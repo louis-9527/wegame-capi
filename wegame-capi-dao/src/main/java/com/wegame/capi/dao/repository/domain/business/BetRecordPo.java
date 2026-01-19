@@ -159,19 +159,44 @@ public class BetRecordPo implements Serializable {
          * grand奖池贡献金额
          */
         private Long grandContributionAmount;
+
+        /**
+         * grand预留奖池贡献金额
+         */
+        private Long grandSupContributionAmount;
+
+
         /**
          * major奖池贡献金额
          */
         private Long majorContributionAmount;
 
         /**
+         * major预留奖池贡献金额
+         */
+        private Long majorSupContributionAmount;
+
+
+        /**
          * minor奖池贡献金额
          */
         private Long minorContributionAmount;
+
+        /**
+         * minor预留奖池贡献金额
+         */
+        private Long minorSupContributionAmount;
+
+
         /**
          * mini奖池贡献金额
          */
         private Long miniContributionAmount;
+
+        /**
+         * mini预留奖池贡献金额
+         */
+        private Long miniSupContributionAmount;
     }
 }
 

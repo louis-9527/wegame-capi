@@ -20,16 +20,16 @@ public class JackpotResultConverter {
                         (existing, replacement) -> existing // 处理 key 冲突
                 ));
         JackpotRewardPoolDo grand = rewardPoolMap.get(JackpotRewardPoolTypeEnum.grand);
-        BigDecimal grandPool = AmountUtil.toBigDecimal(grand.getAmount());
+        BigDecimal grandPool = AmountUtil.toBigDecimal(grand.getJackpotAmount());
 
         JackpotRewardPoolDo major = rewardPoolMap.get(JackpotRewardPoolTypeEnum.major);
-        BigDecimal majorPool = AmountUtil.toBigDecimal(major.getAmount());
+        BigDecimal majorPool = AmountUtil.toBigDecimal(major.getJackpotAmount());
 
         JackpotRewardPoolDo minor = rewardPoolMap.get(JackpotRewardPoolTypeEnum.minor);
-        BigDecimal minorPool = AmountUtil.toBigDecimal(minor.getAmount());
+        BigDecimal minorPool = AmountUtil.toBigDecimal(minor.getJackpotAmount());
 
         JackpotRewardPoolDo mini = rewardPoolMap.get(JackpotRewardPoolTypeEnum.mini);
-        BigDecimal miniPool = AmountUtil.toBigDecimal(mini.getAmount());
+        BigDecimal miniPool = AmountUtil.toBigDecimal(mini.getJackpotAmount());
 
         return JackpotResultVo.builder()
                 .miniAmount(miniPool)

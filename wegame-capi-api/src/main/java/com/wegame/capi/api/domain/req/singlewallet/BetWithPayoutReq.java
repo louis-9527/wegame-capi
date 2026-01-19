@@ -51,6 +51,7 @@ public class BetWithPayoutReq extends BaseReq {
         @AllArgsConstructor
         public static class JackpotPool {
             private BigDecimal totalJackpotAmount = zero;
+            private BigDecimal totalSupJackpotAmount = zero;
             private GrandPool grandPool = new GrandPool();
             private MajorPool majorPool = new MajorPool();
             private MinorPool minorPool = new MinorPool();
@@ -68,6 +69,11 @@ public class BetWithPayoutReq extends BaseReq {
             private BigDecimal minorContributionAmount = zero;
             private BigDecimal miniContributionAmount = zero;
             private BigDecimal betBonusContributionAmount = zero;
+
+            private BigDecimal grandSupContributionAmount = zero;
+            private BigDecimal majorSupContributionAmount = zero;
+            private BigDecimal minorSupContributionAmount = zero;
+            private BigDecimal miniSupContributionAmount = zero;
         }
 
         @Data
@@ -77,6 +83,7 @@ public class BetWithPayoutReq extends BaseReq {
         public static class GrandPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
+            private SupplementaryPool supplementaryPool;
         }
 
         @Data
@@ -86,6 +93,7 @@ public class BetWithPayoutReq extends BaseReq {
         public static class MajorPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
+            private SupplementaryPool supplementaryPool;
         }
 
         @Data
@@ -95,6 +103,7 @@ public class BetWithPayoutReq extends BaseReq {
         public static class MinorPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
+            private SupplementaryPool supplementaryPool;
         }
 
         @Data
@@ -104,6 +113,7 @@ public class BetWithPayoutReq extends BaseReq {
         public static class MiniPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
+            private SupplementaryPool supplementaryPool;
         }
 
         @Data
@@ -111,6 +121,15 @@ public class BetWithPayoutReq extends BaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class BetBonusPool {
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class SupplementaryPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
         }

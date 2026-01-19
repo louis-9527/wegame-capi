@@ -228,6 +228,12 @@
 			"major": "5000000",
 			"minor": "1000000",
 			"mini": "100000"
+		},
+		"reservedPoolGuaranteedAmount": {
+			"grand": "20000000",
+			"major": "5000000",
+			"minor": "1000000",
+			"mini": "100000"
 		}
 	},
 	"rewardMaxMultiple": "10250",
@@ -258,5 +264,9 @@
 			"50_70": 8,
 			"70_100": 5
 		}
+	},
+	"payoutAmountLimitConfig": {
+		"retryCount": 1,
+		"limitAmount": 1000000000
 	}
 }

@@ -2,17 +2,43 @@
 dynamic:
   operation:
     switch: true
-    pulsar_url: pulsar+ssl://pc-cb51cf5b.alicloud-apse1-prod-hfd09.ali.snio.cloud:6651
-    pulsar_topic: dos_game_slot_event
-    pulsar_group:
-      maria_makiling: cd_MariaMakiling
-      malakas: cd_Malakas
-      ibong: cd_Ibong
-      lamang: cd_Lamang
-      bakunawa: cd_Bakunawa
-      diwata_mayari: cd_DiwataMayari
-    pulsar:
-      auth:
-        issuer_url: https://auth.streamnative.cloud
-        credentials_file_path: /operation_pulsar_privateKey.json
-        audience: urn:sn:pulsar:o-iylfk:platform-egame-prod
+  internal:
+    operation:
+      pulsar_url: pulsar+ssl://pc-cb51cf5b.alicloud-apse1-prod-hfd09.ali.snio.cloud:6651
+      pulsar_topic: dos_game_slot_event
+      pulsar_group:
+        maria_makiling: cd_MariaMakiling
+        malakas: cd_Malakas
+        ibong: cd_Ibong
+        lamang: cd_Lamang
+        bakunawa: cd_Bakunawa
+        diwata_mayari: cd_DiwataMayari
+        kapre: cd_Kapre
+        mangkukulam: cd_Mangkukulam
+        sirena: cd_Sirena
+        atlantis: cd_Atlantis
+      pulsar:
+        auth:
+          issuer_url: https://auth.streamnative.cloud
+          credentials_file_path: /operation_pulsar_privateKey.json
+          audience: urn:sn:pulsar:o-iylfk:platform-egame-prod
+  external:
+    operation:
+      pulsar_url: pulsar+ssl://pc-3f23fd60.alicloud-apse1-prod-scx3f.ali.snio.cloud:6651
+      pulsar_topic: dos_bp_game_slot_event
+      pulsar_group:
+        maria_makiling: cd_External_MariaMakiling
+        malakas: cd_External_Malakas
+        ibong: cd_External_Ibong
+        lamang: cd_External_Lamang
+        bakunawa: cd_External_Bakunawa
+        diwata_mayari: cd_External_DiwataMayari
+        kapre: cd_External_Kapre
+        mangkukulam: cd_External_Mangkukulam
+        sirena: cd_External_Sirena
+        atlantis: cd_External_Atlantis
+      pulsar:
+        auth:
+          issuer_url: https://auth.streamnative.cloud
+          credentials_file_path: /operation_pulsar_external_privateKey.json
+          audience:  urn:sn:pulsar:o-iylfk:platform-pulsar-external-platform

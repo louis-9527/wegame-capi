@@ -18,30 +18,57 @@ public class JackpotReqBuilder {
     public static JackpotReq buildReq(JackpotAwardDo jackpotAwardDo, Map<JackpotRewardPoolTypeEnum, JackpotRewardPoolDo> jackpotRewardPoolMap) {
         // 组装奖池信息
         JackpotRewardPoolDo grandPool = jackpotRewardPoolMap.get(JackpotRewardPoolTypeEnum.grand);
+        JackpotReq.JackpotPool.SupplementaryPool grandSupplementaryPool = JackpotReq.JackpotPool.SupplementaryPool.builder()
+                .initAmount(AmountUtil.toBigDecimal(grandPool.getReservedPoolInitAmount()))
+                .amount(AmountUtil.toBigDecimal(grandPool.getReservedAmount()))
+                .build();
         JackpotReq.JackpotPool.GrandPool grandBuilder = JackpotReq.JackpotPool.GrandPool.builder()
                 .amount(AmountUtil.toBigDecimal(grandPool.getAmount()))
-                .initAmount(AmountUtil.toBigDecimal(grandPool.getInitAmount())).build();
+                .initAmount(AmountUtil.toBigDecimal(grandPool.getInitAmount()))
+                .supplementaryPool(grandSupplementaryPool)
+                .build();
 
         JackpotRewardPoolDo majorPool = jackpotRewardPoolMap.get(JackpotRewardPoolTypeEnum.major);
+        JackpotReq.JackpotPool.SupplementaryPool majorSupplementaryPool = JackpotReq.JackpotPool.SupplementaryPool.builder()
+                .initAmount(AmountUtil.toBigDecimal(majorPool.getReservedPoolInitAmount()))
+                .amount(AmountUtil.toBigDecimal(majorPool.getReservedAmount()))
+                .build();
         JackpotReq.JackpotPool.MajorPool majorBuilder = JackpotReq.JackpotPool.MajorPool.builder()
                 .amount(AmountUtil.toBigDecimal(majorPool.getAmount()))
-                .initAmount(AmountUtil.toBigDecimal(majorPool.getInitAmount())).build();
+                .initAmount(AmountUtil.toBigDecimal(majorPool.getInitAmount()))
+                .supplementaryPool(majorSupplementaryPool)
+                .build();
 
         JackpotRewardPoolDo minorPool = jackpotRewardPoolMap.get(JackpotRewardPoolTypeEnum.minor);
+        JackpotReq.JackpotPool.SupplementaryPool minorSupplementaryPool = JackpotReq.JackpotPool.SupplementaryPool.builder()
+                .initAmount(AmountUtil.toBigDecimal(minorPool.getReservedPoolInitAmount()))
+                .amount(AmountUtil.toBigDecimal(minorPool.getReservedAmount()))
+                .build();
         JackpotReq.JackpotPool.MinorPool minorBuilder = JackpotReq.JackpotPool.MinorPool.builder()
                 .amount(AmountUtil.toBigDecimal(minorPool.getAmount()))
-                .initAmount(AmountUtil.toBigDecimal(minorPool.getInitAmount())).build();
+                .initAmount(AmountUtil.toBigDecimal(minorPool.getInitAmount()))
+                .supplementaryPool(minorSupplementaryPool)
+                .build();
 
         JackpotRewardPoolDo miniPool = jackpotRewardPoolMap.get(JackpotRewardPoolTypeEnum.mini);
+        JackpotReq.JackpotPool.SupplementaryPool miniSupplementaryPool = JackpotReq.JackpotPool.SupplementaryPool.builder()
+                .initAmount(AmountUtil.toBigDecimal(miniPool.getReservedPoolInitAmount()))
+                .amount(AmountUtil.toBigDecimal(miniPool.getReservedAmount()))
+                .build();
         JackpotReq.JackpotPool.MiniPool miniBuilder = JackpotReq.JackpotPool.MiniPool.builder()
                 .amount(AmountUtil.toBigDecimal(miniPool.getAmount()))
-                .initAmount(AmountUtil.toBigDecimal(miniPool.getInitAmount())).build();
+                .initAmount(AmountUtil.toBigDecimal(miniPool.getInitAmount()))
+                .supplementaryPool(miniSupplementaryPool)
+                .build();
 
         JackpotReq.JackpotPool.BetBonusPool betBonusBuilder = JackpotReq.JackpotPool.BetBonusPool.builder()
                 .amount(BigDecimal.ZERO)
                 .initAmount(BigDecimal.ZERO).build();
+
+        BigDecimal totalSupJackpotAmount = AmountUtil.toBigDecimal(jackpotRewardPoolMap.values().stream().mapToLong(JackpotRewardPoolDo::getReservedAmount).sum());
         JackpotReq.JackpotPool jackpotPool = JackpotReq.JackpotPool.builder()
                 .totalJackpotAmount(grandBuilder.getAmount().add(majorBuilder.getAmount()).add(minorBuilder.getAmount()).add(miniBuilder.getAmount()))
+                .totalSupJackpotAmount(totalSupJackpotAmount)
                 .grandPool(grandBuilder)
                 .majorPool(majorBuilder)
                 .minorPool(minorBuilder)

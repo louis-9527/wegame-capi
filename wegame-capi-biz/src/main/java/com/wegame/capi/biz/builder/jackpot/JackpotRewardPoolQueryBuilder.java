@@ -55,6 +55,9 @@ public class JackpotRewardPoolQueryBuilder {
         if (Objects.nonNull(rewardPool.getAmount())) {
             update.inc("amount", rewardPool.getAmount());
         }
+        if (Objects.nonNull(rewardPool.getReservedAmount())) {
+            update.inc("reservedAmount", rewardPool.getReservedAmount());
+        }
         if (Objects.nonNull(rewardPool.getUpdater())) {
             update.set("updater", rewardPool.getUpdater());
         }

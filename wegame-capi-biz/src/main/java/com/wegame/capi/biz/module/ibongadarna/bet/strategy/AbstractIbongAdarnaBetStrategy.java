@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.ibongadarna.bet.strategy;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
@@ -8,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.IbongAdarnaBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 
@@ -87,7 +90,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
 
     private BetResultDo<IbongAdarnaGameRecordDo> normalBet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<IbongAdarnaGameRecordDo> list = super.play(betDo, betRecordId, this.ibongAdarnaConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
@@ -98,6 +101,18 @@ public abstract class AbstractIbongAdarnaBetStrategy
         // 中大奖处理
         this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
         return result;
+    }
+
+    @Override
+    protected long getTotalRewardAmount(List<IbongAdarnaGameRecordDo> gameRecordList, Object extParam) {
+        if (CollectionUtil.isEmpty(gameRecordList)) {
+            return 0L;
+        } else {
+            return gameRecordList.stream()
+                    .filter(item -> Objects.nonNull(item.getRewardResult()))
+                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                    .sum();
+        }
     }
 
     public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
