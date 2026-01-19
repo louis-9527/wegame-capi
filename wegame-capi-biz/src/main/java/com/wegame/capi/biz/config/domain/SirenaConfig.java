@@ -25,7 +25,7 @@ import static com.wegame.capi.common.Constants.CONST_100;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SirenaConfig implements Serializable {
+public class SirenaConfig extends GameBizConfig implements Serializable {
     private static final long serialVersionUID = 5555098765480050L;
     /**
      * 赔率配置
@@ -141,7 +141,7 @@ public class SirenaConfig implements Serializable {
     }
 
 
-    public void validate() {
+    public void bizValidate() {
         this.oddsConfigValidate();
         this.probabilisticConfigValidate();
         this.wheelChartValidate();

@@ -204,5 +204,9 @@
     "maxFreeWheelTimes": "12"
   },
   "rewardMaxMultiple": "10250",
-  "rewardNotifyMinMultiple": "20"
+  "rewardNotifyMinMultiple": "20",
+  "payoutAmountLimitConfig": {
+    "retryCount": 1,
+    "limitAmount": 1000000000
+  }
 }

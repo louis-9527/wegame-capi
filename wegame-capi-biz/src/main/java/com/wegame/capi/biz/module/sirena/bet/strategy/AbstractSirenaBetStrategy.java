@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.sirena.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.SirenaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.SirenaBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -16,7 +17,6 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
-import com.wegame.capi.biz.module.kapre.bet.strategy.KapreBetStrategy;
 import com.wegame.capi.biz.module.sirena.bet.SirenaBetHelper;
 import com.wegame.capi.biz.module.sirena.game.SirenaGameContext;
 import com.wegame.capi.client.context.UserInfo;
@@ -32,9 +32,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
-
 
 /**
  * Kapre游戏投注抽象接口
@@ -42,7 +39,7 @@ import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 @Slf4j
 public abstract class AbstractSirenaBetStrategy
         extends AbstractCommonBetStrategy<SirenaGameRecordDo, SirenaBetRecordDetailDo>
-        implements KapreBetStrategy<SirenaBetRecordDetailDo> {
+        implements SirenaBetStrategy<SirenaBetRecordDetailDo> {
 
     @Autowired
     @Qualifier("sirenaGameContext")
@@ -56,6 +53,8 @@ public abstract class AbstractSirenaBetStrategy
     private SirenaOperationEventManager sirenaOperationEventManager;
     @Autowired
     private SirenaBetHelper sirenaBetHelper;
+    @Autowired
+    private SirenaConfig sirenaConfig;
 
     @Override
     public AbstractGameContext<SirenaGameRecordDo> gameContext() {
@@ -107,13 +106,24 @@ public abstract class AbstractSirenaBetStrategy
         }
     }
 
+    @Override
+    protected long getTotalRewardAmount(List<SirenaGameRecordDo> list, Object extParam) {
+        if (CollectionUtils.isEmpty(list)) {
+            return 0;
+        }
+        return list.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+    }
+
     /**
      * 非免费轮投注(正常投注、购买投注)
      */
     private BetResultDo<SirenaBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<SirenaGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<SirenaGameRecordDo> list = super.play(betDo, betRecordId, sirenaConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<SirenaGameRecordDo> firstBatchList = sirenaBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
