@@ -14,7 +14,7 @@ import lombok.ToString;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeTemplateOddsWarmUpEnum {
     MARIA_MAKILING("zhumeng001", "1", "-1", "MARIA_MAKILING"),
-    MALAKAS("zhumeng002", "100", "100", "MALAKAS"),
+    MALAKAS("zhumeng002", "3", "-1", "MALAKAS"),
     LAM_ANG("zhumeng004", "3", "-1", "LAMANG"),
     BAKUNAWA("zhumeng005", "5", "-1", "BAKUNAWA")
 
@@ -30,7 +30,7 @@ public enum GameTypeTemplateOddsWarmUpEnum {
      * x = 0, 预热范围 -> [0, 0]
      * x < 0, 不需要预热
      */
-    private  final String normalBetOdds;
+    private final String normalBetOdds;
     /**
      * 购买投注预热倍率
      * 同上.
