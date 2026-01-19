@@ -52,7 +52,7 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupDiwataMayari;
     @Value("${dynamic.internal.operation.pulsar_group.kapre:cd_Kapre}")
     String dynamicOperationGroupKapre;
-    @Value("${dynamic.internal.pulsar.auth.issuer_url}")
+    @Value("${dynamic.internal.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.internal.operation.pulsar.auth.credentials_file_path}")
     String dynamicOperationAuthCredentialsFilePath;
