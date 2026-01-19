@@ -38,7 +38,7 @@ public class ContractApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<GetPlayerContractReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_PLAYER_CONTRACT_URL_FORMAT, promotionDomain)));
+            RequestEntity<GetPlayerContractReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_PLAYER_CONTRACT_URL_FORMAT, promotionDomain(req.getPId()))));
             ResponseEntity<CommonRes<GetPlayerContractRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetPlayerContractRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -61,7 +61,7 @@ public class ContractApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<RedeemPlayerContractReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_PLAYER_CONTRACT_URL_FORMAT, promotionDomain)));
+            RequestEntity<RedeemPlayerContractReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_PLAYER_CONTRACT_URL_FORMAT, promotionDomain(req.getPId()))));
             ResponseEntity<CommonRes<RedeemPlayerContractRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemPlayerContractRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
