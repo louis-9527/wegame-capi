@@ -122,9 +122,52 @@ api:
       singleDomain: http://sw-external-platform-http-main.igo10.me
       freeSpinDomain: http://sw-inhouse-http-freespin.igo10.me
       promotionDomain: http://reward-http-ep.igo10.me
-      operationDomain: https://dos-egame-aliyun-qat.platform88.me
+      operationDomain: http://dos-egame-bp-aliyun.platform10.me
       bp:
         - platformId: 777
           channelId: 9004
           privateKey: 6b2f96e579ace6cdcd9eb174c7fba61b49aa7ca738e6d9de9b577363432cebce
           privateIv: dcd76c24c18cb4b4f7fd9326734801da
+          dosSupport:  true
+          dosPublicKey: |
+            -----BEGIN PUBLIC KEY-----
+            MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1TmmNTU/ch2QPSujUcXd
+            Uq13T4msP/odau8Bst4fALgdaRQPwV+cnUXV0WVErv7UQsG/T7txjWc7u7u07qld
+            S9RlrfpGMdRfU8UhZDT+nfN9MilWlTbGi8tEZ/hD7Fagjbj1ELA+d/YJ6R2Udvgj
+            lWN1HuWmv1X1gKjX1Y/AXK0OSHkLN2428GBvKGCijJAiub82yOq3ljAvVENVFD8b
+            Jb2ZUfrA3amTuahmIY+DTwG2BCPa00iPB7MYaZUp9PSX6GYB2IgrhJbJLa+/RkPK
+            2PG9ExhdE9E9q+FmmWw6RWoU06B5fYUy7j9NJMQ/YZRuqBJI6WQdNf+tD1huK2m3
+            MQIDAQAB
+            -----END PUBLIC KEY-----
+          dosPrivateKey: |
+            -----BEGIN ENCRYPTED PRIVATE KEY-----
+            MIIFLTBXBgkqhkiG9w0BBQ0wSjApBgkqhkiG9w0BBQwwHAQIGv5eo7jv6+oCAggA
+            MAwGCCqGSIb3DQIJBQAwHQYJYIZIAWUDBAEqBBC6dBuSKpunxgqreiqoznTiBIIE
+            0Fmi1s2fGyFKlQVAOKNDwnEqybZEOR1lPlr4LNZHAOlXJDCNV7ItIfUrNn/7Dc8e
+            MuWYRUViS4XzSLyPqpk4yyuD1laGgDQHwZu2X7vbbaWNY54ZZzT2RgPg94M3ehd7
+            s6TDuPRk/m6RqSeCtQoRTh2WX/pyw4LiVFRHFO8HH2qk4Aic1+Pa5ELYhD1srkIZ
+            ghNlI0EzIaT2hGSsOgzm/oS0Ctje4gTieK/SVg2H7IYRtdVniseKO89iJKItLHa2
+            GTfwJN4yLmc4nblMopv5FGUT7qnqRYZLegSPeGZJjQpPZ1Yfx6ZSEDVHegekkGeT
+            O+jJpNYmrygkqJuB+elmJS2n84qE/p29doEHL1rk4TTMgRYRxK7YRO77AQwh9K/a
+            ZAY7fUCkvj2mH9FxNg9a79wbdi8AVvtbmdt90ez7znfGc0K0EDT4EIInZcIuGfkx
+            0Ss/Tex3Sc1DiSnFSufxfF/hz2C9Mu5cWpvGaTsyJdL9MfU2JKtqOyxkUfqb53XU
+            jNK/IVaO6+WPqArZ8KD4+0yViS9z6zZ2R1JOjkgCY2MJyTKEkm9foJIM/gPifoaD
+            NPEvlRuQlRbc4rGW+dMAQcjHHSyL7F8nwUpQGezsCBdYekDuSLwyXuf+ZiQcMKxP
+            e58V6u5K5ny/LNjyi3BnJIk6vt4T0jAt5VvnKYdmC1D2WFQIPpHvwIZ3blCAJGs4
+            qxf5cn+LoE4b9AYlp1QXlE2MjLTDXGsbrVYDn1kX8GzkPaC8S1vZaKgne0sWMF5C
+            G2l8nZAAXJQwEV8H2I5FMWzhY8wyFo3J0r/gVCaOLFOFn30hk7Cz9+7+2BDxJ98a
+            yBMqEMvx/w7GtnWiVt1TKmaKp1zsu7RWb4VjR8N1MqHOOxWkj2Sd9AAfSUdVDyJ3
+            iEkGxF844rnTNRBK7rhcEcwENOk7act4sp98y2gvebUULopiCiHLU4F6to1iOvjH
+            FHOpJqDlS/JP9MWdVSnfVjBYnJPk01zbU6oQswB1z4FYQr2PkcmsWWmf1qAx2wgA
+            w7hYC1gG3kg5JQiwhmJ7f0pNET8iuNxqYwBgeZRFqRl4Oq9hxI3PctmsI9It7lhq
+            WhczqVE9Uju6XJZ1BI11dtwDPJ0oLXrEbX6H+OzJ23D9AzG2pjHbxA0HFnZj26DT
+            5LuWQcm6vXz+u+rMhKcfxGFxjgAsmO5g7EcdO3ZEQ+4AY282WDQPGS5bmnc0cnMV
+            OEFERTqLc5Bk1eaN8VWWI6eJ2Q0WNALFLrvci0gJD54cgPZQAWr99Vli6UBMjDu+
+            CLqQJ8UearChlVK8TR1i56LWcSJ2jr0d5VuaembPEcm0ZbagekcKKkKFZT+KxVNJ
+            uwhE9rCWqsXf34uev2Bwm00zUINZUcYwaiz2HrfqPWw3NQ/3gOA4O+axQ/I2Mk7I
+            LihXPVdi0glteM3t+cBtESaqOhjgkMn7HDFW3qb65BgttnLoVBkBvg7pR3Jg3RdD
+            OsNaawDSFStSBD7YtJIrLKfx60A9GZ2Gb2GZTvOZHdSoPopBWzGKykCF9MrbpO8T
+            mqViahOQm7z9zY6HHlkub3npTMwaecF+7tSbgCiVjqUOmy//NBggt3x6b73eLLA3
+            Dm1NzEVe1Uh2xBx4TppUD2iMk1vGir71OMqnRfUKIga/
+            -----END ENCRYPTED PRIVATE KEY-----
+          dosPassword: egame-secure-passphrase
