@@ -10,6 +10,13 @@ dynamic:
         maria_makiling: cd_MariaMakiling
         malakas: cd_Malakas
         ibong: cd_Ibong
+        lamang: cd_Lamang
+        bakunawa: cd_Bakunawa
+        diwata_mayari: cd_DiwataMayari
+        kapre: cd_Kapre
+        mangkukulam: cd_Mangkukulam
+        sirena: cd_Sirena
+        atlantis: cd_Atlantis
       pulsar:
         auth:
           issuer_url: https://auth.streamnative.cloud
@@ -23,6 +30,13 @@ dynamic:
         maria_makiling: cd_External_MariaMakiling
         malakas: cd_External_Malakas
         ibong: cd_External_Ibong
+        lamang: cd_External_Lamang
+        bakunawa: cd_External_Bakunawa
+        diwata_mayari: cd_External_DiwataMayari
+        kapre: cd_External_Kapre
+        mangkukulam: cd_External_Mangkukulam
+        sirena: cd_External_Sirena
+        atlantis: cd_External_Atlantis
       pulsar:
         auth:
           issuer_url: https://auth.streamnative.cloud
