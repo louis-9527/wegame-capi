@@ -75,6 +75,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         List<GameRecordTemplateDo> configRecordList;
         MariaMakilingBetRecordTemplateEsDo template;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange)) {
+            // 已经被预热的倍率，直接走缓存
             template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
         } else {
             // 没有被预热的倍率，需要重新查询
