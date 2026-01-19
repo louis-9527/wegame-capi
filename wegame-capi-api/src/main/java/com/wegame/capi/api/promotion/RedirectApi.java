@@ -35,7 +35,7 @@ public class RedirectApi extends PromotionBaseApi {
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetRedirectGameUrlRes getRedirectGameUrl(GetRedirectGameUrlReq req) {
         try {
-            assembleSingleSignature(req);
+            assembleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetRedirectGameUrlReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REDIRECT_GAME_URL_FORMAT, promotionDomain(req.getPId()))));
             ResponseEntity<CommonRes<GetRedirectGameUrlRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetRedirectGameUrlRes>>() {
