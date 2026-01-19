@@ -57,8 +57,10 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         SingleWalletBetResultDo resultDo;
-        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)
-                || Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)) {
+        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
+                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)
+                        || Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)
+        ) {
             resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
@@ -100,8 +102,10 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            if (syncOpt && (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)
-                    || Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI))) {
+            if (syncOpt && Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
+                    Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)
+                    || Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)
+            ) {
                 // 同步设置游戏记录缓存
                 String cacheKey = String.format("%s_%s", betRecordDo.getId(), betRecordDo.getPlayerId());
                 betRecordManager().putGameRecordCache(betRecordDo.getGameRecordList(), gameContext().gameInfo().getGameType(), cacheKey);
