@@ -378,5 +378,9 @@
         "freeGame": {
             "0_100": 1
         }
+    },
+    "payoutAmountLimitConfig": {
+        "retryCount": 1,
+        "limitAmount": 1000000000
     }
 }
