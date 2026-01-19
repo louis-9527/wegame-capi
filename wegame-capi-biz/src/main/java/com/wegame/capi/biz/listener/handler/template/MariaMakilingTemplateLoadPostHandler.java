@@ -30,7 +30,6 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Component
 @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:redis:cache:MariaMakiling7";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
