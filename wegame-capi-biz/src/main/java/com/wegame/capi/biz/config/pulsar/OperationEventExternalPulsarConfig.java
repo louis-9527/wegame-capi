@@ -34,6 +34,7 @@ public class OperationEventExternalPulsarConfig {
     private static final String kapreOperationEventExternalConsumer = "kapreOperationEventExternalConsumer";
     private static final String mangkukulamOperationEventExternalConsumer = "mangkukulamOperationEventExternalConsumer";
     private static final String sirenaOperationEventExternalConsumer = "sirenaOperationEventExternalConsumer";
+    private static final String atlantisOperationEventExternalConsumer = "atlantisOperationEventExternalConsumer";
 
 
 
@@ -60,6 +61,8 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupMangkukulam;
     @Value("${dynamic.external.operation.pulsar_group.sirena:cd_Sirena}")
     String dynamicOperationGroupSirena;
+    @Value("${dynamic.external.operation.pulsar_group.atlantis:cd_Atlantis}")
+    String dynamicOperationGroupAtlantis;
     @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
@@ -217,6 +220,21 @@ public class OperationEventExternalPulsarConfig {
                 .subscriptionName(dynamicOperationGroupSirena)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(sirenaOperationEventPulsarListener)
+                .subscribe();
+    }
+
+
+    @Bean(name = atlantisOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = ATLANTIS_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(AtlantisOperationEventPulsarListener.class)
+    public Consumer<byte[]> atlantisOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                           @Autowired AtlantisOperationEventPulsarListener  atlantisOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, atlantisOperationEventExternalConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupAtlantis)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(atlantisOperationEventPulsarListener)
                 .subscribe();
     }
 }

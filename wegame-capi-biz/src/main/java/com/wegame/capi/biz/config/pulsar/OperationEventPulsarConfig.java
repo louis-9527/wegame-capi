@@ -61,7 +61,7 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupMangkukulam;
     @Value("${dynamic.internal.operation.pulsar_group.sirena:cd_Sirena}")
     String dynamicOperationGroupSirena;
-    @Value("${dynamic.operation.pulsar_group.atlantis:cd_Atlantis}")
+    @Value("${dynamic.internal.operation.pulsar_group.atlantis:cd_Atlantis}")
     String dynamicOperationGroupAtlantis;
     @Value("${dynamic.internal.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
