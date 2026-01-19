@@ -1,9 +1,6 @@
 package com.wegame.capi.biz.config.pulsar;
 
-import com.wegame.capi.biz.listener.operation.IbongOperationEventPulsarListener;
-import com.wegame.capi.biz.listener.operation.LamangOperationEventPulsarListener;
-import com.wegame.capi.biz.listener.operation.MalakasOperationEventPulsarListener;
-import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
+import com.wegame.capi.biz.listener.operation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.*;
@@ -32,6 +29,7 @@ public class OperationEventExternalPulsarConfig {
     private static final String malakasOperationEventExternalConsumer = "malakasOperationEventExternalConsumer";
     private static final String ibongOperationEventExternalConsumer = "ibongOperationEventExternalConsumer";
     private static final String lamangOperationEventExternalConsumer = "lamangOperationEventExternalConsumer";
+    private static final String bakunawaOperationEventExternalConsumer = "bakunawaOperationEventExternalConsumer";
     @Value("${dynamic.external.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.external.operation.pulsar_topic}")
@@ -45,6 +43,8 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupIbong;
     @Value("${dynamic.external.operation.pulsar_group.lamang:cd_Lamang}")
     String dynamicOperationGroupLamang;
+    @Value("${dynamic.external.operation.pulsar_group.bakunawa:cd_Bakunawa}")
+    String dynamicOperationGroupBakunawa;
     @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
@@ -128,6 +128,21 @@ public class OperationEventExternalPulsarConfig {
                 .subscriptionName(dynamicOperationGroupLamang)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(lamangOperationEventPulsarListener)
+                .subscribe();
+    }
+
+
+    @Bean(name = bakunawaOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
+    public Consumer<byte[]> bakunawaOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                           @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, bakunawaOperationEventExternalConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupBakunawa)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(bakunawaOperationEventPulsarListener)
                 .subscribe();
     }
 }
