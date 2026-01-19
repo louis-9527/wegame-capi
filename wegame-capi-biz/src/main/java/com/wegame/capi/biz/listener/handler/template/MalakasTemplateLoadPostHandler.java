@@ -54,35 +54,33 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
         if (!supportGame(GameTypeEnum.MALAKAS)) {
             return;
         }
-        MalakasConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
-        try {
-            log.info("main game template load start...");
-            List<Long> mainGameTemplateIdList = new LinkedList<>();
-            config.getMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.NORMAL_BET, TemplateMultipleRange.build(key));
-                if (CollectionUtils.isNotEmpty(idList)) {
-                    mainGameTemplateIdList.addAll(idList);
-                }
-            });
-            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
-            log.info("main game template load end...");
-        } catch (Exception e) {
-            log.error("template load error", e);
-        }
+        loadTemplate(BetTypeEnum.NORMAL_BET);
+        loadTemplate(BetTypeEnum.BUY_BET);
+    }
 
+    private void loadTemplate(BetTypeEnum betType) {
         try {
-            log.info("free game template load start...");
-            List<Long> freeGameTemplateIdList = new LinkedList<>();
-            config.getFreeGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key));
-                if (CollectionUtils.isNotEmpty(idList)) {
-                    freeGameTemplateIdList.addAll(idList);
-                }
-            });
-            //loadRedisCache(BetTypeEnum.BUY_BET, freeGameTemplateIdList);
-            log.info("free game template load end...");
+            log.info("{} game template load start...", betType);
+            List<Long> templateIdList = new LinkedList<>();
+            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+                malakasConfig.getTemplateRangeConfig().getMainGame().keySet().forEach((String key) -> {
+                    List<Long> idList = loadTemplateIdList(betType, TemplateMultipleRange.build(key));
+                    if (CollectionUtils.isNotEmpty(idList)) {
+                        templateIdList.addAll(idList);
+                    }
+                });
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+                malakasConfig.getTemplateRangeConfig().getFreeGame().keySet().forEach((String key) -> {
+                    List<Long> idList = loadTemplateIdList(betType, TemplateMultipleRange.build(key));
+                    if (CollectionUtils.isNotEmpty(idList)) {
+                        templateIdList.addAll(idList);
+                    }
+                });
+            }
+            loadLocalCache(betType, templateIdList);
+            log.info("{} game template load end...", betType);
         } catch (Exception e) {
-            log.info("free game template load error", e);
+            log.info("{} game template load error", betType, e);
         }
     }
 
@@ -122,36 +120,6 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
             }
         } catch (Exception e) {
             log.info("loadLocalCache error, betType: {}", betType, e);
-        }
-    }
-
-    private void loadRedisCache(BetTypeEnum betType, List<Long> templateIdList) {
-        if (!supportWarmUpEnv()) {
-            return;
-        }
-        TemplateTypeEnum templateType = this.getTemplateType();
-        try {
-            Object hasLoad = redisTemplate.opsForValue().get(key);
-            if (Objects.equals(hasLoad, BooleanEnum.TRUE.getCode())) {
-                log.info("loadRedisCache fail, hasLoad. betType: {}, size: {}", betType, templateIdList.size());
-                return;
-            }
-            distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 10, TimeUnit.SECONDS, () -> {
-                log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
-                if (CollectionUtil.isNotEmpty(templateIdList)) {
-                    List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
-                    multiList.forEach(idList -> {
-                        List<MalakasBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, MalakasBetRecordTemplateEsDo.class);
-                        templateList.forEach(template -> {
-                            betRecordTemplateEsService.putTemplateRedisCache(templateType, template.getId(), template);
-                        });
-                    });
-                }
-                redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
-                log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
-            }, "lock fail");
-        } catch (Exception e) {
-            log.info("loadRedisCache error, betType: {}", betType, e);
         }
     }
 }

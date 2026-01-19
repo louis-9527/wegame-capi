@@ -53,7 +53,6 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
 
     @Override
     public RewardResultDo<MalakasSymbolDo> handle(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
-        long current = System.currentTimeMillis();
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
@@ -122,7 +121,6 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .accumulateReachMaxMultiple(reachMaxMultiple)
                 .build();
         // 6.返回中奖信息
-        log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
         return rewardResult;
     }
 
