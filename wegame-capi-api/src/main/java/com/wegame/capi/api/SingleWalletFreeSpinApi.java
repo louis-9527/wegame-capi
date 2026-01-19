@@ -55,7 +55,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
         // 参数签名
         assembleSingleSignature(req);
         MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-        RequestEntity<FreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN, freeSpinDomain)));
+        RequestEntity<FreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN, freeSpinDomain(req.getPId()))));
         long requestStartTime = System.currentTimeMillis();
         boolean canContinueExecute = true;
         int duplicateIdCount = 0;
@@ -112,7 +112,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             log.info("freeSpinOfPlayer req: {}", FastJsonUtils.toJSONString(req));
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, freeSpinDomain)));
+            RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, freeSpinDomain(req.getPId()))));
             ResponseEntity<CommonRes<FreeSpinOfPlayerRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinOfPlayerRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -138,7 +138,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinHistoryOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_HISTORY_OF_PLAYER, freeSpinDomain)));
+            RequestEntity<FreeSpinHistoryOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_HISTORY_OF_PLAYER, freeSpinDomain(req.getPId()))));
             ResponseEntity<CommonRes<FreeSpinHistoryOfPlayerRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinHistoryOfPlayerRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -164,7 +164,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinDetailReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_DETAIL, freeSpinDomain)));
+            RequestEntity<FreeSpinDetailReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_DETAIL, freeSpinDomain(req.getPId()))));
             ResponseEntity<CommonRes<FreeSpinDetailRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinDetailRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
