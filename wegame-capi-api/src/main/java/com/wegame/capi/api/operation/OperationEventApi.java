@@ -12,9 +12,7 @@ import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -36,10 +34,8 @@ public class OperationEventApi extends SingleWalletBaseApi {
     private static final String UPDATE_EVENTS_STATUS_URL_FORMAT = "%s/updateEventsStatus";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
-    @Value("${api.game.operationDomain}")
-    String operationDomain;
     @Autowired
-    private GameApiProperty gameApiProperty;
+    GameApiProperty gameApiProperty;
 
     /**
      * 更新事件状态
@@ -47,8 +43,8 @@ public class OperationEventApi extends SingleWalletBaseApi {
      * @param req 请求参数
      * @return 更新结果
      */
-    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
-    public UpdateEventsStatusRes updateEventsStatus(String channelId,UpdateEventsStatusReq req) {
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
+    public UpdateEventsStatusRes updateEventsStatus(String channelId, UpdateEventsStatusReq req) {
         try {
             // 参数加密
             String reqString = JSON.toJSONString(req);
@@ -56,19 +52,19 @@ public class OperationEventApi extends SingleWalletBaseApi {
             String sign = SecureUtil.md5(reqString);
             // 获取渠道对应的cpPrivateKey 和 cpPrivateIv
 
-            GameApiProperty.PrivateInfo privateInfo = gameApiProperty.getPrivateInfo(channelId);
-            String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId,privateInfo.getPrivateKey());
-            String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId,privateInfo.getPrivateIv());
+            GameApiProperty.PrivateInfo privateInfo = gameApiProperty.getDosPrivateInfo(channelId);
+            String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId, privateInfo.getPrivateKey());
+            String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId, privateInfo.getPrivateIv());
             // 构建header
             MultiValueMap<String, String> headers = buildHeaders(sign, keyString, ivString);
             UpdateEventsStatusReq.OperationReq operationReq = UpdateEventsStatusReq.OperationReq.builder()
                     .agentCode(channelId)
-                    .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(channelId,reqString))
+                    .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(channelId, reqString))
                     .build();
             RequestEntity<UpdateEventsStatusReq.OperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,
                     HttpMethod.POST,
-                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, operationDomain)));
+                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, operationDomain(channelId)))); // todo fix @bruce 干预事件如何获取domain
             ResponseEntity<UpdateEventsStatusRes> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
