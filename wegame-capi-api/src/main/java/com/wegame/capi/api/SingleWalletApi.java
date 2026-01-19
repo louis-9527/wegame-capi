@@ -55,7 +55,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders();
-            RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
+            RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain(req.getPId()))));
             ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -79,7 +79,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<GetCreditReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
-                    URI.create(String.format(GET_CREDIT_URL_FORMAT, singleDomain)));
+                    URI.create(String.format(GET_CREDIT_URL_FORMAT, singleDomain(req.getPId()))));
             ResponseEntity<CommonRes<GetCreditRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<GetCreditRes>>() {
                     });
@@ -103,7 +103,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req,
                 buildHeaders(),
                 HttpMethod.POST,
-                URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
+                URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain(req.getPId()))));
         long requestStartTime = System.currentTimeMillis();
         boolean canContinueExecute = true;
         int duplicateIdCount = 0;
@@ -167,7 +167,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         RequestEntity<BetStarSpinReq> requestEntity = new RequestEntity<>(req,
                 buildHeaders(),
                 HttpMethod.POST,
-                URI.create(String.format(BET_STAR_SPIN_URL_FORMAT, singleDomain)));
+                URI.create(String.format(BET_STAR_SPIN_URL_FORMAT, singleDomain(req.getPId()))));
         long requestStartTime = System.currentTimeMillis();
         boolean canContinueExecute = true;
         int duplicateIdCount = 0;
@@ -230,7 +230,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<BetStatusReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
-                    URI.create(String.format(BET_STATUS_URL_FORMAT, singleDomain)));
+                    URI.create(String.format(BET_STATUS_URL_FORMAT, singleDomain(req.getPId()))));
             ResponseEntity<CommonRes<BetStatusRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<BetStatusRes>>() {
                     });

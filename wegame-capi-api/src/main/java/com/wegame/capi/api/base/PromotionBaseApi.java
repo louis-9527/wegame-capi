@@ -16,8 +16,8 @@ public class PromotionBaseApi extends CommonBaseApi {
 
     public static final String PROMOTION_PREFIX_ERR_CODE = "2";
 
-    @Value("${api.game.promotionDomain}")
-    public String promotionDomain;
+    //    @Value("${api.game.promotionDomain}")
+    //    public String promotionDomain;
 
     public MultiValueMap<String, String> buildHeaders(String uid) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -27,12 +27,12 @@ public class PromotionBaseApi extends CommonBaseApi {
         return headers;
     }
 
-    public void healthCheck() {
-        try {
-            ResponseEntity<Object> response = promotionRestTemplate.getForEntity(String.format(HEALTH_CHECK_FORMAT, promotionDomain), Object.class);
-            log.info("promotion health check: {}", response);
-        } catch (Exception e) {
-            log.warn("promotion health check error", e);
-        }
-    }
+    //    public void healthCheck() {
+    //        try {
+    //            ResponseEntity<Object> response = promotionRestTemplate.getForEntity(String.format(HEALTH_CHECK_FORMAT, promotionDomain), Object.class);
+    //            log.info("promotion health check: {}", response);
+    //        } catch (Exception e) {
+    //            log.warn("promotion health check error", e);
+    //        }
+    //    }
 }

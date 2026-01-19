@@ -39,7 +39,7 @@ public class DynamicOperationEncryptionHelper {
     private static final String AES_ALGORITHM = "AES/CBC/PKCS5Padding";
 
     @Autowired
-    private GameApiProperty gameApiProperty;
+    GameApiProperty gameApiProperty;
 
     private Map<String, AesSecretKey> aesSecretmap = new HashMap<>();
 
@@ -49,8 +49,11 @@ public class DynamicOperationEncryptionHelper {
     @PostConstruct
     public void init() {
         try {
-            List<GameApiProperty.PrivateInfo> privateInfoList = gameApiProperty.getPrivateInfoList();
+            List<GameApiProperty.PrivateInfo> privateInfoList = gameApiProperty.supportDosPrivateInfoList();
             for (GameApiProperty.PrivateInfo info : privateInfoList) {
+                if (!info.isDosSupport()) {
+                    continue;
+                }
                 byte[] key = hexStringToByteArray(info.getPrivateKey());
                 byte[] iv = hexStringToByteArray(info.getPrivateIv());
                 SecretKeySpec aesSecretKey = new SecretKeySpec(key, "AES");
@@ -81,7 +84,7 @@ public class DynamicOperationEncryptionHelper {
     public String encryptWithPublicKey(String channelId, String message) {
         try {
             AesSecretKey aesSecretKey = aesSecretmap.get(channelId);
-            log.info("encryptWithPublicKey,aesSecretKey.getRsaPublicKey(),channelId:{},publicKey:{},message:{}",channelId,aesSecretKey.getRsaPublicKey(),message);
+            // log.info("encryptWithPublicKey,aesSecretKey.getRsaPublicKey(),channelId:{},publicKey:{},message:{}",channelId,aesSecretKey.getRsaPublicKey(),message);
             Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, aesSecretKey.getRsaPublicKey());
             byte[] encryptedBytes = cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
@@ -97,7 +100,7 @@ public class DynamicOperationEncryptionHelper {
     public String decrypt(String channelId, String encryptedData) {
         try {
             AesSecretKey aesSecretKey = aesSecretmap.get(channelId);
-            log.info("encryptWithPublicKey,decrypt.getRsaPrivateKey(),channelId:{},privateKey:{},encryptedData:{}",channelId,aesSecretKey.getRsaPrivateKey(),encryptedData);
+            // log.info("encryptWithPublicKey,decrypt.getRsaPrivateKey(),channelId:{},privateKey:{},encryptedData:{}",channelId,aesSecretKey.getRsaPrivateKey(),encryptedData);
             Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, aesSecretKey.getRsaPrivateKey());
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedData));
