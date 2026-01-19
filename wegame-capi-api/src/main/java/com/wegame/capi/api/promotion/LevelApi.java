@@ -42,7 +42,7 @@ public class LevelApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<LevelConfigReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(LIST_LEVEL_CONFIG_URL_FORMAT, promotionDomain)));
+            RequestEntity<LevelConfigReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(LIST_LEVEL_CONFIG_URL_FORMAT, promotionDomain(req.getPId()))));
             ResponseEntity<CommonRes<LevelConfigRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<LevelConfigRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -66,7 +66,7 @@ public class LevelApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<PlayerLevelReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_PLAYER_LEVEL_URL_FORMAT, promotionDomain)));
+            RequestEntity<PlayerLevelReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_PLAYER_LEVEL_URL_FORMAT, promotionDomain(req.getPId()))));
             ResponseEntity<CommonRes<PlayerLevelRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<PlayerLevelRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);

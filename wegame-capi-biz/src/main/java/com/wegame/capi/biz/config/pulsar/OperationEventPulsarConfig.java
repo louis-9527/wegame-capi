@@ -31,22 +31,22 @@ public class OperationEventPulsarConfig {
     private static final String malakasOperationEventConsumer = "malakasOperationEventConsumer";
     private static final String ibongOperationEventConsumer = "ibongOperationEventConsumer";
     // todo fix
-    @Value("${dynamic.operation.pulsar_url}")
+    @Value("${dynamic.internal.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
-    @Value("${dynamic.operation.pulsar_topic}")
+    @Value("${dynamic.internal.operation.pulsar_topic}")
     String dynamicOperationTopic;
     // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
-    @Value("${dynamic.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
+    @Value("${dynamic.internal.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
-    @Value("${dynamic.operation.pulsar_group.malakas:cd_Malakas}")
+    @Value("${dynamic.internal.operation.pulsar_group.malakas:cd_Malakas}")
     String dynamicOperationGroupMalakas;
-    @Value("${dynamic.operation.pulsar_group.ibong:cd_Ibong}")
+    @Value("${dynamic.internal.operation.pulsar_group.ibong:cd_Ibong}")
     String dynamicOperationGroupIbong;
-    @Value("${dynamic.operation.pulsar.auth.issuer_url}")
+    @Value("${dynamic.internal.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
-    @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
+    @Value("${dynamic.internal.operation.pulsar.auth.credentials_file_path}")
     String dynamicOperationAuthCredentialsFilePath;
-    @Value("${dynamic.operation.pulsar.auth.audience}")
+    @Value("${dynamic.internal.operation.pulsar.auth.audience}")
     String dynamicOperationAuthAudience;
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)

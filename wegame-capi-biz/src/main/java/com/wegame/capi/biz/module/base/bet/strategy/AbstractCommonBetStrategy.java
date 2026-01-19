@@ -90,7 +90,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             AssertUtil.assertNotNull(userInfo.getChannelId(), ErrorCode.ERR_NOT_LOGIN);
             // 判断渠道
-            if (!gameApiProperty.getChannelIdAll().contains(userInfo.getChannelId())) {
+            if (!gameApiProperty.supportDosChannelIdSet().contains(userInfo.getChannelId())) {
                 return false;
             }
             // 仅正常投注时可干预
