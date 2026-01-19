@@ -30,6 +30,7 @@ public class OperationEventExternalPulsarConfig {
     private static final String ibongOperationEventExternalConsumer = "ibongOperationEventExternalConsumer";
     private static final String lamangOperationEventExternalConsumer = "lamangOperationEventExternalConsumer";
     private static final String bakunawaOperationEventExternalConsumer = "bakunawaOperationEventExternalConsumer";
+    private static final String diwataMayariOperationEventExternalConsumer = "diwataMayariOperationEventExternalConsumer";
     @Value("${dynamic.external.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.external.operation.pulsar_topic}")
@@ -45,6 +46,8 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupLamang;
     @Value("${dynamic.external.operation.pulsar_group.bakunawa:cd_Bakunawa}")
     String dynamicOperationGroupBakunawa;
+    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_DiwataMayari}")
+    String dynamicOperationGroupDiwataMayari;
     @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
@@ -143,6 +146,21 @@ public class OperationEventExternalPulsarConfig {
                 .subscriptionName(dynamicOperationGroupBakunawa)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(bakunawaOperationEventPulsarListener)
+                .subscribe();
+    }
+
+
+    @Bean(name = diwataMayariOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
+    public Consumer<byte[]> diwataMayariOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                               @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, diwataMayariOperationEventExternalConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupDiwataMayari)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(diwataMayariOperationEventPulsarListener)
                 .subscribe();
     }
 }
