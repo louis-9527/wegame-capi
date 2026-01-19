@@ -125,18 +125,12 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(DIWATA_MAYARI, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), DiwataBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
-        log.info("betRecordId:{}", betRecordId);
+        log.info("template betRecordId:{}", betRecordId);
         List<GameRecordTemplateDo> configRecordList;
         DiwataBetRecordTemplateEsDo template;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.DIWATA_MAYARI, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
-            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithLocalCache(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithRedisCache(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
-            } else {
-                throw new BusinessException(ErrorCode.ERR_PARAM);
-            }
+            template = betRecordTemplateEsService.getTemplateWithLocalCache(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
         } else {
             // 没有被预热的倍率，需要重新查询
             template = betRecordTemplateEsService.findById(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
