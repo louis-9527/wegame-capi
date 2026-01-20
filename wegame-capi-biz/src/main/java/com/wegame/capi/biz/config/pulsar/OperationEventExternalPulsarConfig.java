@@ -122,10 +122,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = lamangOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(LamangOperationEventPulsarListener.class)
-    public Consumer<byte[]> lamangOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> lamangOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                          @Autowired LamangOperationEventPulsarListener lamangOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, lamangOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupLamang)
                 .subscriptionType(SubscriptionType.Shared)
