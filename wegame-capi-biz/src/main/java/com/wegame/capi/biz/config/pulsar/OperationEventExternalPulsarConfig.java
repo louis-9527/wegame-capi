@@ -197,10 +197,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = mangkukulamOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
-    public Consumer<byte[]> mangkukulamOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> mangkukulamOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                               @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
         log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMangkukulam)
                 .subscriptionType(SubscriptionType.Shared)
