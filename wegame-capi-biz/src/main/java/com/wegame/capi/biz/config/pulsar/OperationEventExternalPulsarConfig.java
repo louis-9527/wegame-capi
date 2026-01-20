@@ -229,10 +229,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = atlantisOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = ATLANTIS_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(AtlantisOperationEventPulsarListener.class)
-    public Consumer<byte[]> atlantisOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> atlantisOperationEventConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                            @Autowired AtlantisOperationEventPulsarListener  atlantisOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, atlantisOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupAtlantis)
                 .subscriptionType(SubscriptionType.Shared)
