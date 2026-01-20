@@ -27,16 +27,16 @@ dynamic:
       pulsar_url: pulsar+ssl://pc-3f23fd60.alicloud-apse1-prod-scx3f.ali.snio.cloud:6651
       pulsar_topic: dos_bp_game_slot_event
       pulsar_group:
-        maria_makiling: cd_External_MariaMakiling
-        malakas: cd_External_Malakas
-        ibong: cd_External_Ibong
-        lamang: cd_External_Lamang
-        bakunawa: cd_External_Bakunawa
-        diwata_mayari: cd_External_DiwataMayari
-        kapre: cd_External_Kapre
-        mangkukulam: cd_External_Mangkukulam
-        sirena: cd_External_Sirena
-        atlantis: cd_External_Atlantis
+        maria_makiling: ${spring.application.name}_${spring.application.env}_cd_External_MariaMakiling
+        malakas: ${spring.application.name}_${spring.application.env}_cd_External_Malakas
+        ibong: ${spring.application.name}_${spring.application.env}_cd_External_Ibong
+        lamang: ${spring.application.name}_${spring.application.env}_cd_External_Lamang
+        bakunawa: ${spring.application.name}_${spring.application.env}_cd_External_Bakunawa
+        diwata_mayari: ${spring.application.name}_${spring.application.env}_cd_External_DiwataMayari
+        kapre: ${spring.application.name}_${spring.application.env}_cd_External_Kapre
+        mangkukulam: ${spring.application.name}_${spring.application.env}_cd_External_Mangkukulam
+        sirena: ${spring.application.name}_${spring.application.env}_cd_External_Sirena
+        atlantis: ${spring.application.name}_${spring.application.env}_cd_External_Atlantis
       pulsar:
         auth:
           issuer_url: https://auth.streamnative.cloud
