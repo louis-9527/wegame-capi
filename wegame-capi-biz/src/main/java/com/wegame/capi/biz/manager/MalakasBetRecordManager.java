@@ -71,7 +71,7 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
     }
 
     @Override
-    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #query.playerId + '_'  + #query.id")
+    @Cacheable(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #query.getCacheKey()")
     public List<MalakasGameRecordDo> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.list(query, gameType, MalakasGameRecordDo.class);
     }

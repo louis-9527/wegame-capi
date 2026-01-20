@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.net.URL;
 import java.util.Objects;
@@ -22,6 +23,7 @@ import static com.wegame.capi.common.Constants.*;
  * 干预事件Pulsar外部配置
  */
 @Slf4j
+@Profile({"prod"})
 @Configuration
 public class OperationEventExternalPulsarConfig {
     private static final String operationEventExternalPulsarClient = "operationEventExternalPulsarClient";
@@ -48,15 +50,15 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupMalakas;
     @Value("${dynamic.external.operation.pulsar_group.ibong:cd_External_Ibong}")
     String dynamicOperationGroupIbong;
-    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_Lamang}")
+    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_External_Lamang}")
     String dynamicOperationGroupLamang;
-    @Value("${dynamic.external.operation.pulsar_group.bakunawa:cd_Bakunawa}")
+    @Value("${dynamic.external.operation.pulsar_group.bakunawa:cd_External_Bakunawa}")
     String dynamicOperationGroupBakunawa;
-    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_DiwataMayari}")
+    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_External_DiwataMayari}")
     String dynamicOperationGroupDiwataMayari;
-    @Value("${dynamic.external.operation.pulsar_group.kapre:cd_Kapre}")
+    @Value("${dynamic.external.operation.pulsar_group.kapre:cd_External_Kapre}")
     String dynamicOperationGroupKapre;
-    @Value("${dynamic.external.operation.pulsar_group.mangkukulam:_Mangkukulam}")
+    @Value("${dynamic.external.operation.pulsar_group.mangkukulam:cd_External_Mangkukulam}")
     String dynamicOperationGroupMangkukulam;
     @Value("${dynamic.external.operation.pulsar_group.sirena:cd_Sirena}")
     String dynamicOperationGroupSirena;
@@ -92,10 +94,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = mariaMakilingOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MariamakilingOperationEventPulsarListener.class)
-    public Consumer<byte[]> mariaMakilingOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> mariaMakilingOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                                 @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, mariaMakilingOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
                 .subscriptionType(SubscriptionType.Shared)
@@ -106,10 +108,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = malakasOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
-    public Consumer<byte[]> malakasOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> malakasOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                           @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, malakasOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMalakas)
                 .subscriptionType(SubscriptionType.Shared)
@@ -120,10 +122,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = ibongOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(IbongOperationEventPulsarListener.class)
-    public Consumer<byte[]> ibongOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> ibongOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                         @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, ibongOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupIbong)
                 .subscriptionType(SubscriptionType.Shared)
@@ -135,10 +137,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = lamangOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(LamangOperationEventPulsarListener.class)
-    public Consumer<byte[]> lamangOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> lamangOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                          @Autowired LamangOperationEventPulsarListener lamangOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, lamangOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupLamang)
                 .subscriptionType(SubscriptionType.Shared)
@@ -150,10 +152,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = bakunawaOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
-    public Consumer<byte[]> bakunawaOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> bakunawaOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                            @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, bakunawaOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupBakunawa)
                 .subscriptionType(SubscriptionType.Shared)
@@ -165,10 +167,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = diwataMayariOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
-    public Consumer<byte[]> diwataMayariOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> diwataMayariOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                                @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
         log.debug(BUILD_BEAN_FORMAT, diwataMayariOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
                 .subscriptionType(SubscriptionType.Shared)
@@ -180,10 +182,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = kapreOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(KapreOperationEventPulsarListener.class)
-    public Consumer<byte[]> kapreOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> kapreOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                         @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
         log.debug(BUILD_BEAN_FORMAT, kapreOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupKapre)
                 .subscriptionType(SubscriptionType.Shared)

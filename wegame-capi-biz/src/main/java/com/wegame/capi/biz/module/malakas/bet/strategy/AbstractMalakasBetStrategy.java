@@ -131,28 +131,45 @@ public abstract class AbstractMalakasBetStrategy
      */
     private BetResultDo<MalakasBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        List<MalakasGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
-                GameRecordQuery.builder()
-                        .betRecordId(betDo.getBetRecordId())
-                        .playerId(userInfo.getPlayerId())
-                        .batchId(betDo.getGameRecordId())
-                        .build(), gameContext().gameInfo().getGameType());
-        AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
+        GameRecordQuery query = GameRecordQuery.builder()
+                .betRecordId(betDo.getBetRecordId())
+                .cacheKey(String.format("%s_%s", betDo.getBetRecordId(), userInfo.getPlayerId()))
+                .fromPrimary(true)
+                .build();
+        List<MalakasGameRecordDo> allGameRecordList = betRecordManager().listGameRecordWithCache(query,
+                gameContext().gameInfo().getGameType());
+        // todo delete
+        if (CollectionUtils.isEmpty(allGameRecordList)) {
+            log.warn("allGameRecordList is null. cacheKey: {}", query.getCacheKey());
+        }
+        AssertUtil.assertNotEmpty(allGameRecordList, ErrorCode.ERR_PARAM);
+
         // 按照index升序排列
-        gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
-                .filter(Objects::nonNull)
+        List<MalakasGameRecordDo> currentWheelGameRecordList = Optional.ofNullable(allGameRecordList).orElse(Collections.emptyList()).stream()
+                .filter(item -> Objects.nonNull(item) && Objects.equals(item.getBatchId(), betDo.getGameRecordId()))
                 .sorted(Comparator.comparingInt(MalakasGameRecordDo::getIndex))
                 .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(currentWheelGameRecordList)) {
+            log.warn("currentWheelGameRecordList is null. cacheKey: {}, betDo: {}, allGameRecordList: {}", query.getCacheKey(), betDo, allGameRecordList);
+        }
+        AssertUtil.assertNotEmpty(currentWheelGameRecordList, ErrorCode.ERR_PARAM);
+
         //// 合计中奖总金额
-        long overallRewardAmount = gameRecordList.stream()
+        long overallRewardAmount = currentWheelGameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            MalakasGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
+
+        if (CollectionUtils.isNotEmpty(currentWheelGameRecordList)) {
+            MalakasGameRecordDo lastGameRecord = currentWheelGameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
             if (Objects.nonNull(lastGameRecord)) {
+                long payOutAmount = allGameRecordList.stream()
+                        .filter(item -> Objects.nonNull(item.getRewardResult()))
+                        .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                        .sum();
                 // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId());
+                freeWheelAfterHandle(lastGameRecord.getBetRecordId(), payOutAmount, allGameRecordList);
+                betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
             }
         }
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
@@ -164,7 +181,7 @@ public abstract class AbstractMalakasBetStrategy
                 .totalPayoutAmount(0L)
                 .resultDetail(MalakasBetRecordDetailDo.builder()
                         .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetAmount(), overallRewardAmount))
-                        .gameRecordList(gameRecordList)
+                        .gameRecordList(currentWheelGameRecordList)
                         .build())
                 .build();
     }
@@ -176,7 +193,7 @@ public abstract class AbstractMalakasBetStrategy
                 .collect(Collectors.toList());
     }
 
-    public void freeWheelAfterHandle(Long betRecordId) {
+    public void freeWheelAfterHandle(Long betRecordId, long payOutAmount, List<MalakasGameRecordDo> gameRecordList) {
         // do nothing
     }
 
