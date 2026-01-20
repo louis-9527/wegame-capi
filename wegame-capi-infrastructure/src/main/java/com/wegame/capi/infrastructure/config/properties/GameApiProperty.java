@@ -190,7 +190,7 @@ public class GameApiProperty implements InitializingBean, Serializable {
                 dosDomainInfoMap.putAll(external.getBp()
                         .stream()
                         .filter(PrivateInfo::isDosSupport)
-                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> internal.getOperationDomain())));
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> external.getOperationDomain())));
             }
         }
     }
