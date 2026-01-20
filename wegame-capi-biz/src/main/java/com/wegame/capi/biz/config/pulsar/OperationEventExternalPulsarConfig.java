@@ -46,11 +46,11 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupMalakas;
     @Value("${dynamic.external.operation.pulsar_group.ibong:cd_External_Ibong}")
     String dynamicOperationGroupIbong;
-    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_Lamang}")
+    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_External_Lamang}")
     String dynamicOperationGroupLamang;
-    @Value("${dynamic.external.operation.pulsar_group.bakunawa:cd_Bakunawa}")
+    @Value("${dynamic.external.operation.pulsar_group.bakunawa:cd_External_Bakunawa}")
     String dynamicOperationGroupBakunawa;
-    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_DiwataMayari}")
+    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_External_DiwataMayari}")
     String dynamicOperationGroupDiwataMayari;
     @Value("${dynamic.external.operation.pulsar_group.kapre:cd_Kapre}")
     String dynamicOperationGroupKapre;
