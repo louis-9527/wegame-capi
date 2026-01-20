@@ -119,6 +119,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
         TemplateTypeEnum templateType = diwataMayariConfig.getTemplateRangeConfig().getTemplateMapping().get(abType);
         AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
+        log.info("abType: {}, templateName: {}", abType, templateType.getBetRecordTemplateName());
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(templateType, gamePlay.getBetType());
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
