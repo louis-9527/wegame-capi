@@ -33,7 +33,6 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
     @Autowired
     DiwataMayariConfig diwataMayariConfig;
-
     @Autowired
     BetRecordTemplateEsService<DiwataBetRecordTemplateEsDo> betRecordTemplateEsService;
 

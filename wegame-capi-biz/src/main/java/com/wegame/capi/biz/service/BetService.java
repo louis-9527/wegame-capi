@@ -55,16 +55,17 @@ public class BetService {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.MALAKAS) ||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.IBONG_ADARNA)||
+                Objects.equals(betDo.getGameType(), GameTypeEnum.IBONG_ADARNA) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG) ||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.BAKUNAWA) ||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.DIWATA_MAYARI)) {
+                Objects.equals(betDo.getGameType(), GameTypeEnum.BAKUNAWA)) {
             if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
                 betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
             } else {
                 log.info("userInfo.ut: {}, template bet", userInfo.getUt());
                 betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
             }
+        } else if (Objects.equals(betDo.getGameType(), GameTypeEnum.DIWATA_MAYARI)) {
+            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
         } else {
             betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
         }
