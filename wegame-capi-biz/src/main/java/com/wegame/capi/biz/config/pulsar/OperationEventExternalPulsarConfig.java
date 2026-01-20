@@ -137,10 +137,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = bakunawaOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
-    public Consumer<byte[]> bakunawaOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> bakunawaOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                            @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, bakunawaOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupBakunawa)
                 .subscriptionType(SubscriptionType.Shared)
