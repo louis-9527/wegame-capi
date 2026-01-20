@@ -174,10 +174,10 @@ public class OperationEventExternalPulsarConfig {
     @Bean(name = kapreOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(KapreOperationEventPulsarListener.class)
-    public Consumer<byte[]> kapreOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> kapreOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                         @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
         log.debug(BUILD_BEAN_FORMAT, kapreOperationEventExternalConsumer);
-        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupKapre)
                 .subscriptionType(SubscriptionType.Shared)
