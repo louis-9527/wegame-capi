@@ -25,7 +25,7 @@ import static com.wegame.capi.common.Constants.*;
  * 干预事件Pulsar外部配置
  */
 @Slf4j
-@Profile({"prod"})
+@Profile({"qa","prod"})
 @Configuration
 public class OperationEventExternalPulsarConfig {
     private static final String operationEventExternalPulsarClient = "operationEventExternalPulsarClient";
