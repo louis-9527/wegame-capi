@@ -45,7 +45,7 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupMalakas;
     @Value("${dynamic.external.operation.pulsar_group.ibong:cd_External_Ibong}")
     String dynamicOperationGroupIbong;
-    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_Lamang}")
+    @Value("${dynamic.external.operation.pulsar_group.lamang:cd_External_Lamang}")
     String dynamicOperationGroupLamang;
     @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
