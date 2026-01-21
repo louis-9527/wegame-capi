@@ -31,6 +31,6 @@ public class RedirectGameUrlController {
     @PostMapping("/getRedirectGameUrl")
     public CommonResponse<GetRedirectGameUrlVo> getRedirectGameUrl(@RequestBody GreRedirectUrlRequest request) {
         request.validate();
-        return build(GameRedirectGameUrlConverter.doToVo(redirectService.getRedirectGameUrl(request.getGameId())));
+        return build(GameRedirectGameUrlConverter.doToVo(redirectService.getRedirectGameUrl(request.getData().getGameId())));
     }
 }
