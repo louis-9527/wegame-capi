@@ -160,6 +160,7 @@ public class BetRecordConverter {
                 .build()
                 : null);
         vo.setCreateTime(betRecordDo.getCreateTime());
+        vo.setFreeWheelHandleStatus(betRecordDo.getFreeWheelHandleStatus());
         return vo;
     }
 
