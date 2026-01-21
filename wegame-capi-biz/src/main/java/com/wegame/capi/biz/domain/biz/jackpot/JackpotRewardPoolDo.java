@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class JackpotRewardPoolDo implements Serializable {
     private static final long serialVersionUID = -1614958476406033408L;
     /**
