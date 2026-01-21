@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class GetRedirectGameUrlReqBuilder extends Builder {
 
-    public static GetRedirectGameUrlReq buildRedirectReq() {
+    public static GetRedirectGameUrlReq buildRedirectReq(String gameId) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         return GetRedirectGameUrlReq.builder()
@@ -22,7 +22,7 @@ public class GetRedirectGameUrlReqBuilder extends Builder {
                 .playerName(userInfo.getPlayerName())
                 .refId(buildRefId(MDC.get(ThreadMdcUtil.TRACE_ID), userInfo.getGameId()))
                 .createTime(DateUtil.toUTC(new Date()))
-                .gameId(userInfo.getGameId())
+                .gameId(gameId)
                 .build();
     }
 
