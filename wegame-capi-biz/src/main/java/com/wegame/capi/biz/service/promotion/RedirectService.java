@@ -18,8 +18,8 @@ public class RedirectService {
     @Autowired
     RedirectApi redirectApi;
 
-    public GetRedirectGameUrlDo getRedirectGameUrl() {
-        GetRedirectGameUrlRes res = redirectApi.getRedirectGameUrl(GetRedirectGameUrlReqBuilder.buildRedirectReq());
+    public GetRedirectGameUrlDo getRedirectGameUrl(String gameId) {
+        GetRedirectGameUrlRes res = redirectApi.getRedirectGameUrl(GetRedirectGameUrlReqBuilder.buildRedirectReq(gameId));
         return GameRedirectGameUrlConverter.resToDo(res);
     }
 }
