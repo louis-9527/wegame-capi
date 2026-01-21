@@ -24,23 +24,12 @@ public class GreRedirectUrlRequest extends BaseRequest implements Validate, Seri
     @ApiModelProperty(value = "action", required = true)
     private String action;
     @ApiModelProperty(value = "data", required = true)
-    private Data data;
+    private GreRedirectUrlDataRequest data;
 
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(action, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(data, ErrorCode.ERR_PARAM);
 //        AssertUtil.assertStrNotEmpty(data.getGameId(), ErrorCode.ERR_PARAM);
-    }
-
-    @lombok.Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString(callSuper = true)
-    @ApiModel(description = "转发模块请求模型 data")
-    public static class Data implements Serializable {
-        @ApiModelProperty(value = "游戏 id", required = true)
-        private String gameId;
     }
 }
