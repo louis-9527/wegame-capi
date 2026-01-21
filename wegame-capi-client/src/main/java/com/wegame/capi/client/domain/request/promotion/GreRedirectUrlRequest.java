@@ -39,7 +39,7 @@ public class GreRedirectUrlRequest extends BaseRequest implements Validate, Seri
     @AllArgsConstructor
     @ToString(callSuper = true)
     @ApiModel(description = "转发模块请求模型 data")
-    public static class Data implementsk Serializable {
+    public static class Data implements Serializable {
         @ApiModelProperty(value = "游戏 id", required = true)
         private String gameId;
     }
