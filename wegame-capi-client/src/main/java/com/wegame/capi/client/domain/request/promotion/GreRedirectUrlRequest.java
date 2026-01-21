@@ -17,14 +17,30 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(description = "领取任务请求模型")
+@ApiModel(description = "转发模块请求模型")
 public class GreRedirectUrlRequest extends BaseRequest implements Validate, Serializable {
     private static final long serialVersionUID = 5858563029658968111L;
-    @ApiModelProperty(value = "游戏 id", required = true)
-    private String gameId;
+
+    @ApiModelProperty(value = "action", required = true)
+    private String action;
+    @ApiModelProperty(value = "data", required = true)
+    private Data data;
 
     @Override
     public void validateParam() {
-        AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(action, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(data, ErrorCode.ERR_PARAM);
+//        AssertUtil.assertStrNotEmpty(data.getGameId(), ErrorCode.ERR_PARAM);
+    }
+
+    @lombok.Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString(callSuper = true)
+    @ApiModel(description = "转发模块请求模型 data")
+    public static class Data implements Serializable {
+        @ApiModelProperty(value = "游戏 id", required = true)
+        private String gameId;
     }
 }
