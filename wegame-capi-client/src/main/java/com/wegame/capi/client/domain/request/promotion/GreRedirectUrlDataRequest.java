@@ -3,11 +3,12 @@ package com.wegame.capi.client.domain.request.promotion;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-@lombok.Data
+@Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
