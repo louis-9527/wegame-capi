@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.AllArgsConstructor;
@@ -73,6 +74,7 @@ public class JackpotRewardPoolDo implements Serializable {
         return reservedAmount >= reservedPoolInitAmount;
     }
 
+    @JsonIgnore
     public Long getJackpotAmount() {
         return Math.max(initAmount, amount);
     }
