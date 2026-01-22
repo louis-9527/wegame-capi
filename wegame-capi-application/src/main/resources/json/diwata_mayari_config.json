@@ -505,11 +505,11 @@
             "BUY_BET": 3
         },
         "templateMapping": {
-            "A": "diwatamayari_bet_record_template_v1",
-            "B": "diwatamayari_bet_record_template_v2"
+            "A": "DIWATA_MAYARI",
+            "B": "DIWATA_MAYARI_V2"
         },
         "templateRangeMap": {
-            "diwatamayari_bet_record_template_v1": {
+            "DIWATA_MAYARI": {
                 "NORMAL_BET": {
                     "0_0": 720293,
                     "0_1": 249998,
@@ -531,7 +531,7 @@
                     "30_50": 100
                 }
             },
-            "diwatamayari_bet_record_template_v2": {
+            "DIWATA_MAYARI_V2": {
                 "NORMAL_BET": {
                     "0_0": 0,
                     "0_1": 250006,
