@@ -63,8 +63,8 @@ public class BetService {
                 Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.BAKUNAWA) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.DIWATA_MAYARI)||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.MANGKUKULAM) ||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.ATLANTIS)
+                Objects.equals(betDo.getGameType(), GameTypeEnum.MANGKUKULAM)
+//                || Objects.equals(betDo.getGameType(), GameTypeEnum.ATLANTIS)
         ) {
             if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
                 betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
