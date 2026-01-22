@@ -59,13 +59,15 @@ public class ControllerAspect {
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
-                        req);
+                        req,
+                        result);
             } else {
                 log.info("{}-{} controller cost time: {}ms, req={}, res={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
-                        req);
+                        req,
+                        result);
             }
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);
