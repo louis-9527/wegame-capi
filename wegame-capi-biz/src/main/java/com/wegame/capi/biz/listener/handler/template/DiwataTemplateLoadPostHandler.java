@@ -68,17 +68,17 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
     }
 
     private List<Long> loadTemplateIdList(BetTypeEnum betType, TemplateTypeEnum templateType, TemplateMultipleRange multipleRange) {
-        log.info("templateIdList load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
+        log.info("templateIdList load start, betType: {}, range: {}-{}... {}", betType, multipleRange.getStart(), multipleRange.getEnd(), templateType.getBetRecordTemplateName());
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd(), DiwataBetRecordTemplateEsDo.class);
             if (!diwataMayariConfig.getTemplateRangeConfig().supportWarmUp(betType, multipleRange)) {
-                log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}， no load betRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+                log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}，{}, no load betRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size(), templateType.getBetRecordTemplateName());
                 return null;
             }
-            log.info("templateIdList load success, betType: {}, range: {}-{}, size: {}", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+            log.info("templateIdList load success, betType: {}, range: {}-{}, size: {}, {}", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size(), templateType.getBetRecordTemplateName());
             return betRecordTemplateIdList;
         } catch (Exception e) {
-            log.info("templateIdList load error, betType: {}, range: {}-{}", betType, multipleRange.getStart(), multipleRange.getEnd(), e);
+            log.info("templateIdList load error, betType: {}, range: {}-{}, {}", betType, multipleRange.getStart(), multipleRange.getEnd(), templateType.getBetRecordTemplateName(), e);
             return null;
         }
     }
@@ -89,7 +89,7 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         }
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
-                log.info("loadLocalCache start, betType: {}, templateType: {}, size: {}", betType, templateType, templateIdList.size());
+                log.info("loadLocalCache start, betType: {}, templateType: {}, size: {}", betType, templateType.getBetRecordTemplateName(), templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
                     List<DiwataBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.DIWATA_MAYARI, idList, DiwataBetRecordTemplateEsDo.class);
@@ -97,10 +97,10 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
                 });
-                log.info("loadLocalCache success, betType: {}, templateType: {}, size: {}", betType, templateType, templateIdList.size());
+                log.info("loadLocalCache success, betType: {}, templateType: {}, size: {}", betType, templateType.getBetRecordTemplateName(), templateIdList.size());
             }
         } catch (Exception e) {
-            log.info("loadLocalCache error, betType: {}", betType, e);
+            log.info("loadLocalCache error, betType: {}, templateType: {}", betType, templateType.getBetRecordTemplateName(), e);
         }
     }
 }
