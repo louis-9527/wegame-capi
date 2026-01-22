@@ -505,8 +505,8 @@
             "BUY_BET": 3
         },
         "templateMapping": {
-            "afe": "diwatamayari_bet_record_template_v1",
-            "aff": "diwatamayari_bet_record_template_v2"
+            "A": "diwatamayari_bet_record_template_v1",
+            "B": "diwatamayari_bet_record_template_v2"
         },
         "templateRangeMap": {
             "diwatamayari_bet_record_template_v1": {
