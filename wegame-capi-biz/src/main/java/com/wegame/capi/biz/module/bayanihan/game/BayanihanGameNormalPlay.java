@@ -120,7 +120,7 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
                 AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
                 // 组装-游戏记录
                 long gameRecordId = generateGameRecordId();
-                BayanihanGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, firstWheel, rewardResult, collectionInfo);
+                BayanihanGameRecordDo gameRecord = buildGameRecord(gameRecordId, parentGameRecord.getId(), gamePlay.getBetRecordId(), gameRecordId, firstWheel, rewardResult, collectionInfo);
                 ret.add(gameRecord);
                 parentGameRecord.addGameRecordId(gameRecordId);
                 totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
