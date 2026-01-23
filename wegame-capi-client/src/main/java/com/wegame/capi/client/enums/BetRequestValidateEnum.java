@@ -30,7 +30,16 @@ public enum BetRequestValidateEnum {
     IBONG_ADARNA(GameTypeEnum.IBONG_ADARNA, (betType, betSubType, betDetail) -> {
         IbongAdarnaValidator.validateParam(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
-    })
+    }),
+    LAM_ANG(GameTypeEnum.LAM_ANG, (betType, betSubType, betDetail) -> {
+        LamangValidator.validateParam(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
+    }),
+    BAKUNAWA(GameTypeEnum.BAKUNAWA, (betType, betSubType, betDetail) -> {
+        BakunawaValidator.validateParam(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
+    }),
 
 
     ;
