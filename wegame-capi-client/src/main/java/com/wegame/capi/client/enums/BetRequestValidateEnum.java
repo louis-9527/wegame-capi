@@ -61,13 +61,9 @@ public enum BetRequestValidateEnum {
     }),
     ATLANTIS(GameTypeEnum.ATLANTIS, (betType, betSubType, betDetail) -> {
         AtlantisValidator.validateParam(betType, betSubType, betDetail);
-        AtlantisValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
-
-
-
-
 
     ;
     private final GameTypeEnum gameType;
