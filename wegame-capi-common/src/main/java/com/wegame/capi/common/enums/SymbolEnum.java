@@ -76,6 +76,7 @@ public enum SymbolEnum {
     SymbolH2("H2", "SymbolH2"),
     SymbolH3("H3", "SymbolH3"),
     SymbolH4("H4", "SymbolH4"),
+    SymbolH5("H5", "SymbolH5"),
 
     SymbolWD("WD", "SymbolWD"),
     SymbolWD_E("WD_E", "SymbolWD_E"),

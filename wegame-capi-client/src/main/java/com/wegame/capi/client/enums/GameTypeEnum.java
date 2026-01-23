@@ -57,6 +57,10 @@ public enum GameTypeEnum {
             "Atlantis",
             "atlantis_bet_record",
             "atlantis_game_record", 300L, 1.2),
+    BAYANIHAN("zhumeng011",
+            "Bayanihan",
+            "bayanihan_bet_record",
+            "bayanihan_game_record", 300L, 1.2),
 
     ;
 

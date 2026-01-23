@@ -76,7 +76,13 @@ public enum OperationEventTypeEnum {
             "atlantis_operation_event",
             "atlantis_operation_event_detail",
             "atlantis_operation_event_config",
-            "atlantis_operation_event_config_record")
+            "atlantis_operation_event_config_record"),
+
+    BAYANIHAN(GameTypeEnum.BAYANIHAN,
+            "bayanihan_operation_event",
+            "bayanihan_operation_event_detail",
+            "bayanihan_operation_event_config",
+            "bayanihan_operation_event_config_record")
     ;
 
 
