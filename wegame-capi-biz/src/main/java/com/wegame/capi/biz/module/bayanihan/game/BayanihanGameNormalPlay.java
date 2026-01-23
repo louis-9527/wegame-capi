@@ -50,6 +50,7 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final int MAX_SCATTER_IN_COLUMN = 1;
     private static final int MAX_SCATTER_IN_WHEEL = 3;
+    private static final int DEFAULT_STICKY_WILD_TIMES = 3;
     private static final List<Integer> SCATTER_IN_COLUMN = Arrays.asList(0, 2, 4);
 
     @Autowired
@@ -199,8 +200,13 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
     }
 
     private void fillScatter(BayanihanSymbolDo[][] symbolArr) {
-        //todo 135列每一列填充一个scatter
-
+        // 在1、3、5列（索引0、2、4）中，每列随机选择一个行位置填充scatter
+        for (Integer column : SCATTER_IN_COLUMN) {
+            // 随机选择一个行索引 [0, row-1]
+            int randomRow = randomService.randomInt(0, GAME_INFO.getRow() - 1);
+            // 填充scatter元素
+            symbolArr[randomRow][column] = BayanihanSymbolDo.buildFromSymbol(BayanihanGameHelper.BAYANIHAN_SCATTER);
+        }
     }
 
 
@@ -247,6 +253,11 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
                 if (symbolDo.isScatterSymbol()) {
                     AssertUtil.assertTrue(SCATTER_IN_COLUMN.contains(column), ErrorCode.ERR_INTER);
                 }
+                BayanihanSymbolDo res = BayanihanSymbolDo.buildFromSymbol(symbolDo);
+                if (res.isWildSymbol()) {
+                    res.setSymbolClearTimes(DEFAULT_STICKY_WILD_TIMES);
+                }
+                symbolArr[row][column] = res;
                 if (symbolDo.isScatterSymbol()) {
                     scatterNumberInColumn = scatterNumberInColumn + 1;
                     scatterNumberInWheel = scatterNumberInWheel + 1;

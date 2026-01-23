@@ -33,6 +33,8 @@ public class GameProperty {
     private boolean enableSirena;
     @Value("${game.enable.Atlantis: false}")
     private boolean enableAtlantis;
+    @Value("${game.enable.Bayanihan: false}")
+    private boolean enableBayanihan;
 
     public List<GameTypeEnum> enabledGameTypes() {
         List<GameTypeEnum> gameTypeList = new ArrayList<>();
@@ -65,6 +67,9 @@ public class GameProperty {
         }
         if (enableAtlantis) {
             gameTypeList.add(GameTypeEnum.ATLANTIS);
+        }
+        if (enableBayanihan) {
+            gameTypeList.add(GameTypeEnum.BAYANIHAN);
         }
         return gameTypeList;
     }

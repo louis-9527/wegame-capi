@@ -64,6 +64,11 @@ public enum BetRequestValidateEnum {
         CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
+    BAYANIHAN(GameTypeEnum.BAYANIHAN, (betType, betSubType, betDetail) -> {
+        BayanihanValidator.validateParam(betType, betSubType, betDetail);
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
+    }),
 
     ;
     private final GameTypeEnum gameType;

@@ -71,9 +71,9 @@ public class BayanihanGameHelper {
 
 
     public static final GameInfoDo BAYANIHAN_GAME_INFO = GameInfoDo.builder()
-            .id(GameTypeEnum.MANGKUKULAM.getId())
-            .gameType(GameTypeEnum.MANGKUKULAM)
-            .name(GameTypeEnum.MANGKUKULAM.getName())
+            .id(GameTypeEnum.BAYANIHAN.getId())
+            .gameType(GameTypeEnum.BAYANIHAN)
+            .name(GameTypeEnum.BAYANIHAN.getName())
             .row(5)
             .column(5)
             .symbolMap(new ImmutableMap.Builder<String, SymbolDo>()

@@ -38,6 +38,7 @@ public class BetService {
             .put(GameTypeEnum.MANGKUKULAM, "mangkukulamBetContext")
             .put(GameTypeEnum.SIRENA, "sirenaBetContext")
             .put(GameTypeEnum.ATLANTIS, "atlantisBetContext")
+            .put(GameTypeEnum.BAYANIHAN, "bayanihanBetContext")
             .build();
 
     @Autowired
