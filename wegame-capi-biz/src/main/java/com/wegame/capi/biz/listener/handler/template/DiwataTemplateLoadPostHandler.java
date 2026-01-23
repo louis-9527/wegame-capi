@@ -7,8 +7,8 @@ import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEs
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -32,83 +33,63 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
     @Autowired
     DiwataMayariConfig diwataMayariConfig;
-
     @Autowired
     BetRecordTemplateEsService<DiwataBetRecordTemplateEsDo> betRecordTemplateEsService;
-
-    protected TemplateTypeEnum getTemplateType() {
-        return TemplateTypeEnum.DIWATA_MAYARI;
-    }
-
-    protected DiwataMayariConfig.TemplateRangeConfig getTemplateRangeConfig() {
-        return diwataMayariConfig.getTemplateRangeConfig();
-    }
 
     @Override
     public void handle() {
         if (!supportGame(GameTypeEnum.DIWATA_MAYARI)) {
             return;
         }
-        DiwataMayariConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
-        if (Objects.isNull(config)) {
-            return;
-        }
-        try {
-            log.info("main game template load start...");
-            List<Long> mainGameTemplateIdList = new LinkedList<>();
-            config.getMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.NORMAL_BET, TemplateMultipleRange.build(key));
-                if (CollectionUtils.isNotEmpty(idList)) {
-                    mainGameTemplateIdList.addAll(idList);
-                }
-            });
-            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
-            log.info("main game template load end...");
-        } catch (Exception e) {
-            log.error("template load error", e);
-        }
+        List<TemplateTypeEnum> templateTypeList = TemplateTypeEnum.listByGameType(GameTypeEnum.DIWATA_MAYARI);
+        Optional.ofNullable(templateTypeList).orElse(Collections.emptyList())
+                .forEach(item -> {
+                    loadTemplate(BetTypeEnum.NORMAL_BET, item);
+                    loadTemplate(BetTypeEnum.BUY_BET, item);
+                });
+    }
 
+
+    private void loadTemplate(BetTypeEnum betType, TemplateTypeEnum templateType) {
         try {
-            log.info("free game template load start...");
-            List<Long> freeGameTemplateIdList = new LinkedList<>();
-            config.getFreeGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key));
+            log.info("{} game template load start... {}", betType, templateType);
+            List<Long> templateIdList = new LinkedList<>();
+            diwataMayariConfig.getTemplateRangeConfig().getTemplateRangeMap().get(templateType).get(betType).keySet().forEach((String key) -> {
+                List<Long> idList = loadTemplateIdList(betType, templateType, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
-                    freeGameTemplateIdList.addAll(idList);
+                    templateIdList.addAll(idList);
                 }
             });
-            loadLocalCache(BetTypeEnum.BUY_BET, freeGameTemplateIdList);
-            log.info("free game template load end...");
+            loadLocalCache(betType, templateType, templateIdList);
+            log.info("{} game template load end... {}", betType, templateType);
         } catch (Exception e) {
-            log.info("free game template load error", e);
+            log.info("{} game template load error {} ", betType, templateType, e);
         }
     }
 
-    private List<Long> loadTemplateIdList(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
-        TemplateTypeEnum templateType = this.getTemplateType();
-        log.info("templateIdList load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
+    private List<Long> loadTemplateIdList(BetTypeEnum betType, TemplateTypeEnum templateType, TemplateMultipleRange multipleRange) {
+        log.info("templateIdList load start, betType: {}, range: {}-{}... {}", betType, multipleRange.getStart(), multipleRange.getEnd(), templateType.getBetRecordTemplateName());
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd(), DiwataBetRecordTemplateEsDo.class);
-            if (!TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.DIWATA_MAYARI, betType, multipleRange)) {
-                log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+            if (!diwataMayariConfig.getTemplateRangeConfig().supportWarmUp(betType, multipleRange)) {
+                log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}，{}, no load betRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size(), templateType.getBetRecordTemplateName());
                 return null;
             }
-            log.info("templateIdList load success, betType: {}, range: {}-{}, size: {}", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+            log.info("templateIdList load success, betType: {}, range: {}-{}, size: {}, {}", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size(), templateType.getBetRecordTemplateName());
             return betRecordTemplateIdList;
         } catch (Exception e) {
-            log.info("templateIdList load error, betType: {}, range: {}-{}", betType, multipleRange.getStart(), multipleRange.getEnd(), e);
+            log.info("templateIdList load error, betType: {}, range: {}-{}, {}", betType, multipleRange.getStart(), multipleRange.getEnd(), templateType.getBetRecordTemplateName(), e);
             return null;
         }
     }
 
-    private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
+    private void loadLocalCache(BetTypeEnum betType, TemplateTypeEnum templateType, List<Long> templateIdList) {
         if (!supportWarmUpEnv()) {
             return;
         }
-        TemplateTypeEnum templateType = this.getTemplateType();
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
-                log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
+                log.info("loadLocalCache start, betType: {}, templateType: {}, size: {}", betType, templateType.getBetRecordTemplateName(), templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
                     List<DiwataBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.DIWATA_MAYARI, idList, DiwataBetRecordTemplateEsDo.class);
@@ -116,11 +97,10 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
                 });
-                log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
+                log.info("loadLocalCache success, betType: {}, templateType: {}, size: {}", betType, templateType.getBetRecordTemplateName(), templateIdList.size());
             }
         } catch (Exception e) {
-            log.info("loadLocalCache error, betType: {}", betType, e);
+            log.info("loadLocalCache error, betType: {}, templateType: {}", betType, templateType.getBetRecordTemplateName(), e);
         }
     }
-
 }
