@@ -3,18 +3,16 @@ package com.wegame.capi.client.domain.request;
 import com.wegame.base.Validate;
 import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.BetRequestValidateEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.validator.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -94,42 +92,9 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             AssertUtil.assertTrue(betAmount >= 0, ErrorCode.ERR_PARAM);
             AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(payAmount >= 0, ErrorCode.ERR_PARAM);
-            if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
-                MariaMakilingValidator.validateParam(betType, betSubType, this);
-                CommonGameValidator.validateStarCardBet(betType, betSubType, this);
-                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-            } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
-                MalakasValidator.validateParam(betType, betSubType, this);
-                CommonGameValidator.validateStarCardBet(betType, betSubType, this);
-                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-            } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
-                IbongAdarnaValidator.validateParam(betType, betSubType, this);
-                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-            } else if (Objects.equals(gameType, GameTypeEnum.BAKUNAWA)) {
-                BakunawaValidator.validateParam(betType, betSubType, this);
-                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-            } else if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
-                LamangValidator.validateParam(betType, betSubType, this);
-                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-                CommonGameValidator.validateStarCardBet(betType, betSubType, this);
-            } else if (Objects.equals(gameType, GameTypeEnum.DIWATA_MAYARI)) {
-                DiwataMayariValidator.validateParam(betType, betSubType, this);
-                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-            } else if (Objects.equals(gameType, GameTypeEnum.KAPRE)) {
-                KapreValidator.validateParam(betType, betSubType, this);
-                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-                CommonGameValidator.validateStarCardBet(betType, betSubType, this);
-            } else if (Objects.equals(gameType, GameTypeEnum.MANGKUKULAM)) {
-                MangkukulamValidator.validateParam(betType, betSubType, this);
-                MangkukulamValidator.validateStarCardBet(betType, betSubType, this);
-                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-            } else if (Objects.equals(gameType, GameTypeEnum.SIRENA)) {
-                SirenaValidator.validateParam(betType, betSubType, this);
-               // SirenaValidator.validateStarCardBet(betType, betSubType, this);
-               // SirenaValidator.validateFreeSpinBet(betType, betSubType, this);
-            } else {
-                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");
-            }
+            BetRequestValidateEnum betRequestValidate = BetRequestValidateEnum.valueOfGameType(gameType);
+            AssertUtil.assertNotNull(betRequestValidate, ErrorCode.ERR_PARAM, "NOT SUPPORT");
+            betRequestValidate.validate(betType, betSubType, this);
         }
     }
 }

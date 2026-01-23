@@ -7,8 +7,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
@@ -60,6 +58,7 @@ public class FailedBetPostProcessService {
 
     @Async(betRecordStatusThreadPoolExecutor)
     public void processFailedBetAfterLogin(GameTypeEnum gameType, Long userId) {
+        log.info("start to process failed bet after login");
         AssertUtil.assertNotNull(userId, ErrorCode.ERR_INTER);
         process(gameType, userId);
     }
