@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-@Document(collection = "atlantis_game_record")
+@Document(collection = "bayanihan_game_record")
 public class BayanihanGameRecordDo implements Serializable, ToVoConverter<BayanihanBetResultVo, BayanihanGameRecordVo> {
     private static final long serialVersionUID = -227848L;
     @Id

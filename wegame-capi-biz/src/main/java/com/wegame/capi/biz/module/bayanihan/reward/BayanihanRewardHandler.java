@@ -20,6 +20,8 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.biz.module.bayanihan.BayanihanProbabilisticUtil;
+import com.wegame.capi.biz.module.bayanihan.BayanihanSymbolUtil;
 import com.wegame.capi.biz.module.bayanihan.odds.BayanihanOddsCalculateStrategy;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -52,6 +54,7 @@ public class BayanihanRewardHandler extends AbstractRewardHandler<BayanihanSymbo
 
     @Autowired
     BayanihanConfig bayanihanConfig;
+
     @Autowired
     RandomService randomService;
 
@@ -235,8 +238,19 @@ public class BayanihanRewardHandler extends AbstractRewardHandler<BayanihanSymbo
         if (CollectionUtils.isNotEmpty(rewardLineList)) {
             return 0;
         }
+        boolean freeWheel = rewardHandle.getWheel().isFreeFlag();
+        int scatterCount = BayanihanSymbolUtil.countScatterInWheel(rewardHandle.getWheel().getSymbolArr());
         //todo 计算免费轮次数 首轮随机 免费轮+2
-        return 0;
+        if (scatterCount < 3) {
+            return 0;
+        }
+        if (freeWheel) {
+            return bayanihanConfig.getFreeGameConfig().getFreeGameRewardFgCount();
+        } else {
+            TreeMap<String, Integer> config = BayanihanProbabilisticUtil.buildWildProbabilisticMap(bayanihanConfig.getFreeGameConfig().getFreeGameInitialRoundCountConfig());
+            String roundCountStr = randomService.randomKeyByWeight(config);
+            return Integer.valueOf(roundCountStr);
+        }
     }
 
     private void validate(RewardHandleDo<BayanihanSymbolDo> rewardHandle) {

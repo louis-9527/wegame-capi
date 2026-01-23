@@ -3,7 +3,7 @@ package com.wegame.capi.biz.manager;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.config.mongo.AtlantisMongoConfig;
+import com.wegame.capi.biz.config.mongo.BayanihanMongoConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.BayanihanGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
@@ -31,7 +31,7 @@ public class BayanihanBetRecordManager extends AbstractBetRecordManager<Bayaniha
     @Autowired
     GameRecordService<BayanihanGameRecordDo> gameRecordService;
 
-    @Transactional(transactionManager = AtlantisMongoConfig.atlantisTransactionManager)
+    @Transactional(transactionManager = BayanihanMongoConfig.bayanihanTransactionManager)
     public Long add(BetRecordDo<BayanihanGameRecordDo> betRecord, GameTypeEnum gameType) {
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
@@ -46,7 +46,7 @@ public class BayanihanBetRecordManager extends AbstractBetRecordManager<Bayaniha
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = AtlantisMongoConfig.atlantisTransactionManager)
+    @Transactional(transactionManager = BayanihanMongoConfig.bayanihanTransactionManager)
     @Override
     public boolean batchAdd(List<BetRecordDo<BayanihanGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
