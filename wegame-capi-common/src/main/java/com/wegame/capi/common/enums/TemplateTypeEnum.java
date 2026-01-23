@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 模板事件类型枚举
  */
@@ -27,6 +31,7 @@ public enum TemplateTypeEnum {
     BAKUNAWA(GameTypeEnum.BAKUNAWA, TemplateConstants.BAKUNAWA_BET_RECORD_TEMPLATE),
 
     DIWATA_MAYARI(GameTypeEnum.DIWATA_MAYARI, TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE),
+    DIWATA_MAYARI_V2(GameTypeEnum.DIWATA_MAYARI, TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE_V2),
 
     ;
 
@@ -39,16 +44,13 @@ public enum TemplateTypeEnum {
      */
     private final String betRecordTemplateName;
 
-    public static TemplateTypeEnum valueOfGameType(GameTypeEnum gameType) {
+    public static List<TemplateTypeEnum> listByGameType(GameTypeEnum gameType) {
         if (gameType == null) {
             return null;
         }
-        for (TemplateTypeEnum item : TemplateTypeEnum.values()) {
-            if (gameType == item.gameType) {
-                return item;
-            }
-        }
-        return null;
+        return Arrays.stream(TemplateTypeEnum.values())
+                .filter(item -> item.gameType == gameType)
+                .collect(Collectors.toList());
     }
 
 }
