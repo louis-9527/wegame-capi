@@ -93,16 +93,6 @@ public class BayanihanConfig extends GameBizConfig{
         private TreeMap<String, BigDecimal> freeGameInitialMultipleConfig;
 
         /**
-         * 免费游戏最大倍数
-         */
-        private int freeGameMaxMultiple;
-
-        /**
-         * 免费游戏最大轮数
-         */
-        private int freeGameMaxRoundCount;
-
-        /**
          * 免费游戏赢得免费轮次数
          */
         private int freeGameRewardFgCount;

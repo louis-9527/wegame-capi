@@ -4,7 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Kapre游戏元素
+ * bayanihan游戏元素
  */
 @Data
 @SuperBuilder
@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 public class BayanihanSymbolDo extends SymbolDo {
     private static final long serialVersionUID = 6540501277309074773L;
     /**
-     * 元素赔率,现金symbol可使用
+     * 是否新元素，用于收集
      */
     private boolean newSymbol;
 

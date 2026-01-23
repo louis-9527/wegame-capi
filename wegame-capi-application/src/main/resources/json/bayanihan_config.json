@@ -225,8 +225,6 @@
             "4": "5",
             "5": "1"
         },
-        "freeGameMaxMultiple" : 10,
-        "freeGameMaxRoundCount" : 20,
         "freeGameRewardFgCount" : 2,
         "multipleUpgradeCost" : 3
     },
