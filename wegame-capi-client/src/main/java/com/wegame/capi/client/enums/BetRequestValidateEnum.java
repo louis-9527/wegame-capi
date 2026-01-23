@@ -40,6 +40,11 @@ public enum BetRequestValidateEnum {
         BakunawaValidator.validateParam(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
+    DIWATA_MAYARI(GameTypeEnum.DIWATA_MAYARI, (betType, betSubType, betDetail) -> {
+        DiwataMayariValidator.validateParam(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
+    }),
 
 
     ;
