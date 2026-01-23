@@ -3,22 +3,16 @@ package com.wegame.capi.client.domain.request;
 import com.wegame.base.Validate;
 import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetRequestValidateEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.validator.CommonGameValidator;
-import com.wegame.capi.client.validator.IbongAdarnaValidator;
-import com.wegame.capi.client.validator.MalakasValidator;
-import com.wegame.capi.client.validator.MariaMakilingValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor
