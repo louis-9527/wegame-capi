@@ -23,13 +23,14 @@ import com.wegame.capi.biz.module.diawatamayari.reward.DiwataMayariRewardHandler
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
-import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -40,8 +41,6 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
-import static com.wegame.capi.common.enums.TemplateTypeEnum.DIWATA_MAYARI;
-
 
 @Slf4j
 @Component("diwataMayariGameTemplatePlay")
@@ -117,23 +116,28 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
     private List<GameRecordTemplateDo> getGameRecordTemplate(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());
+        AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
+        TemplateTypeEnum templateType = diwataMayariConfig.getTemplateRangeConfig().getTemplateMapping().get(abType);
+        AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
+        log.info("abType: {}, templateName: {}", abType, templateType.getBetRecordTemplateName());
+        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(templateType, gamePlay.getBetType());
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
-
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(DIWATA_MAYARI, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), DiwataBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), DiwataBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
-        log.info("betRecordId:{}", betRecordId);
+        log.info("hit template betRecordId: {}", betRecordId);
         List<GameRecordTemplateDo> configRecordList;
         DiwataBetRecordTemplateEsDo template;
-        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.DIWATA_MAYARI, gamePlay.getBetType(), templateMultipleRange)) {
+        if (diwataMayariConfig.getTemplateRangeConfig().supportWarmUp(gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
-            template = betRecordTemplateEsService.getTemplateWithLocalCache(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
+            // todo delete log
+            log.info("support warm template. load from local cache. betType: {}; templateType: {}. templateMultipleRange: {}", gamePlay.getBetType(), templateType, templateMultipleRange);
+            template = betRecordTemplateEsService.getTemplateWithLocalCache(templateType, betRecordId, DiwataBetRecordTemplateEsDo.class);
         } else {
             // 没有被预热的倍率，需要重新查询
-            template = betRecordTemplateEsService.findById(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
+            template = betRecordTemplateEsService.findById(templateType, betRecordId, DiwataBetRecordTemplateEsDo.class);
         }
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
         configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
@@ -157,17 +161,23 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         return list.get(randomIndex);
     }
 
-    private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betTypeEnum) {
-        String templateMultipleRange;
-        if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
-            templateMultipleRange = randomService.randomKeyByWeight(diwataMayariConfig.getTemplateRangeConfig().getMainGame());
-        } else {
-            templateMultipleRange = randomService.randomKeyByWeight(diwataMayariConfig.getTemplateRangeConfig().getFreeGame());
-        }
+    private TemplateMultipleRange getTemplateMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType) {
+        //        String templateMultipleRange;
+        //        if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
+        //            templateMultipleRange = randomService.randomKeyByWeight(diwataMayariConfig.getTemplateRangeConfig().getMainGame());
+        //        } else {
+        //            templateMultipleRange = randomService.randomKeyByWeight(diwataMayariConfig.getTemplateRangeConfig().getFreeGame());
+        //        }
+        AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(betType, ErrorCode.ERR_INTER);
+        Map<BetTypeEnum, Map<String, Integer>> map = diwataMayariConfig.getTemplateRangeConfig().getTemplateRangeMap().get(templateType);
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        Map<String, Integer> weightMap = map.get(betType);
+        String templateMultipleRange = randomService.randomKeyByWeight(weightMap);
+        log.info("hit templateType: {}, betType: {}, templateMultipleRange: {}", templateType.name(), betType, templateMultipleRange);
         AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateMultipleRange);
     }
-
 
     /**
      * 递归处理免费轮，确保同层级先处理完，再进入下一层
