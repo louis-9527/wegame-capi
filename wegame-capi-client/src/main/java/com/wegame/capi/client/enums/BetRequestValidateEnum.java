@@ -54,6 +54,14 @@ public enum BetRequestValidateEnum {
         MangkukulamValidator.validateStarCardBet(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
+    SIRENA(GameTypeEnum.SIRENA, (betType, betSubType, betDetail) -> {
+        SirenaValidator.validateParam(betType, betSubType, betDetail);
+        // SirenaValidator.validateStarCardBet(betType, betSubType, betDetail); todo @lyric
+        // SirenaValidator.validateFreeSpinBet(betType, betSubType, betDetail); todo @lyric
+    }),
+
+
+
 
 
     ;
