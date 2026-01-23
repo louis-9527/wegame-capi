@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
-@Component("atlantisNormalBetStrategy")
+@Component("bayanihanNormalBetStrategy")
 public class BayanihanNormalBetStrategy extends AbstractBayanihanBetStrategy {
 
     @Autowired

@@ -41,7 +41,7 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 
 @Slf4j
-@Component("atlantisRewardHandler")
+@Component("bayanihaRewardHandler")
 public class BayanihanRewardHandler extends AbstractRewardHandler<BayanihanSymbolDo> {
 
     @Autowired
