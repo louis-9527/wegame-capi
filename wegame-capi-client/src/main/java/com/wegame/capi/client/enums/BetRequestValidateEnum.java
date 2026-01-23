@@ -1,0 +1,58 @@
+package com.wegame.capi.client.enums;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.capi.client.domain.request.BetRequest;
+import com.wegame.capi.client.validator.*;
+import lombok.Getter;
+import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * 游戏类型枚举
+ *
+ * @author apple
+ */
+@Getter
+@ToString
+@JsonFormat(shape = JsonFormat.Shape.STRING)
+public enum BetRequestValidateEnum {
+
+    MARIA_MAKILING(GameTypeEnum.MARIA_MAKILING, (betType, betSubType, betDetail) -> {
+        MariaMakilingValidator.validateParam(betType, betSubType, betDetail);
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
+    }),
+    MALAKAS(GameTypeEnum.MALAKAS, (betType, betSubType, betDetail) -> {
+        MalakasValidator.validateParam(betType, betSubType, betDetail);
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
+    }),
+    IBONG_ADARNA(GameTypeEnum.IBONG_ADARNA, (betType, betSubType, betDetail) -> {
+        IbongAdarnaValidator.validateParam(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
+    })
+
+
+    ;
+    private final GameTypeEnum gameType;
+
+    private final BetRequestValidator validator;
+
+    BetRequestValidateEnum(GameTypeEnum gameType, BetRequestValidator validator) {
+        this.gameType = gameType;
+        this.validator = validator;
+    }
+
+    public static BetRequestValidateEnum valueOfGameType(GameTypeEnum gameType) {
+        for (BetRequestValidateEnum item : BetRequestValidateEnum.values()) {
+            if (item.getGameType() == gameType) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public void validate(BetTypeEnum betType, BetSubTypeEnum betSubType, BetRequest.BetDetail detail) {
+        validator.validate(betType, betSubType, detail);
+    }
+}
