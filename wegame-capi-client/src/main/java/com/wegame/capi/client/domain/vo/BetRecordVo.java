@@ -1,15 +1,12 @@
 package com.wegame.capi.client.domain.vo;
 
 import com.wegame.base.Validate;
-import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaGameRecordVo;
-import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -52,6 +49,10 @@ public class BetRecordVo implements Validate, Serializable {
     private ExtendInfo extendInfo;
     @ApiModelProperty("创建时间")
     private Long createTime;
+
+    @ApiModelProperty("免费轮处理状态")
+    private String freeWheelHandleStatus;
+
     @ApiModelProperty("游戏记录列表")
     private List<Object> gameRecordList;
 

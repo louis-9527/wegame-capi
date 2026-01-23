@@ -264,7 +264,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
     @Cacheable(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
     public T getTemplateWithLocalCache(TemplateTypeEnum templateType, Long betRecordId, Class<T> clazz) {
         // todo delete log
-        log.info("getTemplateWithLocalCache, betRecordId: {}; templateType: {}", betRecordId, templateType);
+        log.info("getTemplateWithLocalCache from es, betRecordId: {}; templateType: {}.", betRecordId, templateType);
         return findById(templateType, betRecordId, clazz);
     }
 

@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@Document(indexName = TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE, createIndex = true)
+//@Document(indexName = TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE, createIndex = true)
 public class DiwataBetRecordTemplateEsDo extends BetRecordTemplateEsDo {
 
     private static final long serialVersionUID = 180432143L;
