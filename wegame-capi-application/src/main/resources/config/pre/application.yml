@@ -48,6 +48,7 @@ spring:
       - game-mangkukulam.yml
       - game-sirena.yml
       - game-atlantis.yml
+      - game-byanihan.yml
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
