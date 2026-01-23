@@ -17,6 +17,7 @@ dynamic:
         mangkukulam: cd_Mangkukulam
         sirena: cd_Sirena
         atlantis: cd_Atlantis
+        bayanihan: cd_Bayanihan
       pulsar:
         auth:
           issuer_url: https://auth.streamnative.cloud/
@@ -37,6 +38,7 @@ dynamic:
         mangkukulam: ${spring.application.name}_${spring.application.env}_cd_External_Mangkukulam
         sirena: ${spring.application.name}_${spring.application.env}_cd_External_Sirena
         atlantis: ${spring.application.name}_${spring.application.env}_cd_External_Atlantis
+        bayanihan: ${spring.application.name}_${spring.application.env}_cd_External_Bayanihan
       pulsar:
         auth:
           issuer_url: https://auth.streamnative.cloud

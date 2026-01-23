@@ -3,14 +3,14 @@ spring:
   data:
     mongodb:
       dynamic:
-        atlantis_mdb:
+        bayanihan_mdb:
           primary_uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/bayanihan?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
           uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/bayanihan?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: bayanihan
 ## pulsar
 pulsar:
   dynamic:
-    atlantis:
+    bayanihan:
       url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
       tenant: ${spring.application.name}_Bayanihan
       namespace: ${spring.application.env}

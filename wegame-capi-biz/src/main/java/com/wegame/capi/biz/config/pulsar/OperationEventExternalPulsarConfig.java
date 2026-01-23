@@ -37,6 +37,7 @@ public class OperationEventExternalPulsarConfig {
     private static final String mangkukulamOperationEventExternalConsumer = "mangkukulamOperationEventExternalConsumer";
     private static final String sirenaOperationEventExternalConsumer = "sirenaOperationEventExternalConsumer";
     private static final String atlantisOperationEventExternalConsumer = "atlantisOperationEventExternalConsumer";
+    private static final String bayanihanOperationEventExternalConsumer = "bayanihanOperationEventExternalConsumer";
 
 
 
@@ -65,6 +66,8 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupSirena;
     @Value("${dynamic.external.operation.pulsar_group.atlantis:cd_Atlantis}")
     String dynamicOperationGroupAtlantis;
+    @Value("${dynamic.external.operation.pulsar_group.bayanihan:cd_External_Bayanihan}")
+    String dynamicOperationGroupBayanihan;
     @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
@@ -237,6 +240,20 @@ public class OperationEventExternalPulsarConfig {
                 .subscriptionName(dynamicOperationGroupAtlantis)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(atlantisOperationEventPulsarListener)
+                .subscribe();
+    }
+
+    @Bean(name = bayanihanOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = BAYANIHAN_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(AtlantisOperationEventPulsarListener.class)
+    public Consumer<byte[]> bayanihanOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
+                                                           @Autowired BayanihanOperationEventPulsarListener  bayanihanOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, bayanihanOperationEventExternalConsumer);
+        return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupBayanihan)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(bayanihanOperationEventPulsarListener)
                 .subscribe();
     }
 }
