@@ -59,6 +59,11 @@ public enum BetRequestValidateEnum {
         // SirenaValidator.validateStarCardBet(betType, betSubType, betDetail); todo @lyric
         // SirenaValidator.validateFreeSpinBet(betType, betSubType, betDetail); todo @lyric
     }),
+    ATLANTIS(GameTypeEnum.ATLANTIS, (betType, betSubType, betDetail) -> {
+        AtlantisValidator.validateParam(betType, betSubType, betDetail);
+        AtlantisValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
+    }),
 
 
 
