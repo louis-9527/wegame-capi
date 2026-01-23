@@ -5,7 +5,6 @@ import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.validator.*;
 import lombok.Getter;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 游戏类型枚举
@@ -49,6 +48,11 @@ public enum BetRequestValidateEnum {
         KapreValidator.validateParam(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
         CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
+    }),
+    MANGKUKULAM(GameTypeEnum.MANGKUKULAM, (betType, betSubType, betDetail) -> {
+        MangkukulamValidator.validateParam(betType, betSubType, betDetail);
+        MangkukulamValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
 
 
