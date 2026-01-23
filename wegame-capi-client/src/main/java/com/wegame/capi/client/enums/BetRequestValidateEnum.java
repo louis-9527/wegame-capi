@@ -51,23 +51,19 @@ public enum BetRequestValidateEnum {
     }),
     MANGKUKULAM(GameTypeEnum.MANGKUKULAM, (betType, betSubType, betDetail) -> {
         MangkukulamValidator.validateParam(betType, betSubType, betDetail);
-        MangkukulamValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
     SIRENA(GameTypeEnum.SIRENA, (betType, betSubType, betDetail) -> {
         SirenaValidator.validateParam(betType, betSubType, betDetail);
-        // SirenaValidator.validateStarCardBet(betType, betSubType, betDetail); todo @lyric
-        // SirenaValidator.validateFreeSpinBet(betType, betSubType, betDetail); todo @lyric
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
     ATLANTIS(GameTypeEnum.ATLANTIS, (betType, betSubType, betDetail) -> {
         AtlantisValidator.validateParam(betType, betSubType, betDetail);
-        AtlantisValidator.validateStarCardBet(betType, betSubType, betDetail);
+        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
-
-
-
-
 
     ;
     private final GameTypeEnum gameType;

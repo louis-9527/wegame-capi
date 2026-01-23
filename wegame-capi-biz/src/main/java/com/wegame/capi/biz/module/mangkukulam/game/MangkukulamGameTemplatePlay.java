@@ -33,6 +33,7 @@ import com.wegame.capi.common.utils.JsonGzipUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -40,10 +41,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGKUKULAM_GAME_INFO;
+import static com.wegame.capi.common.Constants.MANGKUKULAM_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 import static com.wegame.capi.common.enums.TemplateTypeEnum.MANGKUKULAM;
 
 @Slf4j
 @Component("mangkukulamGameTemplatePlay")
+@ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
 public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
