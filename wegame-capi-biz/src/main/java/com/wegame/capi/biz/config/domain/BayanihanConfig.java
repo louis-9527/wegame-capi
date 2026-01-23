@@ -1,0 +1,160 @@
+package com.wegame.capi.biz.config.domain;
+
+import cn.hutool.core.lang.Assert;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.apache.commons.collections4.MapUtils;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * bayanihan 配置
+ *
+ */
+@Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BayanihanConfig extends GameBizConfig{
+
+    private final static int REEL_NUMBERS = 6;
+
+    /**
+     * 赔率配置
+     */
+    private OddsConfig oddsConfig;
+    /**
+     * 概率配置
+     */
+    private ProbabilisticConfig probabilisticConfig;
+
+    /**
+     * 免费游戏相关配置
+     */
+    private FreeGameConfig freeGameConfig;
+    /**
+     * 中奖最大倍数
+     */
+    private Integer rewardMaxMultiple;
+
+    /**
+     * 模板配置
+     */
+    private TemplateRangeConfig templateRangeConfig;
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OddsConfig implements Serializable {
+        /**
+         * TreeMap<元素ID，<赔率类型，具体赔率>>
+         */
+        private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProbabilisticConfig implements Serializable {
+        /**
+         * 主游戏概率
+         * TreeMap<元素ID，<列坐标，概率列表>>
+         */
+        private TreeMap<String, List<BigDecimal>> mainGameProbabilisticConfig;
+        /**
+         * 免费游戏概率
+         * TreeMap<元素ID，<列坐标，概率列表>>
+         */
+        private TreeMap<String, List<BigDecimal>> freeGameProbabilisticConfig;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FreeGameConfig implements Serializable {
+        /**
+         * 免费游戏初始轮数
+         * TreeMap<初始轮数，概率>
+         */
+        private TreeMap<String, BigDecimal> freeGameInitialRoundCountConfig;
+        /**
+         * 免费游戏初始倍率
+         * TreeMap<初始倍率，概率>
+         */
+        private TreeMap<String, BigDecimal> freeGameInitialMultipleConfig;
+
+        /**
+         * 免费游戏最大倍数
+         */
+        private int freeGameMaxMultiple;
+
+        /**
+         * 免费游戏最大轮数
+         */
+        private int freeGameMaxRoundCount;
+
+        /**
+         * 免费游戏赢得免费轮次数
+         */
+        private int freeGameRewardFgCount;
+
+        /**
+         * 升级倍率所需收集数量
+         */
+        private int multipleUpgradeCost;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 主游戏模板配置
+         */
+        private Map<String, Integer> mainGame;
+        /**
+         * 免费游戏模板配置
+         */
+        private Map<String, Integer> freeGame;
+    }
+
+    public void bizValidate() {
+        this.oddsConfigValidate();
+        this.probabilisticConfigValidate();
+        this.rewardMaxMultipleValidate();
+    }
+
+    private void rewardMaxMultipleValidate() {
+        AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
+        AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
+    }
+
+    private void oddsConfigValidate() {
+        Assert.notNull(oddsConfig, "oddsConfig is null");
+        Assert.notNull(oddsConfig.commonOddsConfig, "oddsConfig.commonOddsConfig is null");
+        // 校验-赔率配置
+        oddsConfig.commonOddsConfig.keySet().forEach(symbolId -> {
+            TreeMap<String, BigDecimal> map = oddsConfig.commonOddsConfig.get(symbolId);
+            AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER, "Odds Config Err");
+        });
+    }
+
+    private void probabilisticConfigValidate() {
+        Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
+        //todo
+    }
+
+}

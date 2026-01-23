@@ -145,4 +145,17 @@ public class GameConfig {
             return config;
         }
     }
+
+    @Bean
+    BayanihanConfig bayanihanConfig() throws IOException {
+        String path = "/bayanihan_config.json";
+        InputStream inputStream = getClass().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new RuntimeException("read atlantis_config.json file err！！！");
+        } else {
+            BayanihanConfig config = new ObjectMapper().readValue(inputStream, BayanihanConfig.class);
+            config.validate();
+            return config;
+        }
+    }
 }
