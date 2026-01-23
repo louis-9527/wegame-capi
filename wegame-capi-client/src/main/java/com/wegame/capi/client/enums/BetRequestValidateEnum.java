@@ -45,7 +45,7 @@ public enum BetRequestValidateEnum {
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
         CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
     }),
-    KAPRE(GameTypeEnum.DIWATA_MAYARI, (betType, betSubType, betDetail) -> {
+    KAPRE(GameTypeEnum.KAPRE, (betType, betSubType, betDetail) -> {
         KapreValidator.validateParam(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
         CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
