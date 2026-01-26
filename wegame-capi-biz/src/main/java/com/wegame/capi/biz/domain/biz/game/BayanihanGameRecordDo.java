@@ -96,7 +96,11 @@ public class BayanihanGameRecordDo implements Serializable, ToVoConverter<Bayani
     }
 
     @Data
+    @ToString
     @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     public static class CollectionSnapshot {
         private BigDecimal currentMultiple;
         private int upgradeCost;

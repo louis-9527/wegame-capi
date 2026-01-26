@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.biz.symbol.*;
+import com.wegame.capi.client.domain.vo.bayanihan.BayanihanSymbolVo;
 import com.wegame.capi.client.domain.vo.diwatamayari.DiwataMayariSymbolVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
 import com.wegame.capi.client.domain.vo.kapre.KapreSymbolVo;
@@ -164,6 +165,23 @@ public class SymbolBuilder {
                         .remainClearTimes(mangkukulamSymbolDo.getRemainClearTimes())
                         .multiples(mangkukulamSymbolDo.getMultiples())
                         .sourceIndex(Objects.isNull(mangkukulamSymbolDo.getSourceIndex()) ? null : IndexFactory.buildVo(mangkukulamSymbolDo.getSourceIndex()))
+                        .build();
+            }
+        }
+        return integerArray;
+    }
+
+    public static BayanihanSymbolVo[][] build(BayanihanSymbolDo[][] symbolArr) {
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        BayanihanSymbolVo[][] integerArray = new BayanihanSymbolVo[rows][cols];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                BayanihanSymbolDo bayanihanSymbolDo = symbolArr[row][col];
+                integerArray[row][col] = Objects.isNull(bayanihanSymbolDo) ? null : BayanihanSymbolVo.builder()
+                        .symbolId(bayanihanSymbolDo.getId())
+                        .symbolClearTimes(bayanihanSymbolDo.getSymbolClearTimes())
+                        .newSymbol(bayanihanSymbolDo.isNewSymbol())
                         .build();
             }
         }

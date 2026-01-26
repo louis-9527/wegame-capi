@@ -68,6 +68,8 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         handleMainGame(gamePlay, ret, totalRewardAmount, freeWheelList);
         if (!freeWheelList.isEmpty()) {
             CollectionInfo collectionInfo = initCollectionInfo();
+            BayanihanGameRecordDo last = ret.get(ret.size() - 1);
+            last.setCollectionInfo(collectionInfo.snapshot());
             handleFreeGame(gamePlay, ret, totalRewardAmount, freeWheelList, collectionInfo);
         }
         if (CollectionUtils.isNotEmpty(ret)) {

@@ -31,7 +31,7 @@ public class BayanihanBetResultVo implements Serializable {
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
     @ApiModelProperty("滚轮")
-    private String[][] wheel;
+    private BayanihanSymbolVo[][] wheel;
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")

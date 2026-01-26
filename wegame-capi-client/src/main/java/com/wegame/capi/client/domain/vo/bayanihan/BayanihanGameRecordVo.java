@@ -30,7 +30,7 @@ public class BayanihanGameRecordVo implements Validate, Serializable {
     @ApiModelProperty("中奖金额")
     private Long rewardAmount;
     @ApiModelProperty("滚轮结果")
-    private String[][] wheel;
+    private BayanihanSymbolVo[][] wheel;
     @ApiModelProperty("倍率")
     private BigDecimal multiple;
     @ApiModelProperty("中奖线列表")

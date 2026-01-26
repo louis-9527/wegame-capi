@@ -119,7 +119,7 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
         List<BayanihanGameRecordDo> firstBatchList = getFirstBatchGameRecordList(gameRecordList);
         long mgRewardAmount = calculateRewardAmount(firstBatchList);
         builder.mgRewardAmount(mgRewardAmount);
-        totalRewardAmount += calculateRewardAmount(firstBatchList);
+        totalRewardAmount += mgRewardAmount;
         if (hasRewardFreeWheel(firstBatchList)) {
 
             //初始轮
@@ -137,6 +137,7 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
             // 免费轮实际
             long freeGameRewardAmount = BigDecimal.valueOf(fgBaseRewardAmount).multiply(fgFinalMultiple).longValue();
             builder.fgRewardAmount(freeGameRewardAmount);
+            totalRewardAmount += freeGameRewardAmount;
         }
         builder.totalRewardAmount(totalRewardAmount);
         return builder.build();
