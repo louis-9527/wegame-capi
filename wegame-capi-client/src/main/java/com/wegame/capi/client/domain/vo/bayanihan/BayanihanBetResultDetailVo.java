@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -23,4 +24,14 @@ public class BayanihanBetResultDetailVo implements Serializable {
     private String allWheelRewardSubType;
     @ApiModelProperty("投注结果列表")
     private List<BayanihanBetResultVo> resultList;
+    @ApiModelProperty("免费轮信息")
+    private FreeGameInfoVo freeGameInfo;
+
+    @Data
+    @SuperBuilder
+    public static class FreeGameInfoVo{
+        private BigDecimal initialMultiple;
+        private BigDecimal finalMultiple;
+        private int freeWheelCount;
+    }
 }

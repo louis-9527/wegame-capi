@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.BayanihanConfig;
-import com.wegame.capi.biz.domain.BayanihanBetRecordDetailDo;
+import com.wegame.capi.biz.domain.biz.BayanihanBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
@@ -113,7 +113,7 @@ public abstract class AbstractBayanihanBetStrategy
         if (CollectionUtil.isEmpty(gameRecordList)) {
             return 0L;
         } else {
-            BayanihanBetHelper.CalcAmountResult result = bayanihanBetHelper.calcRewardAmount(gameRecordList);
+            BayanihanBetHelper.GameRecordCalcResult result = bayanihanBetHelper.calcRewardAmount(gameRecordList);
             return result.getTotalRewardAmount();
         }
     }

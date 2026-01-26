@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * bet_record：投注记录
@@ -132,6 +133,36 @@ public class BetRecordPo implements Serializable {
      * 是否可以继续玩
      */
     private String freeWheelHandleStatus;
+
+    /**
+     * 免费轮信息
+     */
+    private FreeGameInfo freeGameInfo;
+
+    /**
+     * 免费轮信息
+     */
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class FreeGameInfo implements Serializable {
+        private static final long serialVersionUID = 4154273029370246976L;
+        /**
+         * 免费轮初始倍率
+         */
+        private BigDecimal initialMultiple;
+        /**
+         * 免费轮最终倍率
+         */
+        private BigDecimal finalMultiple;
+        /**
+         * 免费轮初始倍率
+         */
+        private int initialFreeGameCount;
+    }
 
     @Data
     @ToString

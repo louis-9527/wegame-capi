@@ -142,9 +142,34 @@ public class BetRecordDo<T> implements Serializable {
     private List<T> gameRecordList;
 
     /**
-     * 最终倍率
+     * 免费轮信息
      */
-    private BigDecimal freeGameMultiple;
+    private FreeGameInfo freeGameInfo;
+
+    /**
+     * 免费轮信息
+     */
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class FreeGameInfo implements Serializable {
+        private static final long serialVersionUID = 4154273029370246976L;
+        /**
+         * 免费轮初始倍率
+         */
+        private BigDecimal initialMultiple;
+        /**
+         * 免费轮最终倍率
+         */
+        private BigDecimal finalMultiple;
+        /**
+         * 免费轮初始倍率
+         */
+        private int initialFreeGameCount;
+    }
 
     /**
      * 扩展信息

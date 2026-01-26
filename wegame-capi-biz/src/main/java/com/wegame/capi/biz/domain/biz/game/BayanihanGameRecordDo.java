@@ -86,7 +86,7 @@ public class BayanihanGameRecordDo implements Serializable, ToVoConverter<Bayani
      */
     private boolean lastGameFlag;
 
-    private MultipleSnapshot collectionInfo;
+    private CollectionSnapshot collectionInfo;
 
     public void addGameRecordId(Long gameRecordId) {
         if (Objects.isNull(this.gameRecordIds)) {
@@ -97,7 +97,7 @@ public class BayanihanGameRecordDo implements Serializable, ToVoConverter<Bayani
 
     @Data
     @SuperBuilder
-    public static class MultipleSnapshot {
+    public static class CollectionSnapshot {
         private BigDecimal currentMultiple;
         private int upgradeCost;
         private int remainCollectCount;
@@ -109,10 +109,20 @@ public class BayanihanGameRecordDo implements Serializable, ToVoConverter<Bayani
     public BayanihanBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
             return BayanihanBetResultVo.builder()
+                    .collectionSnapshot(Objects.nonNull(collectionInfo) ? BayanihanBetResultVo.CollectionSnapshot.builder()
+                            .remainCollectCount(collectionInfo.getRemainCollectCount())
+                            .upgradeCost(collectionInfo.getUpgradeCost())
+                            .currentMultiple(collectionInfo.getCurrentMultiple())
+                            .build() : null)
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return BayanihanBetResultVo.builder()
+                    .collectionSnapshot(Objects.nonNull(collectionInfo) ? BayanihanBetResultVo.CollectionSnapshot.builder()
+                            .remainCollectCount(collectionInfo.getRemainCollectCount())
+                            .upgradeCost(collectionInfo.getUpgradeCost())
+                            .currentMultiple(collectionInfo.getCurrentMultiple())
+                            .build() : null)
                     .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
@@ -124,6 +134,11 @@ public class BayanihanGameRecordDo implements Serializable, ToVoConverter<Bayani
                     .build();
         } else {
             return BayanihanBetResultVo.builder()
+                    .collectionSnapshot(Objects.nonNull(collectionInfo) ? BayanihanBetResultVo.CollectionSnapshot.builder()
+                            .remainCollectCount(collectionInfo.getRemainCollectCount())
+                            .upgradeCost(collectionInfo.getUpgradeCost())
+                            .currentMultiple(collectionInfo.getCurrentMultiple())
+                            .build() : null)
                     .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())

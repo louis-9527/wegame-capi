@@ -373,8 +373,8 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
             }
         }
 
-        public BayanihanGameRecordDo.MultipleSnapshot snapshot() {
-            return BayanihanGameRecordDo.MultipleSnapshot.builder()
+        public BayanihanGameRecordDo.CollectionSnapshot snapshot() {
+            return BayanihanGameRecordDo.CollectionSnapshot.builder()
                     .currentMultiple(currentMultiple)
                     .upgradeCost(upgradeCost)
                     .remainCollectCount(currentRemainCollectSymbolCount)

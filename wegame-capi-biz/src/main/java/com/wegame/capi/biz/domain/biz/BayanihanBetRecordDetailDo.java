@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain;
+package com.wegame.capi.biz.domain.biz;
 
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.game.BayanihanGameRecordDo;
@@ -8,6 +8,7 @@ import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +32,11 @@ public class BayanihanBetRecordDetailDo implements ToVoConverter<BayanihanBetRes
      */
     private List<BayanihanGameRecordDo> gameRecordList;
 
+    /**
+     * 免费轮信息
+     */
+    private FreeGameInfoDo freeGameInfo;
+
     @Override
     public BayanihanBetResultDetailVo toResultVo() {
         return BayanihanBetResultDetailVo.builder()
@@ -40,12 +46,26 @@ public class BayanihanBetRecordDetailDo implements ToVoConverter<BayanihanBetRes
                         .stream()
                         .map(ToVoConverter::toResultVo)
                         .collect(Collectors.toList()))
+                .freeGameInfo(Objects.nonNull(freeGameInfo) ?
+                        BayanihanBetResultDetailVo.FreeGameInfoVo.builder()
+                                .finalMultiple(freeGameInfo.getFinalMultiple())
+                                .initialMultiple(freeGameInfo.getInitialMultiple())
+                                .freeWheelCount(freeGameInfo.getFreeWheelCount())
+                                .build() : null)
                 .build();
     }
 
     @Override
     public BayanihanGameRecordVo toRecordVo() {
         return null;
+    }
+
+    @Data
+    @SuperBuilder
+    public static class FreeGameInfoDo{
+        private BigDecimal initialMultiple;
+        private BigDecimal finalMultiple;
+        private int freeWheelCount;
     }
 
 }

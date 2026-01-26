@@ -5,7 +5,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.BayanihanConfig;
-import com.wegame.capi.biz.domain.BayanihanBetRecordDetailDo;
+import com.wegame.capi.biz.domain.biz.BayanihanBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
@@ -39,7 +39,7 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
     @Override
     public BetRecordDo<BayanihanGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<BayanihanGameRecordDo> gameRecordList) {
         //// 总中奖金额
-        CalcAmountResult result = calcRewardAmount(gameRecordList);
+        GameRecordCalcResult result = calcRewardAmount(gameRecordList);
         //计算实际金额
         long actualRewardAmount = result.getTotalRewardAmount();
         BetRecordDo<BayanihanGameRecordDo> res =  BetRecordBuilder.build(betRecordId,
@@ -48,7 +48,9 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
                 reachMaxMultiple(actualRewardAmount, betDo.getBetAmount(), bayanihanConfig.getRewardMaxMultiple()),
                 null,
                 gameRecordList);
-        res.setFreeGameMultiple(res.getFreeGameMultiple());
+        res.setFreeGameInfo(BetRecordDo.FreeGameInfo.builder()
+                .initialFreeGameCount(result.fgInitialCount).initialMultiple(result.fgInitialMultiple).finalMultiple(result.fgFinalMultiple)
+                .build());
         return res;
     }
 
@@ -65,6 +67,12 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
                     .filter(item -> Objects.nonNull(item.getRewardResult()))
                     .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                     .sum();
+            BetRecordDo.FreeGameInfo freeGameInfo = betRecord.getFreeGameInfo();
+            BayanihanBetRecordDetailDo.FreeGameInfoDo freeGameInfoDo = Objects.nonNull(freeGameInfo) ?
+                    BayanihanBetRecordDetailDo.FreeGameInfoDo.builder().initialMultiple(freeGameInfo.getInitialMultiple())
+                            .finalMultiple(freeGameInfo.getFinalMultiple())
+                            .freeWheelCount(freeGameInfo.getInitialFreeGameCount())
+                            .build() : null;
             return BetResultDo.<BayanihanBetRecordDetailDo>builder()
                     .betRecordId(betRecord.getId())
                     .gameId(betRecord.getGameId())
@@ -76,6 +84,7 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
                     .resultDetail(BayanihanBetRecordDetailDo.builder()
                             .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
                             .gameRecordList(firstBatchList)
+                            .freeGameInfo(freeGameInfoDo)
                             .build())
                     .build();
         } else if (Objects.equals(result.getBetStatus(), BetStatusEnum.FAIL)) {
@@ -104,20 +113,26 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
                 .collect(Collectors.toList());
     }
 
-    public CalcAmountResult calcRewardAmount(List<BayanihanGameRecordDo> gameRecordList) {
-        CalcAmountResult.CalcAmountResultBuilder builder = CalcAmountResult.builder();
+    public GameRecordCalcResult calcRewardAmount(List<BayanihanGameRecordDo> gameRecordList) {
+        GameRecordCalcResult.GameRecordCalcResultBuilder builder = GameRecordCalcResult.builder();
         long totalRewardAmount = 0L;
         List<BayanihanGameRecordDo> firstBatchList = getFirstBatchGameRecordList(gameRecordList);
         long mgRewardAmount = calculateRewardAmount(firstBatchList);
         builder.mgRewardAmount(mgRewardAmount);
         totalRewardAmount += calculateRewardAmount(firstBatchList);
         if (hasRewardFreeWheel(firstBatchList)) {
+
+            //初始轮
+            BayanihanGameRecordDo firstBatchLastRecord = firstBatchList.get(firstBatchList.size() - 1);
+            builder.fgInitialMultiple(firstBatchLastRecord.getCollectionInfo().getCurrentMultiple());
+            builder.fgInitialCount(firstBatchLastRecord.getRewardResult().getRewardFreeWheelTimes());
+
             // 免费轮总金额 * 最终倍率
-            List<BayanihanGameRecordDo> freeGame = getFreeBatchGameRecordList(gameRecordList);
-            BigDecimal fgFinalMultiple = freeGame.get(freeGame.size() - 1).getCollectionInfo().getCurrentMultiple();
-            builder.fgMultiple(fgFinalMultiple);
+            List<BayanihanGameRecordDo> freeGameList = getFreeBatchGameRecordList(gameRecordList);
+            BigDecimal fgFinalMultiple = freeGameList.get(freeGameList.size() - 1).getCollectionInfo().getCurrentMultiple();
+            builder.fgFinalMultiple(fgFinalMultiple);
             // 免费轮基础中奖金额
-            long fgBaseRewardAmount = calculateRewardAmount(firstBatchList);
+            long fgBaseRewardAmount = calculateRewardAmount(freeGameList);
             builder.fgBaseRewardAmount(fgBaseRewardAmount);
             // 免费轮实际
             long freeGameRewardAmount = BigDecimal.valueOf(fgBaseRewardAmount).multiply(fgFinalMultiple).longValue();
@@ -146,15 +161,40 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
     @Data
     @NoArgsConstructor
     @SuperBuilder
-    public static class CalcAmountResult {
+    public static class GameRecordCalcResult {
+        /**
+         * 总派奖
+         */
         private long totalRewardAmount;
 
+        /**
+         * 首轮派奖
+         */
         private long mgRewardAmount;
 
+        /**
+         * 免费轮初始轮数
+         */
+        private int fgInitialCount;
+
+        /**
+         * 免费轮派奖金额
+         */
         private long fgRewardAmount;
 
+        /**
+         * 免费轮基础金额
+         */
         private long fgBaseRewardAmount;
 
-        private BigDecimal fgMultiple;
+        /**
+         * 免费轮初始倍率
+         */
+        private BigDecimal fgInitialMultiple;
+
+        /**
+         * 免费轮最终倍率
+         */
+        private BigDecimal fgFinalMultiple;
     }
 }

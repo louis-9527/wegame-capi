@@ -15,20 +15,12 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
-import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -52,6 +44,7 @@ public class BetRecordController {
             .put(GameTypeEnum.MANGKUKULAM, "mangkukulamBetRecordManager")
             .put(GameTypeEnum.SIRENA, "sirenaBetRecordManager")
             .put(GameTypeEnum.ATLANTIS, "atlantisBetRecordManager")
+            .put(GameTypeEnum.BAYANIHAN, "bayanihanBetRecordManager")
             .build();
 
     @Autowired

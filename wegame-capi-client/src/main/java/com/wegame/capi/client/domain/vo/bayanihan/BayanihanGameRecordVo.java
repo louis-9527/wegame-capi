@@ -37,4 +37,14 @@ public class BayanihanGameRecordVo implements Validate, Serializable {
     private List<BayanihanRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识 false否 true是")
     private Boolean freeWheelFlag;
+    @ApiModelProperty("收集信息快照")
+    private CollectionSnapshot collectionSnapshot;
+
+    @Data
+    @SuperBuilder
+    public static class CollectionSnapshot {
+        private BigDecimal currentMultiple;
+        private int upgradeCost;
+        private int remainCollectCount;
+    }
 }

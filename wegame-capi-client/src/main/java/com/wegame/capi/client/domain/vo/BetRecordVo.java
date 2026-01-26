@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -55,6 +56,31 @@ public class BetRecordVo implements Validate, Serializable {
 
     @ApiModelProperty("游戏记录列表")
     private List<Object> gameRecordList;
+
+    @ApiModelProperty("免费轮信息")
+    private FreeGameInfo freeGameInfo;
+
+    /**
+     * 免费轮信息
+     */
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class FreeGameInfo implements Serializable {
+        private static final long serialVersionUID = 4154273029370246976L;
+
+        @ApiModelProperty("免费轮初始倍率")
+        private BigDecimal initialMultiple;
+
+        @ApiModelProperty("免费轮最终倍率")
+        private BigDecimal finalMultiple;
+
+        @ApiModelProperty("免费轮初始次数")
+        private int initialFreeGameCount;
+    }
 
     /**
      * 扩展信息

@@ -76,6 +76,13 @@ public class BetRecordConverter {
         betRecordDo.setUpdater(po.getUpdater());
         betRecordDo.setUpdateTime(po.getUpdateTime());
         betRecordDo.setFreeWheelHandleStatus(po.getFreeWheelHandleStatus());
+        if (Objects.nonNull(po.getFreeGameInfo())) {
+            betRecordDo.setFreeGameInfo(BetRecordDo.FreeGameInfo.builder()
+                    .finalMultiple(po.getFreeGameInfo().getFinalMultiple())
+                    .initialMultiple(po.getFreeGameInfo().getInitialMultiple())
+                    .initialFreeGameCount(po.getFreeGameInfo().getInitialFreeGameCount())
+                    .build());
+        }
         return betRecordDo;
     }
 
@@ -122,6 +129,13 @@ public class BetRecordConverter {
                     .miniSupContributionAmount(betRecordDo.getJackpot().getMiniSupContributionAmount())
                     .build());
         }
+        if (Objects.nonNull(betRecordDo.getFreeGameInfo())) {
+            po.setFreeGameInfo(BetRecordPo.FreeGameInfo.builder()
+                    .finalMultiple(betRecordDo.getFreeGameInfo().getFinalMultiple())
+                    .initialMultiple(betRecordDo.getFreeGameInfo().getInitialMultiple())
+                    .initialFreeGameCount(betRecordDo.getFreeGameInfo().getInitialFreeGameCount())
+                    .build());
+        }
         if (OptEnum.ADD.equals(optEnum)) {
             po.setCreator(betRecordDo.getCreator());
             po.setCreateTime(betRecordDo.getCreateTime());
@@ -159,6 +173,13 @@ public class BetRecordConverter {
                 .campaignId(betRecordDo.getExtendInfo().getCampaignId())
                 .build()
                 : null);
+        if (Objects.nonNull(betRecordDo.getFreeGameInfo())) {
+            vo.setFreeGameInfo(BetRecordVo.FreeGameInfo.builder()
+                    .finalMultiple(betRecordDo.getFreeGameInfo().getFinalMultiple())
+                    .initialMultiple(betRecordDo.getFreeGameInfo().getInitialMultiple())
+                    .initialFreeGameCount(betRecordDo.getFreeGameInfo().getInitialFreeGameCount())
+                    .build());
+        }
         vo.setCreateTime(betRecordDo.getCreateTime());
         vo.setFreeWheelHandleStatus(betRecordDo.getFreeWheelHandleStatus());
         return vo;
