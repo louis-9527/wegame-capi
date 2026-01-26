@@ -30,7 +30,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,11 +113,8 @@ public abstract class AbstractBayanihanBetStrategy
         if (CollectionUtil.isEmpty(gameRecordList)) {
             return 0L;
         } else {
-            BigDecimal freeWheelFinalMultiple = getFreeWheelFinalMultiple(gameRecordList);
-            return gameRecordList.stream()
-                    .filter(item -> Objects.nonNull(item.getRewardResult()))
-                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                    .sum();
+            BayanihanBetHelper.CalcAmountResult result = bayanihanBetHelper.calcRewardAmount(gameRecordList);
+            return result.getTotalRewardAmount();
         }
     }
 

@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Atlantis游戏记录
+ * Bayanihan游戏记录
  */
 @Data
 @SuperBuilder
