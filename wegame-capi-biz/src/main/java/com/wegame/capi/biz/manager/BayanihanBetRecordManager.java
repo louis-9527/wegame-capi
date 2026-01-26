@@ -37,9 +37,9 @@ public class BayanihanBetRecordManager extends AbstractBetRecordManager<Bayaniha
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<BayanihanGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            gameRecordList.forEach(item -> {
-                log.info("add GameRecord id:{}", item.getId());
-            });
+//            gameRecordList.forEach(item -> {
+//                log.info("add GameRecord id:{}", item.getId());
+//            });
             boolean ret = gameRecordService.batchAdd(gameRecordList, gameType, BayanihanGameRecordDo.class);
             AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         }

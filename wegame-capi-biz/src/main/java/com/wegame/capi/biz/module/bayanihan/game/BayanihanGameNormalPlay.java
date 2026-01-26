@@ -75,7 +75,13 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
+        print(ret);
         return ret;
+    }
+    private void print(List<BayanihanGameRecordDo> ret) {
+        for (BayanihanGameRecordDo gameRecordDo : ret) {
+            BayanihanSymbolUtil.print(gameRecordDo);
+        }
     }
 
     private void handleMainGame(GamePlayDo gamePlay, List<BayanihanGameRecordDo> ret, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList) {
@@ -194,7 +200,8 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         BayanihanSymbolDo[][] symbolArr = BayanihanSymbolUtil.copySymbolArr(preWheel.getSymbolArr());
         // 消除：中奖元素
         BayanihanSymbolUtil.clearRewardSymbol(symbolArr, preRewardResult);
-
+        // 下落
+        BayanihanSymbolUtil.fallSymbols(symbolArr);
         // 重新填充
         fillWheel(symbolArr, freeWheel);
 
