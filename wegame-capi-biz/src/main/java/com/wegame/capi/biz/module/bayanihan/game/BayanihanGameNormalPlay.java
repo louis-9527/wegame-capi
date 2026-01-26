@@ -51,6 +51,7 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
     private static final int MAX_SCATTER_IN_COLUMN = 1;
     private static final int MAX_SCATTER_IN_WHEEL = 3;
     private static final int DEFAULT_STICKY_WILD_TIMES = 3;
+    private static final int MULTIPLE_UPGRADE_COST = 3;
     private static final List<Integer> SCATTER_IN_COLUMN = Arrays.asList(0, 2, 4);
 
     @Autowired
@@ -65,7 +66,10 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         AtomicLong totalRewardAmount = new AtomicLong(0L);
         LinkedList<FreeWheelHandleDo> freeWheelList = new LinkedList<>();
         handleMainGame(gamePlay, ret, totalRewardAmount, freeWheelList);
-        handleFreeGame(gamePlay, ret, totalRewardAmount, freeWheelList);
+        if (!freeWheelList.isEmpty()) {
+            CollectionInfo collectionInfo = initCollectionInfo();
+            handleFreeGame(gamePlay, ret, totalRewardAmount, freeWheelList, collectionInfo);
+        }
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
@@ -98,17 +102,9 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList, false, null);
     }
 
-    private void handleFreeGame(GamePlayDo gamePlay, List<BayanihanGameRecordDo> ret, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList) {
+    private void handleFreeGame(GamePlayDo gamePlay, List<BayanihanGameRecordDo> ret, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList, CollectionInfo collectionInfo) {
         Map<IndexDo, BayanihanSymbolDo> beforeStickyWildIndex = null;
-        CollectionInfo collectionInfo = null;
         while (!freeWheelList.isEmpty()) {
-            if (Objects.isNull(collectionInfo)) {
-                String multiStr = randomService.randomKeyByWeight(BayanihanProbabilisticUtil.buildWildProbabilisticMap(bayanihanConfig.getFreeGameConfig().getFreeGameInitialMultipleConfig()));
-                BigDecimal multi = new BigDecimal(multiStr);
-                collectionInfo = CollectionInfo.builder().initMultiple(multi).currentMultiple(multi).
-                        currentRemainCollectSymbolCount(0).totalCollectSymbolCount(0)
-                        .upgradeCost(bayanihanConfig.getFreeGameConfig().getMultipleUpgradeCost()).build();
-            }
             FreeWheelHandleDo preFreeWheelHandleDo = freeWheelList.removeFirst();
             BayanihanGameRecordDo parentGameRecord = preFreeWheelHandleDo.getParentGameRecord();
             for (int i = Constants.CONST_0; i < preFreeWheelHandleDo.getTaskTimes(); i++) {
@@ -128,6 +124,14 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
                 beforeStickyWildIndex = getStickyWildIndex(ret.get(ret.size() - 1).getWheel());
             }
         }
+    }
+
+    private CollectionInfo initCollectionInfo() {
+        String multiStr = randomService.randomKeyByWeight(BayanihanProbabilisticUtil.buildWildProbabilisticMap(bayanihanConfig.getFreeGameConfig().getFreeGameInitialMultipleConfig()));
+        BigDecimal multi = new BigDecimal(multiStr);
+        return CollectionInfo.builder().initMultiple(multi).currentMultiple(multi).
+                currentRemainCollectSymbolCount(0).totalCollectSymbolCount(0)
+                .upgradeCost(MULTIPLE_UPGRADE_COST).build();
     }
 
     private Map<IndexDo, BayanihanSymbolDo> getStickyWildIndex(WheelDo<BayanihanSymbolDo> wheel) {
@@ -369,11 +373,11 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
             }
         }
 
-        public BayanihanGameRecordDo.CollectionInfo snapshot() {
-            return BayanihanGameRecordDo.CollectionInfo.builder()
-                    .initialMultiple(initMultiple)
+        public BayanihanGameRecordDo.MultipleSnapshot snapshot() {
+            return BayanihanGameRecordDo.MultipleSnapshot.builder()
+                    .currentMultiple(currentMultiple)
                     .upgradeCost(upgradeCost)
-                    .collectSymbolCount(totalCollectSymbolCount)
+                    .remainCollectCount(currentRemainCollectSymbolCount)
                     .build();
         }
     }

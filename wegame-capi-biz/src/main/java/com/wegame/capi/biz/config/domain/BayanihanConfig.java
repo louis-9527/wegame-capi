@@ -23,7 +23,7 @@ import java.util.TreeMap;
 @AllArgsConstructor
 public class BayanihanConfig extends GameBizConfig{
 
-    private final static int REEL_NUMBERS = 6;
+    private static final long serialVersionUID = -3176807225114663395L;
 
     /**
      * 赔率配置

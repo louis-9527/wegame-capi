@@ -86,7 +86,7 @@ public class BayanihanGameRecordDo implements Serializable, ToVoConverter<Bayani
      */
     private boolean lastGameFlag;
 
-    private CollectionInfo collectionInfo;
+    private MultipleSnapshot collectionInfo;
 
     public void addGameRecordId(Long gameRecordId) {
         if (Objects.isNull(this.gameRecordIds)) {
@@ -97,10 +97,10 @@ public class BayanihanGameRecordDo implements Serializable, ToVoConverter<Bayani
 
     @Data
     @SuperBuilder
-    public static class CollectionInfo{
-        private BigDecimal initialMultiple;
+    public static class MultipleSnapshot {
+        private BigDecimal currentMultiple;
         private int upgradeCost;
-        private int collectSymbolCount;
+        private int remainCollectCount;
     }
 
     @Transient

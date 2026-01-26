@@ -30,6 +30,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,7 @@ public abstract class AbstractBayanihanBetStrategy
     @Qualifier("bayanihanOperationEventManager")
     private BayanihanOperationEventManager bayanihanOperationEventManager;
     @Autowired
-    private BayanihanBetHelper atlantisBetHelper;
+    private BayanihanBetHelper bayanihanBetHelper;
     @Autowired
     private BayanihanConfig bayanihanConfig;
 
@@ -76,7 +77,7 @@ public abstract class AbstractBayanihanBetStrategy
 
     @Override
     public BetHelper<BayanihanBetRecordDetailDo, BayanihanGameRecordDo> betHelper() {
-        return atlantisBetHelper;
+        return bayanihanBetHelper;
     }
 
     @Override
@@ -113,6 +114,7 @@ public abstract class AbstractBayanihanBetStrategy
         if (CollectionUtil.isEmpty(gameRecordList)) {
             return 0L;
         } else {
+            BigDecimal freeWheelFinalMultiple = getFreeWheelFinalMultiple(gameRecordList);
             return gameRecordList.stream()
                     .filter(item -> Objects.nonNull(item.getRewardResult()))
                     .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
@@ -128,12 +130,12 @@ public abstract class AbstractBayanihanBetStrategy
         long betRecordId = generateBetRecordId();
         List<BayanihanGameRecordDo> list = super.play(betDo, betRecordId, bayanihanConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-        List<BayanihanGameRecordDo> firstBatchList = atlantisBetHelper.getFirstBatchGameRecordList(list);
+        List<BayanihanGameRecordDo> firstBatchList = bayanihanBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
-        BetRecordDo<BayanihanGameRecordDo> betRecord = atlantisBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, atlantisBetHelper.hasRewardFreeWheel(firstBatchList));
+        BetRecordDo<BayanihanGameRecordDo> betRecord = bayanihanBetHelper.buildBetRecord(betRecordId, betDo, list);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, bayanihanBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-        return atlantisBetHelper.handleBetResult(betRecord, resultDo);
+        return bayanihanBetHelper.handleBetResult(betRecord, resultDo);
     }
 
     /**
