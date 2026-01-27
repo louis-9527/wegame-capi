@@ -247,7 +247,7 @@ public class BayanihanRewardHandler extends AbstractRewardHandler<BayanihanSymbo
         if (freeWheel) {
             return bayanihanConfig.getFreeGameConfig().getFreeGameRewardFgCount();
         } else {
-            TreeMap<String, Integer> config = BayanihanProbabilisticUtil.buildWildProbabilisticMap(bayanihanConfig.getFreeGameConfig().getFreeGameInitialRoundCountConfig());
+            TreeMap<String, Integer> config = BayanihanProbabilisticUtil.buildProbabilisticMap(bayanihanConfig.getFreeGameConfig().getFreeGameInitialRoundCountConfig());
             String roundCountStr = randomService.randomKeyByWeight(config);
             return Integer.valueOf(roundCountStr);
         }

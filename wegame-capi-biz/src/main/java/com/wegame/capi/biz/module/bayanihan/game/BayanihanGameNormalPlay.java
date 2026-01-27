@@ -135,7 +135,7 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
     }
 
     private CollectionInfo initCollectionInfo() {
-        String multiStr = randomService.randomKeyByWeight(BayanihanProbabilisticUtil.buildWildProbabilisticMap(bayanihanConfig.getFreeGameConfig().getFreeGameInitialMultipleConfig()));
+        String multiStr = randomService.randomKeyByWeight(BayanihanProbabilisticUtil.buildProbabilisticMap(bayanihanConfig.getFreeGameConfig().getFreeGameInitialMultipleConfig()));
         BigDecimal multi = new BigDecimal(multiStr);
         return CollectionInfo.builder().initMultiple(multi).currentMultiple(multi).
                 currentRemainCollectSymbolCount(0).totalCollectSymbolCount(0)
