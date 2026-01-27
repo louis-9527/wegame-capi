@@ -22,7 +22,7 @@ public class BayanihanSymbolDo extends SymbolDo {
     /**
      * 元素剩余消除次数（只有wild元素会有消除次数）
      */
-    private Integer symbolClearTimes;
+    private int symbolClearTimes;
 
     public BayanihanSymbolDo copy() {
         return BayanihanSymbolDo.builder()
