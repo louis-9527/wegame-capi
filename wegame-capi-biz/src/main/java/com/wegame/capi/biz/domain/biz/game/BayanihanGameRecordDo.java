@@ -170,6 +170,12 @@ public class BayanihanGameRecordDo implements Serializable, ToVoConverter<Bayani
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .rewardLineList(buildRewardLineList())
                 .freeWheelFlag(wheel.isFreeFlag())
+                .collectionSnapshot(Objects.nonNull(collectionInfo) ?
+                        BayanihanGameRecordVo.CollectionSnapshot.builder()
+                                .remainCollectCount(collectionInfo.getRemainCollectCount())
+                                .currentMultiple(collectionInfo.getCurrentMultiple())
+                                .upgradeCost(collectionInfo.getUpgradeCost())
+                                .build() : null)
                 .build();
     }
 
