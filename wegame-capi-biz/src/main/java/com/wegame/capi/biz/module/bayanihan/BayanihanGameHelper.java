@@ -74,7 +74,7 @@ public class BayanihanGameHelper {
             .id(GameTypeEnum.BAYANIHAN.getId())
             .gameType(GameTypeEnum.BAYANIHAN)
             .name(GameTypeEnum.BAYANIHAN.getName())
-            .row(5)
+            .row(4)
             .column(5)
             .symbolMap(new ImmutableMap.Builder<String, SymbolDo>()
                     .put(BAYANIHAN_SymbolL1.getId(), BAYANIHAN_SymbolL1)
