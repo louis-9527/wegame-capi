@@ -75,7 +75,7 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
-        print(ret);
+//        print(ret);
         return ret;
     }
     private void print(List<BayanihanGameRecordDo> ret) {
