@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.manager.operation;
 
-import com.wegame.capi.biz.config.mongo.AtlantisMongoConfig;
+import com.wegame.capi.biz.config.mongo.BayanihanMongoConfig;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
@@ -18,7 +18,7 @@ public class BayanihanOperationEventManager extends AbstractOperationEventManage
 
     @Override
     public OperationEventTypeEnum operationEventType() {
-        return OperationEventTypeEnum.ATLANTIS;
+        return OperationEventTypeEnum.BAYANIHAN;
     }
 
     // 使用 ConcurrentHashMap 进行缓存
@@ -26,13 +26,13 @@ public class BayanihanOperationEventManager extends AbstractOperationEventManage
     private static final Map<Double, List<List<Long>>> normalConfigDetailArray = new ConcurrentHashMap<>();
 
     @Override
-    @Transactional(transactionManager = AtlantisMongoConfig.atlantisTransactionManager)
+    @Transactional(transactionManager = BayanihanMongoConfig.bayanihanTransactionManager)
     public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         super.updateEventDetail(eventDetailDo, eventDo);
     }
 
     @Override
-    @Transactional(transactionManager = AtlantisMongoConfig.atlantisTransactionManager)
+    @Transactional(transactionManager = BayanihanMongoConfig.bayanihanTransactionManager)
     public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         return super.addEventDetail(eventDetailDo);
     }
