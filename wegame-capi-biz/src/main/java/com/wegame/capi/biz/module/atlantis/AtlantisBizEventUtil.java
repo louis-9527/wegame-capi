@@ -205,7 +205,7 @@ public class AtlantisBizEventUtil {
             if (nullIndexList.size() == 1) {
                 indexDo = nullIndexList.get(0);
             } else {
-                indexDo = nullIndexList.get(SecureRandomUtil.randomIntInRange(0, nullIndexList.size()));
+                indexDo = nullIndexList.get(SecureRandomUtil.randomIntInRange(0, nullIndexList.size() - 1));
             }
         } else {
             // 没有空位，则整个盘面随机一个元素
