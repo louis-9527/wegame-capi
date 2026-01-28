@@ -106,7 +106,7 @@ public abstract class AbstractContinuePlayScheduler
         if (Objects.equals(promotionType, BetPromotionTypeEnum.OPERATION_EVENT)) {
             gamePlayType = GamePlayTypeEnum.EVENT_PLAY;
         } else {
-            gamePlayType = GamePlayTypeEnum.NORMAL_PLAY;
+            gamePlayType = GamePlayTypeEnum.TEMPLATE_PLAY;
         }
 
 
