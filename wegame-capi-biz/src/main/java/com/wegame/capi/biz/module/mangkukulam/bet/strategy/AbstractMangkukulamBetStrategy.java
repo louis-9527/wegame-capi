@@ -32,6 +32,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -173,6 +174,8 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             AssertUtil.assertNotNull(betDo.getParentBetRecordId(), ErrorCode.ERR_PARAM);
             BetRecordDo<MangkukulamGameRecordDo> preBetRecord = mangkukulamBetRecordManager.getBetRecordByIdFromPrimary(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             AssertUtil.assertNotNull(preBetRecord, ErrorCode.ERR_PARAM);
+            // 只有promotionType == 0才有第二轮
+            AssertUtil.assertTrue(Objects.equals(preBetRecord.getBetPromotionType(), BetPromotionTypeEnum.NONE.getCode()) , ErrorCode.ERR_INTER);
             AssertUtil.assertTrue(validateBetRecordTimeRange(preBetRecord), ErrorCode.ERR_PARAM);
             // 暂时屏蔽bet状态校验，防止因为pulsar消费不及时导致的无法继续玩
 //            AssertUtil.assertTrue(Objects.equals(preBetRecord.getStatus(), BetStatusEnum.SUCCESS.getCode()), ErrorCode.ERR_PARAM);
