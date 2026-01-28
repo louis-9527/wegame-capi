@@ -129,6 +129,9 @@ public class AtlantisBizEventUtil {
         for (int row = 0; row < nextSymbolArr.length; row++) {
             for (int column = 0; column < nextSymbolArr[row].length; column++) {
                 SymbolDo symbolDo = nextSymbolArr[row][column];
+                if (Objects.isNull(symbolDo)){
+                    continue;
+                }
                 List<IndexDo> indexDos = symbolIndexMap.get(symbolDo);
                 if (CollectionUtil.isEmpty(indexDos)) {
                     symbolIndexMap.put(symbolDo, Lists.newArrayList(IndexFactory.buildDo(row, column)));
