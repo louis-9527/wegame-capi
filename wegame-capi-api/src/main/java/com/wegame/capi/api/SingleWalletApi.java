@@ -211,6 +211,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
                     log.error("betStarSpin BusinessException, reach max retry time limit");
                     throw e;
                 } else {
+                    LockSupport.parkNanos(this, TimeUnit.MILLISECONDS.toNanos(1500));
                     log.warn("betStarSpin immediately retry when error");
                 }
             }
