@@ -28,6 +28,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 import static com.wegame.capi.common.enums.SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID;
@@ -100,6 +101,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
                     log.error("betFreeSpin BusinessException, reach max retry time limit");
                     throw e;
                 } else {
+                    LockSupport.parkNanos(this, TimeUnit.MILLISECONDS.toNanos(1500));
                     log.warn("betFreeSpin immediately retry when error");
                 }
             }
