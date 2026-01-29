@@ -69,8 +69,11 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         if (BetSubTypeEnum.isFirstStep(gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
             // 执行完普通轮和免费轮
             processInitialStage(gamePlay, ret);
-            Long parentGameRecordId = ret.get(ret.size()-1).getId();
-            processFreeStage(gamePlay, ret , null, parentGameRecordId);
+            MangkukulamGameRecordDo last = ret.get(ret.size() - 1);
+            if (Objects.nonNull(last) && last.getRewardResult().isHasRewardFreeWheel()) {
+                Long parentGameRecordId = last.getId();
+                processFreeStage(gamePlay, ret , null, parentGameRecordId);
+            }
             setLastGameFlag(ret);
         } else if (BetSubTypeEnum.isFirstStep(gamePlay.getBetSubType().getCode()) && Objects.isNull(gamePlay.getVolatility())) {
             // 执行首轮
