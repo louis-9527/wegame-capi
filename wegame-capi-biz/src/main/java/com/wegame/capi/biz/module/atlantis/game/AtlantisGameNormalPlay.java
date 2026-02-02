@@ -16,7 +16,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.*;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.atlantis.AtlantisBizEventUtil;
+import com.wegame.capi.biz.module.atlantis.AtlantisBizEventHandler;
 import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
 import com.wegame.capi.biz.module.atlantis.AtlantisSymbolUtil;
 import com.wegame.capi.biz.module.atlantis.reward.AtlantisRewardHandler;
@@ -62,6 +62,8 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
     AtlantisConfig atlantisConfig;
     @Autowired
     AtlantisRewardHandler atlantisRewardHandler;
+    @Autowired
+    private AtlantisBizEventHandler atlantisBizEventHandler;
 
     @Override
     public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
@@ -273,7 +275,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
                 continue;
             }
             // 生成事件处理结果
-            GameBizEventDo gameBizEventDo = AtlantisBizEventUtil.handleBizEvent(bizEvent, nextSymbolArr, i);
+            GameBizEventDo gameBizEventDo = atlantisBizEventHandler.handleBizEvent(bizEvent, nextSymbolArr, i);
             // 处理影响-元素替换
             if (Objects.nonNull(gameBizEventDo) && gameBizEventDo.hasSymbolChange()) {
                 SymbolDo changeToSymbol = gameBizEventDo.getChangeToSymbol();

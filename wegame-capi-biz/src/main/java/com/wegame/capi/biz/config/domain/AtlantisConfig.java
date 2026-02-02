@@ -116,6 +116,11 @@ public class AtlantisConfig extends GameBizConfig implements Serializable {
          * TreeMap<格子,TreeMap<事件类型，概率>>
          */
         private TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig;
+        /**
+         * 单个事件特殊概率配置
+         * TreeMap<事件类型,TreeMap<出现次数，概率>>
+         */
+        private TreeMap<BizEventEnum, TreeMap<Integer, BigDecimal>> singleBizSpecialEventProbabilisticConfig;
 
         public void setWheelProbabilisticConfig(LinkedHashMap<String, List<BigDecimal>> wheelProbabilisticConfigOrigin) {
             TreeMap<SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig = new TreeMap<>(Comparator.comparing(SymbolKeyConfig::getSymbolId).thenComparing(SymbolKeyConfig::getCount));
@@ -192,7 +197,26 @@ public class AtlantisConfig extends GameBizConfig implements Serializable {
         Assert.notNull(this.probabilisticConfig, "probabilisticConfig is null");
         this.wheelProbabilisticConfigValidate(this.probabilisticConfig.getWheelProbabilisticConfig());
         this.bizEventProbabilisticConfigValidate(this.probabilisticConfig.getBizEventProbabilisticConfig());
+        this.singleBizSpecialEventProbabilisticConfig(this.probabilisticConfig.getSingleBizSpecialEventProbabilisticConfig());
+    }
 
+    private void singleBizSpecialEventProbabilisticConfig(TreeMap<BizEventEnum, TreeMap<Integer, BigDecimal>> singleBizSpecialEventProbabilisticConfig) {
+        AssertUtil.assertNotNull(singleBizSpecialEventProbabilisticConfig, ErrorCode.ERR_INTER, "probabilisticConfig.singleBizSpecialEventProbabilisticConfig is null");
+        singleBizSpecialEventProbabilisticConfig.forEach((bizEvent, value) -> {
+            TreeMap<Integer, BigDecimal> decimalMap = singleBizSpecialEventProbabilisticConfig.get(bizEvent);
+            Map<Integer, Integer> map = new HashMap<>();
+            decimalMap.forEach((mapKey, decimalMapKValue) -> {
+                int val = (decimalMapKValue.multiply(new BigDecimal(CONST_10000))).intValue();
+                if (val > 0) {
+                    map.put(mapKey, val);
+                }
+            });
+
+            Integer sumProbabilistic = map.values()
+                    .stream()
+                    .reduce(0, Integer::sum);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.singleBizSpecialEventProbabilisticConfig ERR, columNo:" + bizEvent.name());
+        });
     }
 
     private void bizEventProbabilisticConfigValidate(TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig) {

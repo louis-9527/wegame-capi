@@ -16,7 +16,7 @@ import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.atlantis.AtlantisBizEventUtil;
+import com.wegame.capi.biz.module.atlantis.AtlantisBizEventHandler;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
@@ -53,6 +53,8 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
     AtlantisConfig atlantisConfig;
     @Autowired
     RandomService randomService;
+    @Autowired
+    private AtlantisBizEventHandler atlantisBizEventHandler;
 
     @Override
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
@@ -152,7 +154,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                     .eventMultiple(fixedGameBizEventDo.getEventMultiple())
                     .build();
         } else {
-            gameBizEventDo = AtlantisBizEventUtil.handleEventGoldenCow(goldCowIndex);
+            gameBizEventDo = atlantisBizEventHandler.handleEventGoldenCow(goldCowIndex);
         }
         BigDecimal eventMultiple = gameBizEventDo.getEventMultiple();
         if (eventMultiple.compareTo(BigDecimal.ONE) >= 0) {

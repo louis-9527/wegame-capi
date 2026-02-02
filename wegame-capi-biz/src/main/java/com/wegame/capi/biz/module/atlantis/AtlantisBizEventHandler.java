@@ -5,20 +5,32 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.AtlantisConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.bizevent.GameBizEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BizEventEnum;
-import com.wegame.capi.common.utils.SecureRandomUtil;
+import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 @Slf4j
-public class AtlantisBizEventUtil {
+@Component
+public class AtlantisBizEventHandler {
+
+    @Autowired
+    private AtlantisConfig atlantisConfig;
+    @Autowired
+    private RandomService randomService;
 
     /**
      * 内部不对nextSymbolArr 做修改
@@ -28,22 +40,22 @@ public class AtlantisBizEventUtil {
      * @param sort          排序
      * @return GameBizEventDo
      */
-    public static GameBizEventDo handleBizEvent(BizEventEnum bizEventEnum, SymbolDo[][] nextSymbolArr, int sort) {
+    public GameBizEventDo handleBizEvent(BizEventEnum bizEventEnum, SymbolDo[][] nextSymbolArr, int sort) {
         switch (bizEventEnum) {
             case EVENT_NONE:
                 return null;
             case EVENT_SCATTER:
-                return handleEventScatter(nextSymbolArr, sort);
+                return this.handleEventScatter(nextSymbolArr, sort);
             case EVENT_WILD:
-                return handleEventWild(nextSymbolArr, sort);
+                return this.handleEventWild(nextSymbolArr, sort);
             case EVENT_BOM:
-                return handleEventBom(nextSymbolArr, sort);
+                return this.handleEventBom(nextSymbolArr, sort);
             case EVENT_TRIDENT:
-                return handleEventTrident(nextSymbolArr, sort);
+                return this.handleEventTrident(nextSymbolArr, sort);
             case EVENT_GOLDEN_TANK:
-                return handleEventGoldenTank(nextSymbolArr, sort);
+                return this.handleEventGoldenTank(nextSymbolArr, sort);
             case EVENT_GOLDEN_COW:
-                return handleEventGoldenCow(sort);
+                return this.handleEventGoldenCow(sort);
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "no support biz event");
         }
@@ -56,11 +68,13 @@ public class AtlantisBizEventUtil {
      * @return GameBizEventDo
      * @see BizEventEnum#EVENT_GOLDEN_COW
      */
-    public static GameBizEventDo handleEventGoldenCow(int sort) {
+    public GameBizEventDo handleEventGoldenCow(int sort) {
+        TreeMap<Integer, BigDecimal> tridentCountProbabilisticConfig = getSingleBizEventSpecialProbabilisticConfig(BizEventEnum.EVENT_GOLDEN_COW);
+        Integer randomMultiple = GameUtil.randomKey(tridentCountProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
         return GameBizEventDo.builder()
                 .sort(sort)
                 .bizEventType(BizEventEnum.EVENT_GOLDEN_COW)
-                .eventMultiple(BigDecimal.valueOf(SecureRandomUtil.randomIntInRange(2, 5)))
+                .eventMultiple(BigDecimal.valueOf(randomMultiple))
                 .build();
     }
 
@@ -72,12 +86,14 @@ public class AtlantisBizEventUtil {
      * @return GameBizEventDo
      * @see BizEventEnum#EVENT_GOLDEN_TANK
      */
-    private static GameBizEventDo handleEventGoldenTank(SymbolDo[][] nextSymbolArr, int sort) {
+    private GameBizEventDo handleEventGoldenTank(SymbolDo[][] nextSymbolArr, int sort) {
         List<IndexDo> toWildIndexList = Lists.newArrayList();
         GameInfoDo gameInfo = AtlantisGameHelper.ATLANTIS_GAME_INFO;
         // 随机行index
-        int rowCount = SecureRandomUtil.randomIntInRange(1, 3);
-        Set<Integer> rowIndexSet = SecureRandomUtil.generateUniqueRandomNumbers(0, 2, rowCount);
+        TreeMap<Integer, BigDecimal> tankCountProbabilisticConfig = getSingleBizEventSpecialProbabilisticConfig(BizEventEnum.EVENT_GOLDEN_TANK);
+        Integer rowCount = GameUtil.randomKey(tankCountProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
+        AssertUtil.assertTrue(rowCount <= 3, ErrorCode.ERR_PARAM, "tankCountProbabilisticConfig is error");
+        Set<Integer> rowIndexSet = randomService.randomUniqueIntList(0, 2, rowCount);
         rowIndexSet.forEach(rowIndex -> {
             for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
                 toWildIndexList.add(IndexFactory.buildDo(rowIndex, colum));
@@ -101,12 +117,14 @@ public class AtlantisBizEventUtil {
      * @return GameBizEventDo
      * @see BizEventEnum#EVENT_TRIDENT
      */
-    private static GameBizEventDo handleEventTrident(SymbolDo[][] nextSymbolArr, int sort) {
+    private GameBizEventDo handleEventTrident(SymbolDo[][] nextSymbolArr, int sort) {
         List<IndexDo> toWildIndexList = Lists.newArrayList();
         GameInfoDo gameInfo = AtlantisGameHelper.ATLANTIS_GAME_INFO;
         // 随机列index
-        int columCount = SecureRandomUtil.randomIntInRange(1, 3);
-        Set<Integer> columIndexSet = SecureRandomUtil.generateUniqueRandomNumbers(0, 2, columCount);
+        TreeMap<Integer, BigDecimal> tridentCountProbabilisticConfig = getSingleBizEventSpecialProbabilisticConfig(BizEventEnum.EVENT_TRIDENT);
+        Integer columCount = GameUtil.randomKey(tridentCountProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
+        AssertUtil.assertTrue(columCount <= 3, ErrorCode.ERR_PARAM, "tridentCountProbabilisticConfig is error");
+        Set<Integer> columIndexSet = randomService.randomUniqueIntList(0, 2, columCount);
         columIndexSet.forEach(columIndex -> {
             for (int row = 0; row < gameInfo.getRow(); row++) {
                 toWildIndexList.add(IndexFactory.buildDo(row, columIndex));
@@ -129,7 +147,7 @@ public class AtlantisBizEventUtil {
      * @param sort          排序
      * @return GameBizEventDo
      */
-    private static GameBizEventDo handleEventBom(SymbolDo[][] nextSymbolArr, int sort) {
+    private GameBizEventDo handleEventBom(SymbolDo[][] nextSymbolArr, int sort) {
         // 统计盘面中的棋子 key:symbol,value:对应symbol的坐标列表
         Map<SymbolDo, List<IndexDo>> symbolIndexMap = new HashMap<>();
         for (int row = 0; row < nextSymbolArr.length; row++) {
@@ -171,7 +189,7 @@ public class AtlantisBizEventUtil {
      * @param sort          排序
      * @return GameBizEventDo
      */
-    private static GameBizEventDo handleEventWild(SymbolDo[][] nextSymbolArr, int sort) {
+    private GameBizEventDo handleEventWild(SymbolDo[][] nextSymbolArr, int sort) {
         List<IndexDo> allNullIndexList = getAllNullIndex(nextSymbolArr);
         List<IndexDo> toWildIndexList = Lists.newArrayList();
         // 随机一到3个空位
@@ -180,13 +198,13 @@ public class AtlantisBizEventUtil {
                 toWildIndexList.add(allNullIndexList.get(0));
             } else {
                 // 随机1到3个空位
-                int toWildCount = SecureRandomUtil.randomIntInRange(1, 3);
+                int toWildCount = randomService.randomInt(1, 3);
                 toWildIndexList = getRandomIndexList(allNullIndexList, toWildCount);
             }
         } else {
             // 没有空位，则整个盘面随机一到3个元素
             log.info("handleEventWild no empty index,random the no empty index List.symbolArr:{}", JSON.toJSONString(nextSymbolArr));
-            int toWildCount = SecureRandomUtil.randomIntInRange(1, 3);
+            int toWildCount = randomService.randomInt(1, 3);
             toWildIndexList = getRandomIndexList(getAllIndex(nextSymbolArr), toWildCount);
         }
         return GameBizEventDo.builder()
@@ -205,7 +223,7 @@ public class AtlantisBizEventUtil {
      * @param sort          排序
      * @return GameBizEventDo
      */
-    private static GameBizEventDo handleEventScatter(SymbolDo[][] nextSymbolArr, int sort) {
+    private GameBizEventDo handleEventScatter(SymbolDo[][] nextSymbolArr, int sort) {
         // 获取所有空位
         List<IndexDo> nullIndexList = getAllNullIndex(nextSymbolArr);
         IndexDo indexDo;
@@ -214,7 +232,7 @@ public class AtlantisBizEventUtil {
             if (nullIndexList.size() == 1) {
                 indexDo = nullIndexList.get(0);
             } else {
-                indexDo = nullIndexList.get(SecureRandomUtil.randomIntInRange(0, nullIndexList.size() - 1));
+                indexDo = nullIndexList.get(randomService.randomInt(0, nullIndexList.size() - 1));
             }
         } else {
             // 没有空位，则整个盘面随机一个元素
@@ -237,21 +255,21 @@ public class AtlantisBizEventUtil {
      * @param count      数量
      * @return 索引列表
      */
-    private static List<IndexDo> getRandomIndexList(List<IndexDo> sourceList, int count) {
+    private List<IndexDo> getRandomIndexList(List<IndexDo> sourceList, int count) {
         if (sourceList.size() <= count) {
             return Lists.newArrayList(sourceList);
         }
 
         Set<IndexDo> resultSet = new HashSet<>();
         while (resultSet.size() < count) {
-            int randomIndex = SecureRandomUtil.randomIntInRange(0, sourceList.size() - 1);
+            int randomIndex = randomService.randomInt(0, sourceList.size() - 1);
             IndexDo currentIndex = sourceList.get(randomIndex);
             resultSet.add(currentIndex);
         }
         return Lists.newArrayList(resultSet);
     }
 
-    private static List<IndexDo> getAllIndex(SymbolDo[][] nextSymbolArr) {
+    private List<IndexDo> getAllIndex(SymbolDo[][] nextSymbolArr) {
         List<IndexDo> indexList = Lists.newArrayList();
         for (int row = 0; row < nextSymbolArr.length; row++) {
             if (nextSymbolArr[row] == null) {
@@ -265,7 +283,7 @@ public class AtlantisBizEventUtil {
         return indexList;
     }
 
-    private static List<IndexDo> getAllNullIndex(SymbolDo[][] nextSymbolArr) {
+    private List<IndexDo> getAllNullIndex(SymbolDo[][] nextSymbolArr) {
         List<IndexDo> nullIndexList = Lists.newArrayList();
         for (int row = 0; row < nextSymbolArr.length; row++) {
             if (nextSymbolArr[row] == null) {
@@ -279,6 +297,14 @@ public class AtlantisBizEventUtil {
             }
         }
         return nullIndexList;
+    }
+
+    private TreeMap<Integer, BigDecimal> getSingleBizEventSpecialProbabilisticConfig(BizEventEnum bizEvent) {
+        TreeMap<BizEventEnum, TreeMap<Integer, BigDecimal>> singleBizSpecialEventProbabilisticConfig
+                = this.atlantisConfig.getProbabilisticConfig().getSingleBizSpecialEventProbabilisticConfig();
+        TreeMap<Integer, BigDecimal> singleBizEventSpecialMap = singleBizSpecialEventProbabilisticConfig.get(bizEvent);
+        AssertUtil.assertNotNull(singleBizEventSpecialMap, ErrorCode.ERR_PARAM, "singleBizEventSpecialMap is null");
+        return singleBizEventSpecialMap;
     }
 
 }

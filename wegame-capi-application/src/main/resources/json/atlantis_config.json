@@ -512,6 +512,24 @@
 				"EVENT_GOLDEN_TANK": 0.000,
 				"EVENT_GOLDEN_COW": 0.000
 			}
+		},
+		"singleBizSpecialEventProbabilisticConfig": {
+			"EVENT_TRIDENT": {
+				"1": 70.000,
+				"2": 20.000,
+				"3": 10.000
+			},
+			"EVENT_GOLDEN_TANK": {
+				"1": 70.000,
+				"2": 20.000,
+				"3": 10.000
+			},
+			"EVENT_GOLDEN_COW": {
+				"2": 70.000,
+				"3": 20.000,
+				"4": 7.000,
+				"5": 3.000
+			}
 		}
 	},
 
