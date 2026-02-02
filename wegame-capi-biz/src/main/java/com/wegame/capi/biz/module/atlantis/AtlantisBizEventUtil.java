@@ -65,7 +65,7 @@ public class AtlantisBizEventUtil {
     }
 
     /**
-     * 黄金战车，冲撞棋盘，将1-3row（横排） 变为wild
+     * 黄金战车，冲撞棋盘，随机将1-3row（横排） 变为wild
      *
      * @param nextSymbolArr nextSymbolArr
      * @param sort          排序
@@ -75,11 +75,14 @@ public class AtlantisBizEventUtil {
     private static GameBizEventDo handleEventGoldenTank(SymbolDo[][] nextSymbolArr, int sort) {
         List<IndexDo> toWildIndexList = Lists.newArrayList();
         GameInfoDo gameInfo = AtlantisGameHelper.ATLANTIS_GAME_INFO;
-        for (int row = 0; row < 3; row++) {
+        // 随机行index
+        int rowCount = SecureRandomUtil.randomIntInRange(1, 3);
+        Set<Integer> rowIndexSet = SecureRandomUtil.generateUniqueRandomNumbers(0, 2, rowCount);
+        rowIndexSet.forEach(rowIndex -> {
             for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
-                toWildIndexList.add(IndexFactory.buildDo(row, colum));
+                toWildIndexList.add(IndexFactory.buildDo(rowIndex, colum));
             }
-        }
+        });
 
         return GameBizEventDo.builder()
                 .sort(sort)
@@ -91,7 +94,7 @@ public class AtlantisBizEventUtil {
     }
 
     /**
-     * 三叉戟，引发潮汐冲刷棋盘，将1-3reel（竖列）变为wild。
+     * 三叉戟，引发潮汐冲刷棋盘，随机将1-3reel（竖列）变为wild。
      *
      * @param nextSymbolArr nextSymbolArr
      * @param sort          排序
@@ -101,11 +104,14 @@ public class AtlantisBizEventUtil {
     private static GameBizEventDo handleEventTrident(SymbolDo[][] nextSymbolArr, int sort) {
         List<IndexDo> toWildIndexList = Lists.newArrayList();
         GameInfoDo gameInfo = AtlantisGameHelper.ATLANTIS_GAME_INFO;
-        for (int colum = 0; colum < 3; colum++) {
+        // 随机列index
+        int columCount = SecureRandomUtil.randomIntInRange(1, 3);
+        Set<Integer> columIndexSet = SecureRandomUtil.generateUniqueRandomNumbers(0, 2, columCount);
+        columIndexSet.forEach(columIndex -> {
             for (int row = 0; row < gameInfo.getRow(); row++) {
-                toWildIndexList.add(IndexFactory.buildDo(row, colum));
+                toWildIndexList.add(IndexFactory.buildDo(row, columIndex));
             }
-        }
+        });
 
         return GameBizEventDo.builder()
                 .sort(sort)
@@ -129,7 +135,7 @@ public class AtlantisBizEventUtil {
         for (int row = 0; row < nextSymbolArr.length; row++) {
             for (int column = 0; column < nextSymbolArr[row].length; column++) {
                 SymbolDo symbolDo = nextSymbolArr[row][column];
-                if (Objects.isNull(symbolDo)){
+                if (Objects.isNull(symbolDo)) {
                     continue;
                 }
                 List<IndexDo> indexDos = symbolIndexMap.get(symbolDo);
