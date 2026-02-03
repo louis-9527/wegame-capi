@@ -154,44 +154,43 @@
 			}
 		},
 		"buyCommissionConfig": {
-			"buyCommissionConfig": {
-				"amountCommissionConfig": {
-					"300": {
-						"mini": "525",
-						"minor": "0",
-						"major": "0",
-						"grand": "0"
-					},
-					"500": {
-						"mini": "525",
-						"minor": "350",
-						"major": "0",
-						"grand": "0"
-					},
-					"1000": {
-						"mini": "525",
-						"minor": "525",
-						"major": "700",
-						"grand": "0"
-					},
-					"2000": {
-						"mini": "350",
-						"minor": "350",
-						"major": "1400",
-						"grand": "1400"
-					},
-					"3000": {
-						"mini": "525",
-						"minor": "525",
-						"major": "2100",
-						"grand": "2100"
-					},
-					"5000": {
-						"mini": "875",
-						"minor": "875",
-						"major": "3500",
-						"grand": "3500"
-					}
+			"amountCommissionConfig": {
+				"300": {
+					"mini": "525",
+					"minor": "0",
+					"major": "0",
+					"grand": "0"
+				},
+				"500": {
+					"mini": "525",
+					"minor": "350",
+					"major": "0",
+					"grand": "0"
+				},
+				"1000": {
+					"mini": "525",
+					"minor": "525",
+					"major": "700",
+					"grand": "0"
+				},
+				"2000": {
+					"mini": "350",
+					"minor": "350",
+					"major": "1400",
+					"grand": "1400"
+				},
+				"3000": {
+					"mini": "525",
+					"minor": "525",
+					"major": "2100",
+					"grand": "2100"
+				},
+				"5000": {
+					"mini": "875",
+					"minor": "875",
+					"major": "3500",
+					"grand": "3500"
+				}
 			},
 			"proportionCommissionConfig": {
 				"mini": "1.75",
