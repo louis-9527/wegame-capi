@@ -156,7 +156,9 @@ public abstract class AbsJackpotHandler {
                 commissionResultMap.put(poolType, 0L);
             } else {
                 rate = rate.divide(new BigDecimal(100));
-                commissionResultMap.put(poolType, new BigDecimal(betAmount).multiply(rate).longValue());
+                // betAmount -> commissionAmount 需要*10，增加一位小数精度
+                long commissionAmount = new BigDecimal(betAmount).multiply(rate).multiply(BigDecimal.TEN).longValue();
+                commissionResultMap.put(poolType, commissionAmount);
             }
         }
         return commissionResultMap;
