@@ -7,7 +7,6 @@ CREATE TEMPORARY TABLE mongo_operation_event_config_record_source (
   gameRecordIds STRING,
   wheel STRING,
   extInfo STRING,
-
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -26,7 +25,7 @@ CREATE TEMPORARY TABLE doris_operation_event_config_record_sink (
   gameRecordIds VARCHAR,
   wheel VARCHAR,
   extInfo VARCHAR,
-  syncCreateTime TIMESTAMP,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -54,5 +53,5 @@ SELECT
   gameRecordIds,
   wheel,
   extInfo,
-  LOCALTIMESTAMP AS syncCreateTime
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_operation_event_config_record_source;

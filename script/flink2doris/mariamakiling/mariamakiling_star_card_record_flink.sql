@@ -41,9 +41,9 @@ CREATE TEMPORARY TABLE doris_star_card_record_sink (
   failMsg VARCHAR,
   failCode INT,
   reportStatus INT,
-  createTime TIMESTAMP,
-  updateTime TIMESTAMP,
-  syncCreateTime TIMESTAMP,
+  createTime BIGINT,
+  updateTime BIGINT,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -78,7 +78,7 @@ SELECT
   failMsg,
   failCode,
   reportStatus,
-  TO_TIMESTAMP_LTZ(createTime, 3) AS createTime,
-  TO_TIMESTAMP_LTZ(updateTime, 3) AS updateTime,
-  LOCALTIMESTAMP AS syncCreateTime
+  createTime,
+  updateTime,
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_star_card_record_source;

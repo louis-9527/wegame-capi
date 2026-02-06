@@ -27,7 +27,8 @@ CREATE TEMPORARY TABLE mongo_bet_record_source (
   'uri' = 'mongodb+srv://QATmakiling_Doris_Service:D180HNf5aXMuhIvt@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/makiling?ssl=false&readPreference=secondary',
   'database' = 'makiling',
   'collection' = 'mariamakiling_bet_record',
-  'scan.startup.mode' = 'initial'
+  'scan.startup.mode' = 'initial',
+  'scan.ignore-delete.enabled' = 'true'
 );
 
 CREATE TEMPORARY TABLE doris_bet_record_sink (
@@ -48,12 +49,12 @@ CREATE TEMPORARY TABLE doris_bet_record_sink (
   userId BIGINT,
   status INT,
   reachMaxMultiple BOOLEAN,
-  createTime TIMESTAMP,
-  betTime TIMESTAMP,
-  updateTime TIMESTAMP,
+  createTime BIGINT,
+  betTime BIGINT,
+  updateTime BIGINT,
   creator STRING,
   updater STRING,
-  syncCreateTime TIMESTAMP,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -73,27 +74,27 @@ CREATE TEMPORARY TABLE doris_bet_record_sink (
 
 INSERT INTO doris_bet_record_sink
 SELECT
-  `_id`,
-  betAmount,
-  betId,
-  betPromotionType,
-  betSerialNo,
-  betSubType,
-  betType,
-  channelId,
-  gameId,
-  pId,
-  payAmount,
-  payOutAmount,
-  playerId,
-  playerName,
-  userId,
-  status,
-  reachMaxMultiple,
-  TO_TIMESTAMP_LTZ(createTime, 3) AS createTime,
-  TO_TIMESTAMP_LTZ(betTime, 3) AS betTime,
-  TO_TIMESTAMP_LTZ(updateTime, 3) AS updateTime,
-  creator,
-  updater,
-  LOCALTIMESTAMP AS syncCreateTime
+    `_id`,
+    betAmount,
+    betId,
+    betPromotionType,
+    betSerialNo,
+    betSubType,
+    betType,
+    channelId,
+    gameId,
+    pId,
+    payAmount,
+    payOutAmount,
+    playerId,
+    playerName,
+    userId,
+    status,
+    reachMaxMultiple,
+    createTime,
+    betTime,
+    updateTime,
+    creator,
+    updater,
+    UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_bet_record_source;

@@ -37,7 +37,7 @@ CREATE TEMPORARY TABLE doris_game_record_sink (
   gameRecordIds STRING,
   rewardResult STRING,
   wheel STRING,
-  syncCreateTime TIMESTAMP,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -71,5 +71,5 @@ SELECT
   gameRecordIds,
   rewardResult,
   wheel,
-  LOCALTIMESTAMP AS syncCreateTime
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_game_record_source;
