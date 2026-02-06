@@ -40,6 +40,7 @@ public class FilterConfig {
             "/freeSpin/*",
             "/contract/*",
             "/redirect/*",
+            "/redeem/*",
     };
 
     @Bean
