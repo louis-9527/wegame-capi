@@ -141,7 +141,7 @@ public class AtlantisBizEventHandler {
     }
 
     /**
-     * 炸弹，将棋盘中数量最少的棋子清除（不触发奖励）
+     * 炸弹，将棋盘中数量最少的基础棋子（不包括wild，Scatter）清除（不触发奖励）
      *
      * @param nextSymbolArr nextSymbolArr
      * @param sort          排序
@@ -153,7 +153,7 @@ public class AtlantisBizEventHandler {
         for (int row = 0; row < nextSymbolArr.length; row++) {
             for (int column = 0; column < nextSymbolArr[row].length; column++) {
                 SymbolDo symbolDo = nextSymbolArr[row][column];
-                if (Objects.isNull(symbolDo)) {
+                if (Objects.isNull(symbolDo) || symbolDo.isWildSymbol() || symbolDo.isScatterSymbol()) {
                     continue;
                 }
                 List<IndexDo> indexDos = symbolIndexMap.get(symbolDo);

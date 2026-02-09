@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.atlantis.game;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
@@ -22,6 +23,9 @@ import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
+import com.wegame.capi.common.enums.BizEventEnum;
+import lombok.Data;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -49,93 +54,114 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
     public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
         List<AtlantisGameRecordDo> ret = new ArrayList<>();
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.ATLANTIS);
-        // 获取首轮(batchId == 0 and index == 0)
+        // 获取首轮(parentId == 0 and index == 0)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
 
-        // 处理首轮
-        AtomicLong totalRewardAmount = new AtomicLong(0L);
-        long firstGameRecordId = super.generateGameRecordId();
-        AtlantisGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO, totalRewardAmount);
-        ret.add(firstGameRecord);
         // 按 batchId 分组 & 记录 ID 映射
         Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId = gameMultipleRecordDos.stream()
                 .collect(Collectors.groupingBy(OperationEventConfigRecordDo::getBatchId));
 
-        // 获取首批次并排序
         List<OperationEventConfigRecordDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
                 .stream()
                 .sorted(Comparator.comparing(OperationEventConfigRecordDo::getIndex))
                 .collect(Collectors.toList());
-        // 处理每个批次
-        AtlantisGameRecordDo lastGameRecord = firstGameRecord;
 
-        for (OperationEventConfigRecordDo recordDo : recordBatchList) {
-            if (recordDo.getParentId() != 0L) {
-                // 处理首轮普通轮
-                long gameRecordId = generateGameRecordId();
-                AtlantisGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO, totalRewardAmount);
-                ret.add(gameRecord);
-                lastGameRecord = gameRecord;
-            }
+        // 处理首轮-返回最后一回合的信息
+        AtomicLong totalRewardAmount = new AtomicLong(0L);
+        OneWheelPlayResult firstWheelPlayResult = this.oneWheelPlay(gamePlay, recordBatchList, RECORD_DEFAULT_PARENT_ID, ret, BigDecimal.ZERO, totalRewardAmount, new AtomicInteger(0));
 
-            if (CollectionUtils.isEmpty(recordDo.getGameRecordIds())) {
-                continue;
-            }
-            // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId, totalRewardAmount);
+        // 处理免费轮
+        if (Objects.nonNull(firstWheelPlayResult) && firstWheelPlayResult.hasFreeWheel()) {
+            this.freeWheelPlay(totalRewardAmount, gamePlay, ret, firstWheelPlayResult, groupedByBatchId);
+        }
+        if (CollectionUtils.isNotEmpty(ret)) {
+            ret.get(ret.size() - 1).setLastGameFlag(true);
         }
         //// 总中奖金额
         gamePlay.setOverallRewardAmount(totalRewardAmount.get());
         return ret;
     }
 
-
     /**
-     * 递归处理免费轮，确保同层级先处理完，再进入下一层
+     * 免费轮玩
+     *
+     * @param totalRewardAmount    累计中奖金额
+     * @param gamePlay             play
+     * @param ret                  返回
+     * @param firstWheelPlayResult 首轮结果
      */
-    private void processFreeRounds(
-            List<AtlantisGameRecordDo> ret,
-            GamePlayDo gamePlay,
-            OperationEventConfigRecordDo recordDo,
-            AtlantisGameRecordDo parent,
-            Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId,
-            AtomicLong totalRewardAmount) {
+    private void freeWheelPlay(AtomicLong totalRewardAmount, GamePlayDo gamePlay, List<AtlantisGameRecordDo> ret, OneWheelPlayResult firstWheelPlayResult, Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId) {
+        LinkedList<OneWheelPlayResult> queue = new LinkedList<>();
+        queue.addLast(firstWheelPlayResult);
+        // 免费轮单独算
+        AtomicInteger totalRewardCount = new AtomicInteger(0);
+        while (!queue.isEmpty()) {
+            // 一个一个处理
+            List<Long> configGameRecordIdList = firstWheelPlayResult.getConfigGameRecordIdList();
+            Long parentId = firstWheelPlayResult.getLastRoundGameRecordId();
+            for (Long configGameRecordId : configGameRecordIdList) {
+                // 一轮记录信息
+                List<OperationEventConfigRecordDo> recordBatchList = groupedByBatchId.getOrDefault(configGameRecordId, Collections.emptyList())
+                        .stream()
+                        .sorted(Comparator.comparing(OperationEventConfigRecordDo::getIndex))
+                        .collect(Collectors.toList());
 
-        Map<OperationEventConfigRecordDo, AtlantisGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
-
-        List<Long> gameRecordIds = new ArrayList<>();
-        for (Long batchId : recordDo.getGameRecordIds()) {
-            List<OperationEventConfigRecordDo> currentLevelRecords = groupedByBatchId.get(batchId);
-            currentLevelRecords.sort(Comparator.comparing(OperationEventConfigRecordDo::getIndex));
-            // 处理当前层级的每个记录
-            AtlantisGameRecordDo preGameRecord = null;
-            for (OperationEventConfigRecordDo record : currentLevelRecords) {
-                BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
-                long gameRecordId = generateGameRecordId();
-                AtlantisGameRecordDo gameRecord = null;
-                if (record.getIndex() == 0) {
-                    gameRecordIds.add(gameRecordId);
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record, totalMultipleAmount, totalRewardAmount);
-                    ret.add(gameRecord);
-                } else {
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record, totalMultipleAmount, totalRewardAmount);
-                    ret.add(gameRecord);
-                }
-                preGameRecord = gameRecord;
-                if (CollectionUtils.isNotEmpty(record.getGameRecordIds())) {
-                    nextLevelGameRecordMap.put(record, gameRecord);
+                // 处理一轮
+                OneWheelPlayResult oneWheelPlayResult = this.oneWheelPlay(gamePlay, recordBatchList, parentId, ret, BigDecimal.ZERO, totalRewardAmount, totalRewardCount);
+                // 有免费轮则继续处理
+                if (Objects.nonNull(oneWheelPlayResult) && oneWheelPlayResult.hasFreeWheel()) {
+                    queue.addLast(oneWheelPlayResult);
                 }
             }
         }
-        parent.setGameRecordIds(gameRecordIds);
-        for (Map.Entry<OperationEventConfigRecordDo, AtlantisGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
-            OperationEventConfigRecordDo key = entry.getKey();
-            AtlantisGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, totalRewardAmount);
+    }
+
+    /**
+     * 单轮玩
+     *
+     * @param gamePlay              play
+     * @param recordBatchList       统一批次config List.根据index排序的
+     * @param recordDefaultParentId 默认父级ID
+     * @param ret                   返回
+     * @param totalMultiple         0
+     * @param totalRewardAmount     累计中奖金额
+     * @return OneWheelPlayResult
+     */
+    private OneWheelPlayResult oneWheelPlay(GamePlayDo gamePlay, List<OperationEventConfigRecordDo> recordBatchList, Long recordDefaultParentId, List<AtlantisGameRecordDo> ret, BigDecimal totalMultiple, AtomicLong totalRewardAmount, AtomicInteger totalRewardCount) {
+        AssertUtil.assertNotEmpty(recordBatchList, ErrorCode.ERR_INTER, "recordBatchList is empty");
+        // 定义返回需要的数据
+        AtlantisGameRecordDo lastRoundGameRecord = null;
+        Long parentId = recordDefaultParentId;
+        Long batchId = null;
+        // 处理回合
+        for (int i = 0; i < recordBatchList.size(); i++) {
+            // 拿到回合
+            OperationEventConfigRecordDo round = recordBatchList.get(i);
+            long roundGameRecordId = super.generateGameRecordId();
+            // 首回合的recordId为batchId
+            if (i == 0) {
+                batchId = roundGameRecordId;
+            }
+            AtlantisGameRecordDo roundAtlantisGameRecordDo = this.processGameRecord(gamePlay, roundGameRecordId, parentId, batchId, round, totalMultiple, totalRewardAmount, totalRewardCount);
+            // 添加到结果
+            ret.add(roundAtlantisGameRecordDo);
+            // 最后一回合的实际结果
+            if (i == recordBatchList.size() - 1) {
+                lastRoundGameRecord = roundAtlantisGameRecordDo;
+            }
+            // parentId
+            parentId = roundGameRecordId;
         }
+
+        // 返回
+        return OneWheelPlayResult.builder()
+                .lastRoundConfigRecord(recordBatchList.get(recordBatchList.size() - 1))
+                .lastRoundGameRecord(lastRoundGameRecord)
+                .build();
+
     }
 
     /**
@@ -148,16 +174,36 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
             long batchId,
             OperationEventConfigRecordDo recordDo,
             BigDecimal totalMultiple,
-            AtomicLong totalRewardAmount) {
+            AtomicLong totalRewardAmount,
+            AtomicInteger totalRewardCount) {
 
-        // 确定 `TotalMultiple` 参数
+        // 获取滚轮
         WheelDo<SymbolDo> symbolWheel = this.convertWheel(recordDo.getWheel());
         // 获取事件
-        List<GameBizEventDo> gameEventList = this.getGameEventList(recordDo);
+        List<GameBizEventDo> configGameEventList = this.getGameEventList(recordDo);
         // 处理空值
-        RewardResultDo<SymbolDo> rewardResult = this.rewardHandler(gamePlay, symbolWheel, totalMultiple, totalRewardAmount, gameEventList);
+        RewardResultDo<SymbolDo> rewardResult = this.rewardHandler(gamePlay, symbolWheel, totalMultiple, totalRewardAmount, configGameEventList, totalRewardCount);
         // 构建时还原
-        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, symbolWheel, rewardResult);
+        AtlantisGameRecordDo atlantisGameRecordDo = this.buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, symbolWheel, rewardResult);
+        // 重新构建业务事件
+        List<GameBizEventDo> gameEventList = this.reBuildBizEventList(configGameEventList, rewardResult);
+        atlantisGameRecordDo.setBizEventList(gameEventList);
+        return atlantisGameRecordDo;
+    }
+
+    private List<GameBizEventDo> reBuildBizEventList(final List<GameBizEventDo> configGameEventList, final RewardResultDo<SymbolDo> rewardResult) {
+        List<GameBizEventDo> effectBizEventList = rewardResult.getEffectBizEventList();
+        // 是否包含黄金奶牛
+        if (CollectionUtil.isEmpty(effectBizEventList)) {
+            return configGameEventList;
+        }
+        // configGameEventList 为空说明模版有问题
+        AssertUtil.assertNotEmpty(configGameEventList, ErrorCode.ERR_PARAM, "configGameEventList is empty");
+        List<GameBizEventDo> rewardGoldenCowList = effectBizEventList.stream().filter(gameBizEventDo -> gameBizEventDo.getBizEventType() == BizEventEnum.EVENT_GOLDEN_COW).collect(Collectors.toList());
+        List<GameBizEventDo> gameBizEventList = configGameEventList.stream().filter(gameBizEventDo -> gameBizEventDo.getBizEventType() != BizEventEnum.EVENT_GOLDEN_COW).collect(Collectors.toList());
+        gameBizEventList.addAll(rewardGoldenCowList);
+        gameBizEventList.sort(Comparator.comparing(GameBizEventDo::getSort));
+        return gameBizEventList;
     }
 
     private List<GameBizEventDo> getGameEventList(OperationEventConfigRecordDo recordDo) {
@@ -168,12 +214,16 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
         }
     }
 
-    private RewardResultDo<SymbolDo> rewardHandler(GamePlayDo gamePlay, WheelDo<SymbolDo> wheel, BigDecimal currentMultiple, AtomicLong totalRewardAmount, List<GameBizEventDo> gameEventList) {
+    private RewardResultDo<SymbolDo> rewardHandler(GamePlayDo gamePlay, WheelDo<SymbolDo> wheel, BigDecimal currentMultiple, AtomicLong totalRewardAmount, List<GameBizEventDo> gameEventList, AtomicInteger totalRewardCount) {
         // 中奖处理
-        RewardHandleDo<SymbolDo> rewardHandle = RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, currentMultiple, totalRewardAmount.get(), null, gameEventList);
+        RewardHandleDo<SymbolDo> rewardHandle = RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, currentMultiple, totalRewardAmount.get(), totalRewardCount.get(), gameEventList);
         RewardResultDo<SymbolDo> rewardResult = atlantisRewardHandler.handle(rewardHandle);
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
+        AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
+        if (CollectionUtil.isNotEmpty(rewardResult.getRewardLineDetailList())) {
+            totalRewardCount.addAndGet(rewardResult.getRewardLineDetailList().size());
+        }
         return rewardResult;
     }
 
@@ -185,6 +235,7 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
                                                  RewardResultDo<SymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+
         return AtlantisGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
@@ -205,4 +256,34 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
         return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<SymbolDo>>() {
         });
     }
+
+    /**
+     * 单轮玩结果
+     */
+    @Data
+    @SuperBuilder
+    public static class OneWheelPlayResult {
+        /**
+         * 最后一回合的配置模版记录
+         */
+        private OperationEventConfigRecordDo lastRoundConfigRecord;
+        /**
+         * 最后一回合的实际gameRecord
+         */
+        private AtlantisGameRecordDo lastRoundGameRecord;
+
+        public boolean hasFreeWheel() {
+            return Objects.nonNull(lastRoundConfigRecord) && CollectionUtil.isNotEmpty(this.lastRoundConfigRecord.getGameRecordIds());
+        }
+
+        public List<Long> getConfigGameRecordIdList() {
+            return lastRoundConfigRecord.getGameRecordIds();
+        }
+
+        public Long getLastRoundGameRecordId() {
+            return lastRoundGameRecord.getId();
+        }
+
+    }
+
 }

@@ -59,7 +59,6 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
     public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        // 内部干预决策逻辑
         TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(gamePlay);
 
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(ATLANTIS, gamePlay.getBetType(), gamePlay.getBetSubType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), AtlantisBetRecordTemplateEsDo.class);
@@ -120,10 +119,6 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
 
         LinkedHashMap<String, Integer> integerMultipleRangeMap = this.buildIntegerMultipleRangeMap(decimalMultipleRangeMap);
         String templateIdRange = randomService.randomKeyByWeight(integerMultipleRangeMap);
-        // inner dos 决策
-//        InnerDosDecideResult decideResult = innerDosDeciderManager.decide(gamePlay.getGameType(), gamePlay);
-//        AssertUtil.assertNotNull(decideResult, ErrorCode.ERR_INTER, "inner dos decide result is null");
-//        String templateIdRange = decideResult.getTemplateIdRange();
         AssertUtil.assertStrNotEmpty(templateIdRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateIdRange);
     }
