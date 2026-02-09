@@ -71,8 +71,13 @@ public class AtlantisTemplateLoadPostHandler extends AbstractTemplateLoadPostHan
 
         templateRangeMap.forEach((String betSubTypeCode, LinkedHashMap<String, Integer> rangeWeightMap) -> {
             try {
+                // normal 和 luck boy(EX_BET)一个模版，统一使用Normal
                 BetSubTypeEnum betSubType = BetSubTypeEnum.valueOfCode(betSubTypeCode);
                 AssertUtil.assertNotNull(betSubType, ErrorCode.ERR_PARAM, "no support betSubType of " + betSubTypeCode);
+                // luckboy 不预热
+                if (BetSubTypeEnum.EX_BET.equals(betSubType)) {
+                    return;
+                }
                 log.info("{} template load start...", betSubTypeCode);
                 List<Long> gameTemplateIdList = new LinkedList<>();
                 rangeWeightMap.keySet().forEach((String rangeString) -> {

@@ -22,6 +22,7 @@ import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
@@ -45,7 +46,6 @@ import static com.wegame.capi.common.enums.TemplateTypeEnum.ATLANTIS;
 @ConditionalOnProperty(name = Constants.ATLANTIS_PROP, havingValue = TRUE_VAL)
 public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo> {
 
-    private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final GameInfoDo GAME_INFO = AtlantisGameHelper.ATLANTIS_GAME_INFO;
 
     @Autowired
@@ -61,13 +61,14 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(gamePlay);
 
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(ATLANTIS, gamePlay.getBetType(), gamePlay.getBetSubType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), AtlantisBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(ATLANTIS, gamePlay.getBetType(), this.getTemplateBetSubType(gamePlay.getBetSubType()), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), AtlantisBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = this.getRandomElement(betRecordIdList);
         log.info("betRecordId:{}", betRecordId);
         List<GameRecordTemplateDo> configRecordList;
         AtlantisBetRecordTemplateEsDo template;
-        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.ATLANTIS, gamePlay.getBetType(), gamePlay.getBetSubType(), templateMultipleRange)) {
+
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.ATLANTIS, gamePlay.getBetType(), this.getTemplateBetSubType(gamePlay.getBetSubType()), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存.atlantis只存在本地缓存
             template = betRecordTemplateEsService.getTemplateWithLocalCache(ATLANTIS, betRecordId, AtlantisBetRecordTemplateEsDo.class);
         } else {
@@ -96,12 +97,20 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         return ret;
     }
 
+    private BetSubTypeEnum getTemplateBetSubType(BetSubTypeEnum betSubType) {
+        // normal 和 luck boy(EX_BET)一个模版，统一使用Normal
+        if (betSubType == BetSubTypeEnum.EX_BET) {
+            return BetSubTypeEnum.NORMAL_BET;
+        }
+        return betSubType;
+    }
+
     private AtlantisGameRecordDo buildGameRecord(UserInfo userInfo,
-                                                    Long gameRecordId,
-                                                    Long betRecordId,
-                                                    WheelDo<SymbolDo> wheel,
-                                                    RewardResultDo<SymbolDo> rewardResult,
-                                                    Long TotalRewardAmount) {
+                                                 Long gameRecordId,
+                                                 Long betRecordId,
+                                                 WheelDo<SymbolDo> wheel,
+                                                 RewardResultDo<SymbolDo> rewardResult,
+                                                 Long TotalRewardAmount) {
         return AtlantisGameRecordDo.builder()
                 .id(gameRecordId)
                 .betRecordId(betRecordId)
@@ -113,20 +122,11 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
     }
 
     private TemplateMultipleRange getTemplateMultipleRange(GamePlayDo gamePlay) {
-        // todo
-        Map<String, LinkedHashMap<String, BigDecimal>> templateRangeMap = new HashMap<>();
-        LinkedHashMap<String, BigDecimal> decimalMultipleRangeMap = templateRangeMap.get(gamePlay.getBetSubType().getCode());
-
-        LinkedHashMap<String, Integer> integerMultipleRangeMap = this.buildIntegerMultipleRangeMap(decimalMultipleRangeMap);
-        String templateIdRange = randomService.randomKeyByWeight(integerMultipleRangeMap);
+        LinkedHashMap<String, Integer> multipleRangeMap = atlantisConfig.getTemplateRangeConfig().getTemplateRangeMap().get(gamePlay.getBetSubType().getCode());
+        AssertUtil.assertNotNull(multipleRangeMap, ErrorCode.ERR_INTER, "multipleRangeMap is null");
+        String templateIdRange = randomService.randomKeyByWeight(multipleRangeMap);
         AssertUtil.assertStrNotEmpty(templateIdRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateIdRange);
-    }
-
-    private LinkedHashMap<String, Integer> buildIntegerMultipleRangeMap(LinkedHashMap<String, BigDecimal> decimalMultipleRangeMap) {
-        LinkedHashMap<String, Integer> integerLinkedHashMap = new LinkedHashMap<>();
-        decimalMultipleRangeMap.forEach((key, value) -> integerLinkedHashMap.put(key, value.multiply(new BigDecimal(Constants.CONST_100)).intValue()));
-        return integerLinkedHashMap;
     }
 
     private Long getRandomElement(List<Long> list) {
