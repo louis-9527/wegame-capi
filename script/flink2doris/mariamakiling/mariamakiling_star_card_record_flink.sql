@@ -16,6 +16,7 @@ CREATE TEMPORARY TABLE mongo_star_card_record_source (
   reportStatus INT,
   createTime BIGINT,
   updateTime BIGINT,
+  expiredAt BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -43,6 +44,7 @@ CREATE TEMPORARY TABLE doris_star_card_record_sink (
   reportStatus INT,
   createTime BIGINT,
   updateTime BIGINT,
+  expiredAt BIGINT,
   syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
@@ -80,5 +82,6 @@ SELECT
   reportStatus,
   createTime,
   updateTime,
+  expiredAt,
   UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_star_card_record_source;

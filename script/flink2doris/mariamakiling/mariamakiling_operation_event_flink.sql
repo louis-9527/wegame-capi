@@ -19,6 +19,7 @@ CREATE TEMPORARY TABLE mongo_operation_event_source (
   reportTime BIGINT,
   createTime BIGINT,
   updateTime BIGINT,
+  expiredAt BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -49,6 +50,7 @@ CREATE TEMPORARY TABLE doris_operation_event_sink (
   reportTime BIGINT,
   createTime BIGINT,
   updateTime BIGINT,
+  expiredAt BIGINT,
   syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
@@ -89,5 +91,6 @@ SELECT
   reportTime,
   createTime,
   updateTime,
+  expiredAt,
   UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_operation_event_source;

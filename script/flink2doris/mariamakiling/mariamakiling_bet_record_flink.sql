@@ -19,6 +19,7 @@ CREATE TEMPORARY TABLE mongo_bet_record_source (
   createTime BIGINT,
   betTime BIGINT,
   updateTime BIGINT,
+  expiredAt BIGINT,
   creator STRING,
   updater STRING,
   PRIMARY KEY(_id) NOT ENFORCED
@@ -52,6 +53,7 @@ CREATE TEMPORARY TABLE doris_bet_record_sink (
   createTime BIGINT,
   betTime BIGINT,
   updateTime BIGINT,
+  expiredAt BIGINT,
   creator STRING,
   updater STRING,
   syncCreateTime BIGINT,
@@ -94,6 +96,7 @@ SELECT
     createTime,
     betTime,
     updateTime,
+    expiredAt,
     creator,
     updater,
     UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
