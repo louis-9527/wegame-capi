@@ -9,6 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
+import com.wegame.capi.common.utils.JackpotAmountUtil;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 
 import java.util.Collections;
@@ -71,7 +72,8 @@ public class JackpotRewardPoolConverter {
         vo.setId(Objects.nonNull(jackpotRewardPoolDo.getId()) ? String.valueOf(jackpotRewardPoolDo.getId()) : null);
         vo.setType(jackpotRewardPoolDo.getType().getCode());
         // 金额取保底和jackpot金额的大值
-        vo.setAmount(jackpotRewardPoolDo.getJackpotAmount());
+        // 把数据库中的数据/10,对齐精度
+        vo.setAmount(JackpotAmountUtil.toFrontLong(jackpotRewardPoolDo.getJackpotAmount()));
         return vo;
     }
 
