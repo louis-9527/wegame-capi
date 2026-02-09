@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         mangkukulam_mdb:
-          primary_uri: mongodb+srv://PRODmangkukulam_Service:Pc634vmuZOAvfyV@prod-mangkukulam-pri.mongodb.singapore.nosql.aliyuncs.com/mangkukulam?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=malakas-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://PRODmangkukulam_Service:Pc634vmuZOAvfyV@prod-mangkukulam-pri.mongodb.singapore.nosql.aliyuncs.com/mangkukulam?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=malakas-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://PRODmangkukulam_Service:Pc634vmuZOAvfyV@prod-mangkukulam-pri.mongodb.singapore.nosql.aliyuncs.com/mangkukulam?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=mangkukulam-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://PRODmangkukulam_Service:Pc634vmuZOAvfyV@prod-mangkukulam-pri.mongodb.singapore.nosql.aliyuncs.com/mangkukulam?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=mangkukulam-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: mangkukulam
 ## pulsar
 pulsar:
