@@ -92,7 +92,7 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                 log.info("loadLocalCache start, betType: {}, templateType: {}, size: {}", betType, templateType.getBetRecordTemplateName(), templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    List<DiwataBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.DIWATA_MAYARI, idList, DiwataBetRecordTemplateEsDo.class);
+                    List<DiwataBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, DiwataBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
