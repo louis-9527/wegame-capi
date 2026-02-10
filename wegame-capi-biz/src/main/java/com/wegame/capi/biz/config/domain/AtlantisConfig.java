@@ -44,7 +44,10 @@ public class AtlantisConfig extends GameBizConfig implements Serializable {
      * 模版范围配置
      */
     private TemplateRangeConfig templateRangeConfig;
-
+    /**
+     * 购买免费轮期望的scatter个数
+     */
+    private Integer buyBetExceptedScatterCount;
 
     @Data
     @ToString
