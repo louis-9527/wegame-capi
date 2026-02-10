@@ -17,7 +17,7 @@ import static com.wegame.capi.client.domain.request.BetRequest.BetDetail.MIN_BET
  * @author bruce
  */
 public class BayanihanValidator {
-    private static final long MULTIPLE_35 = 35;
+    private static final long MULTIPLE_30 = 30;
 
     public static void validateParam(BetTypeEnum betType, BetSubTypeEnum betSubType, BetRequest.BetDetail betDetail) {
         AssertUtil.assertNotNull(betDetail.getBetAmount(), ErrorCode.ERR_PARAM);
@@ -54,7 +54,7 @@ public class BayanihanValidator {
                 if (betDetail.isUseStarCard()) {
                     AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount()), ErrorCode.ERR_PARAM);
                 } else {
-                    AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount() * MULTIPLE_35), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount() * MULTIPLE_30), ErrorCode.ERR_PARAM);
                 }
             } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
                 AssertUtil.assertNotNull(betDetail.getPayAmount(), ErrorCode.ERR_PARAM);
