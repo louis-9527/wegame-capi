@@ -77,8 +77,7 @@ public abstract class AbstractContinuePlayScheduler
                         .orElse(Collections.emptyList())
                         .stream()
                         .filter(item -> BetSubTypeEnum.isFirstStep(item.getBetSubType()))
-                        .forEach(betRecord ->
-                                autoContinuePlayGameThreadPoolExecutor.submit(() -> autoContinuePlay(betRecord)));
+                        .forEach(this::autoContinuePlay);
             } while (CollectionUtils.isNotEmpty(detailList));
             log.info("AbstractContinuePlayScheduler run end. cost time: {}", DateUtil.getCurrentMilli() - startTime);
         } catch (Exception e) {
