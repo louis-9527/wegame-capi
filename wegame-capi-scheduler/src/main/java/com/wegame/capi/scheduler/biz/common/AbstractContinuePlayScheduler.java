@@ -4,9 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.module.base.bet.strategy.BetStrategy;
-import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -19,7 +17,6 @@ import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -43,9 +40,6 @@ public abstract class AbstractContinuePlayScheduler
 
     @Autowired
     ThreadPoolExecutor autoContinuePlayGameThreadPoolExecutor;
-    @Qualifier("malakasGameEventPlay")
-    @Autowired
-    private Game<MalakasGameRecordDo> game;
 
     public abstract GameTypeEnum gameType();
 
