@@ -11,6 +11,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.*;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +78,8 @@ public abstract class AbstractContinuePlayScheduler
                         .orElse(Collections.emptyList())
                         .stream()
                         .filter(item -> BetSubTypeEnum.isFirstStep(item.getBetSubType()))
-                        .forEach(this::autoContinuePlay);
+                        .forEach(betRecord ->
+                                autoContinuePlayGameThreadPoolExecutor.submit(() -> autoContinuePlay(betRecord)));
             } while (CollectionUtils.isNotEmpty(detailList));
             log.info("AbstractContinuePlayScheduler run end. cost time: {}", DateUtil.getCurrentMilli() - startTime);
         } catch (Exception e) {
@@ -88,7 +90,10 @@ public abstract class AbstractContinuePlayScheduler
     private void autoContinuePlay(BetRecordDo betRecordDo) {
         try {
             UserInfoContext.setUserInfo(buildUserInfo(betRecordDo));
-            betStrategy().bet(buildBetDo(betRecordDo));
+            String lockName = LockNameUtil.getContinuePlayRecordLock(gameType(), betRecordDo.getId());
+            distributeLock.lockThenRun(lockName, () -> {
+                betStrategy().bet(buildBetDo(betRecordDo));
+            }, "lock error");
         } catch (Exception e) {
             log.error("AbstractContinuePlayScheduler autoContinuePlay exception", e);
         } finally {

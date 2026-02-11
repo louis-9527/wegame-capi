@@ -21,7 +21,7 @@ public abstract class AbstractScheduler implements InitializingBean {
     public static final int DEFAULT_PAGE_SIZE = 100;
     private static final String LOCK_FAIL_TIP = "Get lock[%s] fail";
     @Autowired
-    DistributeLock distributeLock;
+    public DistributeLock distributeLock;
 
     @Override
     public void afterPropertiesSet() {
