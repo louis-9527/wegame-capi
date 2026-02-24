@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
@@ -28,6 +29,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Component("mangkukulamNormalBetStrategy")
 public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy {
 
+    private static final BigDecimal TEN = new BigDecimal(10);
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
     @Autowired
@@ -42,23 +44,26 @@ public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy
         defaultThreadPoolExecutor.execute(() -> {
             try {
                 BetRecordDo betRecord = mangkukulamBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.MANGKUKULAM);
-                AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
-                GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
-                Long freeWheelCount = mangkukulamBetRecordManager.countGameRecord(query, GameTypeEnum.MANGKUKULAM);
-                if (Objects.isNull(freeWheelCount)) {
-                    log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
-                    return;
+                //                AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
+                //                GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
+                //                Long freeWheelCount = mangkukulamBetRecordManager.countGameRecord(query, GameTypeEnum.MANGKUKULAM);
+                //                if (Objects.isNull(freeWheelCount)) {
+                //                    log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
+                //                    return;
+                //                }
+                BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(betRecord.getPayAmount()), 2, BigDecimal.ROUND_FLOOR);
+                if (multi.compareTo(TEN) >= 0) {
+                    updateRewardNotifyInfo(multi, betRecord.getPayOutAmount(), userInfo);
                 }
-                updateRewardNotifyInfo(freeWheelCount, betRecord.getPayOutAmount(), userInfo);
             } catch (Exception e) {
                 log.error("freeWheelAfterHandle Exception, errMsg: {}", e.getMessage(), e);
             }
         });
     }
 
-    private void updateRewardNotifyInfo(long freeWheelCount, long totalRewardAmount, UserInfo userInfo) {
+    private void updateRewardNotifyInfo(BigDecimal multi, long totalRewardAmount, UserInfo userInfo) {
         try {
-            log.info("freeWheelAfterHandle updateRewardNotifyInfo freeWheelCount: {}, totalRewardAmount: {}, userInfo: {}", freeWheelCount, totalRewardAmount, userInfo);
+            log.info("freeWheelAfterHandle updateRewardNotifyInfo multi: {}, totalRewardAmount: {}, userInfo: {}", multi, totalRewardAmount, userInfo);
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
                     .gameId(GameTypeEnum.MANGKUKULAM.getId())
@@ -70,8 +75,7 @@ public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy
                     .rewardContent(String.format(Constants.MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
-                            AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount)),
-                            freeWheelCount))
+                            multi))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MANGKUKULAM.getId(), userInfo.getPId(), userInfo.getChannelId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
@@ -83,4 +87,32 @@ public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }
     }
+
+    //    private void updateRewardNotifyInfo(Long freeWheelCount, long totalRewardAmount, UserInfo userInfo) {
+    //        try {
+    //            log.info("freeWheelAfterHandle updateRewardNotifyInfo freeWheelCount: {}, totalRewardAmount: {}, userInfo: {}", freeWheelCount, totalRewardAmount, userInfo);
+    //            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+    //            RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
+    //                    .gameId(GameTypeEnum.MANGKUKULAM.getId())
+    //                    .gameName(GameTypeEnum.MANGKUKULAM.getName())
+    //                    .userId(Long.valueOf(userInfo.getId()))
+    //                    .userName(userInfo.getUserName())
+    //                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
+    //                    .rewardTime(DateUtil.getCurrentMilli())
+    //                    .rewardContent(String.format(Constants.MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT,
+    //                            DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
+    //                            userInfo.getUserName(),
+    //                            AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount)),
+    //                            freeWheelCount))
+    //                    .build();
+    //            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MANGKUKULAM.getId(), userInfo.getPId(), userInfo.getChannelId());
+    //            DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
+    //            log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
+    //            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MANGKUKULAM_REWARD_NOTIFY_SIZE);
+    //            rewardService.evict(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
+    //            rewardService.getWithCache(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
+    //        } catch (Exception e) {
+    //            log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
+    //        }
+    //    }
 }
