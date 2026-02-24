@@ -6,9 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author apple
@@ -29,6 +27,8 @@ public class ThreadPoolConfig {
     public static final String autoContinuePlayGameThreadPoolExecutor = "autoContinuePlayGameThreadPoolExecutor";
     public static final String warmUpConnectionThreadPoolExecutor = "warmUpConnectionThreadPoolExecutor";
     public static final String innerDosThreadPoolExecutor = "innerDosThreadPoolExecutor";
+
+    public static final String scheduledThreadPoolExecutor = "scheduledThreadPoolExecutor";
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -180,6 +180,16 @@ public class ThreadPoolConfig {
                 new CustomizableThreadFactory("inner-dos-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(scheduledThreadPoolExecutor)
+    public ScheduledThreadPoolExecutor scheduledThreadPoolExecutor() {
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1,
+                new CustomizableThreadFactory("scheduled-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
