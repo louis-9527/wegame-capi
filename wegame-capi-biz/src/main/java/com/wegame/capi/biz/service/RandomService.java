@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Component
 public class RandomService {
@@ -36,6 +37,18 @@ public class RandomService {
      */
     public List<Integer> randomIntList(int min, int max, int count) {
         return SecureRandomUtil.randomIntInRangeList(min, max, count);
+    }
+
+    /**
+     * 生成唯一随机数列表
+     *
+     * @param min   min
+     * @param max   max
+     * @param count count
+     * @return 列表
+     */
+    public Set<Integer> randomUniqueIntList(int min, int max, int count) {
+        return SecureRandomUtil.generateUniqueRandomNumbers(min, max, count);
     }
 
     /**

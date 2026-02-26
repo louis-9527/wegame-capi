@@ -16,13 +16,14 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.*;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.atlantis.AtlantisBizEventUtil;
+import com.wegame.capi.biz.module.atlantis.AtlantisBizEventHandler;
 import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
 import com.wegame.capi.biz.module.atlantis.AtlantisSymbolUtil;
 import com.wegame.capi.biz.module.atlantis.reward.AtlantisRewardHandler;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BizEventEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
@@ -50,6 +51,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
 
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
+    private static final Integer BUY_BET_INIT_SCATTER_COUNT = 4;
     private static final GameInfoDo GAME_INFO = AtlantisGameHelper.ATLANTIS_GAME_INFO;
     private static final List<BizEventEnum> SUPPORT_BIZ_EVENT_LIST = Lists.newArrayList(
             BizEventEnum.EVENT_SCATTER
@@ -62,6 +64,8 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
     AtlantisConfig atlantisConfig;
     @Autowired
     AtlantisRewardHandler atlantisRewardHandler;
+    @Autowired
+    private AtlantisBizEventHandler atlantisBizEventHandler;
 
     @Override
     public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
@@ -95,6 +99,10 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
         WheelDo<SymbolDo> wheelDo = this.generateCommonWheel(isFreeFlag);
         // 2.中奖处理
         RewardResultDo<SymbolDo> rewardResultDo = this.rewardHandler(gamePlay, wheelDo, currentMultiple, totalRewardAmount.get(), totalRewardCount);
+        if (!this.canContinue(gamePlay, rewardResultDo, totalRewardAmount)) {
+            // 购买免费轮首轮处理
+            rewardResultDo = this.reRewardHandlerIfNeed(gamePlay, rewardResultDo, wheelDo, null, isFreeFlag, currentMultiple, totalRewardAmount.get(), totalRewardCount);
+        }
         // 3.组装单轮游戏记录
         long gameRecordId = generateGameRecordId();
         AtlantisGameRecordDo gameRecordDo = this.buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), gameRecordId, wheelDo, rewardResultDo);
@@ -104,11 +112,44 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
         // 5.回合处理
         // 如果有中奖，处理回合
         if (this.canContinuePlayOnPreWheel(gamePlay, gameRecordDo, totalRewardAmount)) {
-            return this.roundHandler(gamePlay, gameRecordDo, ret, totalRewardAmount, totalRewardCount);
+            return this.roundHandler(gamePlay, gameRecordDo, ret, totalRewardAmount, totalRewardCount, isFreeFlag);
         } else {
             // 未中奖
             return gameRecordDo;
         }
+    }
+
+    private WheelDo<SymbolDo> generateWheel(boolean isFreeFlag, GamePlayDo gamePlay) {
+        WheelDo<SymbolDo> commonWheelDo = this.generateCommonWheel(isFreeFlag);
+        if (isFreeFlag || !Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+            return commonWheelDo;
+        } else {
+            // 非免费轮的购买轮,默认生成4个
+            List<IndexDo> scatterIndexList = Lists.newArrayList();
+            List<IndexDo> noScatterIndexList = Lists.newArrayList();
+            SymbolDo[][] symbolArr = commonWheelDo.getSymbolArr();
+            for (int row = 0; row < symbolArr.length; row++) {
+                for (int col = 0; col < symbolArr[row].length; col++) {
+                    SymbolDo symbolDo = symbolArr[row][col];
+                    if (symbolDo.isScatterSymbol()) {
+                        scatterIndexList.add(IndexFactory.buildDo(row, col));
+                    } else {
+                        noScatterIndexList.add(IndexFactory.buildDo(row, col));
+                    }
+                }
+            }
+
+            if (scatterIndexList.size() >= BUY_BET_INIT_SCATTER_COUNT) {
+                return commonWheelDo;
+            } else {
+                Set<Integer> newScatterIndexSet = randomService.randomUniqueIntList(0, noScatterIndexList.size() - 1, BUY_BET_INIT_SCATTER_COUNT - scatterIndexList.size());
+                for (Integer index : newScatterIndexSet) {
+                    IndexDo indexDo = noScatterIndexList.get(index);
+                    symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = AtlantisGameHelper.ATLANTIS_SCATTER;
+                }
+            }
+        }
+        return commonWheelDo;
     }
 
     /**
@@ -145,7 +186,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
      * @param totalRewardAmount      总的中奖金额统计
      * @return 产生的免费轮元数据 最后一回合的gameRecord
      */
-    private AtlantisGameRecordDo roundHandler(GamePlayDo gamePlay, AtlantisGameRecordDo firstRoundGameRecordDo, List<AtlantisGameRecordDo> ret, AtomicLong totalRewardAmount, AtomicInteger totalRewardCount) {
+    private AtlantisGameRecordDo roundHandler(GamePlayDo gamePlay, AtlantisGameRecordDo firstRoundGameRecordDo, List<AtlantisGameRecordDo> ret, AtomicLong totalRewardAmount, AtomicInteger totalRewardCount, boolean isFreeWheel) {
         LinkedList<AtlantisGameRecordDo> roundHandlerQueue = Lists.newLinkedList();
         roundHandlerQueue.addLast(firstRoundGameRecordDo);
 
@@ -157,7 +198,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
             // copy 
             SymbolDo[][] nextSymbolArr = AtlantisSymbolUtil.copySymbolArr(preWheel.getSymbolArr());
             // 重新构建nextSymbolArr
-            this.rebuildSymbolArr(nextSymbolArr, preAtlantisGameRecordDo, totalRewardCount);
+            ReBuildSymbolArrResultDo preReBuildSymbolArrResultDo = this.rebuildSymbolArr(gamePlay, nextSymbolArr, preAtlantisGameRecordDo, totalRewardCount);
             // 构建新滚轮
             WheelDo<SymbolDo> nextWheel = WheelDo.<SymbolDo>builder()
                     .index(preWheel.getIndex() + 1)
@@ -166,6 +207,11 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
                     .build();
             // 中奖处理
             RewardResultDo<SymbolDo> nextRewardResultDo = this.rewardHandler(gamePlay, nextWheel, preAtlantisGameRecordDo.getRewardResult().getTotalMultiple(), totalRewardAmount.get(), totalRewardCount);
+            if (!this.canContinue(gamePlay, nextRewardResultDo, totalRewardAmount)) {
+                // 购买免费轮首轮处理
+                nextRewardResultDo = this.reRewardHandlerIfNeed(gamePlay, nextRewardResultDo, nextWheel, preReBuildSymbolArrResultDo, isFreeWheel, preAtlantisGameRecordDo.getRewardResult().getTotalMultiple(), totalRewardAmount.get(), totalRewardCount);
+            }
+
             // 构建gameRecord
             AtlantisGameRecordDo nextGameRecordDo = this.buildGameRecord(generateGameRecordId(), preAtlantisGameRecordDo.getId(), gamePlay.getBetRecordId(), preAtlantisGameRecordDo.getBatchId(), nextWheel, nextRewardResultDo);
             // 添加到gameRecord列表
@@ -177,10 +223,98 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
             if (this.canContinuePlayOnPreWheel(gamePlay, nextGameRecordDo, totalRewardAmount)) {
                 roundHandlerQueue.addLast(nextGameRecordDo);
             } else {
+                // 购买免费轮首轮兜底处理
                 return nextGameRecordDo;
             }
         }
         return null;
+    }
+
+
+    /**
+     * 购买免费轮首轮兜底处理
+     * <p> 如果是购买免费轮首轮，保证一定返回指定数量的scatter.需要满足以下规则</p>
+     * <ul>1.只针对购买免费轮的首轮进行处理</ul>
+     * <ul>2.scatter 所能覆盖的位置一定只能是最后一次下落的剩余空位</ul>
+     * <ul>3.最后一回合肯定是不中奖的，调用方保证</ul>
+     *
+     * @param gamePlay       gamePlay
+     * @param rewardResultDo nextRewardResultDo
+     * @param isFreeWheel    是否是免费轮
+     * @return 兜底gameRecord
+     */
+    private RewardResultDo<SymbolDo> reRewardHandlerIfNeed(GamePlayDo gamePlay, RewardResultDo<SymbolDo> rewardResultDo, WheelDo<SymbolDo> nextWheel,
+                                                           ReBuildSymbolArrResultDo preReBuildSymbolArrResultDo, boolean isFreeWheel, BigDecimal totalMultiple,
+                                                           long totalRewardAmount, AtomicInteger totalRewardCount) {
+        if (isFreeWheel || !Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+            return rewardResultDo;
+        } else {
+            // 统计处当前滚轮有多少scatter
+            List<IndexDo> scatterIndexList = Lists.newArrayList();
+            SymbolDo[][] symbolArr = nextWheel.getSymbolArr();
+            for (int row = 0; row < symbolArr.length; row++) {
+                for (int col = 0; col < symbolArr[row].length; col++) {
+                    SymbolDo symbolDo = symbolArr[row][col];
+                    if (symbolDo.isScatterSymbol()) {
+                        scatterIndexList.add(new IndexDo(row, col));
+                    }
+                }
+            }
+
+            // 如果没有达到期望的个数，则补充差的个数
+            Integer exceptedScatterCount = this.getExceptedScatterCount(gamePlay);
+            if (exceptedScatterCount <= 0) {
+                log.info("no add scatter...");
+                return rewardResultDo;
+            }
+
+            if (scatterIndexList.size() < exceptedScatterCount) {
+                int addScatterCount = exceptedScatterCount - scatterIndexList.size();
+                // 最后一次下落后的空位中随机挑出对应个数补充
+                List<IndexDo> injectEmptyIndexList = this.getCanInjectEmptyIndexList(preReBuildSymbolArrResultDo, symbolArr);
+                injectEmptyIndexList.removeAll(scatterIndexList);
+                // 这里直接报错
+                AssertUtil.assertTrue(addScatterCount <= injectEmptyIndexList.size(), ErrorCode.ERR_INTER, "Scatter count error");
+                // 从injectEmptyIndexList 随机addScatterCount个数，替换成 scatter
+                if (injectEmptyIndexList.size() == 1) {
+                    IndexDo indexDo = injectEmptyIndexList.get(0);
+                    symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = AtlantisGameHelper.ATLANTIS_SCATTER;
+                }
+
+                Set<Integer> injectScatterIndexSet = randomService.randomUniqueIntList(0, injectEmptyIndexList.size() - 1, addScatterCount);
+                for (Integer index : injectScatterIndexSet) {
+                    IndexDo indexDo = injectEmptyIndexList.get(index);
+                    symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = AtlantisGameHelper.ATLANTIS_SCATTER;
+                }
+                return this.rewardHandler(gamePlay, nextWheel, totalMultiple, totalRewardAmount, totalRewardCount);
+            }
+        }
+        return rewardResultDo;
+
+    }
+
+    private List<IndexDo> getCanInjectEmptyIndexList(ReBuildSymbolArrResultDo preReBuildSymbolArrResultDo, SymbolDo[][] symbolArr) {
+        if (Objects.isNull(preReBuildSymbolArrResultDo)) {
+            List<IndexDo> canInjectEmptyIndexList = Lists.newArrayList();
+            // 首轮首回合-在当前盘面中筛选
+            for (int row = 0; row < symbolArr.length; row++) {
+                for (int col = 0; col < symbolArr[row].length; col++) {
+                    canInjectEmptyIndexList.add(IndexFactory.buildDo(row, col));
+                }
+            }
+            return canInjectEmptyIndexList;
+        } else {
+            // 非首轮首回合-在上一轮中筛选
+            return preReBuildSymbolArrResultDo.getInjectEmptyIndexList();
+
+        }
+
+
+    }
+
+    private Integer getExceptedScatterCount(GamePlayDo gamePlay) {
+        // todo
+        return atlantisConfig.getBuyBetExceptedScatterCount();
     }
 
     /**
@@ -190,7 +324,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
      * @param nextSymbolArr           nextSymbolArr
      * @param preAtlantisGameRecordDo preAtlantisGameRecordDo
      */
-    private void rebuildSymbolArr(SymbolDo[][] nextSymbolArr, AtlantisGameRecordDo preAtlantisGameRecordDo, AtomicInteger totalRewardCount) {
+    private ReBuildSymbolArrResultDo rebuildSymbolArr(GamePlayDo gamePlay, SymbolDo[][] nextSymbolArr, AtlantisGameRecordDo preAtlantisGameRecordDo, AtomicInteger totalRewardCount) {
         // 中奖消除
         this.rewardClearUp(nextSymbolArr, preAtlantisGameRecordDo.getRewardResult());
         // 中奖下落
@@ -198,7 +332,8 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
         // 事件处理:事件影响+事件记录到preAtlantisGameRecordDo
         this.bizEventHandler(nextSymbolArr, preAtlantisGameRecordDo);
         // 新滚轮填充空位
-        this.injectEmptyIndex(nextSymbolArr);
+        List<IndexDo> injectEmptyIndexList = this.injectEmptyIndex(nextSymbolArr);
+        return ReBuildSymbolArrResultDo.builder().injectEmptyIndexList(injectEmptyIndexList).build();
     }
 
     /**
@@ -207,7 +342,8 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
      *
      * @param nextSymbolArr nextSymbolArr
      */
-    private void injectEmptyIndex(SymbolDo[][] nextSymbolArr) {
+    private List<IndexDo> injectEmptyIndex(SymbolDo[][] nextSymbolArr) {
+        List<IndexDo> nullIndexList = Lists.newArrayList();
         // 根据配置获取
         TreeMap<AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig = atlantisConfig.getProbabilisticConfig().getWheelProbabilisticConfig();
         // 按列填充盘面
@@ -236,8 +372,10 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
                     IndexDo indexDo = columNullIndexList.get(i);
                     nextSymbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = symbolDoList.get(i);
                 }
+                nullIndexList.addAll(columNullIndexList);
             }
         }
+        return nullIndexList;
     }
 
     /**
@@ -273,7 +411,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
                 continue;
             }
             // 生成事件处理结果
-            GameBizEventDo gameBizEventDo = AtlantisBizEventUtil.handleBizEvent(bizEvent, nextSymbolArr, i);
+            GameBizEventDo gameBizEventDo = atlantisBizEventHandler.handleBizEvent(bizEvent, nextSymbolArr, i);
             // 处理影响-元素替换
             if (Objects.nonNull(gameBizEventDo) && gameBizEventDo.hasSymbolChange()) {
                 SymbolDo changeToSymbol = gameBizEventDo.getChangeToSymbol();
@@ -331,7 +469,10 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
             return false;
         }
         RewardResultDo<SymbolDo> rewardResult = gameRecordDo.getRewardResult();
+        return this.canContinue(gamePlay, rewardResult, totalRewardAmount);
+    }
 
+    private boolean canContinue(GamePlayDo gamePlay, RewardResultDo<SymbolDo> rewardResult, AtomicLong totalRewardAmount) {
         if (Objects.isNull(rewardResult)) {
             return false;
         }
@@ -480,5 +621,11 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
         private AtlantisGameRecordDo parentGameRecord;
         // 任务执行次数
         private int taskTimes;
+    }
+
+    @Data
+    @SuperBuilder
+    private static class ReBuildSymbolArrResultDo {
+        private List<IndexDo> injectEmptyIndexList;
     }
 }

@@ -17,7 +17,7 @@ import java.util.Objects;
  */
 public class AtlantisValidator {
     private static final long MULTIPLE_2 = 2;
-    private static final long MULTIPLE_20 = 20;
+    private static final long MULTIPLE_10 = 10;
     private static final long MULTIPLE_50 = 50;
     private static final long MULTIPLE_200 = 200;
     private static final List<Long> SUPPORT_BET_AMOUNTS = Lists.newArrayList(300L, 500L, 1_000L,
@@ -48,7 +48,7 @@ public class AtlantisValidator {
             } else if (Objects.equals(betSubType, BetSubTypeEnum.EX_BET)) {
                 AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount() * MULTIPLE_2), ErrorCode.ERR_PARAM);
             } else if (Objects.equals(betSubType, BetSubTypeEnum.EX_BET_ENHANCE)) {
-                AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount() * MULTIPLE_20), ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount() * MULTIPLE_10), ErrorCode.ERR_PARAM);
             } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_NORMAL_BET)) {
                 AssertUtil.assertTrue(Objects.equals(0L, betDetail.getPayAmount()), ErrorCode.ERR_PARAM);
                 AssertUtil.assertStrNotEmpty(betDetail.getBetRecordId(), ErrorCode.ERR_PARAM);
