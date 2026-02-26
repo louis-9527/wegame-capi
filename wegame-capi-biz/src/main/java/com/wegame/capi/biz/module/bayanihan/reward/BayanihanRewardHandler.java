@@ -69,7 +69,13 @@ public class BayanihanRewardHandler extends AbstractRewardHandler<BayanihanSymbo
         // 4.计算免费轮
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
-            int freeWheelTimes = this.calcRewardFreeWheelTimes(rewardHandle, rewardLineList);
+            int freeWheelTimes = 0;
+            // 如果传入了中奖轮数，则使用传入的轮数
+            if (Objects.nonNull(rewardHandle.getActualRewardFreeWheelTimes())) {
+                freeWheelTimes = rewardHandle.getActualRewardFreeWheelTimes();
+            } else {
+                freeWheelTimes = this.calcRewardFreeWheelTimes(rewardHandle, rewardLineList);
+            }
             return RewardResultDo.<BayanihanSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)

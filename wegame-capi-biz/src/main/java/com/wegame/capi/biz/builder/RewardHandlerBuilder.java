@@ -65,4 +65,18 @@ public class RewardHandlerBuilder {
         return rewardHandleDo;
     }
 
+    /**
+     * bayanihan add
+     */
+    public static <T extends SymbolDo> RewardHandleDo<T> build(GameInfoDo gameInfo,
+                                                               GamePlayDo gamePlay,
+                                                               WheelDo<T> wheel,
+                                                               BigDecimal currentMultiple,
+                                                               Integer rewardFreeWheelTimes) {
+
+        RewardHandleDo<T> rewardHandleDo = build(gameInfo, gamePlay, wheel, currentMultiple);
+        rewardHandleDo.setActualRewardFreeWheelTimes(rewardFreeWheelTimes);
+        return rewardHandleDo;
+    }
+
 }

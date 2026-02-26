@@ -79,4 +79,9 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      */
     private List<GameBizEventDo> fixedBizEventList;
 
+    /**
+     * 实际中的免费轮次数-bayanihan中用于防止重新随机免费轮次数
+     */
+    private Integer actualRewardFreeWheelTimes;
+
 }
