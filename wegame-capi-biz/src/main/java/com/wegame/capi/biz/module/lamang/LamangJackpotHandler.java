@@ -163,7 +163,6 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     private Map<String, Integer> initWeight(TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig) {
         Map<String, Integer> weightMap = new HashMap<>();
         for (Map.Entry<String, BigDecimal> entry : jackpotTriggerBetAmountConfig.entrySet()) {
-            weightMap.put(entry.getKey(), entry.getValue().intValue());
             weightMap.put(entry.getKey(), entry.getValue().multiply(new BigDecimal(CONST_10000000)).intValue());
         }
         return weightMap;
