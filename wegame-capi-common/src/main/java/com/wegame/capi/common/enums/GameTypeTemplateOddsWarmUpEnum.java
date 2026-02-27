@@ -30,7 +30,7 @@ public enum GameTypeTemplateOddsWarmUpEnum {
      * x = 0, 预热范围 -> [0, 0]
      * x < 0, 不需要预热
      */
-    private  final String normalBetOdds;
+    private final String normalBetOdds;
     /**
      * 购买投注预热倍率
      * 同上.

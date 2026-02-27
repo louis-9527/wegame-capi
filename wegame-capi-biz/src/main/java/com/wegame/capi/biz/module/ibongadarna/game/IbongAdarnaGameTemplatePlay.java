@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
@@ -17,8 +16,6 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.ibong.IbongAdarnaBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.innerdos.decider.InnerDosDecideResult;
-import com.wegame.capi.biz.innerdos.decider.InnerDosDeciderManager;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.ibongadarna.IbongAdarnaGameHelper;
 import com.wegame.capi.biz.module.ibongadarna.reward.IbongAdarnaRewardHandler;
@@ -58,8 +55,6 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
     IbongAdarnaConfig ibongAdarnaConfig;
     @Autowired
     BetRecordTemplateEsService<IbongAdarnaBetRecordTemplateEsDo> betRecordTemplateEsService;
-    @Autowired
-    private InnerDosDeciderManager innerDosDeciderManager;
 
     @Override
     public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
@@ -121,10 +116,8 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
     }
 
     private TemplateMultipleRange getTemplateMultipleRange(GamePlayDo gamePlay) {
-        // inner dos 决策
-        InnerDosDecideResult decideResult = innerDosDeciderManager.decide(gamePlay.getGameType(), gamePlay);
-        AssertUtil.assertNotNull(decideResult, ErrorCode.ERR_INTER, "inner dos decide result is null");
-        String templateIdRange = decideResult.getTemplateIdRange();
+        LinkedHashMap<String, LinkedHashMap<String, Integer>> templateRangeConfigMap = ibongAdarnaConfig.getTemplateRangeConfig().getTemplateRangeConfigMap();
+        String templateIdRange = randomService.randomKeyByWeight(templateRangeConfigMap.get(gamePlay.getBetType().getCode()));
         AssertUtil.assertStrNotEmpty(templateIdRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateIdRange);
     }

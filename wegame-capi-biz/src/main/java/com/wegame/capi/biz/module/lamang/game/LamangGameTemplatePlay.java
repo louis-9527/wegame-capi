@@ -38,8 +38,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 import static com.wegame.capi.common.enums.TemplateTypeEnum.LAM_ANG;
-import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Component("lamangGameTemplatePlay")
@@ -153,13 +154,7 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         LamangBetRecordTemplateEsDo template;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.LAM_ANG, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
-            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithLocalCache(LAM_ANG, betRecordId, LamangBetRecordTemplateEsDo.class);
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithRedisCache(LAM_ANG, betRecordId, LamangBetRecordTemplateEsDo.class);
-            } else {
-                throw new BusinessException(ErrorCode.ERR_PARAM);
-            }
+            template = betRecordTemplateEsService.getTemplateWithLocalCache(LAM_ANG, betRecordId, LamangBetRecordTemplateEsDo.class);
         } else {
             // 没有被预热的倍率，需要重新查询
             template = betRecordTemplateEsService.findById(LAM_ANG, betRecordId, LamangBetRecordTemplateEsDo.class);

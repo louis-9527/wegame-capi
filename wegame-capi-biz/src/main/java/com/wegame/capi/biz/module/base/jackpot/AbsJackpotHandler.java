@@ -14,6 +14,7 @@ import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
+import com.wegame.capi.common.enums.JackpotRewardAmountTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
@@ -59,13 +60,19 @@ public abstract class AbsJackpotHandler {
     protected Long getRewardAmountAndSingleAward(JackpotDrawAndAwardDo drawAndAwardDo, JackpotRewardPoolTypeEnum jackpotRewardPoolType, Long guaranteed, Long betGameId) {
         String lockKey = LockNameUtil.getJackpotRewardLock(getJackpotType().getGameType());
 
-        return distributeLock.lockThenCall(lockKey, () -> {
+        //todo 分布式锁等待
+        return distributeLock.tryLockThenCall(lockKey, 5, 10, () -> {
             // 获取奖池金额
             JackpotRewardPoolDo rewardPoolDo = jackpotRewardPoolService.selectOneByType(jackpotRewardPoolType, getJackpotType());
             AssertUtil.assertNotNull(rewardPoolDo, ErrorCode.ERR_PARAM);
+            // 保底金额 > 当前jackpot金额，使用预留池，否则使用jackpot奖池
+            JackpotRewardAmountTypeEnum rewardAmountTypeEnum = guaranteed > rewardPoolDo.getAmount() ?
+                    JackpotRewardAmountTypeEnum.RESERVED_POOL_AMOUNT : JackpotRewardAmountTypeEnum.JACKPOT_POOL_AMOUNT;
+            // 派奖金额： 当前jackpot金额大于保底金额，使用
             Long rewardAmount = Math.max(guaranteed, rewardPoolDo.getAmount()); // 中奖金额默认使用保底
             // 添加使用记录并更新奖池金额
-            JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.build(drawAndAwardDo, betGameId, rewardAmount, rewardPoolDo.getId(), jackpotRewardPoolType, getJackpotType());
+            JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.build(drawAndAwardDo, betGameId, rewardAmount,
+                    rewardPoolDo.getId(), jackpotRewardPoolType, rewardAmountTypeEnum, getJackpotType());
             buildRecord.setId(generateId());
             this.jackpotManager().winReward(buildRecord);
             // 清除缓存
@@ -149,7 +156,9 @@ public abstract class AbsJackpotHandler {
                 commissionResultMap.put(poolType, 0L);
             } else {
                 rate = rate.divide(new BigDecimal(100));
-                commissionResultMap.put(poolType, new BigDecimal(betAmount).multiply(rate).longValue());
+                // betAmount -> commissionAmount 需要*10，增加一位小数精度
+                long commissionAmount = new BigDecimal(betAmount).multiply(rate).multiply(BigDecimal.TEN).longValue();
+                commissionResultMap.put(poolType, commissionAmount);
             }
         }
         return commissionResultMap;

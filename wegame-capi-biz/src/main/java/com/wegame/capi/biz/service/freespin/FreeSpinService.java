@@ -31,8 +31,8 @@ public class FreeSpinService {
         return singleWalletFreeSpinApi.freeSpin(req);
     }
 
-    public FreeSpinOfPlayerDo freeSpinOfPlayer() {
-        FreeSpinOfPlayerRes res = singleWalletFreeSpinApi.freeSpinOfPlayer(buildReq());
+    public FreeSpinOfPlayerDo freeSpinOfPlayer(Boolean checkCurrent) {
+        FreeSpinOfPlayerRes res = singleWalletFreeSpinApi.freeSpinOfPlayer(buildReq(checkCurrent));
         return resToDo(res);
     }
 

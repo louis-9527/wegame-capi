@@ -17,7 +17,7 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BakunawaConfig implements Serializable {
+public class BakunawaConfig extends GameBizConfig implements Serializable {
     private static final long serialVersionUID = -4811887935435114L;
     /**
      * 元素概率配置
@@ -77,7 +77,7 @@ public class BakunawaConfig implements Serializable {
         private Map<String, Integer> freeGame;
     }
 
-    public void validate() {
+    public void bizValidate() {
         probabilisticConfigValidate();
         rewardNotifyMinMultipleValidate();
     }

@@ -1,15 +1,22 @@
 package com.wegame.capi.biz.module.base.bet.strategy;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.RetryUtil;
+import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
+import com.wegame.capi.biz.config.domain.PayoutAmountLimitConfig;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
@@ -21,6 +28,7 @@ import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
@@ -68,6 +76,10 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
 
     public abstract BetHelper<RD, R> betHelper();
 
+    protected long getTotalRewardAmount(List<R> list, Object extParam) {
+        throw new BusinessException(ErrorCode.ERR_INTER, "getTotalRewardAmount error");
+    }
+
     public boolean isCanOperationEventBet(BetDo betDo) {
         if (!operationSwitch) {
             return false;
@@ -78,7 +90,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             AssertUtil.assertNotNull(userInfo.getChannelId(), ErrorCode.ERR_NOT_LOGIN);
             // 判断渠道
-            if (!gameApiProperty.getChannelIdAll().contains(userInfo.getChannelId())) {
+            if (!gameApiProperty.supportDosChannelIdSet().contains(userInfo.getChannelId())) {
                 return false;
             }
             // 仅正常投注时可干预
@@ -296,5 +308,37 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             rewardResult.setErrorCode(achievementErrorCode == null ? ErrorCode.ERR_MIDDLE_PLATFORM : achievementErrorCode.getErrorCode());
             return Pair.of(rewardResult, rBetRecordDo);
         }
+    }
+
+    protected boolean needPayoutAmountLimit(BetDo betDo, PayoutAmountLimitConfig payoutAmountLimitConfig) {
+        List<BetTypeEnum> limitBetTypeList = payoutAmountLimitConfig.getLimitBetTypeList();
+        long limitAmount = payoutAmountLimitConfig.getLimitAmount();
+        return limitBetTypeList.contains(betDo.getBetType()) && limitAmount > 0;
+    }
+
+    protected List<R> play(BetDo betDo, long betRecordId, PayoutAmountLimitConfig payoutAmountLimitConfig, Object extParam) {
+        if (this.needPayoutAmountLimit(betDo, payoutAmountLimitConfig)) {
+            return this.payoutAmountLimitPLay(betDo, betRecordId, payoutAmountLimitConfig, extParam);
+        } else {
+            return gameContext().play(this.buildGamePlayDo(betDo, betRecordId, extParam));
+        }
+    }
+
+    protected List<R> payoutAmountLimitPLay(BetDo betDo, long betRecordId, PayoutAmountLimitConfig payoutAmountLimitConfig, Object extParam) {
+        int retryCount = payoutAmountLimitConfig.getRetryCount();
+        long limitAmount = payoutAmountLimitConfig.getLimitAmount();
+        return RetryUtil.execute(() -> {
+            List<R> gameRecordList = gameContext().play(this.buildGamePlayDo(betDo, betRecordId, extParam));
+            long totalRewardAmount = this.getTotalRewardAmount(gameRecordList, extParam);
+            if (totalRewardAmount > limitAmount) {
+                log.error("payoutAmountLimitPLay,amount limit,totalRewardAmount:{},limitAmount:{},betDo:{},recordList:{}", totalRewardAmount, limitAmount, JSON.toJSONString(betDo), JSON.toJSONString(gameRecordList));
+                throw new RetryException(ErrorCode.ERR_INTER, "amount limit");
+            }
+            return gameRecordList;
+        }, retryCount, RetryException.class, "payoutAmountLimitPLay");
+    }
+
+    protected GamePlayDo buildGamePlayDo(BetDo betDo, long betRecordId, Object extParam) {
+        return GamePlayBuilder.build(betDo, betRecordId);
     }
 }

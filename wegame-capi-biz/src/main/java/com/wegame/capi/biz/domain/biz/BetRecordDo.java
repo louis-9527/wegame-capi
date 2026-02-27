@@ -1,10 +1,12 @@
 package com.wegame.capi.biz.domain.biz;
 
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * bet_record：投注记录
@@ -164,19 +166,88 @@ public class BetRecordDo<T> implements Serializable {
          * grand奖池贡献金额
          */
         private Long grandContributionAmount;
+
+        /**
+         * grand预留奖池贡献金额
+         */
+        private Long grandSupContributionAmount;
+
+
         /**
          * major奖池贡献金额
          */
         private Long majorContributionAmount;
 
         /**
+         * major预留奖池贡献金额
+         */
+        private Long majorSupContributionAmount;
+
+
+        /**
          * minor奖池贡献金额
          */
         private Long minorContributionAmount;
+
+        /**
+         * minor预留奖池贡献金额
+         */
+        private Long minorSupContributionAmount;
+
+
         /**
          * mini奖池贡献金额
          */
         private Long miniContributionAmount;
+
+        /**
+         * mini预留奖池贡献金额
+         */
+        private Long miniSupContributionAmount;
+
+        /**
+         * 根据奖池类型和是否进入jackpot池设置贡献金额
+         * @param type 奖池类型
+         * @param amount 贡献金额
+         * @param toJackpot true: 进入jackpot池, false: 进入reserved池
+         */
+        public void setContribution(JackpotRewardPoolTypeEnum type, Long amount, boolean toJackpot) {
+            if (Objects.isNull(type) || Objects.isNull(amount) ) {
+                return;
+            }
+            switch (type) {
+                case grand:
+                    if (toJackpot) {
+                        this.grandContributionAmount = amount;
+                    } else {
+                        this.grandSupContributionAmount = amount;
+                    }
+                    break;
+                case major:
+                    if (toJackpot) {
+                        this.majorContributionAmount = amount;
+                    } else {
+                        this.majorSupContributionAmount = amount;
+                    }
+                    break;
+                case minor:
+                    if (toJackpot) {
+                        this.minorContributionAmount = amount;
+                    } else {
+                        this.minorSupContributionAmount = amount;
+                    }
+                    break;
+                case mini:
+                    if (toJackpot) {
+                        this.miniContributionAmount = amount;
+                    } else {
+                        this.miniSupContributionAmount = amount;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 }

@@ -21,7 +21,7 @@ import com.wegame.capi.biz.domain.biz.template.bakunawa.BakunawaBetRecordTemplat
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.bakunawa.reward.BakunawaRewardHandler;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
-import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -75,12 +75,7 @@ public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo>
         List<GameRecordTemplateDo> configRecordList;
         BakunawaBetRecordTemplateEsDo template;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.BAKUNAWA, gamePlay.getBetType(), templateMultipleRange)) {
-            // 已经被预热的倍率，直接走缓存
-            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithLocalCache(BAKUNAWA, betRecordId, BakunawaBetRecordTemplateEsDo.class);
-            } else {
-                throw new BusinessException(ErrorCode.ERR_PARAM);
-            }
+            template = betRecordTemplateEsService.getTemplateWithLocalCache(BAKUNAWA, betRecordId, BakunawaBetRecordTemplateEsDo.class);
         } else {
             // 没有被预热的倍率，需要重新查询
             template = betRecordTemplateEsService.findById(BAKUNAWA, betRecordId, BakunawaBetRecordTemplateEsDo.class);

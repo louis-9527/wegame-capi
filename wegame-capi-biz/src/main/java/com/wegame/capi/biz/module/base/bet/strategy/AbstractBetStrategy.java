@@ -10,12 +10,10 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
-import com.wegame.capi.biz.manager.MetricsManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
-import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.MessageId;
@@ -41,8 +39,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     public PulsarProducer pulsarProducer;
-    @Autowired
-    private MetricsManager metricsManager;
 
     public abstract AbstractGameContext<R> gameContext();
 
@@ -61,8 +57,10 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         SingleWalletBetResultDo resultDo;
-        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
-            resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
+                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)
+        ) {
+            resultDo =  asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
                 resultDo = syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
@@ -70,9 +68,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
-
-        // 内部干预数据指标处理
-        metricsManager.metrics(betDo,betRecordDo, MetricsTypeEnum.valueOfGameType(gameContext().gameInfo().getGameType()), resultDo, syncOpt);
         return resultDo;
     }
 
@@ -106,7 +101,9 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            if (syncOpt && Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
+            if (syncOpt && Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
+                    Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)
+            ) {
                 // 同步设置游戏记录缓存
                 String cacheKey = String.format("%s_%s", betRecordDo.getId(), betRecordDo.getPlayerId());
                 betRecordManager().putGameRecordCache(betRecordDo.getGameRecordList(), gameContext().gameInfo().getGameType(), cacheKey);

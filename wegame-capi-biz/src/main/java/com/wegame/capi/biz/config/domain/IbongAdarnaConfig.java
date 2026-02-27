@@ -4,14 +4,8 @@ import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.innerdos.config.GameRtpDosCondition;
-import com.wegame.capi.biz.innerdos.config.InnerDosCondition;
-import com.wegame.capi.biz.innerdos.context.DefaultInnerDosContext;
-import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
@@ -25,7 +19,7 @@ import static com.wegame.capi.common.Constants.*;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IbongAdarnaConfig {
+public class IbongAdarnaConfig extends GameBizConfig{
 
     /**
      * 赔率配置
@@ -45,10 +39,11 @@ public class IbongAdarnaConfig {
      * 中奖通知最小倍数
      */
     private Integer rewardNotifyMinMultiple;
+
     /**
-     * innerDos 配置
+     * 模版配置
      */
-    private InnerDosConfig innerDosConfig;
+    private TemplateRangeConfig templateRangeConfig;
 
     @Data
     @SuperBuilder
@@ -92,30 +87,33 @@ public class IbongAdarnaConfig {
     }
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class InnerDosConfig implements Serializable {
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -73484243536450751L;
         /**
-         * 【inner-dos】模版范围配置
+         * Map<Normal, Map<1-10, 100>>
+         * <li>Normal:{@link com.wegame.capi.client.enums.BetSubTypeEnum}</li>
+         * <li>1-10:倍率范围</li>
+         * <li>100:权重</li>
          */
-        private DefaultInnerDosContext.DefaultTemplateRangeConfig templateRangeConfig;
-        /**
-         * 【inner-dos】内部干预条件配置
-         */
-        private InnerDosCondition innerDosCondition;
-        /**
-         * 大盘rtp干预条件 配置
-         * Map<游戏内干预类型，游戏内干预条件>
-         */
-        private Map<GameInnerDosTypeEnum, GameRtpDosCondition> gameRtpDosConditionMap;
+        private LinkedHashMap<String, LinkedHashMap<String, Integer>> templateRangeConfigMap;
     }
 
-    public void validate() {
+    public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         rewardFixedLinesConfigValidate();
         rewardNotifyMinMultipleValidate();
+        templateRangeConfigValidate();
+    }
+
+    private void templateRangeConfigValidate() {
+        AssertUtil.assertNotNull(this.templateRangeConfig, ErrorCode.ERR_PARAM, "templateRangeConfig is null");
+        AssertUtil.assertNotNull(this.templateRangeConfig.templateRangeConfigMap, ErrorCode.ERR_PARAM, "templateRangeConfig.templateRangeConfigMap is null");
     }
 
     private void oddsConfigValidate() {

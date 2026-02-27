@@ -22,10 +22,11 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LamangConfig {
+public class LamangConfig extends GameBizConfig {
+
+    private static final long serialVersionUID = 5582097906043304355L;
 
     private final static int REEL_NUMBERS = 5;
-
     /**
      * 赔率配置
      */
@@ -180,6 +181,13 @@ public class LamangConfig {
         @Setter
         private TreeMap<String, Long> guaranteedAmount;
 
+        /**
+         * 预留池保底金额配置
+         */
+        @Getter
+        @Setter
+        private TreeMap<String, Long> reservedPoolGuaranteedAmount;
+
         public void setJackpotTriggerBetAmountConfig(LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig) {
             // 对数据进行排序
             if (jackpotTriggerBetAmountConfig != null) {
@@ -210,7 +218,7 @@ public class LamangConfig {
         private TreeMap<String, BigDecimal> proportionCommissionConfig;
     }
 
-    public void validate() {
+    public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         multiPleConfigValidate();

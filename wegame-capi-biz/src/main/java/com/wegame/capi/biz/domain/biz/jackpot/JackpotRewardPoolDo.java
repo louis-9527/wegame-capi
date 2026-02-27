@@ -1,7 +1,12 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -15,6 +20,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class JackpotRewardPoolDo implements Serializable {
     private static final long serialVersionUID = -1614958476406033408L;
     /**
@@ -26,9 +32,15 @@ public class JackpotRewardPoolDo implements Serializable {
      */
     private JackpotRewardPoolTypeEnum type;
     /**
-     * 奖池金额.单位：厘， 可以为负
+     * 奖池金额.单位：厘， 不能为负
      */
     private Long amount;
+
+    /**
+     * 预留奖池金额.单位：厘， 可以为负
+     */
+    private Long reservedAmount;
+
     /**
      * 创建人
      */
@@ -49,8 +61,26 @@ public class JackpotRewardPoolDo implements Serializable {
     ///////////////  above auto generated ///////////////
 
     /**
-     * 初始金额
+     * 奖池派奖保底金额
      */
     private Long initAmount;
+
+    /**
+     * 预留奖池派奖保底金额
+     */
+    private Long reservedPoolInitAmount;
+
+    public boolean needContributeToJackpot() {
+        return reservedAmount >= reservedPoolInitAmount;
+    }
+
+    public boolean canDrawJackpot() {
+        return reservedAmount >= reservedPoolInitAmount;
+    }
+
+    @JsonIgnore
+    public Long getJackpotAmount() {
+        return Math.max(initAmount, amount);
+    }
 }
 

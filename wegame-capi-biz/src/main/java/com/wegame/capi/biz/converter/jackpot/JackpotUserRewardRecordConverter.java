@@ -9,8 +9,10 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
+import com.wegame.capi.common.enums.JackpotRewardAmountTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
+import com.wegame.capi.common.utils.JackpotAmountUtil;
 import com.wegame.capi.common.utils.MaskUtil;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
@@ -42,6 +44,7 @@ public class JackpotUserRewardRecordConverter {
         jackpotUserRewardRecordDo.setRewardPoolId(po.getRewardPoolId());
         jackpotUserRewardRecordDo.setRewardPoolType(JackpotRewardPoolTypeEnum.valueOfCode(po.getRewardPoolType()));
         jackpotUserRewardRecordDo.setRewardAmount(po.getRewardAmount());
+        jackpotUserRewardRecordDo.setRewardAmountType(JackpotRewardAmountTypeEnum.valueOfCode(po.getRewardAmountType()));
         jackpotUserRewardRecordDo.setRewardGrantSerialNo(po.getRewardGrantSerialNo());
         jackpotUserRewardRecordDo.setRewardGrantStatus(JackpotRewardGrantStatusEnum.valueOfCode(po.getRewardGrantStatus()));
         jackpotUserRewardRecordDo.setRewardGrantTime(po.getRewardGrantTime());
@@ -68,6 +71,7 @@ public class JackpotUserRewardRecordConverter {
         po.setRewardPoolId(jackpotUserRewardRecordDo.getRewardPoolId());
         po.setRewardPoolType(Objects.nonNull(jackpotUserRewardRecordDo.getRewardPoolType()) ? jackpotUserRewardRecordDo.getRewardPoolType().getCode() : null);
         po.setRewardAmount(jackpotUserRewardRecordDo.getRewardAmount());
+        po.setRewardAmountType(Objects.nonNull(jackpotUserRewardRecordDo.getRewardAmountType()) ? jackpotUserRewardRecordDo.getRewardAmountType().getCode() : null);
         po.setRewardGrantSerialNo(jackpotUserRewardRecordDo.getRewardGrantSerialNo());
         po.setRewardGrantStatus(Objects.nonNull(jackpotUserRewardRecordDo.getRewardGrantStatus()) ? jackpotUserRewardRecordDo.getRewardGrantStatus().getCode() : null);
         po.setRewardGrantTime(jackpotUserRewardRecordDo.getRewardGrantTime());
@@ -98,7 +102,8 @@ public class JackpotUserRewardRecordConverter {
         vo.setBetId(jackpotUserRewardRecordDo.getBetId());
         vo.setRewardPoolId(Objects.nonNull(jackpotUserRewardRecordDo.getRewardPoolId()) ? String.valueOf(jackpotUserRewardRecordDo.getRewardPoolId()) : null);
         vo.setRewardPoolType(jackpotUserRewardRecordDo.getRewardPoolType().getCode());
-        vo.setRewardAmount(jackpotUserRewardRecordDo.getRewardAmount());
+        // 把数据库中的数据/10,对齐精度
+        vo.setRewardAmount(JackpotAmountUtil.toFrontLong(jackpotUserRewardRecordDo.getRewardAmount()));
         vo.setRewardGrantSerialNo(jackpotUserRewardRecordDo.getRewardGrantSerialNo());
         vo.setRewardGrantStatus(jackpotUserRewardRecordDo.getRewardGrantStatus().getCode());
         vo.setRewardGrantTime(Objects.nonNull(jackpotUserRewardRecordDo.getRewardGrantTime()) ? jackpotUserRewardRecordDo.getRewardGrantTime().getTime() : null);

@@ -394,5 +394,9 @@
             "8_15": 1005,
             "15_30": 210
         }
+    },
+    "payoutAmountLimitConfig": {
+        "retryCount": 1,
+        "limitAmount": 1000000000
     }
 }
