@@ -53,7 +53,7 @@ public abstract class AbstractBetContext {
             return betStrategy.bet(betDo);
         } else {
             return distributeLock.tryLockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
-                    100,
+                    150,
                     3000,
                     () -> betStrategy.bet(betDo),
                     OPT_BUSY);

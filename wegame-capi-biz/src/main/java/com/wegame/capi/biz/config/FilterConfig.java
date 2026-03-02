@@ -28,7 +28,9 @@ public class FilterConfig {
             "/bet/*",
             "/betRecord/*",
             "/reward/*",
-            "/user/*",
+            "/user/logout",
+            "/user/me",
+            "/user/getCredit",
             "/inner/*",
             "/achievement/*",
             "/bag/*",
@@ -38,6 +40,7 @@ public class FilterConfig {
             "/freeSpin/*",
             "/contract/*",
             "/redirect/*",
+            "/redeem/*",
     };
 
     @Bean
