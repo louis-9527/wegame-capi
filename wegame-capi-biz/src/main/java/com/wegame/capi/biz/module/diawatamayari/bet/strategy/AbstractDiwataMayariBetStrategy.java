@@ -162,8 +162,12 @@ public abstract class AbstractDiwataMayariBetStrategy
     }
 
     private void updateMultipleControl(BetDo betDo, BetRecordDo<DiwataMayariGameRecordDo> betRecord) {
+        BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
+        if (!bizInterfereConfig.isMultipleControlEnabled()) {
+            return;
+        }
         Map<BizInterfereSubTypeEnum, BizInterfereConfig.MultipleControlConfig.MultipleControlConfigMappingInfo> multipleControlConfigMap
-                = diwataMayariConfig.getBizInterfereConfig().getMultipleControlConfigMap();
+                = bizInterfereConfig.getMultipleControlConfigMap();
         Long payAmount = betDo.getPayAmount();
         Map<Integer, Long> updateMultipleControlMap = new HashMap<>();
         multipleControlConfigMap.forEach((subType, mappingInfo) -> {
@@ -177,11 +181,10 @@ public abstract class AbstractDiwataMayariBetStrategy
     private boolean bizInterfereDecyIfNeed(BetDo betDo, BetRecordDo<DiwataMayariGameRecordDo> betRecord) {
         // 业务干预开关是否打开
         BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
-        BizInterfereContextDo bizInterfereContext = betDo.getBizInterfereContext();
         if (!bizInterfereConfig.isMultipleControlEnabled()) {
             return true;
         }
-
+        BizInterfereContextDo bizInterfereContext = betDo.getBizInterfereContext();
         return bizInterfereService.decrOneReward(betDo.getGameType(),
                 BizInterfereTypeEnum.MULTIPLE_CONTROL, bizInterfereContext.getInUseJackPotSnapshotType(), betRecord.getPayOutAmount());
     }
