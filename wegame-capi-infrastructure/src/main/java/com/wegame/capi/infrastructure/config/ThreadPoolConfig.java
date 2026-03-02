@@ -26,7 +26,7 @@ public class ThreadPoolConfig {
     public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
     public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
     public static final String warmUpConnectionThreadPoolExecutor = "warmUpConnectionThreadPoolExecutor";
-    public static final String innerDosThreadPoolExecutor = "innerDosThreadPoolExecutor";
+    public static final String bizInterfereThreadPoolExecutor = "bizInterfereThreadPoolExecutor";
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -154,7 +154,7 @@ public class ThreadPoolConfig {
         return executor;
     }
 
-    @Bean(innerDosThreadPoolExecutor)
+    @Bean(bizInterfereThreadPoolExecutor)
     public ThreadPoolExecutor innerDosThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 100,

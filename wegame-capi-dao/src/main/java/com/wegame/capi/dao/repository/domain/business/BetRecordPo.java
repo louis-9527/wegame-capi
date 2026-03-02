@@ -63,6 +63,14 @@ public class BetRecordPo implements Serializable {
      */
     private Integer betPromotionType;
     /**
+     * 业务干预类型
+     */
+    private Integer bizInterfereType;
+    /**
+     * 业务干预子类型
+     */
+    private Integer bizInterfereSubType;
+    /**
      * 投注id（单钱包）
      */
     private String betId;

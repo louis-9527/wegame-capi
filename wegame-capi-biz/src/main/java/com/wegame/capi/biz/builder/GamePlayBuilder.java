@@ -23,6 +23,7 @@ public class GamePlayBuilder {
                 .operationEventConfigBetRecordId(Objects.nonNull(betDo.getGameOperationEvent()) ? betDo.getGameOperationEvent().getConfigId() : null)
                 .gameEventDo(betDo.getGameOperationEvent())
                 .betPromotionType(betDo.getBetPromotionType())
+                .bizInterfereContext(betDo.getBizInterfereContext())
                 .build();
     }
 }

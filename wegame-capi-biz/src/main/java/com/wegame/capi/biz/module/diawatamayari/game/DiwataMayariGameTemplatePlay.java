@@ -7,7 +7,9 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
+import com.wegame.capi.biz.config.domain.BizInterfereConfig;
 import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
+import com.wegame.capi.biz.domain.biz.bizinterfere.BizInterfereContextDo;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -20,12 +22,15 @@ import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.diawatamayari.DiwataMayariGameHelper;
 import com.wegame.capi.biz.module.diawatamayari.DiwataMayariSymbolUtil;
 import com.wegame.capi.biz.module.diawatamayari.reward.DiwataMayariRewardHandler;
+import com.wegame.capi.biz.service.bizinterfere.BizInterfereService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
+import com.wegame.capi.common.enums.BizInterfereTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +62,8 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
     BetRecordTemplateEsService<DiwataBetRecordTemplateEsDo> betRecordTemplateEsService;
     @Autowired
     private DiwataMayariConfig diwataMayariConfig;
+    @Autowired
+    private BizInterfereService bizInterfereService;
 
     @Override
     public List<DiwataMayariGameRecordDo> play(GamePlayDo gamePlay) {
@@ -114,13 +121,68 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
     }
 
     private List<GameRecordTemplateDo> getGameRecordTemplate(GamePlayDo gamePlay) {
+        DiwataBetRecordTemplateEsDo template = this.cycleGetTemplateEsDo(gamePlay);
+        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
+        List<GameRecordTemplateDo> configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+        });
+        if (CollectionUtils.isEmpty(configRecordList)) {
+            log.error("template is empty, betType:{}, template multiple:{}", gamePlay.getBetType(), template.getMultiple());
+        }
+        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
+        return configRecordList;
+    }
+
+    private DiwataBetRecordTemplateEsDo cycleGetTemplateEsDo(GamePlayDo gamePlay) {
+        DiwataBetRecordTemplateEsDo template;
+        do {
+            template = this.getTemplateEsDo(gamePlay);
+            AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
+
+            final BizInterfereContextDo bizInterfereContext = gamePlay.getBizInterfereContext();
+            BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
+            if (!bizInterfereConfig.isMultipleControlEnabled()) {
+                return template;
+            }
+
+            if (!bizInterfereContext.isBizInterfere()){
+                return template;
+            }
+
+            // bizInterfere 准入。1.保底金额。2.派彩金额是否足够
+            Long rewardUsableAmount = this.getRewardUsableAmount(bizInterfereConfig, bizInterfereContext);
+            Long inUseJackPotSnapshotAmount = bizInterfereContext.getInUseJackPotSnapshotAmount();
+
+            if (inUseJackPotSnapshotAmount < rewardUsableAmount) {
+                // 下次随机排除当前奖池类型
+                bizInterfereContext.addUnableJackPotType(bizInterfereContext.getInUseJackPotSnapshotType());
+            } else {
+                return template;
+            }
+            Long betAmount = gamePlay.getBetAmount();
+            Double multiple = template.getMultiple();
+            long payoutAmount = Math.round(betAmount * multiple);
+            if (inUseJackPotSnapshotAmount >= payoutAmount) {
+                return template;
+            }
+        } while (true);
+
+    }
+
+    private Long getRewardUsableAmount(BizInterfereConfig bizInterfereConfig, final BizInterfereContextDo bizInterfereContext) {
+        Map<BizInterfereSubTypeEnum, BizInterfereConfig.MultipleControlConfig.MultipleControlConfigMappingInfo> multipleControlConfigMap = bizInterfereConfig.getMultipleControlConfigMap();
+        BizInterfereSubTypeEnum inUseJackPotSnapshotType = bizInterfereContext.getInUseJackPotSnapshotType();
+        BizInterfereConfig.MultipleControlConfig.MultipleControlConfigMappingInfo multipleControlConfigMappingInfo = multipleControlConfigMap.get(inUseJackPotSnapshotType);
+        return multipleControlConfigMappingInfo.getRewardUsableAmount();
+    }
+
+    private DiwataBetRecordTemplateEsDo getTemplateEsDo(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
         TemplateTypeEnum templateType = diwataMayariConfig.getTemplateRangeConfig().getTemplateMapping().get(abType);
         AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
         log.info("abType: {}, templateName: {}", abType, templateType.getBetRecordTemplateName());
-        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(templateType, gamePlay.getBetType());
+        TemplateMultipleRange templateMultipleRange = this.cycleGetTemplateMultipleRange(templateType, gamePlay);
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
@@ -128,7 +190,6 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         log.info("hit template betRecordId: {}", betRecordId);
-        List<GameRecordTemplateDo> configRecordList;
         DiwataBetRecordTemplateEsDo template;
         if (diwataMayariConfig.getTemplateRangeConfig().supportWarmUp(gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
@@ -139,17 +200,12 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
             // 没有被预热的倍率，需要重新查询
             template = betRecordTemplateEsService.findById(templateType, betRecordId, DiwataBetRecordTemplateEsDo.class);
         }
-        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
-        });
-        if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
-        }
-        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 结果验证数据添加
         gamePlay.setTemplateId(betRecordId);
         gamePlay.setTemplateMultipleRange(templateMultipleRange);
-        return configRecordList;
+
+        return template;
+
     }
 
     private Long getRandomElement(List<Long> list) {
@@ -177,6 +233,61 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         log.info("hit templateType: {}, betType: {}, templateMultipleRange: {}", templateType.name(), betType, templateMultipleRange);
         AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateMultipleRange);
+    }
+
+    private TemplateMultipleRange cycleGetTemplateMultipleRange(TemplateTypeEnum templateType, GamePlayDo gamePlay) {
+
+        while (true) {
+            final BizInterfereContextDo bizInterfereContext = gamePlay.getBizInterfereContext();
+            TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(templateType, gamePlay.getBetType());
+            // 是否符合要求.0.业务干预开关是否开启.1.是否高倍率模版。2.是否是已经排除的高倍率范围。3.确定具体的模版到上下文
+            BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
+            if (!bizInterfereConfig.isMultipleControlEnabled()) {
+                return templateMultipleRange;
+            }
+
+            // 获取匹配的倍率控制模版。如果为null,说明不是高倍率模版
+            BizInterfereSubTypeEnum bizInterfereSubType = this.getMultipleControlType(templateMultipleRange);
+            if (Objects.isNull(bizInterfereSubType)) {
+                return templateMultipleRange;
+            } else {
+                // 填充必要信息到上下文:业务干预奖池快照
+                this.buildContextInfoIfNeed(bizInterfereContext);
+            }
+            // 是否是排除的高倍率模版
+            if (!bizInterfereContext.getUnableJackPotTypeList().contains(bizInterfereSubType)) {
+                // 无限重新选择
+                // 确定模版到上下文
+                bizInterfereContext.setBizInterfere(true);
+                bizInterfereContext.setInUseJackPotSnapshotType(bizInterfereSubType);
+                return templateMultipleRange;
+            }
+        }
+    }
+
+    private BizInterfereSubTypeEnum getMultipleControlType(TemplateMultipleRange templateMultipleRange) {
+        Map<BizInterfereSubTypeEnum, BizInterfereConfig.MultipleControlConfig.MultipleControlConfigMappingInfo> multipleControlConfigMap = this.diwataMayariConfig.getBizInterfereConfig().getMultipleControlConfigMap();
+        Set<Map.Entry<BizInterfereSubTypeEnum, BizInterfereConfig.MultipleControlConfig.MultipleControlConfigMappingInfo>> entries = multipleControlConfigMap.entrySet();
+
+        return multipleControlConfigMap.entrySet().stream().filter(entry -> {
+            BizInterfereConfig.MultipleControlConfig.MultipleControlConfigMappingInfo mappingInfo = entry.getValue();
+            String usableTemplateMultipleRange = mappingInfo.getUsableTemplateMultipleRange();
+            TemplateMultipleRange configMultipleRange = TemplateMultipleRange.build(usableTemplateMultipleRange);
+
+            boolean startGreatFlag = configMultipleRange.getStart().compareTo(templateMultipleRange.getStart()) > 0;
+            boolean endLessFlag = configMultipleRange.getEnd().compareTo(templateMultipleRange.getEnd()) <= 0;
+            return startGreatFlag || endLessFlag;
+        }).findFirst().map(Map.Entry::getKey).orElse(null);
+
+
+    }
+
+    private void buildContextInfoIfNeed(BizInterfereContextDo bizInterfereContext) {
+        Map<BizInterfereSubTypeEnum, Long> bizInterfereJackpotSnapshotMap = bizInterfereContext.getBizInterfereJackpotSnapshotMap();
+        if (Objects.isNull(bizInterfereJackpotSnapshotMap)) {
+            Map<BizInterfereSubTypeEnum, Long> rewardInfoMap = bizInterfereService.getRewardInfoMap(bizInterfereContext.getGameType(), BizInterfereTypeEnum.MULTIPLE_CONTROL);
+            bizInterfereContext.setBizInterfereJackpotSnapshotMap(rewardInfoMap);
+        }
     }
 
     /**

@@ -565,5 +565,33 @@
     "payoutAmountLimitConfig": {
         "retryCount": 1,
         "limitAmount": 1000000000
+    },
+    "bizInterfereConfig": {
+        "enabled": true,
+        "multipleControlConfig": {
+            "enabled": true,
+            "multipleControlConfigMap": {
+                "11": {
+                    "usableTemplateMultipleRange": "5-8",
+                    "betIntoRewardRatio": 2.00,
+                    "rewardUsableAmount": 10000
+                },
+                "12": {
+                    "usableTemplateMultipleRange": "8-10",
+                    "betIntoRewardRatio": 3.00,
+                    "rewardUsableAmount": 20000
+                },
+                "13": {
+                    "usableTemplateMultipleRange": "10-20",
+                    "betIntoRewardRatio": 4.00,
+                    "rewardUsableAmount": 100000
+                },
+                "14": {
+                    "usableTemplateMultipleRange": "20-100000000",
+                    "betIntoRewardRatio": 5.00,
+                    "rewardUsableAmount": 200000
+                }
+            }
+        }
     }
 }

@@ -68,6 +68,18 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Integer betPromotionType;
     /**
+     * 业务干预类型
+     *
+     * @see com.wegame.capi.common.enums.BizInterfereTypeEnum
+     */
+    private Integer bizInterfereType;
+    /**
+     * 业务干预子类型
+     *
+     * @see com.wegame.capi.common.enums.BizInterfereSubTypeEnum
+     */
+    private Integer bizInterfereSubType;
+    /**
      * 投注id（单钱包）
      */
     private String betId;
@@ -207,12 +219,13 @@ public class BetRecordDo<T> implements Serializable {
 
         /**
          * 根据奖池类型和是否进入jackpot池设置贡献金额
-         * @param type 奖池类型
-         * @param amount 贡献金额
+         *
+         * @param type      奖池类型
+         * @param amount    贡献金额
          * @param toJackpot true: 进入jackpot池, false: 进入reserved池
          */
         public void setContribution(JackpotRewardPoolTypeEnum type, Long amount, boolean toJackpot) {
-            if (Objects.isNull(type) || Objects.isNull(amount) ) {
+            if (Objects.isNull(type) || Objects.isNull(amount)) {
                 return;
             }
             switch (type) {

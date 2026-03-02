@@ -3,12 +3,14 @@ package com.wegame.capi.biz.module.diawatamayari.bet.strategy;
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.BizInterfereConfig;
 import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.DiwataMayariBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
+import com.wegame.capi.biz.domain.biz.bizinterfere.BizInterfereContextDo;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.DiwataMayariBetRecordManager;
@@ -20,10 +22,13 @@ import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.diawatamayari.bet.DiwataMayariBetHelper;
 import com.wegame.capi.biz.module.diawatamayari.game.DiwataMayariGameContext;
+import com.wegame.capi.biz.service.bizinterfere.BizInterfereService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
+import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
+import com.wegame.capi.common.enums.BizInterfereTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,6 +36,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,6 +62,8 @@ public abstract class AbstractDiwataMayariBetStrategy
     private DiwataMayariBetHelper diwataMayariBetHelper;
     @Autowired
     private DiwataMayariConfig diwataMayariConfig;
+    @Autowired
+    private BizInterfereService bizInterfereService;
 
     @Override
     public AbstractGameContext<DiwataMayariGameRecordDo> gameContext() {
@@ -127,17 +135,55 @@ public abstract class AbstractDiwataMayariBetStrategy
      * 非免费轮投注(正常投注、购买投注)
      */
     private BetResultDo<DiwataMayariBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
+        // 业务干预上下文初始化
+        betDo.setBizInterfereContext(BizInterfereContextDo.builder()
+                .gameType(betDo.getGameType())
+                .build());
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<DiwataMayariGameRecordDo> list = super.play(betDo, betRecordId, diwataMayariConfig.getPayoutAmountLimitConfig(), null);
-        AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-        List<DiwataMayariGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
-        // 2、构建投注记录
-        BetRecordDo<DiwataMayariGameRecordDo> betRecord = diwataMayariBetHelper.buildBetRecord(betRecordId, betDo, list);
+        BetRecordDo<DiwataMayariGameRecordDo> betRecord;
+        List<DiwataMayariGameRecordDo> firstBatchList;
+        do {
+            List<DiwataMayariGameRecordDo> list = super.play(betDo, betRecordId, diwataMayariConfig.getPayoutAmountLimitConfig(), null);
+            AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
+            firstBatchList = getFirstBatchGameRecordList(list);
+            // 2、构建投注记录
+            betRecord = diwataMayariBetHelper.buildBetRecord(betRecordId, betDo, list);
+            // bizInterfere 扣减
+        } while (!this.bizInterfereDecyIfNeed(betDo, betRecord));
+
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, diwataMayariBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        // bizInterfere 抽成
+        this.updateMultipleControl(betDo, betRecord);
+
         return diwataMayariBetHelper.handleBetResult(betRecord, resultDo);
 
+    }
+
+    private void updateMultipleControl(BetDo betDo, BetRecordDo<DiwataMayariGameRecordDo> betRecord) {
+        Map<BizInterfereSubTypeEnum, BizInterfereConfig.MultipleControlConfig.MultipleControlConfigMappingInfo> multipleControlConfigMap
+                = diwataMayariConfig.getBizInterfereConfig().getMultipleControlConfigMap();
+        Long payAmount = betDo.getPayAmount();
+        Map<Integer, Long> updateMultipleControlMap = new HashMap<>();
+        multipleControlConfigMap.forEach((subType, mappingInfo) -> {
+            BigDecimal betIntoRewardRatio = mappingInfo.getBetIntoRewardRatio();
+            long incrAmount = betIntoRewardRatio.multiply(BigDecimal.valueOf(payAmount)).longValue();
+            updateMultipleControlMap.put(subType.getCode(), incrAmount);
+        });
+        bizInterfereService.asyncUpdateBizInterfere(betDo.getGameType(), BizInterfereTypeEnum.MULTIPLE_CONTROL, updateMultipleControlMap);
+    }
+
+    private boolean bizInterfereDecyIfNeed(BetDo betDo, BetRecordDo<DiwataMayariGameRecordDo> betRecord) {
+        // 业务干预开关是否打开
+        BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
+        BizInterfereContextDo bizInterfereContext = betDo.getBizInterfereContext();
+        if (!bizInterfereConfig.isMultipleControlEnabled()) {
+            return true;
+        }
+
+        return bizInterfereService.decrOneReward(betDo.getGameType(),
+                BizInterfereTypeEnum.MULTIPLE_CONTROL, bizInterfereContext.getInUseJackPotSnapshotType(), betRecord.getPayOutAmount());
     }
 
     /**
