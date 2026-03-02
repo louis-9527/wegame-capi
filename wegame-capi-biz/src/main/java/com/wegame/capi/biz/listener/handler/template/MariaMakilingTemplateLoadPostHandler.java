@@ -2,6 +2,7 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
+import com.wegame.base.enums.EnvEnum;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.template.mariamakiling.MariaMakilingBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
@@ -45,6 +46,9 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
 
     @Override
     public void handle() {
+        if (env.equals(EnvEnum.LOCAL.getValue())) {
+            return;
+        }
         if (!supportGame(GameTypeEnum.MARIA_MAKILING)) {
             log.warn("not support game MARIA_MAKILING");
             return;

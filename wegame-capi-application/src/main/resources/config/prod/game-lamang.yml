@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         lamang_mdb:
-          primary_uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/lamang?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
-          uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/lamang?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://PRODlamang_Service:93PDBfVm2WOpaGw@prod-lamang-pri.mongodb.singapore.nosql.aliyuncs.com/lamang?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=lamang-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://PRODlamang_Service:93PDBfVm2WOpaGw@prod-lamang-pri.mongodb.singapore.nosql.aliyuncs.com/lamang?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=lamang-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: lamang
 ## pulsar
 pulsar:
