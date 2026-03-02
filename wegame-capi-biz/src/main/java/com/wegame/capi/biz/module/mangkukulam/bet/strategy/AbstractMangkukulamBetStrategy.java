@@ -330,7 +330,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                     .gameId(GameTypeEnum.MANGKUKULAM.getId())
                     .gameName(GameTypeEnum.MANGKUKULAM.getName())
                     .userId(Long.valueOf(userInfo.getId()))
-                    .userName(userInfo.getUserName())
+                    .userName(userInfo.getPlayerId())
                     .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
                     .rewardTime(DateUtil.getCurrentMilli())
                     .rewardContent(String.format(com.wegame.capi.common.Constants.MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT,
