@@ -74,6 +74,10 @@ public class JackpotRewardPoolDo implements Serializable {
         return reservedAmount >= reservedPoolInitAmount;
     }
 
+    public boolean canDrawJackpot() {
+        return reservedAmount >= reservedPoolInitAmount;
+    }
+
     @JsonIgnore
     public Long getJackpotAmount() {
         return Math.max(initAmount, amount);
