@@ -2,9 +2,9 @@ package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.SnowflakeIdGenerator;
-import com.wegame.base.utils.DateUtil;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -17,10 +17,6 @@ import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.AbTypeEnum;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.Constants;
@@ -28,7 +24,6 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -203,7 +198,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      */
     protected void afterBetSuccessSendDelayRewardNotify(BetRecordDo<R> betRecord) {
         try {
-            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(betRecord.getPayAmount()), 2, RoundingMode.FLOOR);
+            Long amount = Objects.nonNull(betRecord.getPayAmount()) && betRecord.getPayAmount() > 0L ? betRecord.getPayAmount() : betRecord.getBetAmount();
+            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
             if (multi.compareTo(getDelayRewardMultiplierThreshold()) < 0) {
                 return;
             }
