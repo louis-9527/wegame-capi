@@ -137,7 +137,7 @@ public abstract class AbstractDiwataMayariBetStrategy
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, diwataMayariBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 投注成功后发送延迟派奖通知
-        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
+        sendDelayRewardNotifyAfterBet(resultDo, betRecord);
         return diwataMayariBetHelper.handleBetResult(betRecord, resultDo);
 
     }

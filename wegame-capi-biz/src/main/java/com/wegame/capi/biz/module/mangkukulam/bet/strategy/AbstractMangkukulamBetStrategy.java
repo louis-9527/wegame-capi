@@ -6,7 +6,6 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.config.domain.MangkukulamConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MangkukulamBetRecordDetailDo;
@@ -15,7 +14,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MangkukulamBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
@@ -28,7 +26,6 @@ import com.wegame.capi.biz.module.mangkukulam.MangkukulamCalcUtil;
 import com.wegame.capi.biz.module.mangkukulam.bet.MangkukulamBetHelper;
 import com.wegame.capi.biz.module.mangkukulam.game.MangkukulamGameContext;
 import com.wegame.capi.biz.service.GameRecordService;
-import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -36,20 +33,14 @@ import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
-import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 
-import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
@@ -58,9 +49,9 @@ import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
  * Mangkukulam游戏投注抽象接口
  */
 @Slf4j
-public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetStrategy<MangkukulamGameRecordDo,
-        MangkukulamBetRecordDetailDo> implements MangkukulamBetStrategy<MangkukulamBetRecordDetailDo> {
-    private static final BigDecimal TEN = new BigDecimal(10);
+public abstract class AbstractMangkukulamBetStrategy
+        extends AbstractCommonBetStrategy<MangkukulamGameRecordDo, MangkukulamBetRecordDetailDo>
+        implements MangkukulamBetStrategy<MangkukulamBetRecordDetailDo> {
 
     @Autowired
     MangkukulamGameContext<MangkukulamGameRecordDo> mangkukulamGameContext;
@@ -71,19 +62,10 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
     @Autowired
     @Qualifier("mangkukulamOperationEventManager")
     private MangkukulamOperationEventManager mangkukulamOperationEventManager;
-
     @Autowired
     private MangkukulamBetHelper mangkukulamBetHelper;
-
     @Autowired
     private MangkukulamConfig mangkukulamConfig;
-
-    @Autowired
-    ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
-    @Autowired
-    RewardService rewardService;
 
     @Override
     public AbstractGameContext<MangkukulamGameRecordDo> gameContext() {
@@ -185,7 +167,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             // sendDelayRewardInfo(betRecord);
             // 投注成功后发送延迟派奖通知
-            afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
+            sendDelayRewardNotifyAfterBet(resultDo, betRecord);
             return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
         } else if (BetSubTypeEnum.isSecondStep(betDo.getBetSubType().getCode())) {
             // 1、查询投注记录
@@ -217,7 +199,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             Long lastGameRecordId = continuePlayContext.getParentGameRecordId();
             // sendDelayRewardInfo(betRecord);
             // 投注成功后发送延迟派奖通知
-            afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
+            sendDelayRewardNotifyAfterBet(resultDo, betRecord);
             return mangkukulamBetHelper.handleBetResult(betRecord, list, resultDo.getCredit(), lastGameRecordId);
         } else {
             throw new BusinessException(ErrorCode.ERR_PARAM);
@@ -279,16 +261,6 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                 .collect(Collectors.toList());
         //// 合计中奖总金额
         long overallRewardAmount = MangkukulamCalcUtil.calcTotalRewardAmount(gameRecordList);
-        //        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-        //            MangkukulamGameRecordDo lastGameRecord = gameRecordList.stream()
-        //                    .filter(item -> BooleanUtils.isTrue(item.isLastGameFlag()))
-        //                    .findFirst()
-        //                    .orElse(null);
-        //            if (Objects.nonNull(lastGameRecord)) {
-        //                // 后处理-免费轮
-        //                freeWheelAfterHandle(lastGameRecord.getBetRecordId());
-        //            }
-        //        }
         return BetResultDo.<MangkukulamBetRecordDetailDo>builder()
                 .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
@@ -302,49 +274,4 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                         .gameRecordList(gameRecordList).build())
                 .build();
     }
-
-    //    /**
-    //     * 发送延迟大奖信息， 延迟一分钟
-    //     */
-    //    private void sendDelayRewardInfo(BetRecordDo<MangkukulamGameRecordDo> betRecord) {
-    //        try {
-    //            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(betRecord.getBetAmount()), 2, BigDecimal.ROUND_FLOOR);
-    //            if (multi.compareTo(TEN) < 0) {
-    //                return;
-    //            }
-    //            UserInfo userInfo = UserInfoContext.getUserInfo();
-    //            scheduledThreadPoolExecutor.schedule(() -> {
-    //                updateRewardNotifyInfo(multi, userInfo);
-    //            }, 1, TimeUnit.MINUTES);
-    //        } catch (Exception e) {
-    //            log.error("sendDelayRewardInfo error", e);
-    //        }
-    //    }
-    //
-    //    private void updateRewardNotifyInfo(BigDecimal multi, UserInfo userInfo) {
-    //        try {
-    //            log.info("updateRewardNotifyInfo multi: {}, playerName: {}", multi, userInfo.getPlayerName());
-    //            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-    //            RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
-    //                    .gameId(GameTypeEnum.MANGKUKULAM.getId())
-    //                    .gameName(GameTypeEnum.MANGKUKULAM.getName())
-    //                    .userId(Long.valueOf(userInfo.getId()))
-    //                    .userName(userInfo.getPlayerId())
-    //                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
-    //                    .rewardTime(DateUtil.getCurrentMilli())
-    //                    .rewardContent(String.format(com.wegame.capi.common.Constants.MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT,
-    //                            DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
-    //                            userInfo.getUserName(),
-    //                            multi))
-    //                    .build();
-    //            String key = String.format(com.wegame.capi.common.Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MANGKUKULAM.getId(), userInfo.getPId(), userInfo.getChannelId());
-    //            DefaultRedisScript<Long> script = new DefaultRedisScript<>(com.wegame.capi.common.Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
-    //            log.info("updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
-    //            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, com.wegame.capi.common.Constants.MANGKUKULAM_REWARD_NOTIFY_SIZE);
-    //            rewardService.evict(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
-    //            rewardService.getWithCache(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
-    //        } catch (Exception e) {
-    //            log.error("updateRewardNotifyInfo error", e);
-    //        }
-    //    }
 }
