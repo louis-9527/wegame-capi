@@ -129,6 +129,8 @@ public abstract class AbstractKapreBetStrategy
         BetRecordDo<KapreGameRecordDo> betRecord = kapreBetHelper.buildBetRecord(betRecordId, betDo, list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, kapreBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        // 投注成功后发送延迟派奖通知
+        afterBetSuccessSendDelayRewardNotify(betRecord);
         return kapreBetHelper.handleBetResult(betRecord, resultDo);
     }
 
@@ -166,13 +168,6 @@ public abstract class AbstractKapreBetStrategy
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            KapreGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
-            if (Objects.nonNull(lastGameRecord)) {
-                // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId());
-            }
-        }
         return BetResultDo.<KapreBetRecordDetailDo>builder()
                 .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
@@ -186,9 +181,4 @@ public abstract class AbstractKapreBetStrategy
                         .build())
                 .build();
     }
-
-    public void freeWheelAfterHandle(Long betRecordId) {
-        // do nothing
-    }
-
 }
