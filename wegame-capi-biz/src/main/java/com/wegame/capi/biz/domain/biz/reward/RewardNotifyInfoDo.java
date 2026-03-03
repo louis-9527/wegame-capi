@@ -20,6 +20,7 @@ import java.io.Serializable;
 public class RewardNotifyInfoDo implements Serializable {
     private static final long serialVersionUID = -22633876654348L;
     /**
+     @JsonIgnoreProperties(ignoreUnknown = true)
      * 游戏id
      *
      * @see com.wegame.capi.client.enums.GameTypeEnum
@@ -37,6 +38,12 @@ public class RewardNotifyInfoDo implements Serializable {
      * 中奖用户名称
      */
     private String userName;
+    /**
+     * 中奖类型
+     *
+     * @see NotifyRewardTypeEnum
+     */
+    private String notifyRewardType;
     /**
      * 中奖时间
      */
