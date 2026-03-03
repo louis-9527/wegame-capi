@@ -2,9 +2,9 @@ package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.SnowflakeIdGenerator;
-import com.wegame.base.utils.DateUtil;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -204,7 +204,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      */
     protected void afterBetSuccessSendDelayRewardNotify(BetRecordDo<R> betRecord) {
         try {
-            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(betRecord.getPayAmount()), 2, RoundingMode.FLOOR);
+            Long amount = Objects.nonNull(betRecord.getPayAmount()) && betRecord.getPayAmount() > 0L ? betRecord.getPayAmount() : betRecord.getBetAmount();
+            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
             if (multi.compareTo(getDelayRewardMultiplierThreshold()) < 0) {
                 return;
             }
