@@ -31,6 +31,7 @@ public class StartCardUseRecordConvert {
         recordPo.setBetAmount(recordDo.getBetAmount());
         recordPo.setBetRecordId(recordDo.getBetRecordId());
         recordPo.setPayOutAmount(recordDo.getPayOutAmount());
+        recordPo.setExpireAt(recordDo.getExpireAt());
         if (OptEnum.ADD == optEnum) {
             recordPo.setUseStatus(StarCardUseStatusEnum.ING.getCode());
             recordPo.setReportStatus(StarCardReportStatusEnum.ING.getCode());
@@ -74,6 +75,7 @@ public class StartCardUseRecordConvert {
         recordDo.setReportStatus(recordPo.getReportStatus() == null ? null : StarCardReportStatusEnum.valueOfCode(recordPo.getReportStatus()));
         recordDo.setCreateTime(recordPo.getCreateTime());
         recordDo.setUpdateTime(recordPo.getUpdateTime());
+        recordDo.setExpireAt(recordPo.getExpireAt());
         return recordDo;
 
     }

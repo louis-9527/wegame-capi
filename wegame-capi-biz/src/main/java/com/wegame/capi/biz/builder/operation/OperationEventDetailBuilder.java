@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 
 public class OperationEventDetailBuilder {
 
@@ -35,6 +36,7 @@ public class OperationEventDetailBuilder {
         detailDo.setCreateTime(currentMilli);
         detailDo.setUpdateTime(currentMilli);
         detailDo.setBetStatus(BetStatusEnum.ING); // todo 改成干预状态
+        detailDo.setExpireAt(TtlUtil.calculateExpiredAt(currentMilli));
         return detailDo;
     }
 }
