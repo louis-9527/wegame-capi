@@ -11,7 +11,7 @@ spring:
 pulsar:
   dynamic:
     mangkukulam:
-      url: pulsar://pulsar.makillingslot.net:6650
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
       tenant: ${spring.application.name}_Mangkukulam
       namespace: ${spring.application.env}
       bet_topic: Mangkukulam_topic
