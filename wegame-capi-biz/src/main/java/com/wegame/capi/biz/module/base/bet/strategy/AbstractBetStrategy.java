@@ -166,6 +166,10 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             if (Objects.equals(betRecord.getBetPromotionType(), FREE_SPIN)) {
                 amount = betRecord.getBetAmount();
             }
+            if (Objects.isNull(amount)) {
+                log.error("afterBetSuccessSendDelayRewardNotify amount is null, betRecordId: {}", betRecord.getId());
+                return;
+            }
             BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
             if (multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
                 return;
@@ -174,10 +178,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             UserInfo userInfo = UserInfoContext.getUserInfo();
             long payOutAmount = betRecord.getPayOutAmount();
             scheduledThreadPoolExecutor.schedule(() -> {
-                RewardNotifyInfoDo notifyInfo = RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, userInfo);
-                if (notifyInfo != null) {
-                    updateDelayRewardNotifyInfo(notifyInfo, userInfo);
-                }
+                updateDelayRewardNotifyInfo(RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, userInfo), userInfo);
             }, 1, TimeUnit.MINUTES);
         } catch (Exception e) {
             log.error("afterBetSuccessSendDelayRewardNotify error", e);
