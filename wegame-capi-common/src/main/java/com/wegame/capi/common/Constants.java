@@ -27,9 +27,6 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
-    public static final Integer BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE = 10;
-    public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
-
     // lamang推送大奖tips内容
     public static final String LAMANG_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
 
