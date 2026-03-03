@@ -27,10 +27,7 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
-    public static final Integer MALAKAS_REWARD_NOTIFY_SIZE = 10;
     public static final Integer IBONG_ADARNA_REWARD_NOTIFY_SIZE = 10;
-    // malakas推送大奖tips内容
-    public static final String MALAKAS_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // ibong推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
     public static final String IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
 
