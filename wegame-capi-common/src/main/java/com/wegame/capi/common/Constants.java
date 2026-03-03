@@ -27,12 +27,6 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
-
-
-    // mangkukulam推送大奖tips内容
-    //public static final String MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
-    public static final String MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s %sX win ！";
-
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
