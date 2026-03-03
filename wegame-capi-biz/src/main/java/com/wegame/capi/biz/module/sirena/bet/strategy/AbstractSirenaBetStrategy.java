@@ -130,6 +130,8 @@ public abstract class AbstractSirenaBetStrategy
         BetRecordDo<SirenaGameRecordDo> betRecord = sirenaBetHelper.buildBetRecord(betRecordId, betDo, list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, sirenaBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        // 投注成功后发送延迟派奖通知
+        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
         return sirenaBetHelper.handleBetResult(betRecord, resultDo);
     }
 
@@ -155,13 +157,6 @@ public abstract class AbstractSirenaBetStrategy
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            SirenaGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
-            if (Objects.nonNull(lastGameRecord)) {
-                // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId());
-            }
-        }
         return BetResultDo.<SirenaBetRecordDetailDo>builder()
                 .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
@@ -174,10 +169,6 @@ public abstract class AbstractSirenaBetStrategy
                         .gameRecordList(gameRecordList)
                         .build())
                 .build();
-    }
-
-    public void freeWheelAfterHandle(Long betRecordId) {
-        // do nothing
     }
 
 }

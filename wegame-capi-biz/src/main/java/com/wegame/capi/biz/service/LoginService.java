@@ -80,13 +80,7 @@ public class LoginService {
     public UserInfo getUserInfoByToken(String token) {
         Object obj = redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
         if (Objects.nonNull(obj)) {
-            if (obj instanceof String) {
-                //log.info("userInfo is String class");
-                return FastJsonUtils.fromJSONString(obj.toString(), UserInfo.class);
-            } else {
-                //log.info("userInfo is not String class");
-                return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), UserInfo.class);
-            }
+            return FastJsonUtils.fromJSONString(obj.toString(), UserInfo.class);
         } else {
             return null;
         }

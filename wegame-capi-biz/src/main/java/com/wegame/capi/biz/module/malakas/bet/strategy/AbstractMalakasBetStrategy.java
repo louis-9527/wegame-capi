@@ -115,6 +115,8 @@ public abstract class AbstractMalakasBetStrategy
         BetRecordDo<MalakasGameRecordDo> betRecord = malakasBetHelper.buildBetRecord(betRecordId, betDo, list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, malakasBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        // 投注成功后发送延迟派奖通知
+        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
         return malakasBetHelper.handleBetResult(betRecord, resultDo);
     }
 
@@ -163,12 +165,6 @@ public abstract class AbstractMalakasBetStrategy
         if (CollectionUtils.isNotEmpty(currentWheelGameRecordList)) {
             MalakasGameRecordDo lastGameRecord = currentWheelGameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
             if (Objects.nonNull(lastGameRecord)) {
-                long payOutAmount = allGameRecordList.stream()
-                        .filter(item -> Objects.nonNull(item.getRewardResult()))
-                        .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                        .sum();
-                // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId(), payOutAmount, allGameRecordList);
                 betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
             }
         }
@@ -191,10 +187,6 @@ public abstract class AbstractMalakasBetStrategy
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
                 .collect(Collectors.toList());
-    }
-
-    public void freeWheelAfterHandle(Long betRecordId, long payOutAmount, List<MalakasGameRecordDo> gameRecordList) {
-        // do nothing
     }
 
 }

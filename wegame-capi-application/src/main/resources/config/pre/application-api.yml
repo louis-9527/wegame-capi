@@ -4,6 +4,7 @@ api:
     internal:
       platformIdList:
         - 50
+        - 52
         - 55
       invokeSingle: true
       singleDomain: https://sw-http-main-apisix.igo9.me

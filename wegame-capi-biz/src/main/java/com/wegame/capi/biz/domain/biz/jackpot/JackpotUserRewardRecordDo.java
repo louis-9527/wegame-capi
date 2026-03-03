@@ -63,7 +63,7 @@ public class JackpotUserRewardRecordDo implements Serializable {
      */
     private JackpotRewardAmountTypeEnum rewardAmountType;
     /**
-     * 中奖金额.单位：厘
+     * 中奖金额.单位：厘/10
      */
     private Long rewardAmount;
     /**
