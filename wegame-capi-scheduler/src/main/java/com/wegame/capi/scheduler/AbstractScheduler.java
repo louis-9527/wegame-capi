@@ -11,8 +11,6 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.concurrent.TimeUnit;
-
 import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 
 @Slf4j
@@ -21,7 +19,7 @@ public abstract class AbstractScheduler implements InitializingBean {
     public static final int DEFAULT_PAGE_SIZE = 100;
     private static final String LOCK_FAIL_TIP = "Get lock[%s] fail";
     @Autowired
-    DistributeLock distributeLock;
+    public DistributeLock distributeLock;
 
     @Override
     public void afterPropertiesSet() {
@@ -33,7 +31,7 @@ public abstract class AbstractScheduler implements InitializingBean {
     }
 
     protected void scheduleWithLock(String lockName, Runnable runnable) {
-        distributeLock.lockThenRun(lockName, 100, TimeUnit.MILLISECONDS, () -> {
+        distributeLock.lockThenRun(lockName, () -> {
             try {
                 log.info("schedule task, get lock suc, taskName: {}, lockName: {}", taskName(), lockName);
                 MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));

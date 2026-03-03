@@ -2,6 +2,7 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
+import com.wegame.base.enums.EnvEnum;
 import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
 import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
@@ -38,6 +39,9 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
 
     @Override
     public void handle() {
+        if (env.equals(EnvEnum.LOCAL.getValue())) {
+            return;
+        }
         if (!supportGame(GameTypeEnum.DIWATA_MAYARI)) {
             return;
         }
@@ -92,7 +96,7 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                 log.info("loadLocalCache start, betType: {}, templateType: {}, size: {}", betType, templateType.getBetRecordTemplateName(), templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    List<DiwataBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.DIWATA_MAYARI, idList, DiwataBetRecordTemplateEsDo.class);
+                    List<DiwataBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, DiwataBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });

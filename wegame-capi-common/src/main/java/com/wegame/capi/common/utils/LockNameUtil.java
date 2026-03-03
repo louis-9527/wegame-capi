@@ -24,6 +24,8 @@ public class LockNameUtil {
 
 
     private static final String CONTINUE_PLAY_LOCK = "lock:continue_play_scheduler_lock:%s";
+
+    private static final String CONTINUE_PLAY_RECORD_LOCK = "lock:continue_play_record_lock:%s_%s";
     /**
      * 奖池派奖定时任务锁
      */
@@ -125,5 +127,10 @@ public class LockNameUtil {
     public static String getJackpotRewardPoolAccSchedulerSchedulerLock(GameTypeEnum gameType) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(JACKPOT_REWARD_POOL_ACC_SCHEDULER_LOCK, gameType.getName());
+    }
+
+    public static String getContinuePlayRecordLock(GameTypeEnum gameType, Long betRecordId) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(CONTINUE_PLAY_RECORD_LOCK, gameType.getName(), betRecordId);
     }
 }

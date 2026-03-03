@@ -2,6 +2,7 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
+import com.wegame.base.enums.EnvEnum;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
@@ -45,6 +46,9 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
 
     @Override
     public void handle() {
+        if (env.equals(EnvEnum.LOCAL.getValue())) {
+            return;
+        }
         if (!supportGame(GameTypeEnum.MALAKAS)) {
             return;
         }
