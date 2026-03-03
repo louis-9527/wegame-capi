@@ -11,7 +11,7 @@ spring:
 pulsar:
   dynamic:
     bakunawa:
-      url: pulsar://pulsar.makillingslot.net:6650
+      url: pulsar://qat-pulsar-proxy.cpegame.com:6650
       tenant: ${spring.application.name}_Bakunawa
       namespace: ${spring.application.env}
       bet_topic: Bakunawa_topic
