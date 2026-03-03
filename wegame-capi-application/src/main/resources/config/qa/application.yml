@@ -28,7 +28,7 @@ spring:
   application:
     name: wegame-capi
     env: qa
-    version: 20251125
+    version: 2026030301
   profiles:
     active: qa
   config:
