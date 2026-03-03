@@ -1,5 +1,7 @@
 package com.wegame.capi.common;
 
+import java.math.BigDecimal;
+
 public class Constants {
     public static final String CUSER_LOGIN_TOKEN = "wegame:cuser:login:token:%s";
     public static final String SYSTEM = "system";
@@ -18,6 +20,8 @@ public class Constants {
     public static final String DELAY_REWARD_NOTIFY_CONTENT_FORMAT = "Player %s has won a %sX reward in the game, totaling %s pesos. Congratulations! %s";
     /** 延迟大奖通知列表在 Redis 中的默认最大条数（子类可重写 getDelayRewardNotifyListSize 使用不同值） */
     public static final int DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE = 10;
+    /** 延迟大奖通知的默认倍数阈值*/
+    public static final BigDecimal DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD = new BigDecimal(20);
     // 推送大奖lua脚本
     public static final String WEGAME_REWARD_NOTIFY_LUA_SCRIPT = "local key = KEYS[1]\n" +
             "local value = ARGV[1]\n" +
