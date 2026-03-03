@@ -74,6 +74,7 @@ public class BetRecordConverter {
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
         betRecordDo.setUpdateTime(po.getUpdateTime());
+        betRecordDo.setExpireAt(po.getExpireAt());
         return betRecordDo;
     }
 
@@ -100,6 +101,7 @@ public class BetRecordConverter {
         po.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         po.setStatus(betRecordDo.getStatus());
         po.setBetTime(betRecordDo.getBetTime());
+        po.setExpireAt(betRecordDo.getExpireAt());
         if (Objects.nonNull(betRecordDo.getExtendInfo())) {
             po.setExtendInfo(BetRecordPo.ExtendInfo.builder()
                     .ieId(betRecordDo.getExtendInfo().getIeId())

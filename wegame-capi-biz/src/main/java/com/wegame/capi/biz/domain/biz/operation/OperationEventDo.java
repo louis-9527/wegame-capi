@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @ToString
@@ -101,4 +102,8 @@ public class OperationEventDo implements Serializable {
      * 上报失败原因
      */
     private String reportFailMsg;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
 }

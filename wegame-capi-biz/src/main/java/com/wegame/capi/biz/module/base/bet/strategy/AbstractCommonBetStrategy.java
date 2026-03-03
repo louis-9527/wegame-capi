@@ -5,6 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.RetryUtil;
 import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
@@ -31,6 +32,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -205,6 +207,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 .playName(userInfo.getPlayerName())
                 .useStatus(StarCardUseStatusEnum.ING)
                 .reportStatus(StarCardReportStatusEnum.ING)
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build(), this.gameContext().gameInfo().getGameType());
         // 核销星卡
         long startTime = System.currentTimeMillis();

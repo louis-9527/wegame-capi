@@ -40,6 +40,7 @@ public class OperationEventDetailConvert {
             po.setBetStatus(detailDo.getBetStatus().getCode());
             po.setCreateTime(detailDo.getCreateTime());
             po.setUpdateTime(detailDo.getUpdateTime());
+            po.setExpireAt(detailDo.getExpireAt());
         } else {
             po.setUpdateTime(DateUtil.getCurrentMilli());
         }
@@ -75,6 +76,7 @@ public class OperationEventDetailConvert {
         detailDo.setBetStatus(BetStatusEnum.valueOfCode(po.getBetStatus()));
         detailDo.setCreateTime(po.getCreateTime());
         detailDo.setUpdateTime(po.getUpdateTime());
+        detailDo.setExpireAt(po.getExpireAt());
         return detailDo;
     }
 }
