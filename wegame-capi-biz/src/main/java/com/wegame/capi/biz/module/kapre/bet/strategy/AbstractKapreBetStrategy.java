@@ -130,7 +130,7 @@ public abstract class AbstractKapreBetStrategy
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, kapreBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 投注成功后发送延迟派奖通知
-        afterBetSuccessSendDelayRewardNotify(betRecord);
+        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
         return kapreBetHelper.handleBetResult(betRecord, resultDo);
     }
 

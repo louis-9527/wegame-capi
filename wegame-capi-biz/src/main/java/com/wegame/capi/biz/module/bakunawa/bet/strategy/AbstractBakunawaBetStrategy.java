@@ -111,7 +111,7 @@ public abstract class AbstractBakunawaBetStrategy
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<BakunawaGameRecordDo> result = bakunawaBetHelper.handleBetResult(betRecord, resultDo);
         // 投注成功后发送延迟派奖通知
-        afterBetSuccessSendDelayRewardNotify(betRecord);
+        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
         return result;
     }
 }
