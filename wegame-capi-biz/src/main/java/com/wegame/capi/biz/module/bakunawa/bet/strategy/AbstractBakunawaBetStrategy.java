@@ -25,9 +25,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
-
 /**
  * Bakunawa类游戏投注抽象接口
  */
