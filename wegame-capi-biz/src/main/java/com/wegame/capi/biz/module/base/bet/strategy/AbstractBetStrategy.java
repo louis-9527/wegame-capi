@@ -206,7 +206,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      */
     protected void afterBetSuccessSendDelayRewardNotify(BetRecordDo<R> betRecord) {
         try {
-            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(betRecord.getBetAmount()), 2, RoundingMode.FLOOR);
+            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(betRecord.getPayAmount()), 2, RoundingMode.FLOOR);
             if (multi.compareTo(getDelayRewardMultiplierThreshold()) < 0) {
                 return;
             }
