@@ -51,8 +51,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                 }
                 updateRewardNotifyInfo(freeWheelCount, betRecord.getPayOutAmount(), userInfo);
             } catch (Exception e) {
-                log.error("freeWheelAfterHandle Exception, errMsg: {}", e.getMessage(), e);
-            }
+1            }
         });
     }
 
