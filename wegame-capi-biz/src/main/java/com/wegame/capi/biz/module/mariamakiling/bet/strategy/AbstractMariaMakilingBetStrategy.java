@@ -4,7 +4,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
@@ -123,11 +122,6 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .findFirst()
                 .orElse(null);
         AssertUtil.assertNotNull(matchGameRecord, ErrorCode.ERR_PARAM, "NOT FOUND GAME RECORD");
-        // 后处理-免费轮
-        MariaMakilingBetRecordDetailDo detailDo = MariaMakilingBetRecordDetailDo.builder()
-                .gameRecordList(gameRecordList)
-                .build();
-        freeWheelAfterHandle(betDo, detailDo, matchGameRecord.getOverallRewardAmount());
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betStatus(BetStatusEnum.SUCCESS)
@@ -152,6 +146,8 @@ public abstract class AbstractMariaMakilingBetStrategy
         // 保存投注记录并派奖
         boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, syncOpt);
+        // 投注成功后发送延迟派奖通知
+        afterBetSuccessSendDelayRewardNotify(betRecord);
         return mariaMakilingBetHelper.handleBetResult(betRecord, resultDo);
     }
 
@@ -163,8 +159,4 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .sum();
     }
 
-
-    public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
-        // do nothing
-    }
 }
