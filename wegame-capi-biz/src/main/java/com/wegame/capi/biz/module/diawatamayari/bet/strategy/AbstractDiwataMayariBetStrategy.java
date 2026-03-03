@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -172,7 +173,8 @@ public abstract class AbstractDiwataMayariBetStrategy
         Map<Integer, Long> updateMultipleControlMap = new HashMap<>();
         multipleControlConfigMap.forEach((subType, mappingInfo) -> {
             BigDecimal betIntoRewardRatio = mappingInfo.getBetIntoRewardRatio();
-            long incrAmount = betIntoRewardRatio.multiply(BigDecimal.valueOf(payAmount)).longValue();
+            long incrAmount = betIntoRewardRatio.divide(BigDecimal.valueOf(100),3, RoundingMode.FLOOR)
+                    .multiply(BigDecimal.valueOf(payAmount)).longValue();
             updateMultipleControlMap.put(subType.getCode(), incrAmount);
         });
         bizInterfereService.asyncUpdateBizInterfere(betDo.getGameType(), BizInterfereTypeEnum.MULTIPLE_CONTROL, updateMultipleControlMap);
@@ -180,11 +182,12 @@ public abstract class AbstractDiwataMayariBetStrategy
 
     private boolean bizInterfereDecyIfNeed(BetDo betDo, BetRecordDo<DiwataMayariGameRecordDo> betRecord) {
         // 业务干预开关是否打开
+        BizInterfereContextDo bizInterfereContext = betDo.getBizInterfereContext();
         BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
-        if (!bizInterfereConfig.isMultipleControlEnabled()) {
+        if (!bizInterfereConfig.isMultipleControlEnabled() || !bizInterfereContext.isBizInterfere()) {
             return true;
         }
-        BizInterfereContextDo bizInterfereContext = betDo.getBizInterfereContext();
+
         return bizInterfereService.decrOneReward(betDo.getGameType(),
                 BizInterfereTypeEnum.MULTIPLE_CONTROL, bizInterfereContext.getInUseJackPotSnapshotType(), betRecord.getPayOutAmount());
     }
