@@ -110,12 +110,8 @@ public abstract class AbstractBakunawaBetStrategy
         // 保存投注记录并派奖
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<BakunawaGameRecordDo> result = bakunawaBetHelper.handleBetResult(betRecord, resultDo);
-        // 中大奖处理
-        this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
+        // 投注成功后发送延迟派奖通知
+        afterBetSuccessSendDelayRewardNotify(betRecord);
         return result;
-    }
-
-    public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
-        // do nothing
     }
 }

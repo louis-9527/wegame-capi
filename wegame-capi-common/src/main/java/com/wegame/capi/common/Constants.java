@@ -14,6 +14,10 @@ public class Constants {
 
     // 推送中大奖redis key
     public static final String WEGAME_REWARD_NOTIFY_KEY_FORMAT = "wegame:reward.notify:%s_%s_%s";
+    /** 所有游戏通用延迟大奖通知内容模板：Player {playerId} has won a {倍数}X reward in the game, totaling {派奖金额} pesos. Congratulations! {时间} */
+    public static final String DELAY_REWARD_NOTIFY_CONTENT_FORMAT = "Player %s has won a %sX reward in the game, totaling %s pesos. Congratulations! %s";
+    /** 延迟大奖通知列表在 Redis 中的默认最大条数（子类可重写 getDelayRewardNotifyListSize 使用不同值） */
+    public static final int DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE = 10;
     // 推送大奖lua脚本
     public static final String WEGAME_REWARD_NOTIFY_LUA_SCRIPT = "local key = KEYS[1]\n" +
             "local value = ARGV[1]\n" +
@@ -23,26 +27,6 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
-    public static final Integer MARIA_MARKILING_REWARD_NOTIFY_SIZE = 10;
-    public static final Integer MALAKAS_REWARD_NOTIFY_SIZE = 10;
-    public static final Integer IBONG_ADARNA_REWARD_NOTIFY_SIZE = 10;
-    public static final Integer BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE = 10;
-    public static final Integer LAMANG_REWARD_NOTIFY_SIZE = 20;
-    public static final Integer DIWATA_MAYARI_REWARD_NOTIFY_SIZE = 10;
-
-    // maria推送大奖tips内容
-    public static final String MARIA_MARKILING_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
-    // malakas推送大奖tips内容
-    public static final String MALAKAS_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
-    // ibong推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
-    public static final String IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
-    // bakunawa推送大奖tips内容 XXXX won 100x rewards ，₱ 99999
-    public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
-    // lamang推送大奖tips内容
-    public static final String LAMANG_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
-    // diwatamayari推送大奖tips内容
-    public static final String DIWATA_MAYARI_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
-
 
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
