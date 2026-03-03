@@ -27,10 +27,6 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
-    public static final Integer IBONG_ADARNA_REWARD_NOTIFY_SIZE = 10;
-    // ibong推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
-    public static final String IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
-
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
