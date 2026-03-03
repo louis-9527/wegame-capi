@@ -153,11 +153,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                         .build());
     }
 
-    // --------------- 延迟大奖通知（通用能力） ---------------
-    /**
-     * 投注成功后调用：满足倍数阈值则延迟约 1 分钟发送大奖通知
-     */
-    protected void afterBetSuccessSendDelayRewardNotify(SingleWalletBetResultDo resultDo, BetRecordDo<R> betRecord) {
+    public void sendDelayRewardNotifyAfterBet(SingleWalletBetResultDo resultDo, BetRecordDo<R> betRecord) {
         try {
             if (!Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 return;
@@ -167,7 +163,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 amount = betRecord.getBetAmount();
             }
             if (Objects.isNull(amount)) {
-                log.error("afterBetSuccessSendDelayRewardNotify amount is null, betRecordId: {}", betRecord.getId());
+                log.error("sendDelayRewardNotifyAfterBet amount is null, betRecordId: {}", betRecord.getId());
                 return;
             }
             BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
@@ -178,17 +174,14 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             UserInfo userInfo = UserInfoContext.getUserInfo();
             long payOutAmount = betRecord.getPayOutAmount();
             scheduledThreadPoolExecutor.schedule(() -> {
-                updateDelayRewardNotifyInfo(RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, userInfo), userInfo);
+                updateRewardNotifyInfo(RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, userInfo), userInfo);
             }, 1, TimeUnit.MINUTES);
         } catch (Exception e) {
             log.error("afterBetSuccessSendDelayRewardNotify error", e);
         }
     }
 
-    /**
-     * 将延迟大奖通知写入 Redis 并刷新奖励缓存
-     */
-    protected void updateDelayRewardNotifyInfo(RewardNotifyInfoDo notifyInfo, UserInfo userInfo) {
+    private void updateRewardNotifyInfo(RewardNotifyInfoDo notifyInfo, UserInfo userInfo) {
         try {
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             GameTypeEnum gameType = gameContext().gameInfo().getGameType();
