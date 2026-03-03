@@ -303,53 +303,48 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                 .build();
     }
 
-
-    //    public void freeWheelAfterHandle(Long betRecordId) {
-    //        // do nothing
+    //    /**
+    //     * 发送延迟大奖信息， 延迟一分钟
+    //     */
+    //    private void sendDelayRewardInfo(BetRecordDo<MangkukulamGameRecordDo> betRecord) {
+    //        try {
+    //            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(betRecord.getBetAmount()), 2, BigDecimal.ROUND_FLOOR);
+    //            if (multi.compareTo(TEN) < 0) {
+    //                return;
+    //            }
+    //            UserInfo userInfo = UserInfoContext.getUserInfo();
+    //            scheduledThreadPoolExecutor.schedule(() -> {
+    //                updateRewardNotifyInfo(multi, userInfo);
+    //            }, 1, TimeUnit.MINUTES);
+    //        } catch (Exception e) {
+    //            log.error("sendDelayRewardInfo error", e);
+    //        }
     //    }
-
-//    /**
-//     * 发送延迟大奖信息， 延迟一分钟
-//     */
-//    private void sendDelayRewardInfo(BetRecordDo<MangkukulamGameRecordDo> betRecord) {
-//        try {
-//            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(betRecord.getBetAmount()), 2, BigDecimal.ROUND_FLOOR);
-//            if (multi.compareTo(TEN) < 0) {
-//                return;
-//            }
-//            UserInfo userInfo = UserInfoContext.getUserInfo();
-//            scheduledThreadPoolExecutor.schedule(() -> {
-//                updateRewardNotifyInfo(multi, userInfo);
-//            }, 1, TimeUnit.MINUTES);
-//        } catch (Exception e) {
-//            log.error("sendDelayRewardInfo error", e);
-//        }
-//    }
-//
-//    private void updateRewardNotifyInfo(BigDecimal multi, UserInfo userInfo) {
-//        try {
-//            log.info("updateRewardNotifyInfo multi: {}, playerName: {}", multi, userInfo.getPlayerName());
-//            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-//            RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
-//                    .gameId(GameTypeEnum.MANGKUKULAM.getId())
-//                    .gameName(GameTypeEnum.MANGKUKULAM.getName())
-//                    .userId(Long.valueOf(userInfo.getId()))
-//                    .userName(userInfo.getPlayerId())
-//                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
-//                    .rewardTime(DateUtil.getCurrentMilli())
-//                    .rewardContent(String.format(com.wegame.capi.common.Constants.MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT,
-//                            DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
-//                            userInfo.getUserName(),
-//                            multi))
-//                    .build();
-//            String key = String.format(com.wegame.capi.common.Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MANGKUKULAM.getId(), userInfo.getPId(), userInfo.getChannelId());
-//            DefaultRedisScript<Long> script = new DefaultRedisScript<>(com.wegame.capi.common.Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
-//            log.info("updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
-//            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, com.wegame.capi.common.Constants.MANGKUKULAM_REWARD_NOTIFY_SIZE);
-//            rewardService.evict(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
-//            rewardService.getWithCache(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
-//        } catch (Exception e) {
-//            log.error("updateRewardNotifyInfo error", e);
-//        }
-//    }
+    //
+    //    private void updateRewardNotifyInfo(BigDecimal multi, UserInfo userInfo) {
+    //        try {
+    //            log.info("updateRewardNotifyInfo multi: {}, playerName: {}", multi, userInfo.getPlayerName());
+    //            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+    //            RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
+    //                    .gameId(GameTypeEnum.MANGKUKULAM.getId())
+    //                    .gameName(GameTypeEnum.MANGKUKULAM.getName())
+    //                    .userId(Long.valueOf(userInfo.getId()))
+    //                    .userName(userInfo.getPlayerId())
+    //                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
+    //                    .rewardTime(DateUtil.getCurrentMilli())
+    //                    .rewardContent(String.format(com.wegame.capi.common.Constants.MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT,
+    //                            DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
+    //                            userInfo.getUserName(),
+    //                            multi))
+    //                    .build();
+    //            String key = String.format(com.wegame.capi.common.Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MANGKUKULAM.getId(), userInfo.getPId(), userInfo.getChannelId());
+    //            DefaultRedisScript<Long> script = new DefaultRedisScript<>(com.wegame.capi.common.Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
+    //            log.info("updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
+    //            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, com.wegame.capi.common.Constants.MANGKUKULAM_REWARD_NOTIFY_SIZE);
+    //            rewardService.evict(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
+    //            rewardService.getWithCache(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
+    //        } catch (Exception e) {
+    //            log.error("updateRewardNotifyInfo error", e);
+    //        }
+    //    }
 }
