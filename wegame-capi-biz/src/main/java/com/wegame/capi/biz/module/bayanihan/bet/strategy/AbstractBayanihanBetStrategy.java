@@ -131,6 +131,8 @@ public abstract class AbstractBayanihanBetStrategy
         BetRecordDo<BayanihanGameRecordDo> betRecord = bayanihanBetHelper.buildBetRecord(betRecordId, betDo, list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, bayanihanBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        // 投注成功后发送延迟派奖通知
+        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
         return bayanihanBetHelper.handleBetResult(betRecord, resultDo);
     }
 
@@ -156,13 +158,6 @@ public abstract class AbstractBayanihanBetStrategy
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            BayanihanGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
-            if (Objects.nonNull(lastGameRecord)) {
-                // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId());
-            }
-        }
         return BetResultDo.<BayanihanBetRecordDetailDo>builder()
                 .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
@@ -176,9 +171,4 @@ public abstract class AbstractBayanihanBetStrategy
                         .build())
                 .build();
     }
-
-    public void freeWheelAfterHandle(Long betRecordId) {
-        // do nothing
-    }
-
 }
