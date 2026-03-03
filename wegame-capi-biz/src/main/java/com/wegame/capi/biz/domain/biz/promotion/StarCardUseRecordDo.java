@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @ToString
@@ -88,4 +89,8 @@ public class StarCardUseRecordDo implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
 }

@@ -11,6 +11,7 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -70,6 +71,7 @@ public class BetRecordBuilder {
                 .createTime(currentMilli)
                 .updateTime(currentMilli)
                 .gameRecordList(gameRecordList)
+                .expireAt(TtlUtil.calculateExpiredAt(currentMilli))
                 .build();
     }
 
