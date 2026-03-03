@@ -571,23 +571,23 @@
         "multipleControlConfig": {
             "enabled": true,
             "multipleControlConfigMap": {
-                "11": {
-                    "usableTemplateMultipleRange": "5-8",
+                "MULTIPLE_CONTROL_11": {
+                    "usableTemplateMultipleRange": "5_8",
                     "betIntoRewardRatio": 2.00,
                     "rewardUsableAmount": 10000
                 },
-                "12": {
-                    "usableTemplateMultipleRange": "8-10",
+                "MULTIPLE_CONTROL_12": {
+                    "usableTemplateMultipleRange": "8_10",
                     "betIntoRewardRatio": 3.00,
                     "rewardUsableAmount": 20000
                 },
-                "13": {
-                    "usableTemplateMultipleRange": "10-20",
+                "MULTIPLE_CONTROL_13": {
+                    "usableTemplateMultipleRange": "10_20",
                     "betIntoRewardRatio": 4.00,
                     "rewardUsableAmount": 100000
                 },
-                "14": {
-                    "usableTemplateMultipleRange": "20-100000000",
+                "MULTIPLE_CONTROL_14": {
+                    "usableTemplateMultipleRange": "20_100000000",
                     "betIntoRewardRatio": 5.00,
                     "rewardUsableAmount": 200000
                 }
