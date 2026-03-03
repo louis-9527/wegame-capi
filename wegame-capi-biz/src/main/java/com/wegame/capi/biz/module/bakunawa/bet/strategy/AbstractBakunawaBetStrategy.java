@@ -25,9 +25,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
-
 /**
  * Bakunawa类游戏投注抽象接口
  */
@@ -111,7 +108,7 @@ public abstract class AbstractBakunawaBetStrategy
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<BakunawaGameRecordDo> result = bakunawaBetHelper.handleBetResult(betRecord, resultDo);
         // 投注成功后发送延迟派奖通知
-        afterBetSuccessSendDelayRewardNotify(betRecord);
+        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
         return result;
     }
 }
