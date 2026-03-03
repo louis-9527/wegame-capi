@@ -96,8 +96,6 @@ public abstract class AbstractIbongAdarnaBetStrategy
         // 保存投注记录并派奖
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<IbongAdarnaGameRecordDo> result = ibongAdarnaBetHelper.handleBetResult(betRecord, resultDo);
-        // 中大奖处理
-        this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
         return result;
     }
 
