@@ -11,6 +11,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.*;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,7 @@ public abstract class AbstractContinuePlayScheduler
             long endCreateTime = System.currentTimeMillis() - END_TIME_DURATION_IN_MS;
             long startCreateTime = System.currentTimeMillis() - START_TIME_DURATION_IN_MS;
             Long lastId = null;
-            List<BetRecordDo> detailList;
+            List<Long> detailList;
 
             BetRecordQuery query = BetRecordQuery.builder()
                     .endCreateTime(endCreateTime)
@@ -69,14 +70,13 @@ public abstract class AbstractContinuePlayScheduler
                     .build();
             do {
                 query.setGtLastId(lastId);
-                detailList = betRecordService.list(query, gameType());
+                detailList = betRecordService.listId(query, gameType());
                 if (CollectionUtil.isNotEmpty(detailList)) {
-                    lastId = detailList.get(detailList.size() - 1).getId();
+                    lastId = detailList.get(detailList.size() - 1);
                 }
                 Optional.ofNullable(detailList)
                         .orElse(Collections.emptyList())
                         .stream()
-                        .filter(item -> BetSubTypeEnum.isFirstStep(item.getBetSubType()))
                         .forEach(betRecord ->
                                 autoContinuePlayGameThreadPoolExecutor.submit(() -> autoContinuePlay(betRecord)));
             } while (CollectionUtils.isNotEmpty(detailList));
@@ -86,10 +86,16 @@ public abstract class AbstractContinuePlayScheduler
         }
     }
 
-    private void autoContinuePlay(BetRecordDo betRecordDo) {
+    private void autoContinuePlay(Long betRecordId) {
         try {
-            UserInfoContext.setUserInfo(buildUserInfo(betRecordDo));
-            betStrategy().bet(buildBetDo(betRecordDo));
+            String lockName = LockNameUtil.getContinuePlayRecordLock(gameType(), betRecordId);
+            distributeLock.lockThenRun(lockName, () -> {
+                BetRecordDo betRecordDo = betRecordService.getById(betRecordId, gameType(), false);
+                if (Objects.equals(FreeWheelHandleStatusEnum.PENDING.getCode(), betRecordDo.getFreeWheelHandleStatus())) {
+                    UserInfoContext.setUserInfo(buildUserInfo(betRecordDo));
+                    betStrategy().bet(buildBetDo(betRecordDo));
+                }
+            }, "lock error");
         } catch (Exception e) {
             log.error("AbstractContinuePlayScheduler autoContinuePlay exception", e);
         } finally {

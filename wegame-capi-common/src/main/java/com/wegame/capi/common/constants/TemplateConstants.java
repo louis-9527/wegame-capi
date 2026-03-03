@@ -15,5 +15,6 @@ public class TemplateConstants {
     public static final String DIWATA_MAYARI_BET_RECORD_TEMPLATE_V3 = "diwatamayari_bet_record_template_v3";
 
 
-    public static final String MANGKUKULAM_BET_RECORD_TEMPLATE = "mangkukulam_bet_record_template";
+    // public static final String MANGKUKULAM_BET_RECORD_TEMPLATE = "mangkukulam_bet_record_template";
+    public static final String MANGKUKULAM_BET_RECORD_TEMPLATE = "mangkukulam_bet_record_template_v2";
 }

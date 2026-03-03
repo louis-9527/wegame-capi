@@ -2,6 +2,7 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
+import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
@@ -45,6 +46,9 @@ public class IbongAdarnaTemplateLoadPostHandler extends AbstractTemplateLoadPost
 
     @Override
     public void handle() {
+        if (env.equals(EnvEnum.LOCAL.getValue())) {
+            return;
+        }
         if (!supportGame(GameTypeEnum.IBONG_ADARNA)) {
             return;
         }
