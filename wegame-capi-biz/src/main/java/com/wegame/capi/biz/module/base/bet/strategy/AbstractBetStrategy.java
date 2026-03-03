@@ -158,7 +158,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             if (!Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 return;
             }
-            Long amount = betRecord.getPayAmount();
+            // 获取金额： 默认取支付金额， 如果支付金额为0，则取投注金额。 另特殊场景freeSpin，强制取投注金额
+            Long amount = Objects.nonNull(betRecord.getPayAmount()) ? betRecord.getPayAmount() : betRecord.getBetAmount();
             if (Objects.equals(betRecord.getBetPromotionType(), FREE_SPIN)) {
                 amount = betRecord.getBetAmount();
             }
