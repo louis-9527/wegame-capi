@@ -132,7 +132,7 @@ public abstract class AbstractBayanihanBetStrategy
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, bayanihanBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 投注成功后发送延迟派奖通知
-        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
+        sendDelayRewardNotifyAfterBet(resultDo, betRecord);
         return bayanihanBetHelper.handleBetResult(betRecord, resultDo);
     }
 
