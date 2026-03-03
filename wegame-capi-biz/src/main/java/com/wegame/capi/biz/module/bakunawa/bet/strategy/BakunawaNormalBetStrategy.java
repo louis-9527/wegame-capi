@@ -61,7 +61,6 @@
 //                    .gameName(gameType.getName())
 //                    .userId(Long.valueOf(userInfo.getId()))
 //                    .userName(userInfo.getUserName())
-//                    .notifyRewardType(NotifyRewardTypeEnum.MULTIPLE.name())
 //                    .rewardTime(DateUtil.getCurrentMilli())
 //                    .rewardContent(String.format(Constants.BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT,
 //                            userInfo.getUserName(),

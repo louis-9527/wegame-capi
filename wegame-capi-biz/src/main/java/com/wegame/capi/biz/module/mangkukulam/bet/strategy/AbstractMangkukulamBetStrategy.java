@@ -185,7 +185,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             // sendDelayRewardInfo(betRecord);
             // 投注成功后发送延迟派奖通知
-            afterBetSuccessSendDelayRewardNotify(betRecord);
+            afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
             return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
         } else if (BetSubTypeEnum.isSecondStep(betDo.getBetSubType().getCode())) {
             // 1、查询投注记录
@@ -217,7 +217,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             Long lastGameRecordId = continuePlayContext.getParentGameRecordId();
             // sendDelayRewardInfo(betRecord);
             // 投注成功后发送延迟派奖通知
-            afterBetSuccessSendDelayRewardNotify(betRecord);
+            afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
             return mangkukulamBetHelper.handleBetResult(betRecord, list, resultDo.getCredit(), lastGameRecordId);
         } else {
             throw new BusinessException(ErrorCode.ERR_PARAM);
