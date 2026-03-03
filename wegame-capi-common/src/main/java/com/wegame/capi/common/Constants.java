@@ -30,9 +30,6 @@ public class Constants {
     public static final Integer BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE = 10;
     public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
 
-    // lamang推送大奖tips内容
-    public static final String LAMANG_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
-
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
