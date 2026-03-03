@@ -38,12 +38,6 @@ public class RewardNotifyInfoDo implements Serializable {
      */
     private String userName;
     /**
-     * 中奖类型
-     *
-     * @see NotifyRewardTypeEnum
-     */
-    private String notifyRewardType;
-    /**
      * 中奖时间
      */
     private Long rewardTime;
