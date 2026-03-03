@@ -150,7 +150,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
 
             // bizInterfere 准入。1.保底金额。2.派彩金额是否足够
             Long rewardUsableAmount = this.getRewardUsableAmount(bizInterfereConfig, bizInterfereContext);
-            Long inUseJackPotSnapshotAmount = bizInterfereContext.getInUseJackPotSnapshotAmount();
+            Long inUseJackPotSnapshotAmount = bizInterfereContext.getOrDefaultZeroInUseJackPotSnapshotAmount();
 
             if (inUseJackPotSnapshotAmount < rewardUsableAmount) {
                 // 下次随机排除当前奖池类型

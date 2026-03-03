@@ -5,11 +5,11 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 业务干预上下文
@@ -44,14 +44,15 @@ public class BizInterfereContextDo implements Serializable {
     /**
      * 不能随机的奖池类型
      */
+    @Builder.Default
     private List<BizInterfereSubTypeEnum> unableJackPotTypeList = Lists.newArrayList();
 
     public void addUnableJackPotType(BizInterfereSubTypeEnum unableJackPotType) {
         this.unableJackPotTypeList.add(unableJackPotType);
     }
 
-    public Long getInUseJackPotSnapshotAmount() {
-        return bizInterfereJackpotSnapshotMap.get(inUseJackPotSnapshotType);
+    public Long getOrDefaultZeroInUseJackPotSnapshotAmount() {
+        return Optional.ofNullable(bizInterfereJackpotSnapshotMap.get(inUseJackPotSnapshotType)).orElse(0L);
     }
 
 }
