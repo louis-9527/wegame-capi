@@ -147,7 +147,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, syncOpt);
         // 投注成功后发送延迟派奖通知
-        afterBetSuccessSendDelayRewardNotify(betRecord);
+        afterBetSuccessSendDelayRewardNotify(resultDo, betRecord);
         return mariaMakilingBetHelper.handleBetResult(betRecord, resultDo);
     }
 

@@ -261,7 +261,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         // 投注成功后发送延迟派奖通知
-        afterBetSuccessSendDelayRewardNotify(betRecordDo);
+        afterBetSuccessSendDelayRewardNotify(resultDo, betRecordDo);
         return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
