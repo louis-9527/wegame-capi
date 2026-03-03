@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.builder.RewardNotifyInfoBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -21,8 +21,6 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
-import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +31,13 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static com.wegame.capi.common.Constants.DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD;
+import static com.wegame.capi.common.Constants.DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE;
+import static com.wegame.capi.common.enums.BetPromotionTypeEnum.FREE_SPIN;
 
 /**
  * 抽象投注策略<br>
@@ -46,11 +47,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends ToVoConverter>
-        implements BetStrategy<RD> {
+public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends ToVoConverter> implements BetStrategy<RD> {
     private static final int RETRY_TIMES = 3;
-    /** 延迟大奖通知的默认倍数阈值（子类可重写 getDelayRewardMultiplierThreshold 使用不同倍数） */
-    private static final BigDecimal DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD = new BigDecimal(10);
 
     @Autowired
     public SingleWalletService singleWalletService;
@@ -160,61 +158,27 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     }
 
     // --------------- 延迟大奖通知（通用能力） ---------------
-
     /**
-     * 延迟大奖通知的倍数阈值，达到该倍数才发送，默认 10 倍，子类可重写
+     * 投注成功后调用：满足倍数阈值则延迟约 1 分钟发送大奖通知
      */
-    protected BigDecimal getDelayRewardMultiplierThreshold() {
-        return DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD;
-    }
-
-    /**
-     * 延迟大奖通知列表在 Redis 中的最大条数，子类可重写
-     */
-    protected int getDelayRewardNotifyListSize() {
-        return Constants.DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE;
-    }
-
-    /**
-     * 构建延迟大奖通知内容，使用所有游戏通用模板。子类可重写以自定义或返回 null 关闭通知。
-     *
-     * @param multi       派彩金额/投注金额 的倍数
-     * @param payOutAmount 派奖金额（pesos）
-     * @param userInfo    当前用户
-     * @return 通知内容，返回 null 时不发送
-     */
-    protected RewardNotifyInfoDo buildDelayRewardNotifyInfo(BigDecimal multi, long payOutAmount, UserInfo userInfo) {
-        GameTypeEnum gameType = gameContext().gameInfo().getGameType();
-        String content = String.format(Constants.DELAY_REWARD_NOTIFY_CONTENT_FORMAT,
-                userInfo.getPlayerId(),
-                multi.stripTrailingZeros().toPlainString(),
-                AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(payOutAmount)),
-                DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
-        return RewardNotifyInfoDo.builder()
-                .gameId(gameType.getId())
-                .gameName(gameType.getName())
-                .userId(Long.valueOf(userInfo.getId()))
-                .userName(userInfo.getUserName())
-                .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
-                .rewardTime(DateUtil.getCurrentMilli())
-                .rewardContent(content)
-                .build();
-    }
-
-    /**
-     * 投注成功后调用：满足倍数阈值则延迟约 1 分钟发送大奖通知（由 buildDelayRewardNotifyInfo 返回非 null 时写入 Redis 并刷新缓存）
-     */
-    protected void afterBetSuccessSendDelayRewardNotify(BetRecordDo<R> betRecord) {
+    protected void afterBetSuccessSendDelayRewardNotify(SingleWalletBetResultDo resultDo, BetRecordDo<R> betRecord) {
         try {
-            Long amount = Objects.nonNull(betRecord.getPayAmount()) && betRecord.getPayAmount() > 0L ? betRecord.getPayAmount() : betRecord.getBetAmount();
-            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
-            if (multi.compareTo(getDelayRewardMultiplierThreshold()) < 0) {
+            if (!Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 return;
             }
+            Long amount = betRecord.getPayAmount();
+            if (Objects.equals(betRecord.getBetPromotionType(), FREE_SPIN)) {
+                amount = betRecord.getBetAmount();
+            }
+            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
+            if (multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+                return;
+            }
+            GameTypeEnum gameType = gameContext().gameInfo().getGameType();
             UserInfo userInfo = UserInfoContext.getUserInfo();
             long payOutAmount = betRecord.getPayOutAmount();
             scheduledThreadPoolExecutor.schedule(() -> {
-                RewardNotifyInfoDo notifyInfo = buildDelayRewardNotifyInfo(multi, payOutAmount, userInfo);
+                RewardNotifyInfoDo notifyInfo = RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, userInfo);
                 if (notifyInfo != null) {
                     updateDelayRewardNotifyInfo(notifyInfo, userInfo);
                 }
@@ -233,7 +197,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             GameTypeEnum gameType = gameContext().gameInfo().getGameType();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId(), userInfo.getPId(), userInfo.getChannelId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
-            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, getDelayRewardNotifyListSize());
+            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE);
             rewardService.evict(gameType, userInfo.getPId(), userInfo.getChannelId());
             rewardService.getWithCache(gameType, userInfo.getPId(), userInfo.getChannelId());
         } catch (Exception e) {
