@@ -114,6 +114,7 @@ public abstract class AbstractMalakasBetStrategy
         BetRecordDo<MalakasGameRecordDo> betRecord = malakasBetHelper.buildBetRecord(betRecordId, betDo, list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, malakasBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        sendDelayRewardNotifyAfterBet(resultDo, betRecord);
         return malakasBetHelper.handleBetResult(betRecord, resultDo);
 
     }
