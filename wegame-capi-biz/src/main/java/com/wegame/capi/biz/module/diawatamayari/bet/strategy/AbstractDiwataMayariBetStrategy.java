@@ -27,6 +27,7 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
 import com.wegame.capi.common.enums.BizInterfereTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
@@ -155,9 +156,10 @@ public abstract class AbstractDiwataMayariBetStrategy
 
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, diwataMayariBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-        // bizInterfere 抽成
-        this.updateMultipleControl(betDo, betRecord);
-
+        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            // bizInterfere 抽成
+            this.updateMultipleControl(betDo, betRecord);
+        }
         return diwataMayariBetHelper.handleBetResult(betRecord, resultDo);
 
     }
