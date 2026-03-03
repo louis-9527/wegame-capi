@@ -7,7 +7,7 @@
 //import com.wegame.base.enums.ErrorCode;
 //import com.wegame.base.utils.AssertUtil;
 //import com.wegame.base.utils.FastJsonUtils;
-//import com.wegame.capi.biz.config.domain.AtlantisConfig;
+//import com.wegame.capi.biz.config.domain.BayanihanConfig;
 //import com.wegame.capi.biz.domain.biz.game.AtlantisGameRecordDo;
 //import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 //import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -17,6 +17,7 @@
 //import com.wegame.capi.biz.domain.biz.template.atlantis.AtlantisBetRecordTemplateEsDo;
 //import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 //import com.wegame.capi.biz.module.base.game.AbstractGame;
+//import com.wegame.capi.biz.module.bayanihan.BayanihanGameHelper;
 //import com.wegame.capi.biz.module.bayanihan.reward.BayanihanRewardHandler;
 //import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 //import com.wegame.capi.client.context.UserInfo;
@@ -45,12 +46,12 @@
 //public class BayanihanGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo> {
 //
 //    private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
-//    private static final GameInfoDo GAME_INFO = BayanihanGameHelper.ATLANTIS_GAME_INFO;
+//    private static final GameInfoDo GAME_INFO = BayanihanGameHelper.BAYANIHAN_GAME_INFO;
 //
 //    @Autowired
 //    BayanihanRewardHandler atlantisRewardHandler;
 //    @Autowired
-//    AtlantisConfig atlantisConfig;
+//    BayanihanConfig bayanihanConfig;
 //    @Autowired
 //    BetRecordTemplateEsService<AtlantisBetRecordTemplateEsDo> betRecordTemplateEsService;
 //
