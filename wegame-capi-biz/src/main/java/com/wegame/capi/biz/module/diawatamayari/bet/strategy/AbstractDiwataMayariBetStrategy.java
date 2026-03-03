@@ -160,6 +160,8 @@ public abstract class AbstractDiwataMayariBetStrategy
             // bizInterfere 抽成
             this.updateMultipleControl(betDo, betRecord);
         }
+        // 投注成功后发送延迟派奖通知
+        sendDelayRewardNotifyAfterBet(resultDo, betRecord);
         return diwataMayariBetHelper.handleBetResult(betRecord, resultDo);
 
     }
@@ -238,8 +240,6 @@ public abstract class AbstractDiwataMayariBetStrategy
                         .filter(item -> Objects.nonNull(item.getRewardResult()))
                         .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                         .sum();
-                // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId(), payOutAmount, allGameRecordList);
                 betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
             }
         }
@@ -262,10 +262,6 @@ public abstract class AbstractDiwataMayariBetStrategy
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
                 .collect(Collectors.toList());
-    }
-
-    public void freeWheelAfterHandle(Long betRecordId, Long payOutAmount, List<DiwataMayariGameRecordDo> list) {
-        // do nothing
     }
 
 }

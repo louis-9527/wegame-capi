@@ -121,6 +121,8 @@ public abstract class AbstractLamangBetStrategy
         BetRecordDo<LamangGameRecordDo> betRecord = lamangBetHelper.buildBetRecord(betRecordId, betDo, list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        // 投注成功后发送延迟派奖通知
+        sendDelayRewardNotifyAfterBet(resultDo, betRecord);
         return lamangBetHelper.handleBetResult(betRecord, resultDo);
     }
 
@@ -152,13 +154,6 @@ public abstract class AbstractLamangBetStrategy
                 .collect(Collectors.toList());
         //// 合计中奖总金额
         long overallRewardAmount = LamangCalcUtil.calcTotalRewardAmount(gameRecordList);
-        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            LamangGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
-            if (Objects.nonNull(lastGameRecord)) {
-                // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId());
-            }
-        }
         return BetResultDo.<LamangBetRecordDetailDo>builder()
                 .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
@@ -183,9 +178,4 @@ public abstract class AbstractLamangBetStrategy
     public GamePlayTypeEnum getGamePlayType() {
         return TEMPLATE_PLAY;
     }
-
-    public void freeWheelAfterHandle(Long betRecordId) {
-        // do nothing
-    }
-
 }
