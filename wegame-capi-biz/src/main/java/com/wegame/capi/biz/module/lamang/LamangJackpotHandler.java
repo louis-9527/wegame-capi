@@ -5,28 +5,25 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotDrawAndAwardDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeDo;
 import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.biz.manager.jackpot.LamangJackpotManager;
 import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
 import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
-import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 
 import static com.wegame.capi.common.Constants.CONST_10000000;
-import static com.wegame.capi.common.Constants.CONST_1000000000;
 
 @Slf4j
 @Service
@@ -37,6 +34,8 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     private LamangJackpotManager lamangJackpotManager;
     @Autowired
     private RandomService randomService;
+    @Autowired
+    private JackpotRewardPoolService jackpotRewardPoolService;
 
     @Override
     public AbstractJackpotManager jackpotManager() {
@@ -95,6 +94,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
             if (!Objects.equals(reqDo.getBetPromotionType(), BetPromotionTypeEnum.NONE.getCode())) {
                 return null;
             }
+
             JackpotWinPrizeDo jackpotWinPrizeDo = this.checkReward(reqDo.getBetAmount(), reqDo.getGameCount());
             if (jackpotWinPrizeDo == null) {
                 // 未中奖
@@ -125,13 +125,29 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     }
 
     private JackpotWinPrizeDo checkReward(Long amount, Map<Long, Integer> gameCountMap) {
+        if (Objects.isNull(gameCountMap) || gameCountMap.isEmpty()) {
+            return null;
+        }
         JackpotRewardPoolTypeEnum poolTypeEnum = null;
         TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig = this.getJackpotTriggerBetAmountConfig(amount);
+        if (Objects.isNull(jackpotTriggerBetAmountConfig) || jackpotTriggerBetAmountConfig.isEmpty()) {
+            return null;
+        }
+        //todo jackpot 保底池未满不允许中奖
+        List<JackpotRewardPoolDo> rewardPoolDos = jackpotRewardPoolService.listAllWithCache(getJackpotType());
+        for (JackpotRewardPoolDo rewardPoolDo : rewardPoolDos) {
+            if (!rewardPoolDo.canDrawJackpot()) {
+                jackpotTriggerBetAmountConfig.remove(rewardPoolDo.getType().getName());
+            }
+        }
+        // 初始化权重
+        Map<String, Integer> weightMap = initWeight(jackpotTriggerBetAmountConfig);
         for (Map.Entry<Long, Integer> entry : gameCountMap.entrySet()) {
             Long gameRecordId = entry.getKey();   // 获取游戏投注记录ID
             Integer count = entry.getValue(); // 获取对应的游戏计数
             for (int i = 0; i < count; i++) {
-                String rewardPoolType = GameUtil.randomKey(jackpotTriggerBetAmountConfig, CONST_10000000, randomService.randomInt(1, CONST_1000000000));
+                String rewardPoolType = randomService.randomKeyByWeight(weightMap);
+//                String rewardPoolType = GameUtil.randomKey(jackpotTriggerBetAmountConfig, CONST_10000000, randomService.randomInt(1, CONST_1000000000));
                 poolTypeEnum = JackpotRewardPoolTypeEnum.valueOfName(rewardPoolType);
                 log.info("jackpot checkReward,index:{},result:{}", i, poolTypeEnum == null ? "null" : poolTypeEnum.name());
                 if (poolTypeEnum != null) {
@@ -142,6 +158,14 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         }
 
         return null;
+    }
+
+    private Map<String, Integer> initWeight(TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig) {
+        Map<String, Integer> weightMap = new HashMap<>();
+        for (Map.Entry<String, BigDecimal> entry : jackpotTriggerBetAmountConfig.entrySet()) {
+            weightMap.put(entry.getKey(), entry.getValue().multiply(new BigDecimal(CONST_10000000)).intValue());
+        }
+        return weightMap;
     }
 
     private LamangConfig.CommissionConfig getCommissionConfig(BetTypeEnum betType) {
