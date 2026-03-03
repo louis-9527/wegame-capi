@@ -31,7 +31,7 @@ public class RewardNotifyInfoBuilder {
                 .gameId(gameType.getId())
                 .gameName(gameType.getName())
                 .userId(Long.valueOf(userInfo.getId()))
-                .userName(userInfo.getUserName())
+                .userName(userInfo.getPlayerId())
                 .rewardTime(DateUtil.getCurrentMilli())
                 .rewardContent(content)
                 .build();
