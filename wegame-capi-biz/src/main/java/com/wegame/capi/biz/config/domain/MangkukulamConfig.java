@@ -73,7 +73,7 @@ public class MangkukulamConfig extends GameBizConfig{
         /**
          * Map<configName, TemplateRangeConfig>
          */
-        private Map<String, TemplateRangeConfig> templateConfigRangeMap;
+        private Map<String, TemplateRangeConfig> templateRangeConfigMap;
     }
 
     @Data
