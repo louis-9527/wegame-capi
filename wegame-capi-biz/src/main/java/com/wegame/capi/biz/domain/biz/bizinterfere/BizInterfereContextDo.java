@@ -3,12 +3,14 @@ package com.wegame.capi.biz.domain.biz.bizinterfere;
 import com.google.common.collect.Lists;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
+import com.wegame.capi.common.enums.BizInterfereTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -52,7 +54,20 @@ public class BizInterfereContextDo implements Serializable {
     }
 
     public Long getOrDefaultZeroInUseJackPotSnapshotAmount() {
-        return Optional.ofNullable(bizInterfereJackpotSnapshotMap.get(inUseJackPotSnapshotType)).orElse(0L);
+        return Optional.ofNullable(this.bizInterfereJackpotSnapshotMap.get(inUseJackPotSnapshotType)).orElse(0L);
+    }
+
+    public BizInterfereSubTypeEnum getOrDefaultInUseJackPotSnapshotType() {
+        return Optional.ofNullable(this.inUseJackPotSnapshotType).orElse(BizInterfereSubTypeEnum.NONE);
+    }
+
+    public BizInterfereTypeEnum getOrDefaultInUseBizInterfereType() {
+        BizInterfereSubTypeEnum bizInterfereSubType = this.getOrDefaultInUseJackPotSnapshotType();
+        if (Objects.equals(bizInterfereSubType, BizInterfereSubTypeEnum.NONE)){
+            return BizInterfereTypeEnum.NONE;
+        }else {
+            return bizInterfereSubType.getBizInterfereType();
+        }
     }
 
 }
