@@ -5,6 +5,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.common.enums.StarCardReportStatusEnum;
 import com.wegame.capi.common.enums.StarCardUseStatusEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordPo;
 
 import java.util.Collections;
@@ -31,13 +32,13 @@ public class StartCardUseRecordConvert {
         recordPo.setBetAmount(recordDo.getBetAmount());
         recordPo.setBetRecordId(recordDo.getBetRecordId());
         recordPo.setPayOutAmount(recordDo.getPayOutAmount());
-        recordPo.setExpireAt(recordDo.getExpireAt());
         if (OptEnum.ADD == optEnum) {
             recordPo.setUseStatus(StarCardUseStatusEnum.ING.getCode());
             recordPo.setReportStatus(StarCardReportStatusEnum.ING.getCode());
             long currentMilli = DateUtil.getCurrentMilli();
             recordPo.setCreateTime(currentMilli);
             recordPo.setUpdateTime(currentMilli);
+            recordPo.setExpireAt(TtlUtil.calculateExpiredAt(currentMilli));
         } else {
             recordPo.setUpdateTime(DateUtil.getCurrentMilli());
         }
@@ -75,7 +76,6 @@ public class StartCardUseRecordConvert {
         recordDo.setReportStatus(recordPo.getReportStatus() == null ? null : StarCardReportStatusEnum.valueOfCode(recordPo.getReportStatus()));
         recordDo.setCreateTime(recordPo.getCreateTime());
         recordDo.setUpdateTime(recordPo.getUpdateTime());
-        recordDo.setExpireAt(recordPo.getExpireAt());
         return recordDo;
 
     }

@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -127,10 +126,6 @@ public class BetRecordDo<T> implements Serializable {
      * 游戏记录列表
      */
     private List<T> gameRecordList;
-    /**
-     * 过期时间
-     */
-    private Date expireAt;
 
     /**
      * 扩展信息

@@ -12,6 +12,7 @@ import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import org.springframework.data.domain.Sort;
@@ -70,7 +71,6 @@ public class BetRecordConverter {
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
         betRecordDo.setUpdateTime(po.getUpdateTime());
-        betRecordDo.setExpireAt(po.getExpireAt());
         return betRecordDo;
     }
 
@@ -97,7 +97,6 @@ public class BetRecordConverter {
         po.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         po.setStatus(betRecordDo.getStatus());
         po.setBetTime(betRecordDo.getBetTime());
-        po.setExpireAt(betRecordDo.getExpireAt());
         if (Objects.nonNull(betRecordDo.getExtendInfo())) {
             po.setExtendInfo(BetRecordPo.ExtendInfo.builder()
                     .ieId(betRecordDo.getExtendInfo().getIeId())
@@ -118,6 +117,7 @@ public class BetRecordConverter {
             po.setCreateTime(betRecordDo.getCreateTime());
             po.setUpdater(betRecordDo.getUpdater());
             po.setUpdateTime(betRecordDo.getUpdateTime());
+            po.setExpireAt(TtlUtil.calculateExpiredAt(betRecordDo.getCreateTime()));
         } else {
             po.setUpdater(betRecordDo.getUpdater());
             po.setUpdateTime(DateUtil.getCurrentMilli());

@@ -71,7 +71,6 @@ public class BetRecordBuilder {
                 .createTime(currentMilli)
                 .updateTime(currentMilli)
                 .gameRecordList(gameRecordList)
-                .expireAt(TtlUtil.calculateExpiredAt(currentMilli))
                 .build();
     }
 
