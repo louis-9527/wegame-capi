@@ -30,3 +30,17 @@ http://client.sportslive.com.ph:9000/capi/doc.html
 
 线上请求链路：
 压测机 -> cloudfront - > load balancer -> apisix (网关) -> 应用程序pods
+
+
+游戏主R：
+    MariaMakiling: maidong
+    Malakas: maidong
+    IbongAdarna: jayni
+    Lamang: lyric
+    Bakunawa: maidong
+    DiwataMayari: jayni
+    Kapre: jayni
+    Mangkukulam: lyric
+    Sirena: lyric
+    Atlantis: lyric
+    Bayanihan: jayni
