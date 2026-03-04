@@ -17,6 +17,15 @@
     "retryCount": 1,
     "limitAmount": 1000000000
   },
+  "templateConfig" : {
+    "templateMapping": {
+      "A": "DIWATA_MAYARI",
+      "B": "DIWATA_MAYARI_V3"
+    },
+    "templateRangeMap" : {
+      ""
+    }
+  },
   "templateRangeConfig": {
     "normalBetMainGame": {
         "0_0": 1100000,

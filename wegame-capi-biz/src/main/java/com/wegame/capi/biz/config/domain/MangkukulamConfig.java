@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
@@ -54,7 +55,26 @@ public class MangkukulamConfig extends GameBizConfig{
      */
     private Bet buyBet;
 
-    private TemplateRangeConfig templateRangeConfig;
+    private TemplateConfig templateConfig;
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateConfig{
+        /**
+         * 映射关系
+         * AbTypeEnum -> configName
+         */
+        private Map<AbTypeEnum, String> templateMapping;
+
+        /**
+         * Map<configName, TemplateRangeConfig>
+         */
+        private Map<String, TemplateRangeConfig> templateConfigRangeMap;
+    }
 
     @Data
     @ToString
