@@ -169,7 +169,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
 
     private Map<String, Integer> initWeight(TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig,
                                             Map<JackpotRewardPoolTypeEnum, Long> contributionMap) {
-        //todo jackpot 保底池未满不允许中奖
+        // 预留池的金额不够不参与jackpot抽奖
         List<JackpotRewardPoolDo> rewardPoolDos = jackpotRewardPoolService.listAllWithCache(getJackpotType());
         for (JackpotRewardPoolDo rewardPoolDo : rewardPoolDos) {
             if (!rewardPoolDo.canDrawJackpot()) {
@@ -184,9 +184,9 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
             String poolTypeName = entry.getKey();
             JackpotRewardPoolTypeEnum poolType = JackpotRewardPoolTypeEnum.valueOfName(poolTypeName);
             Long contribution = contributionMap.get(poolType);
-            BigDecimal contributionAmount = JackpotAmountUtil.toBigDecimal(contribution);
             // 没有贡献值的奖池不参与抽奖
-            if (Objects.nonNull(contributionAmount)) {
+            if (Objects.nonNull(contribution)) {
+                BigDecimal contributionAmount = JackpotAmountUtil.toBigDecimal(contribution);
                 // 基础权重
                 BigDecimal baseWeight = entry.getValue().multiply(MULTIPLE);
                 // 倍率
