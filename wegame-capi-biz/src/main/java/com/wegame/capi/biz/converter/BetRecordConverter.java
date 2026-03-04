@@ -146,6 +146,8 @@ public class BetRecordConverter {
         vo.setPlayerId(betRecordDo.getPlayerId());
         vo.setPlayerName(betRecordDo.getPlayerName());
         vo.setBetPromotionType(betRecordDo.getBetPromotionType());
+        vo.setBizInterfereType(betRecordDo.getBizInterfereType());
+        vo.setBizInterfereSubType(betRecordDo.getBizInterfereSubType());
         vo.setBetAmount(betRecordDo.getBetAmount());
         vo.setPayAmount(betRecordDo.getPayAmount());
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());

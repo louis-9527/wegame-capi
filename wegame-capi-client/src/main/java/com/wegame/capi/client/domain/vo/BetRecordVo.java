@@ -36,6 +36,10 @@ public class BetRecordVo implements Validate, Serializable {
     private String playerName;
     @ApiModelProperty("0:无，2使用星卡，3预定投注")
     private Integer betPromotionType;
+    @ApiModelProperty("业务干预类型")
+    private Integer bizInterfereType;
+    @ApiModelProperty("业务干预子类型")
+    private Integer bizInterfereSubType;
     @ApiModelProperty("投注金额 单位：分")
     private Long betAmount;
     @ApiModelProperty("支付金额 单位：分")
