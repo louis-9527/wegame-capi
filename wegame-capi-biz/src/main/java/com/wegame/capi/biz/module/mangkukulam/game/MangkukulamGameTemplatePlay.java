@@ -22,10 +22,7 @@ import com.wegame.capi.biz.module.mangkukulam.reward.MangkukulamRewardHandler;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.client.enums.*;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MangkukulamTagEnum;
 import com.wegame.capi.common.enums.TemplateMultipleWarmUpEnum;
@@ -248,8 +245,11 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
     }
 
     private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betType, BetSubTypeEnum subType, VolatilityTypeEnum volatilityType) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         String templateMultipleRange;
-        Map<String, Integer> configMap = mangkukulamConfig.getTemplateRangeConfig().getConfigByBetTypeAndVolatility(betType, subType, volatilityType);
+        AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
+        Map<String, Integer> configMap = mangkukulamConfig.getTemplateConfig().getConfigByBetTypeAndVolatility(abType, betType, subType, volatilityType);
         AssertUtil.assertNotNull(configMap, ErrorCode.ERR_INTER);
         templateMultipleRange = randomService.randomKeyByWeight(configMap);
         AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_INTER);

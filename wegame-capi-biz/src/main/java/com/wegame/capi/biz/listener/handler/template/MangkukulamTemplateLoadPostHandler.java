@@ -40,25 +40,28 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
         return TemplateTypeEnum.MANGKUKULAM;
     }
 
-    protected MangkukulamConfig.TemplateRangeConfig getTemplateRangeConfig() {
-        return mangkukulamConfig.getTemplateRangeConfig();
-    }
-
     @Override
     public void handle() {
         if (!supportGame(GameTypeEnum.MANGKUKULAM)) {
             return;
         }
-        MangkukulamConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
-        if (Objects.isNull(config)) {
-            return;
+        // 暂时共用同一套模板，使用不同权重
+        Map<String, MangkukulamConfig.TemplateRangeConfig> configMap = mangkukulamConfig.getTemplateConfig().getTemplateRangeConfigMap();
+        for (Map.Entry<String, MangkukulamConfig.TemplateRangeConfig> entry : configMap.entrySet()) {
+            MangkukulamConfig.TemplateRangeConfig rangeConfig = entry.getValue();
+            if (Objects.nonNull(rangeConfig)) {
+                loadTemplate(getTemplateType(), rangeConfig);
+            }
         }
+    }
+
+    private void loadTemplate(TemplateTypeEnum templateType, MangkukulamConfig.TemplateRangeConfig config) {
         // 1. 普通轮首轮
         try {
             log.info("normal bet main game template load start...");
             List<Long> normalBetMainGameTemplateIdList = new LinkedList<>();
             config.getNormalBetMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     normalBetMainGameTemplateIdList.addAll(idList);
                 }
@@ -74,7 +77,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
             log.info("buy bet main game template load start...");
             List<Long> buybetMainGameTemplateIdList = new LinkedList<>();
             config.getBuyBetMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     buybetMainGameTemplateIdList.addAll(idList);
                 }
@@ -90,7 +93,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
             log.info("free game template load start...");
             List<Long> freeGameTemplateList = new LinkedList<>();
             mergeFreeWheelRange(config).forEach(rangeKey -> {
-                List<Long> idList = loadTemplateIdList(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), TemplateMultipleRange.build(rangeKey));
+                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), TemplateMultipleRange.build(rangeKey));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     freeGameTemplateList.addAll(idList);
                 }
@@ -112,8 +115,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
         return freeWheelKeySet;
     }
 
-    private List<Long> loadTemplateIdList(String tag, TemplateMultipleRange multipleRange) {
-        TemplateTypeEnum templateType = this.getTemplateType();
+    private List<Long> loadTemplateIdList(TemplateTypeEnum templateType, String tag, TemplateMultipleRange multipleRange) {
         log.info("templateIdList load start, tag: {}, range: {}-{}...", tag, multipleRange.getStart(), multipleRange.getEnd());
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(templateType, tag, multipleRange.getStart(), multipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);

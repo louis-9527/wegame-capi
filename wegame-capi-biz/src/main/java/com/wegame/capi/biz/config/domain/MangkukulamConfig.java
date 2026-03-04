@@ -74,6 +74,14 @@ public class MangkukulamConfig extends GameBizConfig{
          * Map<configName, TemplateRangeConfig>
          */
         private Map<String, TemplateRangeConfig> templateRangeConfigMap;
+
+        public Map<String,Integer> getConfigByBetTypeAndVolatility(AbTypeEnum abType, BetTypeEnum betType, BetSubTypeEnum betSubType, VolatilityTypeEnum volatilityType) {
+            String configName = templateMapping.get(abType);
+            AssertUtil.assertNotNull(configName, ErrorCode.ERR_INTER);
+            TemplateRangeConfig config = templateRangeConfigMap.get(configName);
+            AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER);
+            return config.getConfigByBetTypeAndVolatility(betType, betSubType, volatilityType);
+        }
     }
 
     @Data
