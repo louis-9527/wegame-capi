@@ -149,6 +149,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         }
         // 初始化权重
         Map<String, Integer> weightMap = initWeight(jackpotTriggerBetAmountConfig, jackpotDrawAndAwardDo.getContribution());
+        log.info("jackpot actual weightMap:{}", weightMap);
         for (Map.Entry<Long, Integer> entry : gameCountMap.entrySet()) {
             Long gameRecordId = entry.getKey();   // 获取游戏投注记录ID
             Integer count = entry.getValue(); // 获取对应的游戏计数
