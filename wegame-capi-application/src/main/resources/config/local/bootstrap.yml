@@ -5,6 +5,7 @@ logging:
     #    org.springframework.web: trace
     #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: DEBUG
+    com.wegame.capi.biz.listener.betRecord.AbstractPulsarListener: ERROR
     com.wegame.base.config: ERROR
     org.apache.pulsar: ERROR
     #    org.apache.ibatis: trace
@@ -19,6 +20,10 @@ logging:
     # Spring配置绑定模块：打印配置注入、更新日志（可选）
     # org.springframework.boot.context.properties: DEBUG
 spring:
+  config:
+    import:
+      - "optional:nacos:wegame-capi-local-maria_makiling_config.json"
+      - "optional:nacos:wegame-capi-local-malakas_config.json"
   cloud:
     nacos:
       username: nacos
@@ -34,14 +39,15 @@ spring:
         password: nacos
         group: wegame-capi-local
         namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
-        file-extension: yml
-        extension-configs:
-          - data-id: player.json
-            group: wegame-capi-local
-            refresh: true
-          - data-id: wegame-capi-local-maria_makiling_config.json
-            group: wegame-capi-local
-            refresh: true
+        file-extension: json
+        refresh-enabled: true
+#        extension-configs:
+#          - data-id: wegame-capi-local-maria_makiling_config.json
+#            group: wegame-capi-local
+#            refresh: true
+#          - data-id: wegame-capi-local-malakas_config.json
+#            group: wegame-capi-local
+#            refresh: true
 #game switch
 game:
   enable:

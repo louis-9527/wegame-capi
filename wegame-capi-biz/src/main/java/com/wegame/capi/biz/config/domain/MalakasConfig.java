@@ -22,7 +22,7 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MalakasConfig {
+public class MalakasConfig implements Serializable, Validate{
 
     private final static int REEL_NUMBERS = 7;
 
