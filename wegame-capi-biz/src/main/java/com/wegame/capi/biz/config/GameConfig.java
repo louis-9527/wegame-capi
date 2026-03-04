@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.config.nacos.ConfigReader;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,15 +21,33 @@ import java.io.InputStream;
 @Configuration
 public class GameConfig {
 
+    @Autowired
+    ConfigReader configReader;
+
+//    @Bean
+//    MariaMakilingConfig mariaMakilingConfig() throws IOException {
+//        String path = "/maria_makiling_config.json";
+//        InputStream inputStream = getClass().getResourceAsStream(path);
+//        if (inputStream == null) {
+//            throw new RuntimeException("read maria_makiling_config.json file err！！！");
+//        } else {
+//            MariaMakilingConfig config = new ObjectMapper().readValue(inputStream, MariaMakilingConfig.class);
+//            config.validate();
+//            return config;
+//        }
+//    }
+
     @Bean
+    @RefreshScope
     MariaMakilingConfig mariaMakilingConfig() throws IOException {
-        String path = "/maria_makiling_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
+        log.info("开始创建 MariaMakilingConfig bean...");
+        InputStream inputStream = configReader.getInputStream("wegame-capi-local-maria_makiling_config.json");
         if (inputStream == null) {
             throw new RuntimeException("read maria_makiling_config.json file err！！！");
         } else {
             MariaMakilingConfig config = new ObjectMapper().readValue(inputStream, MariaMakilingConfig.class);
             config.validate();
+            log.info("MariaMakilingConfig bean 创建成功");
             return config;
         }
     }
