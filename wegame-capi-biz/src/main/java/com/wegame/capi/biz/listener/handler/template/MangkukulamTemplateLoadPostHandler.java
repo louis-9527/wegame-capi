@@ -2,15 +2,12 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.MangkukulamConfig;
 import com.wegame.capi.biz.domain.biz.template.mangkukulam.MangkukulamBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MangkukulamTagEnum;
-import com.wegame.capi.common.enums.TemplateMultipleWarmUpEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,7 +55,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
             log.info("normal bet main game template load start...");
             List<Long> normalBetMainGameTemplateIdList = new LinkedList<>();
             config.getNormalBetMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     normalBetMainGameTemplateIdList.addAll(idList);
                 }
@@ -74,7 +71,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
             log.info("buy bet main game template load start...");
             List<Long> buybetMainGameTemplateIdList = new LinkedList<>();
             config.getBuyBetMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.BUY_BET_INITIAL_STAGE, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     buybetMainGameTemplateIdList.addAll(idList);
                 }
@@ -90,7 +87,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
             log.info("free game template load start...");
             List<Long> freeGameTemplateList = new LinkedList<>();
             mergeFreeWheelRange(config).forEach(rangeKey -> {
-                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), TemplateMultipleRange.build(rangeKey));
+                List<Long> idList = loadTemplateIdList(templateType, MangkukulamTagEnum.FREE_GAME_STAGE, TemplateMultipleRange.build(rangeKey));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     freeGameTemplateList.addAll(idList);
                 }
@@ -112,13 +109,11 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
         return freeWheelKeySet;
     }
 
-    private List<Long> loadTemplateIdList(TemplateTypeEnum templateType, String tag, TemplateMultipleRange multipleRange) {
+    private List<Long> loadTemplateIdList(TemplateTypeEnum templateType, MangkukulamTagEnum tag, TemplateMultipleRange multipleRange) {
         log.info("templateIdList load start, tag: {}, range: {}-{}...", tag, multipleRange.getStart(), multipleRange.getEnd());
         try {
-            List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(templateType, tag, multipleRange.getStart(), multipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
-            TemplateMultipleWarmUpEnum warmUpEnum = TemplateMultipleWarmUpEnum.valueOfCode(templateType.getGameType());
-            AssertUtil.assertNotNull(warmUpEnum, ErrorCode.ERR_INTER, "error warm up enum");
-            if (!warmUpEnum.canWarmUp(tag, multipleRange.getEnd())) {
+            List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(templateType, tag.getCode(), multipleRange.getStart(), multipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
+            if (!mangkukulamConfig.getTemplateConfig().supportWarmUp(tag, multipleRange)) {
                 log.info("templateIdList load end, tag: {}, range: {}-{}, size: {}， no load gameRecordTemplate", tag, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;
             }
@@ -136,7 +131,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
         }
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
-                log.info("loadLocalCache start, tag: {}, size: {}", tag, templateIdList.size());
+                log.info("loadLocalCache start, index : {}, tag: {}, size: {}", templateType.getBetRecordTemplateName(), tag, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
                     List<MangkukulamBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MANGKUKULAM, idList, MangkukulamBetRecordTemplateEsDo.class);
@@ -144,7 +139,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
                 });
-                log.info("loadLocalCache success, tag: {}, size: {}", tag, templateIdList.size());
+                log.info("loadLocalCache success, index: {}, tag: {}, size: {}", templateType.getBetRecordTemplateName(), tag, templateIdList.size());
             }
         } catch (Exception e) {
             log.info("loadLocalCache error, tag: {}", tag, e);

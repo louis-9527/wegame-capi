@@ -20,7 +20,7 @@
   "templateConfig" : {
     "templateWarmUpEndOddsMap": {
       "NORMAL_BET_INITIAL_STAGE": 5,
-      "BUY_BET_INITIAL_STAGE": 3,
+      "BUY_BET_INITIAL_STAGE": 5,
       "FREE_GAME_STAGE": -1
     },
     "abTemplateMapping": {

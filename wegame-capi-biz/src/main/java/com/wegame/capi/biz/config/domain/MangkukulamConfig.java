@@ -10,6 +10,7 @@ import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MangkukulamTagEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
@@ -83,6 +84,12 @@ public class MangkukulamConfig extends GameBizConfig{
          * 映射关系 TemplateTypeEnum -> TemplateRangeConfig
          */
         private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfigMapping;
+
+        public boolean supportWarmUp(MangkukulamTagEnum tag, TemplateMultipleRange multipleRange) {
+            BigDecimal endOdds = templateWarmUpEndOddsMap.get(tag);
+            AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
+            return multipleRange.getEnd().compareTo(endOdds) <= 0;
+        }
 
         /**
          * 获取当前测试类型使用的es index

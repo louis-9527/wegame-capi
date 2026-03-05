@@ -270,15 +270,15 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
      * @param subType
      * @return
      */
-    private String getTemplateTag(BetTypeEnum betType, BetSubTypeEnum subType) {
+    private MangkukulamTagEnum getTemplateTag(BetTypeEnum betType, BetSubTypeEnum subType) {
         if (BetSubTypeEnum.isSecondStep(subType.getCode())) {
-            return MangkukulamTagEnum.FREE_GAME_STAGE.getCode();
+            return MangkukulamTagEnum.FREE_GAME_STAGE;
         }
         if (BetSubTypeEnum.isFirstStep(subType.getCode())) {
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
-                return MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode();
+                return MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE;
             } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
-                return MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode();
+                return MangkukulamTagEnum.BUY_BET_INITIAL_STAGE;
             }
         }
         return null;
@@ -293,11 +293,11 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
-        String tag = getTemplateTag(betType, subType);
+        MangkukulamTagEnum tag = getTemplateTag(betType, subType);
         AssertUtil.assertNotNull(tag, ErrorCode.ERR_INTER);
         TemplateTypeEnum templateType = mangkukulamConfig.getTemplateConfig().getTemplateType(abType);
         log.info("abType: {}, templateType: {}, tag: {}", abType.getDesc(), templateType.getBetRecordTemplateName(), tag);
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(templateType, tag, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(templateType, tag.getCode(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         log.info("templatePlay: es index: {}, template betRecordId :{}, range:{} - {} ", templateType.getBetRecordTemplateName(), betRecordId, templateMultipleRange.getStart(), templateMultipleRange.getEnd());
@@ -305,7 +305,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         MangkukulamBetRecordTemplateEsDo template;
         TemplateMultipleWarmUpEnum warmUp = TemplateMultipleWarmUpEnum.valueOfCode(GameTypeEnum.MANGKUKULAM);
         AssertUtil.assertNotNull(warmUp, ErrorCode.ERR_INTER, "error warmUp");
-        if (warmUp.canWarmUp(tag, templateMultipleRange.getEnd())) {
+        if (mangkukulamConfig.getTemplateConfig().supportWarmUp(tag, templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             template = betRecordTemplateEsService.getTemplateWithLocalCache(templateType, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
         } else {
