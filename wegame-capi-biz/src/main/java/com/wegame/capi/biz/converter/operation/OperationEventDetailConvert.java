@@ -4,6 +4,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailPo;
 
 import java.util.Collections;
@@ -40,6 +41,7 @@ public class OperationEventDetailConvert {
             po.setBetStatus(detailDo.getBetStatus().getCode());
             po.setCreateTime(detailDo.getCreateTime());
             po.setUpdateTime(detailDo.getUpdateTime());
+            po.setExpireAt(TtlUtil.calculateExpiredAt(detailDo.getCreateTime()));
         } else {
             po.setUpdateTime(DateUtil.getCurrentMilli());
         }
