@@ -6,6 +6,8 @@ CREATE TEMPORARY TABLE mongo_bet_record_source (
   betSerialNo STRING,
   betSubType STRING,
   betType STRING,
+  bizInterfereSubType INT,
+  bizInterfereType INT,
   channelId STRING,
   gameId STRING,
   pId STRING,
@@ -22,6 +24,7 @@ CREATE TEMPORARY TABLE mongo_bet_record_source (
   expiredAt BIGINT,
   creator STRING,
   updater STRING,
+  expiredAt BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -40,6 +43,8 @@ CREATE TEMPORARY TABLE doris_bet_record_sink (
   betSerialNo STRING,
   betSubType STRING,
   betType STRING,
+  bizInterfereSubType INT,
+  bizInterfereType INT,
   channelId STRING,
   gameId STRING,
   pId STRING,
@@ -56,6 +61,7 @@ CREATE TEMPORARY TABLE doris_bet_record_sink (
   expiredAt BIGINT,
   creator STRING,
   updater STRING,
+  expiredAt BIGINT,
   syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
