@@ -139,6 +139,10 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
             AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
 
             final BizInterfereContextDo bizInterfereContext = gamePlay.getBizInterfereContext();
+            if (Objects.isNull(bizInterfereContext)){
+                return template;
+            }
+
             BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
             if (!bizInterfereConfig.isMultipleControlEnabled()) {
                 return template;

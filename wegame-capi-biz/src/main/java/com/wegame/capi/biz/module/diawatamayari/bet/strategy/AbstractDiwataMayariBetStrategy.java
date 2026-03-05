@@ -167,6 +167,10 @@ public abstract class AbstractDiwataMayariBetStrategy
     }
 
     private void updateMultipleControl(BetDo betDo, BetRecordDo<DiwataMayariGameRecordDo> betRecord) {
+        BizInterfereContextDo bizInterfereContext = betDo.getBizInterfereContext();
+        if (Objects.isNull(bizInterfereContext)) {
+            return;
+        }
         BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
         if (!bizInterfereConfig.isMultipleControlEnabled()) {
             return;
@@ -177,7 +181,7 @@ public abstract class AbstractDiwataMayariBetStrategy
         Map<Integer, Long> updateMultipleControlMap = new HashMap<>();
         multipleControlConfigMap.forEach((subType, mappingInfo) -> {
             BigDecimal betIntoRewardRatio = mappingInfo.getBetIntoRewardRatio();
-            long incrAmount = betIntoRewardRatio.divide(BigDecimal.valueOf(100),3, RoundingMode.FLOOR)
+            long incrAmount = betIntoRewardRatio.divide(BigDecimal.valueOf(100), 3, RoundingMode.FLOOR)
                     .multiply(BigDecimal.valueOf(payAmount)).longValue();
             updateMultipleControlMap.put(subType.getCode(), incrAmount);
         });
@@ -187,6 +191,9 @@ public abstract class AbstractDiwataMayariBetStrategy
     private boolean bizInterfereDecyIfNeed(BetDo betDo, BetRecordDo<DiwataMayariGameRecordDo> betRecord) {
         // 业务干预开关是否打开
         BizInterfereContextDo bizInterfereContext = betDo.getBizInterfereContext();
+        if (Objects.isNull(bizInterfereContext)) {
+            return true;
+        }
         BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
         if (!bizInterfereConfig.isMultipleControlEnabled() || !bizInterfereContext.isBizInterfere()) {
             return true;
