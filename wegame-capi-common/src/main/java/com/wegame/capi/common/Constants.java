@@ -32,9 +32,6 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
-    public static final Integer BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE = 10;
-    public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
-
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
