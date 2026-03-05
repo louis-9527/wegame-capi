@@ -134,6 +134,11 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
                 .overallRewardAmount(maxAmountControl(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
                 .accumulateReachMaxMultiple(firstWheelReachMaxRewardMultiple)
                 .lastGameFlag(firstWheelReachMaxRewardMultiple || !firstWheelRewardResult.isHasRewardFreeWheel())
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
         ret.add(firstGameRecord);
         if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
