@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 星卡使用记录
@@ -89,5 +90,9 @@ public class StarCardUseRecordPo implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
 }
 
