@@ -41,14 +41,12 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
         if (!supportGame(GameTypeEnum.MANGKUKULAM)) {
             return;
         }
-        // 暂时共用同一套模板，使用不同权重(权重范围不同)
-        Map<String, MangkukulamConfig.TemplateRangeConfig> configMap = mangkukulamConfig.getTemplateConfig().getTemplateRangeConfigMap();
-        Map<String, TemplateTypeEnum> configEsIndexMapping = mangkukulamConfig.getTemplateConfig().getTemplateConfigEsIndexMapping();
-        for (Map.Entry<String, MangkukulamConfig.TemplateRangeConfig> entry : configMap.entrySet()) {
+        Map<TemplateTypeEnum, MangkukulamConfig.TemplateRangeConfig> configMap = mangkukulamConfig.getTemplateConfig().getTemplateRangeConfigMapping();
+        for (Map.Entry<TemplateTypeEnum, MangkukulamConfig.TemplateRangeConfig> entry : configMap.entrySet()) {
             MangkukulamConfig.TemplateRangeConfig rangeConfig = entry.getValue();
-            TemplateTypeEnum templateType = configEsIndexMapping.get(entry.getKey());
+            TemplateTypeEnum templateType = entry.getKey();
             if (Objects.nonNull(rangeConfig) && Objects.nonNull(templateType)) {
-                log.info("start load mangkukulam template,configName: {}", entry.getKey());
+                log.info("start load mangkukulam template from {}", templateType.getBetRecordTemplateName());
                 loadTemplate(templateType, rangeConfig);
             }
         }

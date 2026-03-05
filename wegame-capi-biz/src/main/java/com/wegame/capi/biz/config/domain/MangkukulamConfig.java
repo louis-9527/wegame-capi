@@ -10,6 +10,7 @@ import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.common.enums.MangkukulamTagEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -67,20 +68,21 @@ public class MangkukulamConfig extends GameBizConfig{
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     public static class TemplateConfig{
-        /**
-         * 映射关系 AbTypeEnum -> configName
-         */
-        private Map<AbTypeEnum, String> abTemplateMapping;
 
         /**
-         * 映射关系 configName-> es index
+         * 预热Map tag -> 倍率
          */
-        private Map<String, TemplateTypeEnum> templateConfigEsIndexMapping;
+        private Map<MangkukulamTagEnum, BigDecimal> templateWarmUpEndOddsMap;
 
         /**
-         * 映射关系 configName -> TemplateRangeConfig
+         * 映射关系 AbTypeEnum -> TemplateTypeEnum
          */
-        private Map<String, TemplateRangeConfig> templateRangeConfigMap;
+        private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
+
+        /**
+         * 映射关系 TemplateTypeEnum -> TemplateRangeConfig
+         */
+        private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfigMapping;
 
         /**
          * 获取当前测试类型使用的es index
@@ -88,9 +90,7 @@ public class MangkukulamConfig extends GameBizConfig{
          * @return
          */
         public TemplateTypeEnum getTemplateType(AbTypeEnum abType){
-            String configName = abTemplateMapping.get(abType);
-            AssertUtil.assertNotNull(configName, ErrorCode.ERR_INTER);
-            return templateConfigEsIndexMapping.get(configName);
+            return abTemplateMapping.get(abType);
         }
 
         /**
@@ -102,11 +102,10 @@ public class MangkukulamConfig extends GameBizConfig{
          * @return
          */
         public Map<String,Integer> getConfigByBetTypeAndVolatility(AbTypeEnum abType, BetTypeEnum betType, BetSubTypeEnum betSubType, VolatilityTypeEnum volatilityType) {
-            String configName = abTemplateMapping.get(abType);
-            AssertUtil.assertNotNull(configName, ErrorCode.ERR_INTER);
-            TemplateRangeConfig config = templateRangeConfigMap.get(configName);
+            TemplateTypeEnum templateType = abTemplateMapping.get(abType);
+            AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
+            TemplateRangeConfig config = templateRangeConfigMapping.get(templateType);
             AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER);
-            log.info("abTest: {}, use configName: {}", abType.getDesc(), configName);
             return config.getConfigByBetTypeAndVolatility(betType, betSubType, volatilityType);
         }
     }
