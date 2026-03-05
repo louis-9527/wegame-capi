@@ -12,6 +12,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  * yaml 配置文件形式
  * <a href="https://casinoplus.sg.larksuite.com/docx/HEnhdEWwioZpMFxRF4MlX7Azgig"/>
  */
+@Slf4j
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -80,6 +82,7 @@ public class MangkukulamConfig extends GameBizConfig{
             AssertUtil.assertNotNull(configName, ErrorCode.ERR_INTER);
             TemplateRangeConfig config = templateRangeConfigMap.get(configName);
             AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER);
+            log.info("abTest: {}, use configName: {}", abType.getDesc(), configName);
             return config.getConfigByBetTypeAndVolatility(betType, betSubType, volatilityType);
         }
     }

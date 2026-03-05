@@ -249,6 +249,8 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         String templateMultipleRange;
         AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
+        AssertUtil.assertNotNull(abType, ErrorCode.ERR_NOT_LOGIN);
+        log.info("abType: {}, betType: {}, subType: {}, volatilityType: {}", abType.getDesc(), betType.getCode(), subType.getCode(), volatilityType.getCode());
         Map<String, Integer> configMap = mangkukulamConfig.getTemplateConfig().getConfigByBetTypeAndVolatility(abType, betType, subType, volatilityType);
         AssertUtil.assertNotNull(configMap, ErrorCode.ERR_INTER);
         templateMultipleRange = randomService.randomKeyByWeight(configMap);

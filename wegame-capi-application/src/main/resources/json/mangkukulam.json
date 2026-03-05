@@ -19,11 +19,11 @@
   },
   "templateConfig" : {
     "templateMapping": {
-      "A": "a_test",
-      "B": "b_test"
+      "A": "mangkukulam_config_v1",
+      "B": "mangkukulam_config_v2"
     },
     "templateRangeConfigMap" : {
-      "a_test" : {
+      "mangkukulam_config_v1" : {
         "normalBetMainGame": {
           "0_0": 1100000,
           "0_1": 250000,
@@ -92,7 +92,7 @@
           "1225_2450": 200
         }
       },
-      "b_test" : {
+      "mangkukulam_config_v2" : {
         "normalBetMainGame": {
           "0_0": 1100000,
           "0_1": 250000,

@@ -45,11 +45,12 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
         if (!supportGame(GameTypeEnum.MANGKUKULAM)) {
             return;
         }
-        // 暂时共用同一套模板，使用不同权重
+        // 暂时共用同一套模板，使用不同权重(权重key范围相同)
         Map<String, MangkukulamConfig.TemplateRangeConfig> configMap = mangkukulamConfig.getTemplateConfig().getTemplateRangeConfigMap();
         for (Map.Entry<String, MangkukulamConfig.TemplateRangeConfig> entry : configMap.entrySet()) {
             MangkukulamConfig.TemplateRangeConfig rangeConfig = entry.getValue();
             if (Objects.nonNull(rangeConfig)) {
+                log.info("start load mangkukulam template,configName: {}", entry.getKey());
                 loadTemplate(getTemplateType(), rangeConfig);
             }
         }
