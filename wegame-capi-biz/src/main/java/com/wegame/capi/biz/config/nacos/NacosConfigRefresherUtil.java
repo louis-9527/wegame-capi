@@ -29,7 +29,7 @@ public class NacosConfigRefresherUtil {
         if (supportValidate(dataId)) {
             try {
                 Class<? extends GameBizConfig> classType = getClassType(dataId);
-                Object obj = FastJsonUtils.fromJSONString(configInfo, classType);
+                Object obj = FastJsonUtils.fromJSONString(configInfo, classType.getClass());
                 GameBizConfig config = (GameBizConfig) obj;
                 config.validate();
                 return true;

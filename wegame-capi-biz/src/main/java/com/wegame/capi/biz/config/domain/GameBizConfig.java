@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 
 @Data
@@ -25,6 +26,7 @@ public class GameBizConfig implements Serializable {
         throw new BusinessException(ErrorCode.ERR_INTER, "no support");
     }
 
+    @PostConstruct
     public void validate() {
         AssertUtil.assertNotNull(payoutAmountLimitConfig, ErrorCode.ERR_PARAM);
         payoutAmountLimitConfig.validate();
