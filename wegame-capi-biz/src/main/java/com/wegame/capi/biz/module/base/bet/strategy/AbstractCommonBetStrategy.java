@@ -143,6 +143,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                     resultDo.getBetId(),
                     eventAmount);
         }
+        // 投注成功后发送延迟派奖通知
+        sendDelayRewardNotifyAfterBet(resultDo, betRecordDo);
         return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
