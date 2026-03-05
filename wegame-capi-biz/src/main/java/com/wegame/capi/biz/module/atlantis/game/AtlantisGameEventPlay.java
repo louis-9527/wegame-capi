@@ -6,6 +6,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.AtlantisGameRecordDo;
@@ -25,6 +26,7 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.enums.BizEventEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -250,6 +252,11 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(false)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 
