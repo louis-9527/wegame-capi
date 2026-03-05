@@ -15,7 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBizConfig implements Serializable {
+public class GameBizConfig implements Serializable, ConfigValidate {
 
     /**
      * 派彩金额限制配置
@@ -26,6 +26,7 @@ public class GameBizConfig implements Serializable {
         throw new BusinessException(ErrorCode.ERR_INTER, "no support");
     }
 
+    @Override
     @PostConstruct
     public void validate() {
         AssertUtil.assertNotNull(payoutAmountLimitConfig, ErrorCode.ERR_PARAM);
