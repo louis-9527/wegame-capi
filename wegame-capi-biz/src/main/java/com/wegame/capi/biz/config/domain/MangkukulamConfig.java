@@ -10,6 +10,7 @@ import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -67,18 +68,41 @@ public class MangkukulamConfig extends GameBizConfig{
     @EqualsAndHashCode(callSuper = false)
     public static class TemplateConfig{
         /**
-         * 映射关系
-         * AbTypeEnum -> configName
+         * 映射关系 AbTypeEnum -> configName
          */
-        private Map<AbTypeEnum, String> templateMapping;
+        private Map<AbTypeEnum, String> abTemplateMapping;
 
         /**
-         * Map<configName, TemplateRangeConfig>
+         * 映射关系 configName-> es index
+         */
+        private Map<String, TemplateTypeEnum> templateConfigEsIndexMapping;
+
+        /**
+         * 映射关系 configName -> TemplateRangeConfig
          */
         private Map<String, TemplateRangeConfig> templateRangeConfigMap;
 
+        /**
+         * 获取当前测试类型使用的es index
+         * @param abType
+         * @return
+         */
+        public TemplateTypeEnum getTemplateType(AbTypeEnum abType){
+            String configName = abTemplateMapping.get(abType);
+            AssertUtil.assertNotNull(configName, ErrorCode.ERR_INTER);
+            return templateConfigEsIndexMapping.get(configName);
+        }
+
+        /**
+         * 获取当前测试类型使用的权重配置
+         * @param abType
+         * @param betType
+         * @param betSubType
+         * @param volatilityType
+         * @return
+         */
         public Map<String,Integer> getConfigByBetTypeAndVolatility(AbTypeEnum abType, BetTypeEnum betType, BetSubTypeEnum betSubType, VolatilityTypeEnum volatilityType) {
-            String configName = templateMapping.get(abType);
+            String configName = abTemplateMapping.get(abType);
             AssertUtil.assertNotNull(configName, ErrorCode.ERR_INTER);
             TemplateRangeConfig config = templateRangeConfigMap.get(configName);
             AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER);

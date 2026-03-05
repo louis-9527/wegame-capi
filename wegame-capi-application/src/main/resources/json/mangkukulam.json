@@ -18,9 +18,13 @@
     "limitAmount": 1000000000
   },
   "templateConfig" : {
-    "templateMapping": {
+    "abTemplateMapping": {
       "A": "mangkukulam_config_v1",
       "B": "mangkukulam_config_v2"
+    },
+    "templateConfigEsIndexMapping": {
+      "mangkukulam_config_v1": "MANGKUKULAM",
+      "mangkukulam_config_v2": "MANGKUKULAM"
     },
     "templateRangeConfigMap" : {
       "mangkukulam_config_v1" : {

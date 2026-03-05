@@ -36,22 +36,20 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
     @Autowired
     BetRecordTemplateEsService<MangkukulamBetRecordTemplateEsDo> betRecordTemplateEsService;
 
-    protected TemplateTypeEnum getTemplateType() {
-        return TemplateTypeEnum.MANGKUKULAM;
-    }
-
     @Override
     public void handle() {
         if (!supportGame(GameTypeEnum.MANGKUKULAM)) {
             return;
         }
-        // 暂时共用同一套模板，使用不同权重(权重key范围相同)
+        // 暂时共用同一套模板，使用不同权重(权重范围不同)
         Map<String, MangkukulamConfig.TemplateRangeConfig> configMap = mangkukulamConfig.getTemplateConfig().getTemplateRangeConfigMap();
+        Map<String, TemplateTypeEnum> configEsIndexMapping = mangkukulamConfig.getTemplateConfig().getTemplateConfigEsIndexMapping();
         for (Map.Entry<String, MangkukulamConfig.TemplateRangeConfig> entry : configMap.entrySet()) {
             MangkukulamConfig.TemplateRangeConfig rangeConfig = entry.getValue();
-            if (Objects.nonNull(rangeConfig)) {
+            TemplateTypeEnum templateType = configEsIndexMapping.get(entry.getKey());
+            if (Objects.nonNull(rangeConfig) && Objects.nonNull(templateType)) {
                 log.info("start load mangkukulam template,configName: {}", entry.getKey());
-                loadTemplate(getTemplateType(), rangeConfig);
+                loadTemplate(templateType, rangeConfig);
             }
         }
     }
@@ -67,7 +65,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
                     normalBetMainGameTemplateIdList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), normalBetMainGameTemplateIdList);
+            loadTemplateToLocalCache(templateType, MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), normalBetMainGameTemplateIdList);
             log.info("normal bet main game template load end...");
         } catch (Exception e) {
             log.error("normal bet main game template load error", e);
@@ -83,7 +81,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
                     buybetMainGameTemplateIdList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), buybetMainGameTemplateIdList);
+            loadTemplateToLocalCache(templateType, MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), buybetMainGameTemplateIdList);
             log.info("buy bet  main game template load end...");
         } catch (Exception e) {
             log.info("buy bet main game template load error", e);
@@ -99,7 +97,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
                     freeGameTemplateList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), freeGameTemplateList);
+            loadTemplateToLocalCache(templateType, MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), freeGameTemplateList);
         } catch (Exception e) {
             log.info("free game template load error", e);
         }
@@ -134,11 +132,10 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
         }
     }
 
-    private void loadTemplateToLocalCache(String tag, List<Long> templateIdList) {
+    private void loadTemplateToLocalCache(TemplateTypeEnum templateType, String tag, List<Long> templateIdList) {
         if (!supportWarmUpEnv()) {
             return;
         }
-        TemplateTypeEnum templateType = this.getTemplateType();
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
                 log.info("loadLocalCache start, tag: {}, size: {}", tag, templateIdList.size());
