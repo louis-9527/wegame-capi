@@ -78,19 +78,17 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      * 保存投注记录并投注派彩
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
-        SingleWalletBetResultDo resultDo;
         if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
                 Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)
         ) {
-            resultDo =  asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+            return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
-                resultDo = syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
+                return syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
             } else {
-                resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+                return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
-        return resultDo;
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo) {
