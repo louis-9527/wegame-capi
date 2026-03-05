@@ -79,8 +79,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
-                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)
-                || Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)
+                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS) ||
+                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)
         ) {
             return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
