@@ -35,8 +35,7 @@ import java.util.Objects;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.wegame.capi.common.Constants.DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD;
-import static com.wegame.capi.common.Constants.DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE;
+import static com.wegame.capi.common.Constants.*;
 import static com.wegame.capi.common.enums.BetPromotionTypeEnum.FREE_SPIN;
 
 /**
@@ -157,9 +156,15 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public void sendDelayRewardNotifyAfterBet(SingleWalletBetResultDo resultDo, BetRecordDo<R> betRecord) {
         try {
+            //  1、投注成功
             if (!Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 return;
             }
+            // 2、派彩金额条件：派彩金额大与阈值
+            if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD) {
+                return;
+            }
+            // 3、派彩倍数条件：派彩倍数大于阈值
             // 获取金额： 默认取支付金额并且支付金额大于0，否则取投注金额。 另特殊场景freeSpin，强制取投注金额
             Long amount = Objects.nonNull(betRecord.getPayAmount()) && betRecord.getPayAmount() > 0L ? betRecord.getPayAmount() : betRecord.getBetAmount();
             if (Objects.equals(betRecord.getBetPromotionType(), FREE_SPIN.getCode())) {
@@ -173,6 +178,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             if (multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
                 return;
             }
+            // 4、发送延迟消息
             GameTypeEnum gameType = gameContext().gameInfo().getGameType();
             UserInfo userInfo = UserInfoContext.getUserInfo();
             long payOutAmount = betRecord.getPayOutAmount();
