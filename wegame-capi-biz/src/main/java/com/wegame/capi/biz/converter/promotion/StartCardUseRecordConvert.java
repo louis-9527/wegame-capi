@@ -5,6 +5,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.common.enums.StarCardReportStatusEnum;
 import com.wegame.capi.common.enums.StarCardUseStatusEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordPo;
 
 import java.util.Collections;
@@ -37,6 +38,7 @@ public class StartCardUseRecordConvert {
             long currentMilli = DateUtil.getCurrentMilli();
             recordPo.setCreateTime(currentMilli);
             recordPo.setUpdateTime(currentMilli);
+            recordPo.setExpireAt(TtlUtil.calculateExpiredAt(currentMilli));
         } else {
             recordPo.setUpdateTime(DateUtil.getCurrentMilli());
         }
