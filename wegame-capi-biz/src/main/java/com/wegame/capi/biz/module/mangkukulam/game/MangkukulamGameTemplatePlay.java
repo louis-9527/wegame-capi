@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MangkukulamConfig;
@@ -30,6 +31,7 @@ import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MangkukulamTagEnum;
 import com.wegame.capi.common.enums.TemplateMultipleWarmUpEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -370,6 +372,11 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(false)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 
