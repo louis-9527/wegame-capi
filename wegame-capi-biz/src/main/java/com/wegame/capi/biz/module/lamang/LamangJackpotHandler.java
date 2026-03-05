@@ -129,10 +129,12 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
             return null;
         }
         JackpotRewardPoolTypeEnum poolTypeEnum = null;
-        TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig = this.getJackpotTriggerBetAmountConfig(amount);
-        if (Objects.isNull(jackpotTriggerBetAmountConfig) || jackpotTriggerBetAmountConfig.isEmpty()) {
+        TreeMap<String, BigDecimal> originalConfig = this.getJackpotTriggerBetAmountConfig(amount);
+        if (Objects.isNull(originalConfig) || originalConfig.isEmpty()) {
             return null;
         }
+        // 创建副本，避免修改原始配置
+        TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig = new TreeMap<>(originalConfig);
         //todo jackpot 保底池未满不允许中奖
         List<JackpotRewardPoolDo> rewardPoolDos = jackpotRewardPoolService.listAllWithCache(getJackpotType());
         for (JackpotRewardPoolDo rewardPoolDo : rewardPoolDos) {
