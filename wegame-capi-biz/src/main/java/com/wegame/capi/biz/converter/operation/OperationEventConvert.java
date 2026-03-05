@@ -48,7 +48,6 @@ public class OperationEventConvert {
         eventDo.setEventMsgDetail(JSON.toJSONString(messageDo));
         eventDo.setCreateTime(currentMilli);
         eventDo.setUpdateTime(currentMilli);
-        eventDo.setExpireAt(TtlUtil.calculateExpiredAt(currentMilli));
         return eventDo;
     }
 
@@ -81,7 +80,6 @@ public class OperationEventConvert {
         eventDo.setEventSubStatus(OperationEventSubStatusEnum.valueOfCode(po.getEventSubStatus()));
         eventDo.setReportStatus(OperationEventReportStatusEnum.valueOfCode(po.getReportStatus()));
         eventDo.setUpdateTime(po.getUpdateTime());
-        eventDo.setExpireAt(po.getExpireAt());
         return eventDo;
     }
 
@@ -110,7 +108,7 @@ public class OperationEventConvert {
             po.setEventMsgDetail(eventDo.getEventMsgDetail());
             po.setCreateTime(currentMilli);
             po.setUpdateTime(currentMilli);
-            po.setExpireAt(eventDo.getExpireAt());
+            po.setExpireAt(TtlUtil.calculateExpiredAt(currentMilli));
         } else {
             po.setEventStatus(Objects.isNull(eventDo.getEventStatus()) ? null : eventDo.getEventStatus().getCode());
             po.setEventSubStatus(Objects.isNull(eventDo.getEventSubStatus()) ? null : eventDo.getEventSubStatus().getCode());
