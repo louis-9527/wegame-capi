@@ -2,8 +2,8 @@ package com.wegame.capi.biz.module.mariamakiling.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
@@ -29,8 +29,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-
 /**
  * MariaMakiling类游戏投注抽象接口
  */
@@ -48,6 +46,8 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     @Qualifier("mariaMakilingOperationEventManager")
     MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
+    @Autowired
+    MariaMakilingConfig mariaMakilingConfig;
 
     @Override
     public AbstractGameContext<MariaMakilingGameRecordDo> gameContext() {
@@ -122,11 +122,6 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .findFirst()
                 .orElse(null);
         AssertUtil.assertNotNull(matchGameRecord, ErrorCode.ERR_PARAM, "NOT FOUND GAME RECORD");
-        // 后处理-免费轮
-        MariaMakilingBetRecordDetailDo detailDo = MariaMakilingBetRecordDetailDo.builder()
-                .gameRecordList(gameRecordList)
-                .build();
-        freeWheelAfterHandle(betDo, detailDo, matchGameRecord.getOverallRewardAmount());
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betStatus(BetStatusEnum.SUCCESS)
@@ -144,17 +139,24 @@ public abstract class AbstractMariaMakilingBetStrategy
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<MariaMakilingGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<MariaMakilingGameRecordDo> list = super.play(betDo, betRecordId, this.mariaMakilingConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
         BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
         boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, syncOpt);
+        // 投注成功后发送延迟派奖通知
+        sendDelayRewardNotifyAfterBet(resultDo, betRecord);
         return mariaMakilingBetHelper.handleBetResult(betRecord, resultDo);
     }
 
-    public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
-        // do nothing
+    @Override
+    protected long getTotalRewardAmount(List<MariaMakilingGameRecordDo> gameRecordList, Object extParam) {
+        return gameRecordList.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
     }
+
 }

@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.IbongAdarnaBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
@@ -95,9 +96,14 @@ public abstract class AbstractIbongAdarnaBetStrategy
         // 保存投注记录并派奖
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<IbongAdarnaGameRecordDo> result = ibongAdarnaBetHelper.handleBetResult(betRecord, resultDo);
-        // 中大奖处理
-        this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
         return result;
+    }
+
+
+    @Override
+    protected long getTotalRewardAmount(List<IbongAdarnaGameRecordDo> list, Object extParam) {
+        // todo
+        return 0;
     }
 
     public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
