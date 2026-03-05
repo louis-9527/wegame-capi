@@ -7,6 +7,9 @@ import com.wegame.base.utils.AssertUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -18,11 +21,21 @@ import java.util.TreeMap;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 
+//@Data
+//@SuperBuilder
+//@NoArgsConstructor
+//@AllArgsConstructor
 @Data
 @SuperBuilder
+@Component
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class MalakasConfig implements Serializable, Validate{
+@EqualsAndHashCode(callSuper = false)
+@RefreshScope
+// 匹配JSON根节点, 推荐以游戏命名（不可带任何分隔符，所有字母小写）
+@ConfigurationProperties(prefix = "malakas")
+public class MalakasConfig extends GameBizConfig implements Serializable  {
 
     private final static int REEL_NUMBERS = 7;
 

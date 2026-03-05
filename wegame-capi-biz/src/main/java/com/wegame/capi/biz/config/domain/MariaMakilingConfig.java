@@ -9,19 +9,31 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.TreeMap;
 
+//@Data
+//@ToString
+//@SuperBuilder
+//@NoArgsConstructor
+//@AllArgsConstructor
 @Data
-@ToString
 @SuperBuilder
+@Component
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MariaMakilingConfig extends GameBizConfig implements Serializable, Validate {
+@RefreshScope
+// 匹配JSON根节点, 推荐以游戏命名（不可带任何分隔符，所有字母小写）
+@ConfigurationProperties(prefix = "mariamakiling")
+public class MariaMakilingConfig extends GameBizConfig implements Serializable {
 
     private static final long serialVersionUID = -7867808743045979621L;
 
