@@ -148,17 +148,21 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                         .build());
     }
 
+    /**
+     * 延迟发送大奖通知
+     * <p>
+     * 条件：派彩金额>2000 || 倍数>30x
+     * </p>
+     * @param resultDo resultDo
+     * @param betRecord betRecord
+     */
     public void sendDelayRewardNotifyAfterBet(SingleWalletBetResultDo resultDo, BetRecordDo<R> betRecord) {
         try {
             //  1、投注成功
             if (!Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 return;
             }
-            // 2、派彩金额条件：派彩金额大与阈值
-            if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD) {
-                return;
-            }
-            // 3、派彩倍数条件：派彩倍数大于阈值
+            // 2、计算倍数
             // 获取金额： 默认取支付金额并且支付金额大于0，否则取投注金额。 另特殊场景freeSpin，强制取投注金额
             Long amount = Objects.nonNull(betRecord.getPayAmount()) && betRecord.getPayAmount() > 0L ? betRecord.getPayAmount() : betRecord.getBetAmount();
             if (Objects.equals(betRecord.getBetPromotionType(), FREE_SPIN.getCode())) {
@@ -169,7 +173,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 return;
             }
             BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
-            if (multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+            // 3、派彩金额||倍数
+            if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD && multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
                 return;
             }
             // 4、发送延迟消息
