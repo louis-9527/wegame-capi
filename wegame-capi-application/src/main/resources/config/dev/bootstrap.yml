@@ -22,15 +22,15 @@ spring:
         import-check:
           enabled: false
         server-addr: mse-98afa3410-nacos-ans.mse.aliyuncs.com:8848
-        group: wegame-capi-local
-        namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
+        group: wegame-capi-dev
+        namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
         refresh-enabled: true
         extension-configs:
-          - data-id: wegame-capi-local-maria_makiling_config.json
-            group: wegame-capi-local
+          - data-id: wegame-capi-dev-maria_makiling_config.json
+            group: wegame-capi-dev
             refresh: true
-          - data-id: wegame-capi-local-malakas_config.json
-            group: wegame-capi-local
+          - data-id: wegame-capi-dev-malakas_config.json
+            group: wegame-capi-dev
             refresh: true
 #game switch
 game:
