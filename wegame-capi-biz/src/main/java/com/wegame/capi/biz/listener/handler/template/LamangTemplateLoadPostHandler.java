@@ -7,8 +7,8 @@ import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsD
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,8 +18,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * 模版预加载后处理执行器
@@ -38,16 +40,17 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         return TemplateTypeEnum.LAM_ANG;
     }
 
-    protected LamangConfig.TemplateRangeConfig getTemplateRangeConfig() {
-        return lamangConfig.getTemplateRangeConfig();
-    }
 
     @Override
     public void handle() {
         if (!supportGame(GameTypeEnum.LAM_ANG)) {
             return;
         }
-        LamangConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
+        Map<TemplateTypeEnum, LamangConfig.TemplateConfig> templateConfigMapping = lamangConfig.getTemplateConfig().getTemplateConfigMapping();
+
+    }
+
+    private void loadTemplate(LamangConfig.TemplateRangeConfig config, TemplateTypeEnum templateType) {
         try {
             log.info("main game template load start...");
             List<Long> mainGameTemplateIdList = new LinkedList<>();
