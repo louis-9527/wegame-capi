@@ -23,6 +23,7 @@ import com.wegame.capi.biz.module.lamang.reward.LamangRewardHandler;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
@@ -120,7 +121,7 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         return ret;
     }
 
-    private List<GameRecordTemplateDo> getTemplateConfigList(GamePlayDo gamePlay) {
+    private List<GameRecordTemplateDo> getTemplateConfigList(GamePlayDo gamePlay, UserInfo userInfo) {
         // 1 加载倍率范围
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());
         log.info("random templateMultipleRange: {}", templateMultipleRange);
@@ -262,12 +263,13 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         });
     }
 
-    private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betTypeEnum) {
+    private TemplateMultipleRange getTemplateMultipleRange(AbTypeEnum abType, BetTypeEnum betTypeEnum) {
         String templateMultipleRange;
+        LamangConfig.TemplateRangeConfig config = lamangConfig.getTemplateConfig().getTemplateRangeConfig(abType);
         if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
-            templateMultipleRange = randomService.randomKeyByWeight(lamangConfig.getTemplateRangeConfig().getMainGame());
+            templateMultipleRange = randomService.randomKeyByWeight(config.getMainGame());
         } else {
-            templateMultipleRange = randomService.randomKeyByWeight(lamangConfig.getTemplateRangeConfig().getFreeGame());
+            templateMultipleRange = randomService.randomKeyByWeight(config.getFreeGame());
         }
         AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateMultipleRange);

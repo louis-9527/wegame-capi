@@ -88,13 +88,20 @@ public class LamangConfig extends GameBizConfig {
 
         private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
 
-        private Map<TemplateTypeEnum, TemplateConfig> templateConfigMapping;
+        private Map<TemplateTypeEnum, TemplateRangeConfig> templateConfigMapping;
 
         public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
             BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
             AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
             return multipleRange.getEnd().compareTo(endOdds) <= 0;
         }
+
+        public TemplateRangeConfig getTemplateRangeConfig(AbTypeEnum abType) {
+            TemplateTypeEnum templateTypeEnum = abTemplateMapping.get(abType);
+            AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
+            return templateConfigMapping.get(templateTypeEnum);
+        }
+
     }
 
     @Data

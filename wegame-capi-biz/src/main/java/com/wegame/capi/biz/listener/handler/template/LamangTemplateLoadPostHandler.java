@@ -2,14 +2,16 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
-import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,18 +38,19 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
     @Autowired
     BetRecordTemplateEsService<LamangBetRecordTemplateEsDo> betRecordTemplateEsService;
 
-    protected TemplateTypeEnum getTemplateType() {
-        return TemplateTypeEnum.LAM_ANG;
-    }
-
 
     @Override
     public void handle() {
         if (!supportGame(GameTypeEnum.LAM_ANG)) {
             return;
         }
-        Map<TemplateTypeEnum, LamangConfig.TemplateConfig> templateConfigMapping = lamangConfig.getTemplateConfig().getTemplateConfigMapping();
-
+        Map<TemplateTypeEnum, LamangConfig.TemplateRangeConfig> templateConfigMapping = lamangConfig.getTemplateConfig().getTemplateConfigMapping();
+        Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping = lamangConfig.getTemplateConfig().getAbTemplateMapping();
+        for (TemplateTypeEnum templateType : abTemplateMapping.values()) {
+            LamangConfig.TemplateRangeConfig config = templateConfigMapping.get(templateType);
+            AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER, "template config can not be null");
+            loadTemplate(config, templateType);
+        }
     }
 
     private void loadTemplate(LamangConfig.TemplateRangeConfig config, TemplateTypeEnum templateType) {
@@ -55,12 +58,12 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
             log.info("main game template load start...");
             List<Long> mainGameTemplateIdList = new LinkedList<>();
             config.getMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.NORMAL_BET, TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(BetTypeEnum.NORMAL_BET, templateType, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     mainGameTemplateIdList.addAll(idList);
                 }
             });
-            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
+            loadLocalCache(templateType, BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
             log.info("main game template load end...");
         } catch (Exception e) {
             log.error("template load error", e);
@@ -70,7 +73,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
             log.info("free game template load start...");
             List<Long> freeGameTemplateIdList = new LinkedList<>();
             config.getFreeGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(BetTypeEnum.BUY_BET, templateType, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     freeGameTemplateIdList.addAll(idList);
                 }
@@ -82,12 +85,11 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         }
     }
 
-    private List<Long> loadTemplateIdList(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
-        TemplateTypeEnum templateType = this.getTemplateType();
+    private List<Long> loadTemplateIdList(BetTypeEnum betType, TemplateTypeEnum templateType, TemplateMultipleRange multipleRange) {
         log.info("templateIdList load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd(), LamangBetRecordTemplateEsDo.class);
-            if (!TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.LAM_ANG, betType, multipleRange)) {
+            if (!lamangConfig.getTemplateConfig().supportWarmUp(betType, multipleRange)) {
                 log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;
             }
@@ -99,14 +101,13 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         }
     }
 
-    private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
+    private void loadLocalCache(TemplateTypeEnum templateType, BetTypeEnum betType, List<Long> templateIdList) {
         if (!supportWarmUpEnv()) {
             return;
         }
-        TemplateTypeEnum templateType = this.getTemplateType();
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
-                log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
+                log.info("loadLocalCache start, templateType : {}, betType: {}, size: {}",templateType.getBetRecordTemplateName(), betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
                     List<LamangBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.LAM_ANG, idList, LamangBetRecordTemplateEsDo.class);
@@ -114,7 +115,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
                 });
-                log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
+                log.info("loadLocalCache success, templateType : {}, betType: {}, size: {}", templateType.getBetRecordTemplateName(), betType, templateIdList.size());
             }
         } catch (Exception e) {
             log.info("loadLocalCache error, betType: {}", betType, e);
