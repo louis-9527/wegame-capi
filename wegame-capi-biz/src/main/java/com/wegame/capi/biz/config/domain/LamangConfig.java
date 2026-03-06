@@ -88,7 +88,7 @@ public class LamangConfig extends GameBizConfig {
 
         private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
 
-        private Map<TemplateTypeEnum, TemplateRangeConfig> templateConfigMapping;
+        private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfig;
 
         public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
             BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
@@ -99,7 +99,7 @@ public class LamangConfig extends GameBizConfig {
         public TemplateRangeConfig getTemplateRangeConfig(AbTypeEnum abType) {
             TemplateTypeEnum templateTypeEnum = abTemplateMapping.get(abType);
             AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
-            return templateConfigMapping.get(templateTypeEnum);
+            return templateRangeConfig.get(templateTypeEnum);
         }
 
     }

@@ -44,7 +44,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         if (!supportGame(GameTypeEnum.LAM_ANG)) {
             return;
         }
-        Map<TemplateTypeEnum, LamangConfig.TemplateRangeConfig> templateConfigMapping = lamangConfig.getTemplateConfig().getTemplateConfigMapping();
+        Map<TemplateTypeEnum, LamangConfig.TemplateRangeConfig> templateConfigMapping = lamangConfig.getTemplateConfig().getTemplateRangeConfig();
         Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping = lamangConfig.getTemplateConfig().getAbTemplateMapping();
         for (TemplateTypeEnum templateType : abTemplateMapping.values()) {
             LamangConfig.TemplateRangeConfig config = templateConfigMapping.get(templateType);

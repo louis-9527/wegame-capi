@@ -241,7 +241,7 @@
 	"templateConfig": {
 		"templateWarmUpEndOddsMap": {
 			"NORMAL_BET": 5,
-			"BUY_BET": 3
+			"BUY_BET": -1
 		},
 		"abTemplateMapping": {
 			"A": "LAM_ANG",
