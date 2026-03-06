@@ -1,17 +1,20 @@
 package com.wegame.capi.biz.config.nacos;
 
-import ch.qos.logback.core.util.StringCollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.ImmutableMap;
+import com.wegame.base.domain.BizAlertMessage;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AppUtil;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.LarkUtil;
-import com.wegame.base.utils.StringUtil;
 import com.wegame.capi.biz.config.domain.ConfigValidate;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.env.Environment;
 
 import java.util.Map;
 import java.util.Objects;
@@ -23,11 +26,12 @@ import java.util.Objects;
 public class NacosConfigRefresherUtil {
 
     private static final String bootId = "b2ff5555-4320-4c50-bfb5-5955cf1b6005";
+    private static final Environment environment = AppUtil.getAppContext().getBean(Environment.class);
 
     public static final String MARIAMAKILING_JSON_ROOT_NAME = "mariamakiling";
     public static final String MALAKAS_JSON_ROOT_NAME = "malakas";
 
-    private static final Map<String, Class> TO_CLASSTYPE_MAP = new ImmutableMap.Builder<String, Class>()
+    private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new ImmutableMap.Builder<String, Class<? extends ConfigValidate>>()
             .put("maria_makiling_config.json", MariaMakilingConfig.class)
             .put("malakas_config.json", MalakasConfig.class)
             .build();
@@ -36,28 +40,26 @@ public class NacosConfigRefresherUtil {
             .put("malakas_config.json", MALAKAS_JSON_ROOT_NAME)
             .build();
 
-
     public static boolean validate(String dataId, String groupId, String configInfo) {
-        if (supportValidate(dataId)) {
+        if (needValidate(dataId)) {
             try {
+                String realConfigInfo = getRealConfigInfo(dataId, configInfo);
+                AssertUtil.assertStrNotEmpty(realConfigInfo, ErrorCode.ERR_PARAM);
                 Class classType = getClassType(dataId);
-                String info = getRealConfigInfo(dataId, configInfo);
-                if (StringUtils.isEmpty(info)) {
-                    LarkUtil.sendTextMsg(bootId, String.format("%s, %s config error", dataId, groupId));
-                    return false;
-                }
-                Object obj = FastJsonUtils.fromJSONString(info, classType);
-                if (obj instanceof ConfigValidate) {
-                    ConfigValidate config = (ConfigValidate) obj;
-                    config.validate();
-                    return true;
-                } else {
-                    LarkUtil.sendTextMsg(bootId, String.format("%s, %s config no support validate", dataId, groupId));
-                    return false;
-                }
+                AssertUtil.assertStrNotEmpty(realConfigInfo, ErrorCode.ERR_INTER);
+                Object obj = FastJsonUtils.fromJSONString(realConfigInfo, classType);
+                AssertUtil.assertTrue(obj instanceof ConfigValidate, ErrorCode.ERR_INTER);
+                ConfigValidate config = (ConfigValidate) obj;
+                config.validate();
+                return true;
             } catch (Exception e) {
                 log.error("config validate error", e);
-                LarkUtil.sendTextMsg(bootId, String.format("%s, %s config validate error", dataId, groupId));
+                LarkUtil.sendTextMsg(environment.getProperty("lark.warningRobot"),
+                        BizAlertMessage.builder()
+                                .applicationName(environment.getProperty("spring.application.name"))
+                                .env(environment.getProperty("spring.application.env"))
+                                .body(String.format("%s, %s config validate error", dataId, groupId))
+                                .build().buildMessage());
                 return false;
             }
         }
@@ -74,7 +76,7 @@ public class NacosConfigRefresherUtil {
     }
 
     private static Class getClassType(String dataId) {
-        for (Map.Entry<String, Class> entry : TO_CLASSTYPE_MAP.entrySet()) {
+        for (Map.Entry<String, Class<? extends ConfigValidate>> entry : TO_CLASSTYPE_MAP.entrySet()) {
             if (dataId.endsWith(entry.getKey())) {
                 return entry.getValue();
             }
@@ -91,7 +93,7 @@ public class NacosConfigRefresherUtil {
         return null;
     }
 
-    private static boolean supportValidate(String dataId) {
+    private static boolean needValidate(String dataId) {
         return TO_CLASSTYPE_MAP.keySet().stream().filter(item -> dataId.contains(item)).findAny().isPresent();
     }
 }

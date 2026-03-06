@@ -21,11 +21,6 @@ import java.util.TreeMap;
 import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.MARIAMAKILING_JSON_ROOT_NAME;
 import static com.wegame.capi.common.Constants.COMMON_JSON_CONFIG_SEPARATOR;
 
-//@Data
-//@ToString
-//@SuperBuilder
-//@NoArgsConstructor
-//@AllArgsConstructor
 @Data
 @SuperBuilder
 @ToString
