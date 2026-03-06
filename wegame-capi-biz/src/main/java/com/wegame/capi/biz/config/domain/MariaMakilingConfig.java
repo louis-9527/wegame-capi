@@ -23,13 +23,13 @@ import static com.wegame.capi.common.Constants.COMMON_JSON_CONFIG_SEPARATOR;
 
 @Data
 @SuperBuilder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@RefreshScope
-// 匹配JSON根节点, 推荐以游戏命名（不可带任何分隔符，所有字母小写）
-@ConfigurationProperties(prefix = MARIAMAKILING_JSON_ROOT_NAME)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Component
+@RefreshScope
+@ConfigurationProperties(prefix = MARIAMAKILING_JSON_ROOT_NAME) // 匹配JSON根节点, 推荐以游戏命名（不可带任何分隔符，所有字母小写）
 public class MariaMakilingConfig extends GameBizConfig implements Serializable {
 
     private static final long serialVersionUID = -7867808743045979621L;

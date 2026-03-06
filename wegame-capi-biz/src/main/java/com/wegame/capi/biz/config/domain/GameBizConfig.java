@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 import java.io.Serializable;
 
 @Data
-@ToString
+@ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

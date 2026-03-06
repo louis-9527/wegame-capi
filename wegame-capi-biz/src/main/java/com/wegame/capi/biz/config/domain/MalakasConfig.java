@@ -22,20 +22,15 @@ import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.MALAKAS_
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 
-//@Data
-//@SuperBuilder
-//@NoArgsConstructor
-//@AllArgsConstructor
 @Data
 @SuperBuilder
-@Component
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
 @RefreshScope
-// 匹配JSON根节点, 推荐以游戏命名（不可带任何分隔符，所有字母小写）
-@ConfigurationProperties(prefix = MALAKAS_JSON_ROOT_NAME)
+@ConfigurationProperties(prefix = MALAKAS_JSON_ROOT_NAME) // 匹配JSON根节点, 推荐以游戏命名（不可带任何分隔符，所有字母小写）
 public class MalakasConfig extends GameBizConfig implements Serializable  {
 
     private final static int REEL_NUMBERS = 7;
