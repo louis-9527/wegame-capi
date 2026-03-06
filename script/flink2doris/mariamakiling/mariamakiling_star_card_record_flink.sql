@@ -16,10 +16,11 @@ CREATE TEMPORARY TABLE mongo_star_card_record_source (
   reportStatus INT,
   createTime BIGINT,
   updateTime BIGINT,
+  expiredAt BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
-  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:gNIFe0zzbC4U7D24h3L@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/makiling?ssl=false&readPreference=secondary',
+  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:D180HNf5aXMuhIvt@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/makiling?ssl=false&readPreference=secondary',
   'database' = 'makiling',
   'collection' = 'mariamakiling_star_card_record',
   'scan.startup.mode' = 'initial'
@@ -41,16 +42,17 @@ CREATE TEMPORARY TABLE doris_star_card_record_sink (
   failMsg VARCHAR,
   failCode INT,
   reportStatus INT,
-  createTime TIMESTAMP,
-  updateTime TIMESTAMP,
-  syncCreateTime TIMESTAMP,
+  createTime BIGINT,
+  updateTime BIGINT,
+  expiredAt BIGINT,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
-  'fenodes' = '10.147.68.89:8031',
+  'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
   'table.identifier' = 'makiling.mariamakiling_star_card_record',
   'username' = 'QATmakiling_Doris_Service',
-  'password' = 'gNIFe0zzbC4U7D24h3L',
+  'password' = 'D180HNf5aXMuhIvt',
   'sink.label-prefix' = 'doris_star_card_record_label',
   'sink.properties.format' = 'json',
   'sink.properties.read_json_by_line' = 'true',
@@ -78,7 +80,8 @@ SELECT
   failMsg,
   failCode,
   reportStatus,
-  TO_TIMESTAMP_LTZ(createTime, 3) AS createTime,
-  TO_TIMESTAMP_LTZ(updateTime, 3) AS updateTime,
-  LOCALTIMESTAMP AS syncCreateTime
+  createTime,
+  updateTime,
+  expiredAt,
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_star_card_record_source;

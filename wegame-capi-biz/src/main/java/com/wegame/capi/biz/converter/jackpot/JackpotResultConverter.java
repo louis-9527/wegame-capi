@@ -4,7 +4,7 @@ import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.client.domain.vo.JackpotResultVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
-import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.common.utils.JackpotAmountUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,16 +20,16 @@ public class JackpotResultConverter {
                         (existing, replacement) -> existing // 处理 key 冲突
                 ));
         JackpotRewardPoolDo grand = rewardPoolMap.get(JackpotRewardPoolTypeEnum.grand);
-        BigDecimal grandPool = AmountUtil.toBigDecimal(grand.getJackpotAmount());
+        BigDecimal grandPool = JackpotAmountUtil.toBigDecimal(grand.getJackpotAmount());
 
         JackpotRewardPoolDo major = rewardPoolMap.get(JackpotRewardPoolTypeEnum.major);
-        BigDecimal majorPool = AmountUtil.toBigDecimal(major.getJackpotAmount());
+        BigDecimal majorPool = JackpotAmountUtil.toBigDecimal(major.getJackpotAmount());
 
         JackpotRewardPoolDo minor = rewardPoolMap.get(JackpotRewardPoolTypeEnum.minor);
-        BigDecimal minorPool = AmountUtil.toBigDecimal(minor.getJackpotAmount());
+        BigDecimal minorPool = JackpotAmountUtil.toBigDecimal(minor.getJackpotAmount());
 
         JackpotRewardPoolDo mini = rewardPoolMap.get(JackpotRewardPoolTypeEnum.mini);
-        BigDecimal miniPool = AmountUtil.toBigDecimal(mini.getJackpotAmount());
+        BigDecimal miniPool = JackpotAmountUtil.toBigDecimal(mini.getJackpotAmount());
 
         return JackpotResultVo.builder()
                 .miniAmount(miniPool)
