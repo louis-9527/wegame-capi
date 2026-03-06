@@ -162,8 +162,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             if (!Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 return;
             }
-            // 2、计算倍数
-            // 获取金额： 默认取支付金额并且支付金额大于0，否则取投注金额。 另特殊场景freeSpin，强制取投注金额
+            // 2、获取金额： 默认取支付金额并且支付金额大于0，否则取投注金额。 另特殊场景freeSpin，强制取投注金额
             Long amount = Objects.nonNull(betRecord.getPayAmount()) && betRecord.getPayAmount() > 0L ? betRecord.getPayAmount() : betRecord.getBetAmount();
             if (Objects.equals(betRecord.getBetPromotionType(), FREE_SPIN.getCode())) {
                 amount = betRecord.getBetAmount();
@@ -172,17 +171,22 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 log.error("sendDelayRewardNotifyAfterBet amount is null, betRecordId: {}", betRecord.getId());
                 return;
             }
+            // 3、派彩金额 < 金额(支付金额|投注)
+            if (betRecord.getPayOutAmount() < amount) {
+                return;
+            }
+            // 4、计算倍数
             BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
-            // 3、发送判断：派彩金额 < 2000 && 倍数 < 30x 则不发，反之则发送大奖通知
+            // 5、发送判断：派彩金额 < 2000 && 倍数 < 30x 则不发，反之则发送大奖通知
             if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD && multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
                 return;
             }
-            // 4、发送延迟消息
+            // 6、发送延迟消息
             GameTypeEnum gameType = gameContext().gameInfo().getGameType();
             UserInfo userInfo = UserInfoContext.getUserInfo();
             long payOutAmount = betRecord.getPayOutAmount();
             scheduledThreadPoolExecutor.schedule(() -> {
-                updateRewardNotifyInfo(RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, userInfo), userInfo);
+                updateRewardNotifyInfo(RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, betRecord.getBetTime(), userInfo), userInfo);
             }, 1, TimeUnit.MINUTES);
         } catch (Exception e) {
             log.error("sendDelayRewardNotifyAfterBet error", e);
