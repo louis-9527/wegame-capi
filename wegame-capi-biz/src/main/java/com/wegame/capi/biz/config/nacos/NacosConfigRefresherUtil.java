@@ -3,9 +3,7 @@ package com.wegame.capi.biz.config.nacos;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.ImmutableMap;
-import com.wegame.base.domain.BizAlertMessage;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AppUtil;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.LarkUtil;
@@ -14,7 +12,6 @@ import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,8 +22,7 @@ import java.util.Objects;
 @Slf4j
 public class NacosConfigRefresherUtil {
 
-    private static final String bootId = "b2ff5555-4320-4c50-bfb5-5955cf1b6005";
-    private static final Environment environment = AppUtil.getAppContext().getBean(Environment.class);
+    private static final String bootId = "b7a6477c-b829-41d4-acac-599c15aee2dc";
 
     public static final String MARIAMAKILING_JSON_ROOT_NAME = "mariamakiling";
     public static final String MALAKAS_JSON_ROOT_NAME = "malakas";
@@ -54,12 +50,7 @@ public class NacosConfigRefresherUtil {
                 return true;
             } catch (Exception e) {
                 log.error("config validate error", e);
-                LarkUtil.sendTextMsg(environment.getProperty("lark.warningRobot"),
-                        BizAlertMessage.builder()
-                                .applicationName(environment.getProperty("spring.application.name"))
-                                .env(environment.getProperty("spring.application.env"))
-                                .body(String.format("%s, %s config validate error", dataId, groupId))
-                                .build().buildMessage());
+                LarkUtil.sendTextMsg(bootId, String.format("%s, %s config validate error", dataId, groupId));
                 return false;
             }
         }
