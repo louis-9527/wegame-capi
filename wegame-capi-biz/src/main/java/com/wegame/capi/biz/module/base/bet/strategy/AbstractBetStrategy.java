@@ -173,7 +173,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 return;
             }
             BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
-            // 3、派彩金额||倍数
+            // 3、发送判断：派彩金额 < 2000 && 倍数 < 30x 则不发，反之则发送大奖通知
             if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD && multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
                 return;
             }
