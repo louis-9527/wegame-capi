@@ -85,6 +85,6 @@ public class NacosConfigRefresherUtil {
     }
 
     private static boolean needValidate(String dataId) {
-        return TO_CLASSTYPE_MAP.keySet().stream().filter(item -> dataId.contains(item)).findAny().isPresent();
+        return TO_CLASSTYPE_MAP.keySet().stream().filter(item -> dataId.endsWith(item)).findAny().isPresent();
     }
 }
