@@ -533,26 +533,26 @@
             },
             "DIWATA_MAYARI_V3": {
                 "NORMAL_BET": {
-                    "0_0": 28900000,
-                    "0_0.5": 6201150,
-                    "0.5_1": 1670000,
-                    "1_3": 1980000,
-                    "3_5": 670000,
-                    "5_8": 420000,
-                    "8_15": 400000,
-                    "15_30": 230000,
-                    "30_50": 96000,
-                    "50_70": 44000,
-                    "70_100": 32000,
-                    "100_300": 40000,
-                    "300_500": 3700,
+                    "0_0": 29366350,
+                    "0_0.5": 6192985,
+                    "0.5_1": 1671487,
+                    "1_3": 1989574,
+                    "3_5": 671412,
+                    "5_8": 428352,
+                    "8_15": 401087,
+                    "15_30": 240098,
+                    "30_50": 96743,
+                    "50_70": 44191,
+                    "70_100": 32641,
+                    "100_300": 40955,
+                    "300_500": 3748,
                     "500_1000": 1300,
-                    "1000_5000": 300
+                    "1000_5000": 305
                 },
                 "BUY_BET": {
-                    "0_1": 300003,
+                    "0_1": 300000,
                     "1_2": 200000,
-                    "2_3": 10170,
+                    "2_3": 10169,
                     "3_5": 4300,
                     "5_8": 2000,
                     "8_15": 1280,
@@ -572,24 +572,24 @@
             "enabled": true,
             "multipleControlConfigMap": {
                 "MULTIPLE_CONTROL_11": {
-                    "usableTemplateMultipleRange": "5_8",
-                    "betIntoRewardRatio": 2.00,
-                    "rewardUsableAmount": 10000
+                    "usableTemplateMultipleRange": "100_300",
+                    "betIntoRewardRatio": 15.5,
+                    "rewardUsableAmount": 2000000
                 },
                 "MULTIPLE_CONTROL_12": {
-                    "usableTemplateMultipleRange": "8_10",
-                    "betIntoRewardRatio": 3.00,
-                    "rewardUsableAmount": 20000
+                    "usableTemplateMultipleRange": "300_500",
+                    "betIntoRewardRatio": 3.5,
+                    "rewardUsableAmount": 4000000
                 },
                 "MULTIPLE_CONTROL_13": {
-                    "usableTemplateMultipleRange": "10_20",
-                    "betIntoRewardRatio": 4.00,
-                    "rewardUsableAmount": 100000
+                    "usableTemplateMultipleRange": "500_1000",
+                    "betIntoRewardRatio": 2,
+                    "rewardUsableAmount": 7500000
                 },
                 "MULTIPLE_CONTROL_14": {
-                    "usableTemplateMultipleRange": "20_100000000",
-                    "betIntoRewardRatio": 5.00,
-                    "rewardUsableAmount": 200000
+                    "usableTemplateMultipleRange": "1000_5000",
+                    "betIntoRewardRatio": 1,
+                    "rewardUsableAmount": 20000000
                 }
             }
         }
