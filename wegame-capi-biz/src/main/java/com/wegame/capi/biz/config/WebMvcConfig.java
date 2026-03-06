@@ -33,8 +33,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/doc.html",
             "/swagger-resources",
             "/operationEvent/getStatusOfEvents",
-            "/common/ping",
-            "/test/**"
+            "/common/ping"
     };
     @Autowired
     GameMaintainInterceptor gameMaintainInterceptor;
