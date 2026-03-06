@@ -567,7 +567,7 @@
         "limitAmount": 1000000000
     },
     "bizInterfereConfig": {
-        "enabled": true,
+        "enabled": false,
         "multipleControlConfig": {
             "enabled": true,
             "multipleControlConfigMap": {
