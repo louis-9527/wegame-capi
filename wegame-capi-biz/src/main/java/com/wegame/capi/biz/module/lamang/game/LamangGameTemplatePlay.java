@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.LamangConfig;
@@ -28,6 +29,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -254,6 +256,11 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
                 .gameRecordIds(null)
                 .lastGameFlag(false)
                 .jackpotDrawTimes(drawTimes)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 
