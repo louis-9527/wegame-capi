@@ -110,17 +110,17 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
     }
 
     private List<Long> loadTemplateIdList(TemplateTypeEnum templateType, MangkukulamTagEnum tag, TemplateMultipleRange multipleRange) {
-        log.info("templateIdList load start, tag: {}, range: {}-{}...", tag, multipleRange.getStart(), multipleRange.getEnd());
+        log.info("templateIdList load start, template: {}, tag: {}, range: {}-{}...", templateType.getBetRecordTemplateName(), tag, multipleRange.getStart(), multipleRange.getEnd());
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(templateType, tag.getCode(), multipleRange.getStart(), multipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
             if (!mangkukulamConfig.getTemplateConfig().supportWarmUp(tag, multipleRange)) {
-                log.info("templateIdList load end, tag: {}, range: {}-{}, size: {}， no load gameRecordTemplate", tag, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+                log.info("templateIdList load end, template: {}, tag: {}, range: {}-{}, size: {}， no load gameRecordTemplate", templateType.getBetRecordTemplateName(), tag, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;
             }
-            log.info("templateIdList load success, tag: {}, range: {}-{}, size: {}", tag, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+            log.info("templateIdList load success, template: {}, tag: {}, range: {}-{}, size: {}", templateType.getBetRecordTemplateName(), tag, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
             return betRecordTemplateIdList;
         } catch (Exception e) {
-            log.info("templateIdList load error, tag: {}, range: {}-{}", tag, multipleRange.getStart(), multipleRange.getEnd(), e);
+            log.info("templateIdList load error,template:{}, tag: {}, range: {}-{}", templateType.getBetRecordTemplateName(), tag, multipleRange.getStart(), multipleRange.getEnd(), e);
             return null;
         }
     }
