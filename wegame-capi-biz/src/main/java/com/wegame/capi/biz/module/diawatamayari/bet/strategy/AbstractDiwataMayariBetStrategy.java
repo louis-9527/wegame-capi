@@ -179,7 +179,7 @@ public abstract class AbstractDiwataMayariBetStrategy
 
         // 购买轮不干预
         if (Objects.equals(betDo.getBetType(), BetTypeEnum.BUY_BET)){
-            return;
+            return ;
         }
         
         BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
