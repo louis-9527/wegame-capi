@@ -143,6 +143,11 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
                 return template;
             }
 
+            // 购买轮不干预
+            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)){
+                return template;
+            }
+
             BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
             if (!bizInterfereConfig.isMultipleControlEnabled()) {
                 return template;
