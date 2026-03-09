@@ -23,10 +23,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -70,6 +67,26 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
      * 累计中奖总金额
      */
     private Long overallRewardAmount;
+    /**
+     * 创建人
+     */
+    private String creator;
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 更新人
+     */
+    private String updater;
+    /**
+     * 更新时间
+     */
+    private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
 
     /**
      * 是否中奖免费轮
