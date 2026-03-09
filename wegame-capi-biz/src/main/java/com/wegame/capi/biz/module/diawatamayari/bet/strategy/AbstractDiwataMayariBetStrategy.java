@@ -146,6 +146,10 @@ public abstract class AbstractDiwataMayariBetStrategy
         BetRecordDo<DiwataMayariGameRecordDo> betRecord;
         List<DiwataMayariGameRecordDo> firstBatchList;
         do {
+            // 重新初始化干预上下文
+            if(Objects.nonNull(betDo.getBizInterfereContext())) {
+                betDo.getBizInterfereContext().reInit();
+            }
             List<DiwataMayariGameRecordDo> list = super.play(betDo, betRecordId, diwataMayariConfig.getPayoutAmountLimitConfig(), null);
             AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
             firstBatchList = getFirstBatchGameRecordList(list);

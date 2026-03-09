@@ -49,6 +49,11 @@ public class BizInterfereContextDo implements Serializable {
     @Builder.Default
     private List<BizInterfereSubTypeEnum> unableJackPotTypeList = Lists.newArrayList();
 
+    public void reInit() {
+        this.isBizInterfere = false;
+        this.inUseJackPotSnapshotType = null;
+    }
+
     public void addUnableJackPotType(BizInterfereSubTypeEnum unableJackPotType) {
         this.unableJackPotTypeList.add(unableJackPotType);
     }

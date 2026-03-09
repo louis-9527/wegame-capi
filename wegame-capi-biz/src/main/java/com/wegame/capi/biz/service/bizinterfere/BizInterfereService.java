@@ -88,10 +88,19 @@ public class BizInterfereService {
         try {
             result = redisTemplate.execute(DECR_ONE_REWARD_SCRIPT, Collections.singletonList(key), filed, deductValue);
         } catch (Exception e) {
-            log.error("BizInterfereService#decrOneReward,error,gameType:{},bizInterfereType:{},bizInterfereSubType:{},deductValue:{}"
+            log.error("decrOneReward error, gameType:{}, bizInterfereType:{}, bizInterfereSubType:{}, deductValue:{}"
                     , gameType.getId(), bizInterfereType.getCode(), bizInterfereSubType.getCode(), deductValue, e);
             return false;
         }
-        return Optional.ofNullable(result).map(r -> r > -1).orElse(false);
+        boolean ret = Optional.ofNullable(result).map(r -> r > -1).orElse(false);
+        // add log
+        if (ret) {
+            log.info("decrOneReward success, gameType:{}, bizInterfereType:{}, bizInterfereSubType:{}, deductValue:{}, result: {}"
+                    , gameType.getId(), bizInterfereType.getCode(), bizInterfereSubType.getCode(), deductValue, result);
+        } else {
+            log.warn("decrOneReward fail, gameType:{}, bizInterfereType:{}, bizInterfereSubType:{}, deductValue:{}, result: {}"
+                    , gameType.getId(), bizInterfereType.getCode(), bizInterfereSubType.getCode(), deductValue, result);
+        }
+        return ret;
     }
 }
