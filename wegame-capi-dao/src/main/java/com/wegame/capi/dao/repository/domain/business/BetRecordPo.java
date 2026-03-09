@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * bet_record：投注记录
@@ -126,6 +127,10 @@ public class BetRecordPo implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
 
     ///////////////  above auto generated ///////////////
     /**
