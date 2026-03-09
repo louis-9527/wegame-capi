@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.KapreConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -21,6 +22,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.utils.GameUtil;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -307,6 +309,11 @@ public class KapreGameNormalPlay extends AbstractGame<KapreGameRecordDo> {
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(false)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 
