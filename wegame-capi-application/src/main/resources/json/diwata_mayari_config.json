@@ -506,7 +506,7 @@
         },
         "templateMapping": {
             "A": "DIWATA_MAYARI",
-            "B": "DIWATA_MAYARI_V4"
+            "B": "DIWATA_MAYARI_V3"
         },
         "templateRangeMap": {
             "DIWATA_MAYARI": {
@@ -531,7 +531,7 @@
                     "30_50": 100
                 }
             },
-            "DIWATA_MAYARI_V4": {
+            "DIWATA_MAYARI_V3": {
                 "NORMAL_BET": {
                     "0_0": 29343800,
                     "0_0.5": 6192985,
