@@ -26,6 +26,7 @@ import com.wegame.capi.biz.service.bizinterfere.BizInterfereService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
@@ -175,6 +176,12 @@ public abstract class AbstractDiwataMayariBetStrategy
         if (Objects.isNull(bizInterfereContext)) {
             return;
         }
+
+        // 购买轮不干预
+        if (Objects.equals(betDo.getBetType(), BetTypeEnum.BUY_BET)){
+            return ;
+        }
+
         BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
         if (!bizInterfereConfig.isMultipleControlEnabled()) {
             return;
@@ -198,6 +205,12 @@ public abstract class AbstractDiwataMayariBetStrategy
         if (Objects.isNull(bizInterfereContext)) {
             return true;
         }
+
+        // 购买轮不干预
+        if (Objects.equals(betDo.getBetType(), BetTypeEnum.BUY_BET)){
+            return true;
+        }
+
         BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
         if (!bizInterfereConfig.isMultipleControlEnabled() || !bizInterfereContext.isBizInterfere()) {
             return true;
