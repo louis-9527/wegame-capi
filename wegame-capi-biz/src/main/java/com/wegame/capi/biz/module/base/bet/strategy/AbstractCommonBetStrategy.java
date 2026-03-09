@@ -16,7 +16,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
@@ -141,6 +140,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                     resultDo.getBetId(),
                     eventAmount);
         }
+        // 投注成功后发送延迟派奖通知
+        sendDelayRewardNotifyAfterBet(resultDo, betRecordDo);
         return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
@@ -257,6 +258,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+        // 投注成功后发送延迟派奖通知
+        sendDelayRewardNotifyAfterBet(resultDo, betRecordDo);
         return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
