@@ -181,7 +181,7 @@ public abstract class AbstractDiwataMayariBetStrategy
         if (Objects.equals(betDo.getBetType(), BetTypeEnum.BUY_BET)){
             return ;
         }
-        
+
         BizInterfereConfig bizInterfereConfig = diwataMayariConfig.getBizInterfereConfig();
         if (!bizInterfereConfig.isMultipleControlEnabled()) {
             return;
