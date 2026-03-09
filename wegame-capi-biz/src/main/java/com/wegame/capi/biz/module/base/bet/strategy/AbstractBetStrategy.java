@@ -35,8 +35,7 @@ import java.util.Objects;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.wegame.capi.common.Constants.DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD;
-import static com.wegame.capi.common.Constants.DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE;
+import static com.wegame.capi.common.Constants.*;
 import static com.wegame.capi.common.enums.BetPromotionTypeEnum.FREE_SPIN;
 
 /**
@@ -79,20 +78,18 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      * 保存投注记录并投注派彩
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
-        SingleWalletBetResultDo resultDo;
         if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
-                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)
-                        || Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)
+                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS) ||
+                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)
         ) {
-            resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+            return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
-                resultDo = syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
+                return syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
             } else {
-                resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+                return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
-        return resultDo;
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo) {
@@ -157,13 +154,22 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                         .build());
     }
 
+    /**
+     * 延迟发送大奖通知
+     * <p>
+     * 条件：派彩金额>2000 || 倍数>30x
+     * </p>
+     * @param resultDo resultDo
+     * @param betRecord betRecord
+     */
     public void sendDelayRewardNotifyAfterBet(SingleWalletBetResultDo resultDo, BetRecordDo<R> betRecord) {
         try {
+            //  1、投注成功
             if (!Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 return;
             }
-            // 获取金额： 默认取支付金额， 如果支付金额为0，则取投注金额。 另特殊场景freeSpin，强制取投注金额
-            Long amount = Objects.nonNull(betRecord.getPayAmount()) ? betRecord.getPayAmount() : betRecord.getBetAmount();
+            // 2、获取金额： 默认取支付金额并且支付金额大于0，否则取投注金额。 另特殊场景freeSpin，强制取投注金额
+            Long amount = Objects.nonNull(betRecord.getPayAmount()) && betRecord.getPayAmount() > 0L ? betRecord.getPayAmount() : betRecord.getBetAmount();
             if (Objects.equals(betRecord.getBetPromotionType(), FREE_SPIN.getCode())) {
                 amount = betRecord.getBetAmount();
             }
@@ -171,15 +177,22 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 log.error("sendDelayRewardNotifyAfterBet amount is null, betRecordId: {}", betRecord.getId());
                 return;
             }
-            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
-            if (multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+            // 3、派彩金额 < 金额(支付金额|投注)
+            if (betRecord.getPayOutAmount() < amount) {
                 return;
             }
+            // 4、计算倍数
+            BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
+            // 5、发送判断：派彩金额 < 2000 && 倍数 < 30x 则不发，反之则发送大奖通知
+            if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD && multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+                return;
+            }
+            // 6、发送延迟消息
             GameTypeEnum gameType = gameContext().gameInfo().getGameType();
             UserInfo userInfo = UserInfoContext.getUserInfo();
             long payOutAmount = betRecord.getPayOutAmount();
             scheduledThreadPoolExecutor.schedule(() -> {
-                updateRewardNotifyInfo(RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, userInfo), userInfo);
+                updateRewardNotifyInfo(RewardNotifyInfoBuilder.buildDelayRewardNotifyInfo(gameType, multi, payOutAmount, betRecord.getBetTime(), userInfo), userInfo);
             }, 1, TimeUnit.MINUTES);
         } catch (Exception e) {
             log.error("sendDelayRewardNotifyAfterBet error", e);

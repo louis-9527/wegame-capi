@@ -10,6 +10,7 @@ import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventPo;
 
 import java.math.BigDecimal;
@@ -107,6 +108,7 @@ public class OperationEventConvert {
             po.setEventMsgDetail(eventDo.getEventMsgDetail());
             po.setCreateTime(currentMilli);
             po.setUpdateTime(currentMilli);
+            po.setExpireAt(TtlUtil.calculateExpiredAt(currentMilli));
         } else {
             po.setEventStatus(Objects.isNull(eventDo.getEventStatus()) ? null : eventDo.getEventStatus().getCode());
             po.setEventSubStatus(Objects.isNull(eventDo.getEventSubStatus()) ? null : eventDo.getEventSubStatus().getCode());
