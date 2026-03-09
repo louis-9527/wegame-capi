@@ -20,7 +20,6 @@ import com.wegame.capi.biz.module.atlantis.AtlantisBizEventHandler;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
-import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -83,8 +82,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
         // 4、中奖线处理
         // 当前回合中奖总金额
-        long totalRewardAmount = 0L;
-//        AtomicLong totalRewardAmount = new AtomicLong(0L);
+        AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 中奖坐标列表
         List<RewardLineDetailDo<SymbolDo>> rewardLineDetailList = Lists.newArrayList();
         for (RewardLineDo<SymbolDo> rewardLine : rewardLineList) {
@@ -94,7 +92,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
             // 普通中奖 ：总金额 = 投注金额 * 赔率 * 中奖线数量
             BigDecimal lineRewardAmount = super.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, BigDecimal.ONE);
             // 累加中奖总金额
-            totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
+            totalRewardAmount.addAndGet(lineRewardAmount.longValue());
             // 中奖线明细列表
             rewardLineDetailList.add(RewardLineDetailDo.<SymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
@@ -134,12 +132,12 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 .build();
     }
 
-    private void reBuildTotalRewardAmount(GameBizEventDo gameBizEventDo, AtomicLong totalRewardAmount) {
+    private void reBuildAllTotalRewardAmount(GameBizEventDo gameBizEventDo, AtomicLong totalRewardAmount) {
         long extRewardAmount = (long) gameBizEventDo.getExtInfo();
         totalRewardAmount.addAndGet(extRewardAmount);
     }
 
-    private List<GameBizEventDo> goldCowEventEffectHandler(List<BizEventEnum> bizEventList, Long totalRewardAmount, RewardHandleDo<SymbolDo> rewardHandle) {
+    private List<GameBizEventDo> goldCowEventEffectHandler(List<BizEventEnum> bizEventList, AtomicLong currentRoundTotalRewardAmount, RewardHandleDo<SymbolDo> rewardHandle) {
         if (CollectionUtils.isEmpty(bizEventList) || !bizEventList.contains(BizEventEnum.EVENT_GOLDEN_COW)) {
             return null;
         }
@@ -152,7 +150,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 goldCowEventIndexList.add(i);
             }
         }
-        AtomicLong allTotalRewardAmount = new AtomicLong(totalRewardAmount + rewardHandle.getCurrentTotalRewardAmount());
+        AtomicLong allTotalRewardAmount = new AtomicLong(currentRoundTotalRewardAmount.get() + rewardHandle.getCurrentTotalRewardAmount());
         // 如果是固定事件
         if (CollectionUtil.isNotEmpty(rewardHandle.getFixedBizEventList())) {
             // 固定事件的个数
@@ -161,6 +159,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
             AssertUtil.assertTrue(goldCowEventIndexList.size() == goldCowFixedEventList.size(), ErrorCode.ERR_PARAM, "reward error");
             // 单个处理
             for (GameBizEventDo fixedGameBizEventDo : goldCowFixedEventList) {
+                // extInfo:当前回合之前所有轮/回合的额外中奖金额
                 Long extInfo = this.calcGoldCowEventExtRewardAmount(rewardHandle, allTotalRewardAmount.get(), fixedGameBizEventDo.getEventMultiple());
                 GameBizEventDo bizEventDo = GameBizEventDo.builder()
                         .sort(fixedGameBizEventDo.getSort())
@@ -169,19 +168,27 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                         .extInfo(extInfo)
                         .build();
                 bizEventDoList.add(bizEventDo);
-                this.reBuildTotalRewardAmount(bizEventDo, allTotalRewardAmount);
+                this.reBuildAllTotalRewardAmount(bizEventDo, allTotalRewardAmount);
+                this.reBuildCurrentRoundTotalRewardAmount(bizEventDo, currentRoundTotalRewardAmount);
             }
         } else {
             // 非固定事件
             for (Integer goldCowEventIndex : goldCowEventIndexList) {
                 GameBizEventDo bizEventDo = atlantisBizEventHandler.handleEventGoldenCow(goldCowEventIndex);
                 // 额外增加的中奖金额
+                // extInfo:当前回合之前所有轮/回合的额外中奖金额
                 bizEventDo.setExtInfo(this.calcGoldCowEventExtRewardAmount(rewardHandle, allTotalRewardAmount.get(), bizEventDo.getEventMultiple()));
                 bizEventDoList.add(bizEventDo);
-                this.reBuildTotalRewardAmount(bizEventDo, allTotalRewardAmount);
+                this.reBuildAllTotalRewardAmount(bizEventDo, allTotalRewardAmount);
+                this.reBuildCurrentRoundTotalRewardAmount(bizEventDo, currentRoundTotalRewardAmount);
             }
         }
         return bizEventDoList;
+    }
+
+    private void reBuildCurrentRoundTotalRewardAmount(GameBizEventDo bizEventDo, AtomicLong currentRoundTotalRewardAmount) {
+        long extRewardAmount = (long) bizEventDo.getExtInfo();
+        currentRoundTotalRewardAmount.addAndGet(extRewardAmount);
     }
 
     public Long calcGoldCowEventExtRewardAmount(RewardHandleDo<SymbolDo> rewardHandler, long totalRewardAmount, BigDecimal eventMultiple) {
