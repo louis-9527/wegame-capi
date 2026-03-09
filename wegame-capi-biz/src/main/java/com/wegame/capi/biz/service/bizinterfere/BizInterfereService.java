@@ -2,6 +2,7 @@ package com.wegame.capi.biz.service.bizinterfere;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.constants.BizInterfereConstants;
 import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
@@ -16,6 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,18 +49,21 @@ public class BizInterfereService {
     public Boolean asyncUpdateBizInterfere(GameTypeEnum gameType, BizInterfereTypeEnum bizInterfereType, Map<Integer, Long> bizInterfereSubTypeIncrMap) {
         // 管道实现
         String hashKey = BizInterfereConstants.buildBizInterfereRedisHashKey(gameType, bizInterfereType);
-        redisTemplate.executePipelined((RedisCallback<Long>) connection -> {
+        List<Object> resultList = redisTemplate.executePipelined((RedisCallback<Long>) connection -> {
             try {
                 bizInterfereSubTypeIncrMap.forEach((bizInterfereSubType, incrValue) -> {
                     connection.hIncrBy(hashKey.getBytes(), bizInterfereSubType.toString().getBytes(), incrValue);
                 });
             } catch (Exception e) {
-                log.error("BizInterfereService#asyncUpdateBizInterfere,error,gameType:{},bizInterfereType:{},bizInterfereSubTypeIncrMap:{}"
+                log.error("drawReward error, gameType:{}, bizInterfereType:{}, bizInterfereSubTypeIncrMap:{}"
                         , gameType.getId(), bizInterfereType.getCode(), bizInterfereSubTypeIncrMap, e);
             }
             // must be null
             return null;
         });
+        // todo delete
+        log.info("drawReward ret, gameType:{}, bizInterfereType:{}, bizInterfereSubTypeIncrMap:{}, resultList: {}"
+                , gameType.getId(), bizInterfereType.getCode(), bizInterfereSubTypeIncrMap, FastJsonUtils.toJSONString(resultList));
         return true;
     }
 
