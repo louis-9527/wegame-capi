@@ -19,6 +19,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BetRecordDo<T> implements Serializable {
     private static final long serialVersionUID = -3514324297343525888L;
     /**
