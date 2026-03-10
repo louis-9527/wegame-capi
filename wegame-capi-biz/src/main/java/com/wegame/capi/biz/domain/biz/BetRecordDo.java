@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
