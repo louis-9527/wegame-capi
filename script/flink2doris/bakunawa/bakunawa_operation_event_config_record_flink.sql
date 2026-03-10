@@ -3,11 +3,10 @@ CREATE TEMPORARY TABLE mongo_operation_event_config_record_source (
   parentId BIGINT,
   batchId BIGINT,
   betRecordId BIGINT,
-  index INT,
+  `index` INT,
   gameRecordIds STRING,
   wheel STRING,
   extInfo STRING,
-
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -22,11 +21,11 @@ CREATE TEMPORARY TABLE doris_operation_event_config_record_sink (
   parentId BIGINT,
   batchId BIGINT,
   betRecordId BIGINT,
-  index INT,
+  `index` INT,
   gameRecordIds VARCHAR,
   wheel VARCHAR,
   extInfo VARCHAR,
-  syncCreateTime TIMESTAMP,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -50,9 +49,9 @@ SELECT
   parentId,
   batchId,
   betRecordId,
-  index,
+  `index`,
   gameRecordIds,
   wheel,
   extInfo,
-  LOCALTIMESTAMP AS syncCreateTime
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_operation_event_config_record_source;

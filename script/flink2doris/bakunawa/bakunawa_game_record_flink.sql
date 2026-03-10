@@ -5,6 +5,11 @@ CREATE TEMPORARY TABLE mongo_game_record_source (
   playerName STRING,
   rewardResult STRING,
   wheel STRING,
+  creator STRING,
+  updater STRING,
+  updateTime BIGINT,
+  createTime BIGINT,
+  expireAt BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -22,7 +27,12 @@ CREATE TEMPORARY TABLE doris_game_record_sink (
   rewardResult STRING,
   wheel STRING,
   accumulateReachMaxMultiple BOOLEAN,
-  syncCreateTime TIMESTAMP,
+  creator STRING,
+  updater STRING,
+  updateTime BIGINT,
+  createTime BIGINT,
+  expireAt BIGINT,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -48,5 +58,10 @@ SELECT
   playerName,
   rewardResult,
   wheel,
-  LOCALTIMESTAMP AS syncCreateTime
+  creator,
+  createTime,
+  updater,
+  updateTime,
+  expireAt,
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_game_record_source;

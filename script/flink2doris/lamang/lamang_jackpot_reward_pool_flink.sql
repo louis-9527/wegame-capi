@@ -1,11 +1,11 @@
 CREATE TEMPORARY TABLE mongo_jackpot_reward_pool_source (
-  `_id` INT,
+  `_id` String,
   amount BIGINT,
-  createTime INT,
+  `type` INT,
   creator STRING,
-  type INT,
-  updateTime BIGINT,
+  createTime BIGINT,
   updater STRING,
+  updateTime BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -18,12 +18,12 @@ CREATE TEMPORARY TABLE mongo_jackpot_reward_pool_source (
 CREATE TEMPORARY TABLE doris_jackpot_reward_pool_sink (
   `_id` STRING,
   amount BIGINT,
-  createTime TIMESTAMP,
+  `type` INT,
   creator STRING,
-  type INT,
-  updateTime TIMESTAMP,
+  createTime BIGINT,
   updater STRING,
-  syncCreateTime TIMESTAMP,
+  updateTime BIGINT,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -43,12 +43,12 @@ CREATE TEMPORARY TABLE doris_jackpot_reward_pool_sink (
 
 INSERT INTO doris_jackpot_reward_pool_sink
 SELECT
-  CAST(`_id` AS STRING) AS `_id`,
+  `_id`,
   amount,
-  TO_TIMESTAMP_LTZ(createTime, 3) AS createTime,
+  `type`,
   creator,
-  type,
-  TO_TIMESTAMP_LTZ(updateTime, 3) AS updateTime,
+  createTime,
   updater,
-  LOCALTIMESTAMP AS syncCreateTime
+  updateTime,
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_jackpot_reward_pool_source;

@@ -17,7 +17,7 @@ CREATE TEMPORARY TABLE doris_operation_event_config_sink (
   gameId STRING,
   betType STRING,
   multiple DOUBLE,
-  syncCreateTime TIMESTAMP,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -41,5 +41,5 @@ SELECT
   gameId,
   betType,
   multiple,
-  LOCALTIMESTAMP AS syncCreateTime
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_operation_event_config_source;

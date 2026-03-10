@@ -13,7 +13,11 @@ CREATE TEMPORARY TABLE mongo_game_record_source (
   gameRecordIds STRING,
   rewardResult STRING,
   wheel STRING,
-  expiredAt BIGINT,
+  creator STRING,
+  updater STRING,
+  updateTime BIGINT,
+  createTime BIGINT,
+  expireAt BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -38,7 +42,11 @@ CREATE TEMPORARY TABLE doris_game_record_sink (
   gameRecordIds STRING,
   rewardResult STRING,
   wheel STRING,
-  expiredAt BIGINT,
+  creator STRING,
+  updater STRING,
+  updateTime BIGINT,
+  createTime BIGINT,
+  expireAt BIGINT,
   syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
@@ -73,6 +81,10 @@ SELECT
   gameRecordIds,
   rewardResult,
   wheel,
-  expiredAt,
+  creator,
+  createTime,
+  updater,
+  updateTime,
+  expireAt,
   UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_game_record_source;

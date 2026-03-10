@@ -19,6 +19,7 @@ CREATE TEMPORARY TABLE mongo_operation_event_detail_source (
   gameId STRING,
   createTime BIGINT,
   updateTime BIGINT,
+  expireAt BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -40,16 +41,17 @@ CREATE TEMPORARY TABLE doris_operation_event_detail_sink (
   betAmount BIGINT,
   payOutAmount BIGINT,
   eventAmount BIGINT,
-  payOutTime TIMESTAMP,
-  betTime TIMESTAMP,
+  payOutTime BIGINT,
+  betTime BIGINT,
   betId STRING,
   betRecordId BIGINT,
   betStatus INT,
   channelId STRING,
   gameId STRING,
-  createTime TIMESTAMP,
-  updateTime TIMESTAMP,
-  syncCreateTime TIMESTAMP,
+  createTime BIGINT,
+  updateTime BIGINT,
+  expireAt BIGINT,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -80,14 +82,15 @@ SELECT
   betAmount,
   payOutAmount,
   eventAmount,
-  TO_TIMESTAMP_LTZ(payOutTime, 3) AS payOutTime,
-  TO_TIMESTAMP_LTZ(betTime, 3) AS betTime,
+  payOutTime,
+  betTime,
   betId,
   betRecordId,
   betStatus,
   channelId,
   gameId,
-  TO_TIMESTAMP_LTZ(createTime, 3) AS createTime,
-  TO_TIMESTAMP_LTZ(updateTime, 3) AS updateTime,
-  LOCALTIMESTAMP AS syncCreateTime
+  createTime,
+  updateTime,
+  expireAt,
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_operation_event_detail_source;

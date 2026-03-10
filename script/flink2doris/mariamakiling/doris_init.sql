@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS mariamakiling_bet_record (
   playerName VARCHAR(255) COMMENT '玩家名称',
   betType VARCHAR(255) COMMENT '投注类型',
   betSubType VARCHAR(255) COMMENT '投注子类型',
+  bizInterfereType INT COMMENT '业务干预类型',
+  bizInterfereSubType INT COMMENT '业务干预子类型',
   betPromotionType INT COMMENT '投注营销类型',
   betId VARCHAR(255) COMMENT '投注id（单钱包）',
   betSerialNo VARCHAR(255) COMMENT '投注流水号（对应单钱包refId）',
@@ -35,7 +37,7 @@ CREATE TABLE IF NOT EXISTS mariamakiling_bet_record (
   createTime BIGINT COMMENT '创建时间',
   updater VARCHAR(255) COMMENT '更新人',
   updateTime BIGINT COMMENT '更新时间',
-  expiredAt BIGINT COMMENT '过期时间',
+  expireAt BIGINT COMMENT '过期时间',
   syncCreateTime BIGINT COMMENT '数据同步写入时间'
 ) ENGINE=OLAP
 UNIQUE KEY(`_id`)
@@ -80,7 +82,11 @@ CREATE TABLE IF NOT EXISTS mariamakiling_game_record (
   overallRewardAmount BIGINT COMMENT '累计中奖总金额',
   accumulateReachMaxMultiple BOOLEAN COMMENT '达到触发最大中奖倍数',
   lastGameFlag BOOLEAN COMMENT '最后一轮标识',
-  expiredAt BIGINT COMMENT '过期时间',
+  creator VARCHAR(255) COMMENT '创建人',
+  createTime BIGINT COMMENT '创建时间',
+  updater VARCHAR(255) COMMENT '更新人',
+  updateTime BIGINT COMMENT '更新时间',
+  expireAt BIGINT COMMENT '过期时间',
   syncCreateTime BIGINT COMMENT '数据同步写入时间'
 ) ENGINE=OLAP
 UNIQUE KEY(`_id`)
@@ -124,7 +130,7 @@ CREATE TABLE IF NOT EXISTS mariamakiling_operation_event (
   reportTime BIGINT COMMENT '上报时间',
   createTime BIGINT COMMENT '创建时间',
   updateTime BIGINT COMMENT '更新时间',
-  expiredAt BIGINT COMMENT '过期时间',
+  expireAt BIGINT COMMENT '过期时间',
   syncCreateTime BIGINT COMMENT '数据同步写入时间'
 ) ENGINE=OLAP
 UNIQUE KEY(`_id`)
@@ -234,7 +240,7 @@ CREATE TABLE IF NOT EXISTS mariamakiling_star_card_record (
   reportStatus INT COMMENT '上报状态',
   createTime BIGINT COMMENT '创建时间',
   updateTime BIGINT COMMENT '更新时间',
-  expiredAt BIGINT COMMENT '过期时间',
+  expireAt BIGINT COMMENT '过期时间',
   syncCreateTime BIGINT COMMENT '数据同步写入时间'
 ) ENGINE=OLAP
 UNIQUE KEY(`_id`)
@@ -282,7 +288,7 @@ CREATE TABLE IF NOT EXISTS mariamakiling_operation_event_detail (
   gameId VARCHAR(255) COMMENT '游戏ID',
   createTime BIGINT COMMENT '创建时间',
   updateTime BIGINT COMMENT '更新时间',
-  expiredAt BIGINT COMMENT '过期时间',
+  expireAt BIGINT COMMENT '过期时间',
   syncCreateTime BIGINT COMMENT '数据同步写入时间'
 ) ENGINE=OLAP
 UNIQUE KEY(`_id`)
@@ -305,5 +311,3 @@ PROPERTIES (
   -- 压缩配置（可选）
   -- "compression" = "LZ4",
 );
-
-    

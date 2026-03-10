@@ -21,6 +21,7 @@ CREATE TEMPORARY TABLE mongo_bet_record_source (
   updateTime BIGINT,
   creator STRING,
   updater STRING,
+  expireAt BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -48,12 +49,13 @@ CREATE TEMPORARY TABLE doris_bet_record_sink (
   userId BIGINT,
   status INT,
   reachMaxMultiple BOOLEAN,
-  createTime TIMESTAMP,
-  betTime TIMESTAMP,
-  updateTime TIMESTAMP,
+  createTime BIGINT,
+  betTime BIGINT,
+  updateTime BIGINT,
   creator STRING,
   updater STRING,
-  syncCreateTime TIMESTAMP,
+  expireAt BIGINT,
+  syncCreateTime BIGINT,
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
@@ -90,10 +92,10 @@ SELECT
   userId,
   status,
   reachMaxMultiple,
-  TO_TIMESTAMP_LTZ(createTime, 3) AS createTime,
-  TO_TIMESTAMP_LTZ(betTime, 3) AS betTime,
-  TO_TIMESTAMP_LTZ(updateTime, 3) AS updateTime,
   creator,
+  createTime,
   updater,
-  LOCALTIMESTAMP AS syncCreateTime
+  updateTime,
+  expireAt,
+  UNIX_TIMESTAMP(CURRENT_TIMESTAMP) * 1000
 FROM mongo_bet_record_source;
