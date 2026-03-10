@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.bakunawa.game;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
 import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -14,6 +15,7 @@ import com.wegame.capi.biz.module.bakunawa.reward.BakunawaRewardHandler;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -98,6 +100,11 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
                 .rewardResult(rewardResult)
                 .overallRewardAmount(overallRewardAmount)
                 .accumulateReachMaxMultiple(rewardResult.getTotalMultiple().intValue() > bakunawaConfig.getRewardMaxMultiple())
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 }
