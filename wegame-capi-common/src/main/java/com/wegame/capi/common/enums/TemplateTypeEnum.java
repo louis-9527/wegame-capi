@@ -36,6 +36,8 @@ public enum TemplateTypeEnum {
 
     MANGKUKULAM(GameTypeEnum.MANGKUKULAM, TemplateConstants.MANGKUKULAM_BET_RECORD_TEMPLATE),
 
+    MANGKUKULAM_V3(GameTypeEnum.MANGKUKULAM, TemplateConstants.MANGKUKULAM_BET_RECORD_TEMPLATE_V3),
+
     ;
 
     /**

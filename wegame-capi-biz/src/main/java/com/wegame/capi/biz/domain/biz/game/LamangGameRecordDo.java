@@ -90,6 +90,27 @@ public class LamangGameRecordDo implements Serializable, ToVoConverter<LamangBet
      */
     private Integer jackpotDrawTimes;
 
+    /**
+     * 创建人
+     */
+    private String creator;
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 更新人
+     */
+    private String updater;
+    /**
+     * 更新时间
+     */
+    private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
+
     @Transient
     @JsonIgnore
     @Override
