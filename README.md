@@ -33,14 +33,14 @@ http://client.sportslive.com.ph:9000/capi/doc.html
 
 
 游戏主R：
-    MariaMakiling: maidong
-    Malakas: maidong
-    IbongAdarna: jayni
-    Lamang: lyric
-    Bakunawa: maidong
-    DiwataMayari: jayni
-    Kapre: jayni
-    Mangkukulam: lyric
-    Sirena: lyric
-    Atlantis: lyric
-    Bayanihan: jayni
+    MariaMakiling: zhumeng001 maidong
+    Malakas: zhumeng002 maidong
+    IbongAdarna: zhumeng003 jayni
+    Lamang: zhumeng004 lyric
+    Bakunawa: zhumeng005 maidong
+    DiwataMayari: zhumeng006 jayni
+    Kapre: zhumeng007 jayni
+    Mangkukulam: zhumeng008 lyric
+    Sirena: zhumeng009 lyric
+    Atlantis: zhumeng010 lyric
+    Bayanihan: zhumeng011 jayni
