@@ -1,6 +1,7 @@
 package com.wegame.capi.scheduler.biz.common;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -98,7 +99,9 @@ public abstract class AbstractContinuePlayScheduler
                     betStrategy().bet(buildBetDo(betRecordDo));
                 }
             }, "lock error");
-        } catch (Exception e) {
+        } catch (LockException lockException) {
+            log.info("AbstractContinuePlayScheduler autoContinuePlay lockException");
+        }catch (Exception e) {
             log.error("AbstractContinuePlayScheduler autoContinuePlay exception", e);
         } finally {
             UserInfoContext.clear();
