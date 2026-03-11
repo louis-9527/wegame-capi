@@ -49,7 +49,7 @@ public abstract class AbstractContinuePlayScheduler
     private static final long START_TIME_DURATION_IN_MS = 10 * 60 * 1000;
     private static final long END_TIME_DURATION_IN_MS = 5 * 60 * 1000;
 
-    private static final AbTypeEnum DEFAULT_AB_TYPE = AbTypeEnum.B;
+    private static final AbTypeEnum DEFAULT_AB_TYPE = AbTypeEnum.A;
 
     @Override
     public void run() {
