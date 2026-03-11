@@ -38,7 +38,6 @@ public class PayoutAmountLimitConfig implements Serializable {
     public void validate() {
         AssertUtil.assertTrue(this.retryCount >= 0, ErrorCode.ERR_INTER, "retryCount is less than 0");
         AssertUtil.assertTrue(CollectionUtil.isNotEmpty(this.limitBetTypeList), ErrorCode.ERR_INTER, "limitBetTypeList is empty");
-        log.info("maxPayoutAmountLimit:{}", this);
     }
 
 }
