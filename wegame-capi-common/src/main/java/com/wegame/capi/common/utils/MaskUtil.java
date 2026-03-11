@@ -1,6 +1,8 @@
 package com.wegame.capi.common.utils;
 
+import cn.hutool.core.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -43,5 +45,30 @@ public class MaskUtil {
             log.error("maskPlayerName error", e);
             return playerName;
         }
+    }
+
+
+
+    /**
+     * 玩家信息(playerId、playerName)脱敏处理规则：
+     * 1. 长度不足4位时，随机生成0-9数字补齐到4位；
+     * 2. 补齐后（或原长度≥4）：前2位明文+6位星号+后2位明文
+     * eg: 1234 -> 12****34
+     */
+    public static String desensitizePlayerInfo(String playerInfo) {
+        String processedPlayerInfo = StringUtils.defaultString(playerInfo, "");
+        int length = processedPlayerInfo.length();
+        if (processedPlayerInfo.length() < 4) {
+            // 计算需要补齐的位数
+            int needFill = 4 - length;
+            // 生成needFill位0-9的随机数字串
+            String randomFill = RandomUtil.randomNumbers(needFill);
+            // 拼接补齐（补在末尾，也可根据业务需求补在开头）
+            processedPlayerInfo += randomFill;
+        }
+
+        String prefix = processedPlayerInfo.substring(0, 2);
+        String suffix = processedPlayerInfo.substring(processedPlayerInfo.length() - 2);
+        return prefix + "******" + suffix;
     }
 }
