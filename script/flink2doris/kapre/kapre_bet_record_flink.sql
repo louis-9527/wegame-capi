@@ -86,6 +86,8 @@ SELECT
   betSerialNo,
   betSubType,
   betType,
+  bizInterfereType,
+  bizInterfereSubType,
   channelId,
   gameId,
   pId,
