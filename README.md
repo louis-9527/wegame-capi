@@ -44,3 +44,4 @@ http://client.sportslive.com.ph:9000/capi/doc.html
     Sirena: zhumeng009 lyric
     Atlantis: zhumeng010 lyric
     Bayanihan: zhumeng011 jayni
+    Idol: zhumeng012 maidong
