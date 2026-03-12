@@ -18,6 +18,7 @@ public class Constants {
     public static final String WEGAME_REWARD_NOTIFY_KEY_FORMAT = "wegame:reward.notify:%s_%s_%s";
     /** 所有游戏通用延迟大奖通知内容模板：Player {playerId} has won a {倍数}X reward in the game, totaling {派奖金额} pesos. Congratulations! {时间} */
     public static final String DELAY_REWARD_NOTIFY_CONTENT_FORMAT = "Player %s has won a %sX reward in the game, totaling %s pesos. Congratulations! %s";
+    public static final String LAMANG_DELAY_REWARD_NOTIFY_CONTENT_FORMAT = "Player %s · %s\n₱%s won at %sX";
     /** 延迟大奖通知列表在 Redis 中的默认最大条数（子类可重写 getDelayRewardNotifyListSize 使用不同值） */
     public static final int DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE = 10;
     /** 延迟大奖通知的默认倍数阈值*/
