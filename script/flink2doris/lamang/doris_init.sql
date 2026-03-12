@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS lamang_bet_record (
   playerName VARCHAR(255) COMMENT '玩家名称',
   betType VARCHAR(255) COMMENT '投注类型',
   betSubType VARCHAR(255) COMMENT '投注子类型',
+  bizInterfereType INT COMMENT '业务干预类型',
+  bizInterfereSubType INT COMMENT '业务干预子类型',
   betPromotionType INT COMMENT '投注营销类型',
   betId VARCHAR(255) COMMENT '投注id（单钱包）',
   betSerialNo VARCHAR(255) COMMENT '投注流水号（对应单钱包refId）',
