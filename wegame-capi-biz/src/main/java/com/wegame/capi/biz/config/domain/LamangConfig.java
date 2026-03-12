@@ -2,8 +2,8 @@ package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
@@ -14,6 +14,7 @@ import org.apache.commons.collections4.MapUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -72,6 +73,24 @@ public class LamangConfig extends GameBizConfig {
         private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
     }
 
+    /**
+     * 模板选择链中的单个节点
+     * <p>priority 越小优先级越高；strategy 决定从 context 中取哪个维度的 key；
+     * mapping 定义该维度的 key → 模板类型的映射表。</p>
+     */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TemplateSelectionChainItem implements Serializable {
+        private static final long serialVersionUID = 1L;
+        /** 优先级，数字越小越先执行 */
+        private int priority;
+        /** 决策策略，决定从 context 中取哪个字段做 key */
+        private TemplateStrategyEnum strategy;
+        /** key（enum name）→ 模板类型名称 的映射表 */
+        private Map<String, String> mapping;
+    }
+
     @Data
     @ToString
     @SuperBuilder
@@ -86,7 +105,10 @@ public class LamangConfig extends GameBizConfig {
          */
         private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
 
-        private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
+        /**
+         * 模板选择策略链（按 priority 升序执行，第一个命中的策略决定模板）
+         */
+        private List<TemplateSelectionChainItem> templateSelectionChain;
 
         private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfig;
 
@@ -96,10 +118,35 @@ public class LamangConfig extends GameBizConfig {
             return multipleRange.getEnd().compareTo(endOdds) <= 0;
         }
 
-        public TemplateRangeConfig getTemplateRangeConfig(AbTypeEnum abType) {
-            TemplateTypeEnum templateTypeEnum = abTemplateMapping.get(abType);
-            AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
-            return templateRangeConfig.get(templateTypeEnum);
+        /**
+         * 按优先级遍历策略链，返回第一个能命中的模板类型
+         *
+         * @param ctx 本次投注的选择上下文
+         * @return 命中的模板类型
+         * @throws BusinessException 所有策略均未命中时抛出
+         */
+        public TemplateTypeEnum select(TemplateSelectionContext ctx) {
+            return templateSelectionChain.stream()
+                    .sorted(Comparator.comparingInt(TemplateSelectionChainItem::getPriority))
+                    .map(item -> item.getStrategy().resolve(ctx, item.getMapping()))
+                    .filter(Objects::nonNull)
+                    .map(TemplateTypeEnum::valueOf)
+                    .findFirst()
+                    .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
+        }
+
+        /**
+         * 收集策略链中所有映射到的模板类型（用于预热）
+         */
+        public Set<TemplateTypeEnum> getAllTemplateTypes() {
+            return templateSelectionChain.stream()
+                    .flatMap(item -> item.getMapping().values().stream())
+                    .map(TemplateTypeEnum::valueOf)
+                    .collect(Collectors.toSet());
+        }
+
+        public TemplateRangeConfig getTemplateRangeConfig(TemplateTypeEnum templateType) {
+            return templateRangeConfig.get(templateType);
         }
 
     }

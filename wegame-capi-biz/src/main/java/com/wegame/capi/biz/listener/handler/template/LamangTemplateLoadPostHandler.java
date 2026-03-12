@@ -7,7 +7,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
-import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.wegame.capi.common.Constants.LAMANG_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -45,8 +45,8 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
             return;
         }
         Map<TemplateTypeEnum, LamangConfig.TemplateRangeConfig> templateConfigMapping = lamangConfig.getTemplateConfig().getTemplateRangeConfig();
-        Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping = lamangConfig.getTemplateConfig().getAbTemplateMapping();
-        for (TemplateTypeEnum templateType : abTemplateMapping.values()) {
+        Set<TemplateTypeEnum> allTemplateTypes = lamangConfig.getTemplateConfig().getAllTemplateTypes();
+        for (TemplateTypeEnum templateType : allTemplateTypes) {
             LamangConfig.TemplateRangeConfig config = templateConfigMapping.get(templateType);
             AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER, "template config can not be null");
             loadTemplate(config, templateType);

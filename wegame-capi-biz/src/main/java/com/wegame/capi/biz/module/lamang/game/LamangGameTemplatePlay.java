@@ -9,6 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.LamangConfig;
+import com.wegame.capi.biz.config.domain.TemplateSelectionContext;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
@@ -29,7 +30,6 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
-import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -124,28 +124,34 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
     }
 
     private List<GameRecordTemplateDo> getTemplateConfigList(GamePlayDo gamePlay, UserInfo userInfo) {
-        // 1 加载倍率范围
+        // 1 构建选择上下文，按策略链决定模板类型
         AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
         AssertUtil.assertNotNull(abType, ErrorCode.ERR_NOT_LOGIN);
-        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(abType, gamePlay.getBetType());
+        TemplateSelectionContext ctx = TemplateSelectionContext.builder()
+                .promotionType(gamePlay.getBetPromotionType())
+                .abType(abType)
+                .build();
+        TemplateTypeEnum templateType = lamangConfig.getTemplateConfig().select(ctx);
+        AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
+        log.info("templateType selected: {}, promotionType: {}, abType: {}", templateType, ctx.getPromotionType(), abType);
+
+        // 2 加载倍率范围
+        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(templateType, gamePlay.getBetType());
         log.info("random templateMultipleRange: {}", templateMultipleRange);
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
-        TemplateTypeEnum templateType = lamangConfig.getTemplateConfig().getAbTemplateMapping().get(abType);
-        AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
-        log.info("random templateType: {}", templateType);
-        // 2 加载记录idList
+        // 3 加载记录idList
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(LAM_ANG, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), LamangBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
 
-        // 3 随机一个betRecordId
+        // 4 随机一个betRecordId
         Long betRecordId = getRandomElement(betRecordIdList);
 
-        // 4 加载模板 & 解压
-        log.info("templatePlay: abType: {}, templateIndex: {}, betType: {}, templateId: {}, range: {}-{}",
-                abType.getDesc(), templateType.getBetRecordTemplateName(),gamePlay.getBetType().getCode(), betRecordId,  templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        // 5 加载模板 & 解压
+        log.info("templatePlay: templateType: {}, betType: {}, templateId: {}, range: {}-{}",
+                templateType.getBetRecordTemplateName(), gamePlay.getBetType().getCode(), betRecordId, templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         LamangBetRecordTemplateEsDo template = loadTemplate(gamePlay, templateType, betRecordId, templateMultipleRange);
         List<GameRecordTemplateDo> configRecordList = decompressGameRecordList(template);
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
@@ -276,9 +282,10 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         });
     }
 
-    private TemplateMultipleRange getTemplateMultipleRange(AbTypeEnum abType, BetTypeEnum betTypeEnum) {
+    private TemplateMultipleRange getTemplateMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betTypeEnum) {
         String templateMultipleRange;
-        LamangConfig.TemplateRangeConfig config = lamangConfig.getTemplateConfig().getTemplateRangeConfig(abType);
+        LamangConfig.TemplateRangeConfig config = lamangConfig.getTemplateConfig().getTemplateRangeConfig(templateType);
+        AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER);
         if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
             templateMultipleRange = randomService.randomKeyByWeight(config.getMainGame());
         } else {
