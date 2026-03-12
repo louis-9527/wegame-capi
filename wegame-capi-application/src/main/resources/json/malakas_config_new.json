@@ -372,6 +372,10 @@
     },
     "rewardMaxMultiple": "10250",
     "templateRangeConfig": {
+        "templateWarmUpEndOddsMap": {
+            "NORMAL_BET": 5,
+            "BUY_BET": 3
+        },
         "mainGame": {
             "0_0": 128316922,
             "0_0.5": 31011196,
