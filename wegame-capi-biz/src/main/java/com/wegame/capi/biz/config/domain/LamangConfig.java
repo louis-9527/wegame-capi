@@ -3,6 +3,10 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -55,7 +59,7 @@ public class LamangConfig extends GameBizConfig {
     /**
      * 模板配置
      */
-    private TemplateRangeConfig templateRangeConfig;
+    private TemplateConfig templateConfig;
 
     @Data
     @SuperBuilder
@@ -66,6 +70,38 @@ public class LamangConfig extends GameBizConfig {
          * TreeMap<元素ID，<赔率类型，具体赔率>>
          */
         private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateConfig implements Serializable {
+
+        private static final long serialVersionUID = -4036721298176088906L;
+        /**
+         * 预热Map
+         */
+        private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
+
+        private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
+
+        private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfig;
+
+        public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
+            BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
+            AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
+            return multipleRange.getEnd().compareTo(endOdds) <= 0;
+        }
+
+        public TemplateRangeConfig getTemplateRangeConfig(AbTypeEnum abType) {
+            TemplateTypeEnum templateTypeEnum = abTemplateMapping.get(abType);
+            AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
+            return templateRangeConfig.get(templateTypeEnum);
+        }
+
     }
 
     @Data
