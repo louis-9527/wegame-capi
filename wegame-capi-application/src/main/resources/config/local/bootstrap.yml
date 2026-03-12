@@ -32,7 +32,8 @@ spring:
       config:
         import-check:
           enabled: false
-        server-addr: localhost:8848
+#        server-addr: localhost:8848
+        server-addr: mse-98afa3410-nacos-ans.mse.aliyuncs.com:8848
         username: nacos
         password: nacos
         group: wegame-capi-local
@@ -45,11 +46,14 @@ spring:
           - data-id: wegame-capi-local-malakas_config.json
             group: wegame-capi-local
             refresh: true
+          - data-id: wegame-capi-local-bakunawa_config.json
+            group: wegame-capi-local
+            refresh: true
 #game switch
 game:
   enable:
     MariaMakiling: false
     Malakas: false
     IbongAdarna: false
-    Lamang: true
-    Bakunawa: false
+    Lamang: false
+    Bakunawa: true

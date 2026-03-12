@@ -7,6 +7,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.LarkUtil;
+import com.wegame.capi.biz.config.domain.BakunawaConfig;
 import com.wegame.capi.biz.config.domain.ConfigValidate;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
@@ -26,14 +27,17 @@ public class NacosConfigRefresherUtil {
 
     public static final String MARIAMAKILING_JSON_ROOT_NAME = "mariamakiling";
     public static final String MALAKAS_JSON_ROOT_NAME = "malakas";
+    public static final String BAKUNAWA_JSON_ROOT_NAME = "bakunawa";
 
     private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new ImmutableMap.Builder<String, Class<? extends ConfigValidate>>()
             .put("maria_makiling_config.json", MariaMakilingConfig.class)
             .put("malakas_config.json", MalakasConfig.class)
+            .put("bakunawa_config.json", BakunawaConfig.class)
             .build();
     private static final Map<String, String> TO_JSON_ROOT_MAP = new ImmutableMap.Builder<String, String>()
             .put("maria_makiling_config.json", MARIAMAKILING_JSON_ROOT_NAME)
             .put("malakas_config.json", MALAKAS_JSON_ROOT_NAME)
+            .put("bakunawa_config.json", BAKUNAWA_JSON_ROOT_NAME)
             .build();
 
     public static boolean validate(String dataId, String groupId, String configInfo) {
