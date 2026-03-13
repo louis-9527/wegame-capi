@@ -2,10 +2,12 @@ package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -14,7 +16,6 @@ import org.apache.commons.collections4.MapUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -73,24 +74,6 @@ public class LamangConfig extends GameBizConfig {
         private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
     }
 
-    /**
-     * 模板选择链中的单个节点
-     * <p>priority 越小优先级越高；strategy 决定从 context 中取哪个维度的 key；
-     * mapping 定义该维度的 key → 模板类型的映射表。</p>
-     */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class TemplateSelectionChainItem implements Serializable {
-        private static final long serialVersionUID = 1L;
-        /** 优先级，数字越小越先执行 */
-        private int priority;
-        /** 决策策略，决定从 context 中取哪个字段做 key */
-        private TemplateStrategyEnum strategy;
-        /** key（enum name）→ 模板类型名称 的映射表 */
-        private Map<String, String> mapping;
-    }
-
     @Data
     @ToString
     @SuperBuilder
@@ -106,9 +89,15 @@ public class LamangConfig extends GameBizConfig {
         private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
 
         /**
-         * 模板选择策略链（按 priority 升序执行，第一个命中的策略决定模板）
+         * 干预类型 → 模板类型（key 为 BetPromotionTypeEnum.name()）
+         * 未配置的 promotionType 自动下沉到 abTemplateMapping 兜底
          */
-        private List<TemplateSelectionChainItem> templateSelectionChain;
+        private Map<BetPromotionTypeEnum, TemplateTypeEnum> promotionTemplateMapping;
+
+        /**
+         * AB 分组 → 模板类型（兜底）
+         */
+        private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
 
         private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfig;
 
@@ -119,30 +108,18 @@ public class LamangConfig extends GameBizConfig {
         }
 
         /**
-         * 按优先级遍历策略链，返回第一个能命中的模板类型
+         * 模板选择：promotionType 优先，未命中则按 AB 兜底
          *
          * @param ctx 本次投注的选择上下文
-         * @return 命中的模板类型
-         * @throws BusinessException 所有策略均未命中时抛出
          */
         public TemplateTypeEnum select(TemplateSelectionContext ctx) {
-            return templateSelectionChain.stream()
-                    .sorted(Comparator.comparingInt(TemplateSelectionChainItem::getPriority))
-                    .map(item -> item.getStrategy().resolve(ctx, item.getMapping()))
-                    .filter(Objects::nonNull)
-                    .map(TemplateTypeEnum::valueOf)
-                    .findFirst()
-                    .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
-        }
-
-        /**
-         * 收集策略链中所有映射到的模板类型（用于预热）
-         */
-        public Set<TemplateTypeEnum> getAllTemplateTypes() {
-            return templateSelectionChain.stream()
-                    .flatMap(item -> item.getMapping().values().stream())
-                    .map(TemplateTypeEnum::valueOf)
-                    .collect(Collectors.toSet());
+            if (Objects.nonNull(ctx.getPromotionType())) {
+                TemplateTypeEnum t = promotionTemplateMapping.get(ctx.getPromotionType());
+                if (t != null) return t;
+            }
+            TemplateTypeEnum t = abTemplateMapping.get(ctx.getAbType());
+            AssertUtil.assertNotNull(t, ErrorCode.ERR_INTER);
+            return t;
         }
 
         public TemplateRangeConfig getTemplateRangeConfig(TemplateTypeEnum templateType) {

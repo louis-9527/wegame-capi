@@ -9,7 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.config.domain.TemplateSelectionContext;
+import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
@@ -124,7 +124,7 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
     }
 
     private List<GameRecordTemplateDo> getTemplateConfigList(GamePlayDo gamePlay, UserInfo userInfo) {
-        // 1 构建选择上下文，按策略链决定模板类型
+        // 1 构建选择上下文，决定模板类型：promotionType 优先，未命中则按 AB 兜底
         AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
         AssertUtil.assertNotNull(abType, ErrorCode.ERR_NOT_LOGIN);
         TemplateSelectionContext ctx = TemplateSelectionContext.builder()

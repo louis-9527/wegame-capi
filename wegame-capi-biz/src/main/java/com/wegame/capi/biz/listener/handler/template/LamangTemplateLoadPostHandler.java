@@ -20,8 +20,6 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import static com.wegame.capi.common.Constants.LAMANG_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
@@ -45,8 +43,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
             return;
         }
         Map<TemplateTypeEnum, LamangConfig.TemplateRangeConfig> templateConfigMapping = lamangConfig.getTemplateConfig().getTemplateRangeConfig();
-        Set<TemplateTypeEnum> allTemplateTypes = lamangConfig.getTemplateConfig().getAllTemplateTypes();
-        for (TemplateTypeEnum templateType : allTemplateTypes) {
+        for (TemplateTypeEnum templateType : templateConfigMapping.keySet()) {
             LamangConfig.TemplateRangeConfig config = templateConfigMapping.get(templateType);
             AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER, "template config can not be null");
             loadTemplate(config, templateType);

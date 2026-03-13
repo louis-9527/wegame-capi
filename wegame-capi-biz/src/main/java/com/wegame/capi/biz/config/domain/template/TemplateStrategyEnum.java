@@ -1,6 +1,7 @@
-package com.wegame.capi.biz.config.domain;
+package com.wegame.capi.biz.config.domain.template;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 模板选择策略枚举
@@ -15,30 +16,20 @@ import java.util.Map;
  */
 public enum TemplateStrategyEnum {
 
-    /**
-     * 按干预类型（promotionType）决定模板
-     * mapping key: {@link com.wegame.capi.common.enums.BetPromotionTypeEnum#name()}
-     */
+    /** 按干预类型（promotionType）决定模板 */
     PROMOTION_TYPE {
         @Override
         public String resolve(TemplateSelectionContext ctx, Map<String, String> mapping) {
-            if (ctx.getPromotionType() == null) {
-                return null;
-            }
+            if (Objects.isNull(ctx.getPromotionType())) return null;
             return mapping.get(ctx.getPromotionType().name());
         }
     },
 
-    /**
-     * 按用户 AB 分组决定模板（通常作为兜底策略）
-     * mapping key: {@link com.wegame.capi.client.enums.AbTypeEnum#name()}
-     */
+    /** 按用户 AB 分组决定模板（通常作为兜底策略） */
     AB_TYPE {
         @Override
         public String resolve(TemplateSelectionContext ctx, Map<String, String> mapping) {
-            if (ctx.getAbType() == null) {
-                return null;
-            }
+            if (Objects.isNull(ctx.getAbType())) return null;
             return mapping.get(ctx.getAbType().name());
         }
     };
@@ -48,7 +39,7 @@ public enum TemplateStrategyEnum {
      *
      * @param ctx     本次投注的选择上下文
      * @param mapping 该策略的 key → 模板名称 映射表
-     * @return 命中的模板名称；未命中返回 null（交由下一优先级处理）
+     * @return 命中的模板名称；未命中返回 null
      */
     public abstract String resolve(TemplateSelectionContext ctx, Map<String, String> mapping);
 }
