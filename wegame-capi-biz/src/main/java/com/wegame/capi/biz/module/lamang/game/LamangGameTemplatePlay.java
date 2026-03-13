@@ -29,7 +29,6 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
-import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -43,7 +42,6 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.LAMANG_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
-import static com.wegame.capi.common.enums.TemplateTypeEnum.LAM_ANG;
 
 @Slf4j
 @Component("lamangGameTemplatePlay")
@@ -137,7 +135,7 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
         log.info("random templateType: {}", templateType);
         // 2 加载记录idList
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(LAM_ANG, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), LamangBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), LamangBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
 
         // 3 随机一个betRecordId
