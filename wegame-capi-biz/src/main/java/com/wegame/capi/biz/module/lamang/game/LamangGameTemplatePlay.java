@@ -132,7 +132,7 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
                 .build();
         TemplateTypeEnum templateType = lamangConfig.getTemplateConfig().select(ctx);
         AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
-        log.info("templateType selected: {}, promotionType: {}, abType: {}", templateType, ctx.getPromotionType(), abType);
+        log.info("templateType selected: {}, promotionType: {}, abType: {}", templateType.name(), ctx.getPromotionType(), abType);
 
         // 2 加载倍率范围
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(templateType, gamePlay.getBetType());
