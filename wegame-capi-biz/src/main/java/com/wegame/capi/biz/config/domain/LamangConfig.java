@@ -2,12 +2,12 @@ package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.client.enums.AbTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.biz.config.domain.template.TemplateSelectionChainItem;
 import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
-import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -16,6 +16,7 @@ import org.apache.commons.collections4.MapUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -88,18 +89,26 @@ public class LamangConfig extends GameBizConfig {
          */
         private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
 
-        /**
-         * 干预类型 → 模板类型（key 为 BetPromotionTypeEnum.name()）
-         * 未配置的 promotionType 自动下沉到 abTemplateMapping 兜底
-         */
-        private Map<BetPromotionTypeEnum, TemplateTypeEnum> promotionTemplateMapping;
-
-        /**
-         * AB 分组 → 模板类型（兜底）
-         */
-        private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
-
         private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfig;
+
+        /**
+         * 模板选择链（预留扩展用）
+         * 注入时已按 priority 升序排好，直接顺序遍历即可，无需二次排序。
+         */
+        private List<TemplateSelectionChainItem> templateSelectionChain;
+
+        /**
+         * Jackson 反序列化时调用；注入即完成升序排序，后续无需再排。
+         */
+        public void setTemplateSelectionChain(List<TemplateSelectionChainItem> chain) {
+            if (chain == null) {
+                this.templateSelectionChain = null;
+                return;
+            }
+            this.templateSelectionChain = chain.stream()
+                    .sorted(Comparator.comparingInt(TemplateSelectionChainItem::getPriority))
+                    .collect(Collectors.toList());
+        }
 
         public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
             BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
@@ -108,18 +117,21 @@ public class LamangConfig extends GameBizConfig {
         }
 
         /**
-         * 模板选择：promotionType 优先，未命中则按 AB 兜底
+         * 模板选择：按 priority 升序遍历 templateSelectionChain，首个命中项即返回
          *
          * @param ctx 本次投注的选择上下文
+         * @throws BusinessException 所有策略均未命中时抛出
          */
         public TemplateTypeEnum select(TemplateSelectionContext ctx) {
-            if (Objects.nonNull(ctx.getPromotionType())) {
-                TemplateTypeEnum t = promotionTemplateMapping.get(ctx.getPromotionType());
-                if (t != null) return t;
+            if (Objects.nonNull(templateSelectionChain)) {
+                for (TemplateSelectionChainItem item : templateSelectionChain) {
+                    TemplateTypeEnum result = item.resolve(ctx);
+                    if (Objects.nonNull(result)) {
+                        return result;
+                    }
+                }
             }
-            TemplateTypeEnum t = abTemplateMapping.get(ctx.getAbType());
-            AssertUtil.assertNotNull(t, ErrorCode.ERR_INTER);
-            return t;
+            return null;
         }
 
         public TemplateRangeConfig getTemplateRangeConfig(TemplateTypeEnum templateType) {

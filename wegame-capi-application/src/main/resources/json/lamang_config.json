@@ -259,13 +259,23 @@
 			"NORMAL_BET": 5,
 			"BUY_BET": -1
 		},
-		"promotionTemplateMapping": {
-			"FREE_SPIN": "LAM_ANG_V3"
-		},
-		"abTemplateMapping": {
-			"A": "LAM_ANG",
-			"B": "LAM_ANG_V2"
-		},
+		"templateSelectionChain": [
+			{
+				"priority": 2,
+				"strategy": "AB_TYPE",
+				"mapping": {
+					"A": "LAM_ANG",
+					"B": "LAM_ANG_V2"
+				}
+			},
+			{
+				"priority": 1,
+				"strategy": "PROMOTION_TYPE",
+				"mapping": {
+					"FREE_SPIN": "LAM_ANG_V3"
+				}
+			}
+		],
 		"templateRangeConfig" : {
 			"LAM_ANG" : {
 				"mainGame": {
