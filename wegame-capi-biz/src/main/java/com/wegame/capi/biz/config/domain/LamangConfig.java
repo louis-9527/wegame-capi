@@ -117,9 +117,7 @@ public class LamangConfig extends GameBizConfig {
                 TemplateTypeEnum t = promotionTemplateMapping.get(ctx.getPromotionType());
                 if (Objects.nonNull(t)) return t;
             }
-            TemplateTypeEnum t = abTemplateMapping.get(ctx.getAbType());
-            AssertUtil.assertNotNull(t, ErrorCode.ERR_INTER);
-            return t;
+            return abTemplateMapping.get(ctx.getAbType());
         }
 
         public TemplateRangeConfig getTemplateRangeConfig(TemplateTypeEnum templateType) {
