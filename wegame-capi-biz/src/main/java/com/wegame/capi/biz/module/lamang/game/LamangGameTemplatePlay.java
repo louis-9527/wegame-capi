@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.LAMANG_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
-import static com.wegame.capi.common.enums.TemplateTypeEnum.LAM_ANG;
 
 @Slf4j
 @Component("lamangGameTemplatePlay")
@@ -143,7 +142,7 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
         // 3 加载记录idList
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(LAM_ANG, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), LamangBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), LamangBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
 
         // 4 随机一个betRecordId
