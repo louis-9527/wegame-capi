@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.config.domain.template;
 
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class TemplateSelectionChainItem implements Serializable {
     private TemplateStrategyEnum strategy;
 
     /** key（enum name）→ 模板类型名称 的映射表 */
-    private Map<String, String> mapping;
+    private Map<String, TemplateTypeEnum> mapping;
 
     /**
      * 委托 strategy 解析当前 context，返回命中的模板名称
@@ -36,7 +37,7 @@ public class TemplateSelectionChainItem implements Serializable {
      * @param ctx 本次投注的选择上下文
      * @return 命中的模板名称；未命中返回 null（交由下一优先级处理）
      */
-    public String resolve(TemplateSelectionContext ctx) {
+    public TemplateTypeEnum resolve(TemplateSelectionContext ctx) {
         return strategy.resolve(ctx, mapping);
     }
 }

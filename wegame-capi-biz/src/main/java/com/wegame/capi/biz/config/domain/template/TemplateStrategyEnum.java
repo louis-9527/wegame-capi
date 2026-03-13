@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.config.domain.template;
 
+import com.wegame.capi.common.enums.TemplateTypeEnum;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,7 +21,7 @@ public enum TemplateStrategyEnum {
     /** 按干预类型（promotionType）决定模板 */
     PROMOTION_TYPE {
         @Override
-        public String resolve(TemplateSelectionContext ctx, Map<String, String> mapping) {
+        public TemplateTypeEnum resolve(TemplateSelectionContext ctx, Map<String, TemplateTypeEnum> mapping) {
             if (Objects.isNull(ctx.getPromotionType())) return null;
             return mapping.get(ctx.getPromotionType().name());
         }
@@ -28,7 +30,7 @@ public enum TemplateStrategyEnum {
     /** 按用户 AB 分组决定模板（通常作为兜底策略） */
     AB_TYPE {
         @Override
-        public String resolve(TemplateSelectionContext ctx, Map<String, String> mapping) {
+        public TemplateTypeEnum resolve(TemplateSelectionContext ctx, Map<String, TemplateTypeEnum> mapping) {
             if (Objects.isNull(ctx.getAbType())) return null;
             return mapping.get(ctx.getAbType().name());
         }
@@ -41,5 +43,5 @@ public enum TemplateStrategyEnum {
      * @param mapping 该策略的 key → 模板名称 映射表
      * @return 命中的模板名称；未命中返回 null
      */
-    public abstract String resolve(TemplateSelectionContext ctx, Map<String, String> mapping);
+    public abstract TemplateTypeEnum resolve(TemplateSelectionContext ctx, Map<String, TemplateTypeEnum> mapping);
 }
