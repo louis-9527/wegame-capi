@@ -34,7 +34,7 @@ public class RewardNotifyInfoBuilder {
         if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
             content = String.format(Constants.LAMANG_DELAY_REWARD_NOTIFY_CONTENT_FORMAT,
                     desensitizePlayerId(userInfo.getPlayerId()),
-                    DateUtil.format(new Date(rewardTime), "yyyy-MM-dd HH:mm:ss"),
+                    cn.hutool.core.date.DateUtil.format(new Date(rewardTime), "MMM dd h:mm a"),
                     AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(payOutAmount)),
                     multi.stripTrailingZeros().toPlainString());
         }
