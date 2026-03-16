@@ -14,20 +14,9 @@ public interface Game<R> {
     /**
      * 玩游戏
      *
-     * @param gamePlay
-     * @return 游戏记录
-     */
-    List<R> play(GamePlayDo gamePlay);
-
-    /**
-     * 玩游戏
-     *
-     * @param betDo 投注上下文
+     * @param bet 投注上下文
      * @param gamePlay 游戏上下文
      * @return 游戏记录
      */
-    default List<R> play(BetDo betDo, GamePlayDo gamePlay) {
-        // do nothing
-        return null;
-    }
+    List<R> play(BetDo bet, GamePlayDo gamePlay);
 }
