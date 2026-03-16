@@ -270,7 +270,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 betDo.setGamePlayType(GamePlayTypeEnum.EVENT_PLAY);
             }
         }
-        List<R> list = gameContext().play(build(betDo, betRecordId));
+        List<R> list = gameContext().play(betDo, build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         return betHelper().buildBetRecord(betRecordId, betDo, list);
     }
@@ -320,7 +320,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         if (this.needPayoutAmountLimit(betDo, payoutAmountLimitConfig)) {
             return this.payoutAmountLimitPLay(betDo, betRecordId, payoutAmountLimitConfig, extParam);
         } else {
-            return gameContext().play(this.buildGamePlayDo(betDo, betRecordId, extParam));
+            return gameContext().play(betDo, this.buildGamePlayDo(betDo, betRecordId, extParam));
         }
     }
 
@@ -328,7 +328,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         int retryCount = payoutAmountLimitConfig.getRetryCount();
         long limitAmount = payoutAmountLimitConfig.getLimitAmount();
         return RetryUtil.execute(() -> {
-            List<R> gameRecordList = gameContext().play(this.buildGamePlayDo(betDo, betRecordId, extParam));
+            List<R> gameRecordList = gameContext().play(betDo, this.buildGamePlayDo(betDo, betRecordId, extParam));
             long totalRewardAmount = this.getTotalRewardAmount(gameRecordList, extParam);
             if (totalRewardAmount > limitAmount) {
                 log.error("payoutAmountLimitPLay,amount limit,totalRewardAmount:{},limitAmount:{},betDo:{},recordList:{}", totalRewardAmount, limitAmount, JSON.toJSONString(betDo), JSON.toJSONString(gameRecordList));

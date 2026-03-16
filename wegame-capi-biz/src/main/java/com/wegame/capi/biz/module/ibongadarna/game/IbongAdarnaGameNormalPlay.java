@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
@@ -45,7 +46,7 @@ public class IbongAdarnaGameNormalPlay extends AbstractGame<IbongAdarnaGameRecor
     IbongAdarnaRewardHandler ibongAdarnaRewardHandler;
 
     @Override
-    public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<IbongAdarnaGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         List<IbongAdarnaGameRecordDo> ret = new ArrayList<>();
         // 生成滚轮
         WheelDo<IbongAdarnaSymbolDo> wheel = generateNormalWheel(gameInfo);
