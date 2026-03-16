@@ -23,6 +23,7 @@ public class Constants {
     public static final int DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE = 10;
     /** 延迟大奖通知的默认倍数阈值*/
     public static final BigDecimal DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD = new BigDecimal(30);
+    public static final BigDecimal LAMANG_DELAY_REWARD_MULTIPLIER_THRESHOLD = new BigDecimal(100);
     public static final Long DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD = 2000_000L;
     // 推送大奖lua脚本
     public static final String WEGAME_REWARD_NOTIFY_LUA_SCRIPT = "local key = KEYS[1]\n" +
