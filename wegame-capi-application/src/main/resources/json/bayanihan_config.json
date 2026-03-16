@@ -2,9 +2,9 @@
     "oddsConfig": {
         "commonOddsConfig": {
             "L1": {
-                "THREE": "0.01",
-                "FOUR": "0.02",
-                "FIVE": "0.03"
+                "THREE": "0.02",
+                "FOUR": "0.03",
+                "FIVE": "0.04"
             },
             "L2": {
                 "THREE": "0.04",
@@ -44,7 +44,7 @@
             "H5": {
                 "THREE": "0.6",
                 "FOUR": "0.8",
-                "FIVE": "0.1"
+                "FIVE": "1"
             }
         }
     },
