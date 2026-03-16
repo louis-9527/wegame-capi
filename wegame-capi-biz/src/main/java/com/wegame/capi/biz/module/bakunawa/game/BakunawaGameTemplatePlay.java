@@ -10,6 +10,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -61,7 +62,7 @@ public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo>
     BakunawaConfig bakunawaConfig;
 
     @Override
-    public List<BakunawaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<BakunawaGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());

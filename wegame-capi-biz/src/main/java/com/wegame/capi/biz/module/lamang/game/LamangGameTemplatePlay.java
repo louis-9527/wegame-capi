@@ -9,6 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.LamangConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
@@ -61,7 +62,7 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
     BetRecordTemplateEsService<LamangBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
-    public List<LamangGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<LamangGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<GameRecordTemplateDo> configRecordList = getTemplateConfigList(gamePlay, userInfo);
