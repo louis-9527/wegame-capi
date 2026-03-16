@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * bet_record：投注记录
@@ -68,6 +69,14 @@ public class BetRecordPo implements Serializable {
      */
     private Integer betPromotionType;
     /**
+     * 业务干预类型
+     */
+    private Integer bizInterfereType;
+    /**
+     * 业务干预子类型
+     */
+    private Integer bizInterfereSubType;
+    /**
      * 投注id（单钱包）
      */
     private String betId;
@@ -127,6 +136,10 @@ public class BetRecordPo implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
 
     ///////////////  above auto generated ///////////////
     /**

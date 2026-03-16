@@ -20,7 +20,6 @@ import com.wegame.capi.biz.module.atlantis.AtlantisBizEventHandler;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
-import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -34,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -83,8 +83,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
         // 4、中奖线处理
         // 当前回合中奖总金额
-        long totalRewardAmount = 0L;
-//        AtomicLong totalRewardAmount = new AtomicLong(0L);
+        AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 中奖坐标列表
         List<RewardLineDetailDo<SymbolDo>> rewardLineDetailList = Lists.newArrayList();
         for (RewardLineDo<SymbolDo> rewardLine : rewardLineList) {
@@ -94,7 +93,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
             // 普通中奖 ：总金额 = 投注金额 * 赔率 * 中奖线数量
             BigDecimal lineRewardAmount = super.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, BigDecimal.ONE);
             // 累加中奖总金额
-            totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
+            totalRewardAmount.addAndGet(lineRewardAmount.longValue());
             // 中奖线明细列表
             rewardLineDetailList.add(RewardLineDetailDo.<SymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
@@ -111,35 +110,39 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
         // 中奖事件
         List<BizEventEnum> bizEventList = this.rewardBizEventHandler(rewardLineList, rewardHandle);
-        // 黄金奶牛处理
-        List<GameBizEventDo> effectBizEventList = this.goldCowEventEffectHandler(bizEventList, totalRewardAmount, rewardHandle);
-        // 5.构建中奖结果
-        boolean reachMaxMultiple = reachMaxMultiple(
+
+        boolean reachMaxMultipleBoolean = reachMaxMultiple(
                 rewardHandle.getGamePlayType(),
-                Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
+                Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount.get() : totalRewardAmount.get() + rewardHandle.getCurrentTotalRewardAmount(),
                 rewardHandle.getBetAmount(),
                 atlantisConfig.getRewardMaxMultiple());
+        AtomicBoolean reachMaxMultiple = new AtomicBoolean(reachMaxMultipleBoolean);
+
+        // 黄金奶牛处理
+        List<GameBizEventDo> effectBizEventList = this.goldCowEventEffectHandler(bizEventList, totalRewardAmount, rewardHandle, reachMaxMultiple);
+        // 5.构建中奖结果
+
         // 6.返回中奖信息
         return RewardResultDo.<SymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
-                .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
-                .totalRewardAmount(totalRewardAmount)
+                .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount.get()))
+                .totalRewardAmount(totalRewardAmount.get())
                 .rewardLineDetailList(rewardLineDetailList)
                 .hasRewardFreeWheel(false)
                 .rewardFreeWheelTimes(0)
                 .bizEventList(bizEventList)
                 .effectBizEventList(effectBizEventList)
-                .accumulateReachMaxMultiple(reachMaxMultiple)
+                .accumulateReachMaxMultiple(reachMaxMultiple.get())
                 .build();
     }
 
-    private void reBuildTotalRewardAmount(GameBizEventDo gameBizEventDo, AtomicLong totalRewardAmount) {
+    private void reBuildAllTotalRewardAmount(GameBizEventDo gameBizEventDo, AtomicLong totalRewardAmount) {
         long extRewardAmount = (long) gameBizEventDo.getExtInfo();
         totalRewardAmount.addAndGet(extRewardAmount);
     }
 
-    private List<GameBizEventDo> goldCowEventEffectHandler(List<BizEventEnum> bizEventList, Long totalRewardAmount, RewardHandleDo<SymbolDo> rewardHandle) {
+    private List<GameBizEventDo> goldCowEventEffectHandler(List<BizEventEnum> bizEventList, AtomicLong currentRoundTotalRewardAmount, RewardHandleDo<SymbolDo> rewardHandle, AtomicBoolean reachMaxMultiple) {
         if (CollectionUtils.isEmpty(bizEventList) || !bizEventList.contains(BizEventEnum.EVENT_GOLDEN_COW)) {
             return null;
         }
@@ -152,7 +155,8 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 goldCowEventIndexList.add(i);
             }
         }
-        AtomicLong allTotalRewardAmount = new AtomicLong(totalRewardAmount + rewardHandle.getCurrentTotalRewardAmount());
+        Long currentTotalRewardAmount = Optional.ofNullable(rewardHandle.getCurrentTotalRewardAmount()).orElse(0L);
+        AtomicLong allTotalRewardAmount = new AtomicLong(currentRoundTotalRewardAmount.get() + currentTotalRewardAmount);
         // 如果是固定事件
         if (CollectionUtil.isNotEmpty(rewardHandle.getFixedBizEventList())) {
             // 固定事件的个数
@@ -161,7 +165,8 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
             AssertUtil.assertTrue(goldCowEventIndexList.size() == goldCowFixedEventList.size(), ErrorCode.ERR_PARAM, "reward error");
             // 单个处理
             for (GameBizEventDo fixedGameBizEventDo : goldCowFixedEventList) {
-                Long extInfo = this.calcGoldCowEventExtRewardAmount(rewardHandle, allTotalRewardAmount.get(), fixedGameBizEventDo.getEventMultiple());
+                // extInfo:当前回合之前所有轮/回合的额外中奖金额
+                Long extInfo = this.calcGoldCowEventExtRewardAmount(rewardHandle, allTotalRewardAmount.get(), fixedGameBizEventDo.getEventMultiple(), reachMaxMultiple);
                 GameBizEventDo bizEventDo = GameBizEventDo.builder()
                         .sort(fixedGameBizEventDo.getSort())
                         .bizEventType(fixedGameBizEventDo.getBizEventType())
@@ -169,22 +174,45 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                         .extInfo(extInfo)
                         .build();
                 bizEventDoList.add(bizEventDo);
-                this.reBuildTotalRewardAmount(bizEventDo, allTotalRewardAmount);
+                this.reBuildAllTotalRewardAmount(bizEventDo, allTotalRewardAmount);
+                this.reBuildCurrentRoundTotalRewardAmount(bizEventDo, currentRoundTotalRewardAmount);
+                boolean reachMaxMultipleBoolean = reachMaxMultiple(
+                        rewardHandle.getGamePlayType(),
+                        allTotalRewardAmount.get(),
+                        rewardHandle.getBetAmount(),
+                        atlantisConfig.getRewardMaxMultiple());
+                reachMaxMultiple.set(reachMaxMultipleBoolean);
             }
         } else {
             // 非固定事件
             for (Integer goldCowEventIndex : goldCowEventIndexList) {
                 GameBizEventDo bizEventDo = atlantisBizEventHandler.handleEventGoldenCow(goldCowEventIndex);
                 // 额外增加的中奖金额
-                bizEventDo.setExtInfo(this.calcGoldCowEventExtRewardAmount(rewardHandle, allTotalRewardAmount.get(), bizEventDo.getEventMultiple()));
+                // extInfo:当前回合之前所有轮/回合的额外中奖金额
+                bizEventDo.setExtInfo(this.calcGoldCowEventExtRewardAmount(rewardHandle, allTotalRewardAmount.get(), bizEventDo.getEventMultiple(), reachMaxMultiple));
                 bizEventDoList.add(bizEventDo);
-                this.reBuildTotalRewardAmount(bizEventDo, allTotalRewardAmount);
+                this.reBuildAllTotalRewardAmount(bizEventDo, allTotalRewardAmount);
+                this.reBuildCurrentRoundTotalRewardAmount(bizEventDo, currentRoundTotalRewardAmount);
+                boolean reachMaxMultipleBoolean = reachMaxMultiple(
+                        rewardHandle.getGamePlayType(),
+                        allTotalRewardAmount.get(),
+                        rewardHandle.getBetAmount(),
+                        atlantisConfig.getRewardMaxMultiple());
+                reachMaxMultiple.set(reachMaxMultipleBoolean);
             }
         }
         return bizEventDoList;
     }
 
-    public Long calcGoldCowEventExtRewardAmount(RewardHandleDo<SymbolDo> rewardHandler, long totalRewardAmount, BigDecimal eventMultiple) {
+    private void reBuildCurrentRoundTotalRewardAmount(GameBizEventDo bizEventDo, AtomicLong currentRoundTotalRewardAmount) {
+        long extRewardAmount = (long) bizEventDo.getExtInfo();
+        currentRoundTotalRewardAmount.addAndGet(extRewardAmount);
+    }
+
+    public Long calcGoldCowEventExtRewardAmount(RewardHandleDo<SymbolDo> rewardHandler, long totalRewardAmount, BigDecimal eventMultiple, AtomicBoolean reachMaxMultiple) {
+        if (reachMaxMultiple.get()) {
+            return 0L;
+        }
         if (eventMultiple.compareTo(BigDecimal.ONE) >= 0) {
             BigDecimal extMultiple = eventMultiple.subtract(BigDecimal.ONE);
             // 额外增加的中奖金额

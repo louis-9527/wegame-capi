@@ -12,6 +12,9 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wegame.capi.client.domain.request.BetRequest.BetDetail.MAX_BET_AMOUNT;
+import static com.wegame.capi.client.domain.request.BetRequest.BetDetail.MIN_BET_AMOUNT;
+
 /**
  * @author bruce
  */
@@ -33,7 +36,16 @@ public class AtlantisValidator {
         AssertUtil.assertNotNull(betDetail.getBetAmount(), ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDetail.getPayAmount(), ErrorCode.ERR_PARAM);
         AssertUtil.assertFalse(NOT_SUPPORT_BET_SUB_TYPES.contains(betSubType), ErrorCode.ERR_PARAM, "no support bet sub type");
-        AssertUtil.assertTrue(SUPPORT_BET_AMOUNTS.contains(betDetail.getBetAmount()), ErrorCode.ERR_PARAM, "illegal bet amount");
+        if (betDetail.isUseStarCard()) {
+            AssertUtil.assertTrue(betDetail.getBetAmount() >= 10, ErrorCode.ERR_PARAM);
+        } else if (betDetail.isUseFreeSpin()) {
+            AssertUtil.assertTrue(betDetail.getBetAmount() >= 10, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betDetail.getPayAmount() == 0L, ErrorCode.ERR_PARAM);
+        } else {
+            AssertUtil.assertTrue(SUPPORT_BET_AMOUNTS.contains(betDetail.getBetAmount()), ErrorCode.ERR_PARAM, "illegal bet amount");
+            AssertUtil.assertTrue(betDetail.getBetAmount() >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betDetail.getBetAmount() <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
+        }
         if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
             // 不能使用星卡
             AssertUtil.assertFalse(betDetail.isUseStarCard(), ErrorCode.ERR_PARAM);

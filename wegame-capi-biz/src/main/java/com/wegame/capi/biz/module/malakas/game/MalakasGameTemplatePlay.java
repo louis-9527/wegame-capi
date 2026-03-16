@@ -5,9 +5,11 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -27,6 +29,7 @@ import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
 import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.utils.ListUtil.getRandomElement;
 
 @Slf4j
 @Component("malakasGameTemplatePlay")
@@ -58,7 +62,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
     BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
-    public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MalakasGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());
@@ -230,6 +234,11 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(lastGameFlag)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 
@@ -249,12 +258,5 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         return TemplateMultipleRange.build(templateMultipleRange);
     }
 
-    private Long getRandomElement(List<Long> list) {
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
-        Random random = new Random();
-        int randomIndex = random.nextInt(list.size());
-        return list.get(randomIndex);
-    }
+
 }

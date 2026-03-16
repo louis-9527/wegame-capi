@@ -5,7 +5,9 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
@@ -20,6 +22,7 @@ import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +49,7 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
     OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
-    public List<LamangGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<LamangGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         List<LamangGameRecordDo> ret = new ArrayList<>();
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.LAM_ANG);
         // 获取首轮(batchId == 0 and index == 0)
@@ -192,6 +195,11 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
                 .gameRecordIds(null)
                 .lastGameFlag(false)
                 .jackpotDrawTimes(drawTimes)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 

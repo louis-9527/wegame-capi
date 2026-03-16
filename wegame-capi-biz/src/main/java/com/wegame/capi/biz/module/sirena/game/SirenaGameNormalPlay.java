@@ -5,9 +5,11 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.SirenaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
@@ -30,6 +32,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.utils.GameUtil;
+import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
@@ -63,7 +66,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     private SirenaBetRecordManager sirenaBetRecordManager;
 
     @Override
-    public List<SirenaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<SirenaGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
         List<SirenaGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 首轮游戏处理
@@ -551,6 +554,11 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(false)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 

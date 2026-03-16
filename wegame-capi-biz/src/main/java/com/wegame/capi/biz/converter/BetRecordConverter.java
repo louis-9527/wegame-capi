@@ -12,6 +12,7 @@ import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import org.springframework.data.domain.Sort;
@@ -43,6 +44,8 @@ public class BetRecordConverter {
         betRecordDo.setPlayerId(po.getPlayerId());
         betRecordDo.setPlayerName(po.getPlayerName());
         betRecordDo.setBetPromotionType(po.getBetPromotionType());
+        betRecordDo.setBizInterfereType(po.getBizInterfereType());
+        betRecordDo.setBizInterfereSubType(po.getBizInterfereSubType());
         betRecordDo.setBetType(po.getBetType());
         betRecordDo.setBetSubType(po.getBetSubType());
         betRecordDo.setBetId(po.getBetId());
@@ -102,6 +105,8 @@ public class BetRecordConverter {
         po.setBetType(betRecordDo.getBetType());
         po.setBetSubType(betRecordDo.getBetSubType());
         po.setBetPromotionType(betRecordDo.getBetPromotionType());
+        po.setBizInterfereType(betRecordDo.getBizInterfereType());
+        po.setBizInterfereSubType(betRecordDo.getBizInterfereSubType());
         po.setBetId(betRecordDo.getBetId());
         po.setBetSerialNo(betRecordDo.getBetSerialNo());
         po.setBetAmount(betRecordDo.getBetAmount());
@@ -141,6 +146,7 @@ public class BetRecordConverter {
             po.setCreateTime(betRecordDo.getCreateTime());
             po.setUpdater(betRecordDo.getUpdater());
             po.setUpdateTime(betRecordDo.getUpdateTime());
+            po.setExpireAt(TtlUtil.calculateExpiredAt(betRecordDo.getCreateTime()));
         } else {
             po.setUpdater(betRecordDo.getUpdater());
             po.setUpdateTime(DateUtil.getCurrentMilli());
@@ -161,6 +167,8 @@ public class BetRecordConverter {
         vo.setPlayerId(betRecordDo.getPlayerId());
         vo.setPlayerName(betRecordDo.getPlayerName());
         vo.setBetPromotionType(betRecordDo.getBetPromotionType());
+        vo.setBizInterfereType(betRecordDo.getBizInterfereType());
+        vo.setBizInterfereSubType(betRecordDo.getBizInterfereSubType());
         vo.setBetAmount(betRecordDo.getBetAmount());
         vo.setPayAmount(betRecordDo.getPayAmount());
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());

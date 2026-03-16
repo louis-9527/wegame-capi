@@ -4,8 +4,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
@@ -22,6 +24,7 @@ import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
 import com.wegame.capi.common.enums.SymbolRepeatTypeEnum;
 import com.wegame.capi.common.utils.GameUtil;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,7 +48,7 @@ public class IbongAdarnaGameNormalPlay extends AbstractGame<IbongAdarnaGameRecor
     IbongAdarnaRewardHandler ibongAdarnaRewardHandler;
 
     @Override
-    public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<IbongAdarnaGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         List<IbongAdarnaGameRecordDo> ret = new ArrayList<>();
         // 生成滚轮
         WheelDo<IbongAdarnaSymbolDo> wheel = generateNormalWheel(gameInfo);
@@ -207,6 +210,11 @@ public class IbongAdarnaGameNormalPlay extends AbstractGame<IbongAdarnaGameRecor
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .overallRewardAmount(overallRewardAmount)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 }

@@ -30,7 +30,7 @@ public class ThreadPoolConfig {
 
     public static final String autoContinuePlayGameThreadPoolExecutor = "autoContinuePlayGameThreadPoolExecutor";
     public static final String warmUpConnectionThreadPoolExecutor = "warmUpConnectionThreadPoolExecutor";
-    public static final String innerDosThreadPoolExecutor = "innerDosThreadPoolExecutor";
+    public static final String bizInterfereThreadPoolExecutor = "bizInterfereThreadPoolExecutor";
 
     public static final String scheduledThreadPoolExecutor = "scheduledThreadPoolExecutor";
 
@@ -174,14 +174,14 @@ public class ThreadPoolConfig {
         return executor;
     }
 
-    @Bean(innerDosThreadPoolExecutor)
-    public ThreadPoolExecutor innerDosThreadPoolExecutor() {
+    @Bean(bizInterfereThreadPoolExecutor)
+    public ThreadPoolExecutor bizInterfereThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
-                100,
+                20,
                 100L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(300000),
-                new CustomizableThreadFactory("inner-dos-pool-"),
+                new CustomizableThreadFactory("biz-interface-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();

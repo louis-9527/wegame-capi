@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.bet;
 
+import com.wegame.capi.biz.domain.biz.bizinterfere.BizInterfereContextDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.enums.*;
@@ -96,5 +97,10 @@ public class BetDo implements Serializable {
     /////////////// 波动选择 ///////////////
     private VolatilityTypeEnum volatility;
 
+    /**
+     * 业务干预上下文
+     * 参数和结果接受判断
+     */
+    private BizInterfereContextDo bizInterfereContext;
 }
 

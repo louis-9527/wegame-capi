@@ -6,6 +6,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
@@ -18,6 +20,7 @@ import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,7 +46,7 @@ public class IbongAdarnaGameEventPlay extends AbstractGame<IbongAdarnaGameRecord
     OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
-    public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<IbongAdarnaGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), IBONG_ADARNA);
@@ -73,6 +76,11 @@ public class IbongAdarnaGameEventPlay extends AbstractGame<IbongAdarnaGameRecord
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .overallRewardAmount(TotalRewardAmount)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 
