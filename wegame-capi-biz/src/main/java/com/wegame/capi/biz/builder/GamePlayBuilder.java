@@ -24,6 +24,7 @@ public class GamePlayBuilder {
                 .gameEventDo(betDo.getGameOperationEvent())
                 .volatility(betDo.getVolatility())
                 .betPromotionType(betDo.getBetPromotionType())
+                .bizInterfereContext(betDo.getBizInterfereContext())
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
 import lombok.*;
@@ -19,6 +20,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BetRecordDo<T> implements Serializable {
     private static final long serialVersionUID = -3514324297343525888L;
     /**
@@ -71,6 +73,18 @@ public class BetRecordDo<T> implements Serializable {
      * @see com.wegame.capi.common.enums.BetPromotionTypeEnum
      */
     private Integer betPromotionType;
+    /**
+     * 业务干预类型
+     *
+     * @see com.wegame.capi.common.enums.BizInterfereTypeEnum
+     */
+    private Integer bizInterfereType;
+    /**
+     * 业务干预子类型
+     *
+     * @see com.wegame.capi.common.enums.BizInterfereSubTypeEnum
+     */
+    private Integer bizInterfereSubType;
     /**
      * 投注id（单钱包）
      */
@@ -217,12 +231,13 @@ public class BetRecordDo<T> implements Serializable {
 
         /**
          * 根据奖池类型和是否进入jackpot池设置贡献金额
-         * @param type 奖池类型
-         * @param amount 贡献金额
+         *
+         * @param type      奖池类型
+         * @param amount    贡献金额
          * @param toJackpot true: 进入jackpot池, false: 进入reserved池
          */
         public void setContribution(JackpotRewardPoolTypeEnum type, Long amount, boolean toJackpot) {
-            if (Objects.isNull(type) || Objects.isNull(amount) ) {
+            if (Objects.isNull(type) || Objects.isNull(amount)) {
                 return;
             }
             switch (type) {

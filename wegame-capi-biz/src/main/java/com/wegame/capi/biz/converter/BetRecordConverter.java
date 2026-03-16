@@ -44,6 +44,8 @@ public class BetRecordConverter {
         betRecordDo.setPlayerId(po.getPlayerId());
         betRecordDo.setPlayerName(po.getPlayerName());
         betRecordDo.setBetPromotionType(po.getBetPromotionType());
+        betRecordDo.setBizInterfereType(po.getBizInterfereType());
+        betRecordDo.setBizInterfereSubType(po.getBizInterfereSubType());
         betRecordDo.setBetType(po.getBetType());
         betRecordDo.setBetSubType(po.getBetSubType());
         betRecordDo.setBetId(po.getBetId());
@@ -96,6 +98,8 @@ public class BetRecordConverter {
         po.setBetType(betRecordDo.getBetType());
         po.setBetSubType(betRecordDo.getBetSubType());
         po.setBetPromotionType(betRecordDo.getBetPromotionType());
+        po.setBizInterfereType(betRecordDo.getBizInterfereType());
+        po.setBizInterfereSubType(betRecordDo.getBizInterfereSubType());
         po.setBetId(betRecordDo.getBetId());
         po.setBetSerialNo(betRecordDo.getBetSerialNo());
         po.setBetAmount(betRecordDo.getBetAmount());
@@ -149,6 +153,8 @@ public class BetRecordConverter {
         vo.setPlayerId(betRecordDo.getPlayerId());
         vo.setPlayerName(betRecordDo.getPlayerName());
         vo.setBetPromotionType(betRecordDo.getBetPromotionType());
+        vo.setBizInterfereType(betRecordDo.getBizInterfereType());
+        vo.setBizInterfereSubType(betRecordDo.getBizInterfereSubType());
         vo.setBetAmount(betRecordDo.getBetAmount());
         vo.setPayAmount(betRecordDo.getPayAmount());
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());
