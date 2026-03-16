@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @param <R>
  */
 @Slf4j
-public abstract class AbstractInventoryTemplateGame<R extends ToVoConverter> extends AbstractGame<R> {
+public abstract class AbstractInventoryTemplatePlay<R extends ToVoConverter> extends AbstractGame<R> {
 
     @Autowired
     public InventoryService inventoryService;

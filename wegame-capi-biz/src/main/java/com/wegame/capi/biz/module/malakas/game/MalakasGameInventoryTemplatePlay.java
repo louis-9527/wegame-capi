@@ -9,7 +9,7 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
-import com.wegame.capi.biz.module.base.game.AbstractInventoryTemplateGame;
+import com.wegame.capi.biz.module.base.game.AbstractInventoryTemplatePlay;
 import com.wegame.capi.biz.module.malakas.reward.MalakasRewardHandler;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
@@ -35,7 +35,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Component("malakasGameInventoryTemplatePlay")
 @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
-public class MalakasGameInventoryTemplatePlay extends AbstractInventoryTemplateGame<MalakasGameRecordDo> {
+public class MalakasGameInventoryTemplatePlay extends AbstractInventoryTemplatePlay<MalakasGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final GameInfoDo gameInfo = MALAKAS_GAME_INFO;
@@ -50,16 +50,10 @@ public class MalakasGameInventoryTemplatePlay extends AbstractInventoryTemplateG
     MalakasGameCommonTemplatePlay malakasGameCommonTemplatePlay;
 
     @Override
-    public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
-        throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
-    }
-
-    @Override
     public List<MalakasGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         // todo 判断是否走库存控制逻辑 todo 在上层判断
         return malakasGameCommonTemplatePlay.commonTemplatePlay(gamePlay, getTemplate(gamePlay));
     }
-
 
     // todo 应该不需要了
     public MalakasBetRecordTemplateEsDo getTemplate(GamePlayDo gamePlay) {

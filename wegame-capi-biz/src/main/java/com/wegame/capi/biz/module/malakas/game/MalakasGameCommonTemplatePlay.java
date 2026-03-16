@@ -110,15 +110,15 @@ public class MalakasGameCommonTemplatePlay {
             processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId, maxBatchId);
         }
         // 结果验证数据添加
+        // todo
         //// 总中奖金额
         long totalRewardAmount = ret.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        // todo
-//        gamePlay.setTemplateId(betRecordId);
-//        gamePlay.setOverallRewardAmount(totalRewardAmount);
-//        gamePlay.setTemplateMultipleRange(templateMultipleRange);
+        //        gamePlay.setTemplateId(betRecordId);
+        //        gamePlay.setOverallRewardAmount(totalRewardAmount);
+        //        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return ret;
     }
 
