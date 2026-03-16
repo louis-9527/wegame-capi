@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.KapreConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
@@ -49,7 +50,7 @@ public class KapreGameNormalPlay extends AbstractGame<KapreGameRecordDo> {
     KapreRewardHandler kapreRewardHandler;
 
     @Override
-    public List<KapreGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<KapreGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
         List<KapreGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 首轮游戏处理
