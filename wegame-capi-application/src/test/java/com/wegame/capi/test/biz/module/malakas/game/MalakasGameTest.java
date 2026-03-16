@@ -66,7 +66,7 @@ public class MalakasGameTest extends BaseTest {
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
                 .betAmount(100L)
                 .build();
-        List<MalakasGameRecordDo> recordList = malakasGame.play(playDo);
+        List<MalakasGameRecordDo> recordList = malakasGame.play(null, playDo);
         recordList.forEach(item -> {
             MalakasSymbolUtil.print(item.getWheel().getSymbolArr(), "test");
         });
@@ -81,7 +81,7 @@ public class MalakasGameTest extends BaseTest {
                 .betAmount(100L)
                 .payAmount(10000L)
                 .build();
-        List<MalakasGameRecordDo> recordList = malakasGame.play(playDo);
+        List<MalakasGameRecordDo> recordList = malakasGame.play(null, playDo);
         // 校验
         //// 1.是否为空
         Assert.assertNotNull(recordList);
