@@ -6,6 +6,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
@@ -41,7 +42,7 @@ public class IbongAdarnaGameEventPlay extends AbstractGame<IbongAdarnaGameRecord
     OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
-    public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<IbongAdarnaGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), IBONG_ADARNA);
