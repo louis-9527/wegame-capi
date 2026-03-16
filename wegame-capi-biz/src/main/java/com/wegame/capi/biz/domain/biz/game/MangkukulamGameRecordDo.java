@@ -90,6 +90,27 @@ public class MangkukulamGameRecordDo implements Serializable, ToVoConverter<Mang
      */
     private Long parentBetRecordId;
 
+    /**
+     * 创建人
+     */
+    private String creator;
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 更新人
+     */
+    private String updater;
+    /**
+     * 更新时间
+     */
+    private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
+
     public void addGameRecordId(Long gameRecordId) {
         if (Objects.isNull(gameRecordIds)) {
             gameRecordIds = new ArrayList<>();

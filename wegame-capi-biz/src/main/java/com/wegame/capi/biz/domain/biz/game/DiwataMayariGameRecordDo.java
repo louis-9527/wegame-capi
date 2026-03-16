@@ -88,6 +88,26 @@ public class DiwataMayariGameRecordDo implements Serializable, ToVoConverter<Diw
      * 最后一轮标识
      */
     private boolean lastGameFlag;
+    /**
+     * 创建人
+     */
+    private String creator;
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 更新人
+     */
+    private String updater;
+    /**
+     * 更新时间
+     */
+    private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
 
     @Transient
     @JsonIgnore

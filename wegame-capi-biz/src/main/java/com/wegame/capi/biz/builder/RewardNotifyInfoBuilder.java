@@ -31,6 +31,13 @@ public class RewardNotifyInfoBuilder {
                 multi.stripTrailingZeros().toPlainString(),
                 AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(payOutAmount)),
                 DateUtil.format(new Date(rewardTime), "yyyy-MM-dd HH:mm:ss"));
+        if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
+            content = String.format(Constants.LAMANG_DELAY_REWARD_NOTIFY_CONTENT_FORMAT,
+                    desensitizePlayerId(userInfo.getPlayerId()),
+                    cn.hutool.core.date.DateUtil.format(new Date(rewardTime), "MMM dd h:mm a"),
+                    AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(payOutAmount)),
+                    multi.stripTrailingZeros().toPlainString());
+        }
         return RewardNotifyInfoDo.builder()
                 .gameId(gameType.getId())
                 .gameName(gameType.getName())

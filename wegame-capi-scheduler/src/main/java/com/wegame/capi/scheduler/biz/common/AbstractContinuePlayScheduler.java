@@ -1,6 +1,7 @@
 package com.wegame.capi.scheduler.biz.common;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -47,6 +48,8 @@ public abstract class AbstractContinuePlayScheduler
 
     private static final long START_TIME_DURATION_IN_MS = 10 * 60 * 1000;
     private static final long END_TIME_DURATION_IN_MS = 5 * 60 * 1000;
+
+    private static final AbTypeEnum DEFAULT_AB_TYPE = AbTypeEnum.A;
 
     @Override
     public void run() {
@@ -96,7 +99,9 @@ public abstract class AbstractContinuePlayScheduler
                     betStrategy().bet(buildBetDo(betRecordDo));
                 }
             }, "lock error");
-        } catch (Exception e) {
+        } catch (LockException lockException) {
+            log.info("AbstractContinuePlayScheduler autoContinuePlay lockException");
+        }catch (Exception e) {
             log.error("AbstractContinuePlayScheduler autoContinuePlay exception", e);
         } finally {
             UserInfoContext.clear();
@@ -138,6 +143,7 @@ public abstract class AbstractContinuePlayScheduler
                 .channelId(betRecordDo.getChannelId())
                 .gameId(betRecordDo.getGameId())
                 .id(String.valueOf(betRecordDo.getUserId()))
+                .ut(DEFAULT_AB_TYPE.getId())
                 .build();
     }
 }

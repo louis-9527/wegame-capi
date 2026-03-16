@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.game;
 
+import com.wegame.capi.biz.domain.biz.bizinterfere.BizInterfereContextDo;
 import com.wegame.capi.client.enums.*;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
@@ -96,6 +97,11 @@ public class GamePlayDo implements Serializable {
      * 对play 结果的验证数据源
      */
     private PlayValidateData playValidateData;
+
+    /**
+     * bizInteger context
+     */
+    private BizInterfereContextDo bizInterfereContext;
 
     public Long getAvailableBonus() {
         if (Objects.isNull(this.gameEventDo) || !this.gameEventDo.isEventResult() || Objects.isNull(this.gameEventDo.getOperationEvent())) {

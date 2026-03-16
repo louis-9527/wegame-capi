@@ -28,6 +28,8 @@ public enum TemplateTypeEnum {
 
     LAM_ANG(GameTypeEnum.LAM_ANG, TemplateConstants.LAMANG_BET_RECORD_TEMPLATE),
 
+    LAM_ANG_V2(GameTypeEnum.LAM_ANG, TemplateConstants.LAMANG_BET_RECORD_TEMPLATE_V2),
+
     BAKUNAWA(GameTypeEnum.BAKUNAWA, TemplateConstants.BAKUNAWA_BET_RECORD_TEMPLATE),
 
     DIWATA_MAYARI(GameTypeEnum.DIWATA_MAYARI, TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE),
@@ -36,6 +38,8 @@ public enum TemplateTypeEnum {
 
     MANGKUKULAM(GameTypeEnum.MANGKUKULAM, TemplateConstants.MANGKUKULAM_BET_RECORD_TEMPLATE),
     ATLANTIS(GameTypeEnum.ATLANTIS, TemplateConstants.ATLANTIS_BET_RECORD_TEMPLATE),
+
+    MANGKUKULAM_V3(GameTypeEnum.MANGKUKULAM, TemplateConstants.MANGKUKULAM_BET_RECORD_TEMPLATE_V3),
 
     ;
 

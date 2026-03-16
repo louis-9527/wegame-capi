@@ -6,11 +6,16 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.MangkukulamTagEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
@@ -23,6 +28,7 @@ import java.util.stream.Collectors;
  * yaml 配置文件形式
  * <a href="https://casinoplus.sg.larksuite.com/docx/HEnhdEWwioZpMFxRF4MlX7Azgig"/>
  */
+@Slf4j
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -54,7 +60,62 @@ public class MangkukulamConfig extends GameBizConfig{
      */
     private Bet buyBet;
 
-    private TemplateRangeConfig templateRangeConfig;
+    private TemplateConfig templateConfig;
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateConfig{
+
+        /**
+         * 预热Map tag -> 倍率
+         */
+        private Map<MangkukulamTagEnum, BigDecimal> templateWarmUpEndOddsMap;
+
+        /**
+         * 映射关系 AbTypeEnum -> TemplateTypeEnum
+         */
+        private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
+
+        /**
+         * 映射关系 TemplateTypeEnum -> TemplateRangeConfig
+         */
+        private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfigMapping;
+
+        public boolean supportWarmUp(MangkukulamTagEnum tag, TemplateMultipleRange multipleRange) {
+            BigDecimal endOdds = templateWarmUpEndOddsMap.get(tag);
+            AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
+            return multipleRange.getEnd().compareTo(endOdds) <= 0;
+        }
+
+        /**
+         * 获取当前测试类型使用的es index
+         * @param abType
+         * @return
+         */
+        public TemplateTypeEnum getTemplateType(AbTypeEnum abType){
+            return abTemplateMapping.get(abType);
+        }
+
+        /**
+         * 获取当前测试类型使用的权重配置
+         * @param abType
+         * @param betType
+         * @param betSubType
+         * @param volatilityType
+         * @return
+         */
+        public Map<String,Integer> getConfigByBetTypeAndVolatility(AbTypeEnum abType, BetTypeEnum betType, BetSubTypeEnum betSubType, VolatilityTypeEnum volatilityType) {
+            TemplateTypeEnum templateType = abTemplateMapping.get(abType);
+            AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
+            TemplateRangeConfig config = templateRangeConfigMapping.get(templateType);
+            AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER);
+            return config.getConfigByBetTypeAndVolatility(betType, betSubType, volatilityType);
+        }
+    }
 
     @Data
     @ToString

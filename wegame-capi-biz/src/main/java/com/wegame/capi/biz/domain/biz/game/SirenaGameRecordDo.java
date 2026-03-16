@@ -6,11 +6,9 @@ import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
-import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.IndexVo;
-import com.wegame.capi.client.domain.vo.kapre.*;
 import com.wegame.capi.client.domain.vo.sirena.SirenaBetResultVo;
 import com.wegame.capi.client.domain.vo.sirena.SirenaGameRecordVo;
 import com.wegame.capi.client.domain.vo.sirena.SirenaRewardLineVo;
@@ -86,6 +84,27 @@ public class SirenaGameRecordDo implements Serializable, ToVoConverter<SirenaBet
      * 最后一轮标识
      */
     private boolean lastGameFlag;
+
+    /**
+     * 创建人
+     */
+    private String creator;
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 更新人
+     */
+    private String updater;
+    /**
+     * 更新时间
+     */
+    private Long updateTime;
+    /**
+     * 过期时间
+     */
+    private Date expireAt;
 
     public void addGameRecordId(Long gameRecordId) {
         if (Objects.isNull(this.gameRecordIds)) {
