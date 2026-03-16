@@ -9,6 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MangkukulamConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
@@ -63,7 +64,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
     BetRecordTemplateEsService<MangkukulamBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
-    public List<MangkukulamGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MangkukulamGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
         List<MangkukulamGameRecordDo> ret = new ArrayList<>();
         if (BetSubTypeEnum.isFirstStep(gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
             // 执行完普通轮和免费轮
