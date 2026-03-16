@@ -5,6 +5,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.BayanihanConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.BayanihanGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -60,7 +61,7 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
     BayanihanRewardHandler bayanihanRewardHandler;
 
     @Override
-    public List<BayanihanGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<BayanihanGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
 
         List<BayanihanGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
