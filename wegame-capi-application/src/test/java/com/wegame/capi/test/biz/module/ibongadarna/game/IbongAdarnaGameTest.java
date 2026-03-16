@@ -36,7 +36,7 @@ public class IbongAdarnaGameTest extends BaseTest {
 
     @Test
     public void play_normal_test() {
-        List<IbongAdarnaGameRecordDo> result = ibongAdarnaGame.play(GameTestMocker.mockGamePlayDo(BetSubTypeEnum.NORMAL_BET, 100L));
+        List<IbongAdarnaGameRecordDo> result = ibongAdarnaGame.play(null, GameTestMocker.mockGamePlayDo(BetSubTypeEnum.NORMAL_BET, 100L));
         assertNotNull(result);
         assertEquals(1, result.size());
         assertNotNull(result.get(0).getWheel());
