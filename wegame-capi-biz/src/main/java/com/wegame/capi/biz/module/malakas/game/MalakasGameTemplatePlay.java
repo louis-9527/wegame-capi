@@ -8,6 +8,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -58,7 +59,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
     BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
-    public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MalakasGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());
