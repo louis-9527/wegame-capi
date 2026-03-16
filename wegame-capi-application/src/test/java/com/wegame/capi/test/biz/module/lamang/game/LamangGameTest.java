@@ -65,7 +65,7 @@ public class LamangGameTest extends BaseTest {
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
                 .betAmount(100L)
                 .build();
-        List<LamangGameRecordDo> recordList = normalPlay.play(playDo);
+        List<LamangGameRecordDo> recordList = normalPlay.play(null, playDo);
         recordList.forEach(item -> {
             LamangSymbolUtil.print(item.getWheel().getSymbolArr(), "test");
         });
@@ -80,7 +80,7 @@ public class LamangGameTest extends BaseTest {
                 .betAmount(100L)
                 .payAmount(10000L)
                 .build();
-        List<LamangGameRecordDo> recordList = normalPlay.play(playDo);
+        List<LamangGameRecordDo> recordList = normalPlay.play(null, playDo);
         // 校验
         //// 1.是否为空
         Assert.assertNotNull(recordList);
