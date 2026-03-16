@@ -1,8 +1,7 @@
-package com.wegame.capi.biz.config.domain;
+package com.wegame.capi.biz.config.domain.common;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.NumberUtil;
-import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.InventoryTypeEnum;
 import javafx.util.Pair;
