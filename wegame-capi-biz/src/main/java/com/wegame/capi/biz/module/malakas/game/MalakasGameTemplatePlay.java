@@ -42,6 +42,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
 import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.utils.ListUtil.getRandomElement;
 
 @Slf4j
 @Component("malakasGameTemplatePlay")
@@ -240,12 +241,5 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         return TemplateMultipleRange.build(templateMultipleRange);
     }
 
-    private Long getRandomElement(List<Long> list) {
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
-        Random random = new Random();
-        int randomIndex = random.nextInt(list.size());
-        return list.get(randomIndex);
-    }
+
 }
