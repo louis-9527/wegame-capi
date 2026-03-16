@@ -406,9 +406,8 @@
     "inventoryControlConfig": {
         "enable": true,
         "rewardConfig": {
-            "rewardProbability": {
-                "NORMAL_BET": 0.30,
-                "BUY_BET": 1
+            "rewardBlankProbability": {
+                "NORMAL_BET": 0.70
             },
             "rewardConfigMap": {
                 "rewardConfig_normal_bet_lose": {

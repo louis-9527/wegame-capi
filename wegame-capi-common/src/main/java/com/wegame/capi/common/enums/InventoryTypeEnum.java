@@ -14,7 +14,6 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum InventoryTypeEnum {
 
-    NONE(0, "无"),
     JUNIOR(1, "初级"),
     INTERMEDIATE(2, "中级"),
     SENIOR(3, "高级"),
