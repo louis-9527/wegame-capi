@@ -9,6 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.SirenaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
@@ -65,7 +66,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     private SirenaBetRecordManager sirenaBetRecordManager;
 
     @Override
-    public List<SirenaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<SirenaGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
         List<SirenaGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 首轮游戏处理
