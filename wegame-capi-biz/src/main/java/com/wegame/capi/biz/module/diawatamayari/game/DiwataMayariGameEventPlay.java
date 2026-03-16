@@ -7,6 +7,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -47,7 +48,7 @@ public class DiwataMayariGameEventPlay extends AbstractGame<DiwataMayariGameReco
     OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
-    public List<DiwataMayariGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<DiwataMayariGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         List<DiwataMayariGameRecordDo> ret = new ArrayList<>();
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.DIWATA_MAYARI);
         // 获取首轮(batchId == 0 and index == 0)
