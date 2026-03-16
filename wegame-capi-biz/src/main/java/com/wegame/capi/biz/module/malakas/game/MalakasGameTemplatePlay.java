@@ -9,6 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -43,6 +44,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
 import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.utils.ListUtil.getRandomElement;
 
 @Slf4j
 @Component("malakasGameTemplatePlay")
@@ -60,7 +62,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
     BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
-    public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MalakasGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());
@@ -256,12 +258,5 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         return TemplateMultipleRange.build(templateMultipleRange);
     }
 
-    private Long getRandomElement(List<Long> list) {
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
-        Random random = new Random();
-        int randomIndex = random.nextInt(list.size());
-        return list.get(randomIndex);
-    }
+
 }

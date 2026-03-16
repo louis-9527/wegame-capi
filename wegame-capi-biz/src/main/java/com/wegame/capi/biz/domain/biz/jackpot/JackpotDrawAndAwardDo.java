@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.Builder;
 import lombok.Data;
 
@@ -22,4 +24,14 @@ public class JackpotDrawAndAwardDo {
      * 营销类型
      */
     private Integer betPromotionType;
+    /**
+     * 投注类型
+     */
+    private BetTypeEnum betType;
+
+    /**
+     * 奖池贡献
+     */
+
+    private Map<JackpotRewardPoolTypeEnum, Long> contribution;
 }

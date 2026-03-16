@@ -67,6 +67,8 @@ public class BetService {
                 log.info("userInfo.ut: {}, template bet", userInfo.getUt());
                 betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
             }
+        } else if (Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG)) {
+            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
         } else if (Objects.equals(betDo.getGameType(), GameTypeEnum.DIWATA_MAYARI)) {
             betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
         } else if (Objects.equals(betDo.getGameType(), GameTypeEnum.MANGKUKULAM)) {

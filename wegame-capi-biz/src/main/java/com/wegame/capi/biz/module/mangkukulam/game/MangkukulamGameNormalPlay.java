@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MangkukulamConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
@@ -60,7 +61,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
     MangkukulamRewardHandler mangkukulamRewardHandler;
 
     @Override
-    public List<MangkukulamGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MangkukulamGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
         List<MangkukulamGameRecordDo> gameRecordResult = new ArrayList<>();
         LinkedList<FreeWheelHandleDo> freeWheelList = new LinkedList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);

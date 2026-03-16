@@ -95,8 +95,7 @@ public class JackpotUserRewardRecordConverter {
         JackpotUserRewardRecordVo vo = new JackpotUserRewardRecordVo();
         vo.setId(Objects.nonNull(jackpotUserRewardRecordDo.getId()) ? String.valueOf(jackpotUserRewardRecordDo.getId()) : null);
         vo.setUserId(Objects.nonNull(jackpotUserRewardRecordDo.getUserId()) ? String.valueOf(jackpotUserRewardRecordDo.getUserId()) : null);
-        vo.setPlayerName(MaskUtil
-                .maskPlayerName(jackpotUserRewardRecordDo.getPlayerName(), 0, 4, 3));
+        vo.setPlayerName(MaskUtil.desensitizePlayerInfo(jackpotUserRewardRecordDo.getPlayerName()));
         vo.setBetRecordId(jackpotUserRewardRecordDo.getBetRecordId());
         vo.setGameRecordId(jackpotUserRewardRecordDo.getGameRecordId());
         vo.setBetId(jackpotUserRewardRecordDo.getBetId());
