@@ -7,6 +7,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -47,7 +48,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
     OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
-    public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MalakasGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.MALAKAS_DYNAMIC);
         // 获取首轮(batchId == 0 and index == 0)

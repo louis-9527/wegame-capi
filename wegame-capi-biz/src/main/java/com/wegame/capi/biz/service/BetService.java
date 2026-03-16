@@ -55,7 +55,6 @@ public class BetService {
         if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.MALAKAS) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.IBONG_ADARNA)||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.BAKUNAWA)) {
             if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
                 betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
@@ -63,6 +62,8 @@ public class BetService {
                 log.info("userInfo.ut: {}, template bet", userInfo.getUt());
                 betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
             }
+        } else if (Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG)) {
+            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
         }else {
             betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
         }
