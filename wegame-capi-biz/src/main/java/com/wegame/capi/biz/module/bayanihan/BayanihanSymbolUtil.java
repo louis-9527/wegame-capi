@@ -13,6 +13,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -111,8 +112,13 @@ public class BayanihanSymbolUtil {
      */
     public static void clearRewardSymbol(BayanihanSymbolDo[][] symbolArr, RewardResultDo<BayanihanSymbolDo> rewardResult) {
         List<RewardSymbolDo<BayanihanSymbolDo>> rewardSymbolDoList = getRewardSymbolDoList(rewardResult);
-        if (CollectionUtils.isNotEmpty(rewardSymbolDoList)) {
-            rewardSymbolDoList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+        Map<IndexDo, RewardSymbolDo<BayanihanSymbolDo>> map = rewardSymbolDoList.stream()
+                .collect(Collectors.toMap(RewardSymbolDo::getIndex,
+                        r -> r,
+                        (a, b) -> a));
+        List<RewardSymbolDo<BayanihanSymbolDo>> distinctList = new ArrayList<>(map.values());
+        if (CollectionUtils.isNotEmpty(distinctList)) {
+            distinctList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
         }
     }
 
