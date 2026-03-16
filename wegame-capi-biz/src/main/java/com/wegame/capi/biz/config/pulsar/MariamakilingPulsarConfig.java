@@ -3,12 +3,15 @@ package com.wegame.capi.biz.config.pulsar;
 import com.wegame.base.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -39,10 +42,36 @@ public class MariamakilingPulsarConfig {
     @Value("${pulsar.dynamic.maria_makiling.bet_deadLetter_topic}")
     String mariaMakilingBetDeadLetterTopic;
 
+
+    @Value("${pulsar.dynamic.maria_makiling.pulsar.auth.issuer_url}")
+    String mariaMakilingAuthIssuerUrl;
+    @Value("${pulsar.dynamic.maria_makiling.pulsar.auth.credentials_file_path}")
+    String mariaMakilingAuthCredentialsFilePath;
+    @Value("${pulsar.dynamic.maria_makiling.pulsar.auth.audience}")
+    String mariaMakilingAuthAudience;
+
     @Bean(name = mariaMakilingPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient mariaMakilingPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, mariaMakilingPulsarClient);
-        PulsarClient pulsarClient = PulsarClient.builder()
+        //        PulsarClient pulsarClient = PulsarClient.builder()
+        //                .serviceUrl(mariaMakilingUrl)
+        //                .keepAliveInterval(30, TimeUnit.SECONDS)
+        //                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
+        //                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
+        //                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+        //                .listenerThreads(Runtime.getRuntime().availableProcessors())
+        //                .connectionsPerBroker(60)
+        //                .connectionMaxIdleSeconds(3000)
+        //                .enableTcpNoDelay(true)
+        //                // 10分钟打印一次统计信息
+        //                .statsInterval(600, TimeUnit.SECONDS)
+        //                .build();
+        Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
+                new URL(mariaMakilingAuthIssuerUrl),
+                Objects.requireNonNull(getClass().getResource(mariaMakilingAuthCredentialsFilePath)),
+                mariaMakilingAuthAudience
+        );
+        return  PulsarClient.builder()
                 .serviceUrl(mariaMakilingUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 //                .operationTimeout(100, TimeUnit.MILLISECONDS)
@@ -54,8 +83,8 @@ public class MariamakilingPulsarConfig {
                 .enableTcpNoDelay(true)
                 // 10分钟打印一次统计信息
                 .statsInterval(600, TimeUnit.SECONDS)
+                .authentication(authentication)
                 .build();
-        return pulsarClient;
     }
 
     @Bean(name = mariamakilingProducer, destroyMethod = COMMON_CLOSE_METHOD)
