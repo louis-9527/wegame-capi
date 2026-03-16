@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.AtlantisConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.AtlantisGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -68,7 +69,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
     private AtlantisBizEventHandler atlantisBizEventHandler;
 
     @Override
-    public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<AtlantisGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
 
         List<AtlantisGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);

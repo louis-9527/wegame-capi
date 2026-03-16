@@ -10,6 +10,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.AtlantisConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.AtlantisGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -65,7 +66,7 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
     BetRecordTemplateEsService<AtlantisBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
-    public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<AtlantisGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(gamePlay);

@@ -7,6 +7,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.AtlantisGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -51,7 +52,7 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
     OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
-    public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<AtlantisGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
         List<AtlantisGameRecordDo> ret = new ArrayList<>();
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.ATLANTIS);
         // 获取首轮(parentId == 0 and index == 0)
