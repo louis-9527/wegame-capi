@@ -118,7 +118,7 @@ public class BayanihanSymbolUtil {
                         (a, b) -> a));
         List<RewardSymbolDo<BayanihanSymbolDo>> distinctList = new ArrayList<>(map.values());
         if (CollectionUtils.isNotEmpty(distinctList)) {
-            distinctList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+            distinctList.forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
         }
     }
 
