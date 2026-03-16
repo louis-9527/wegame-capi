@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -62,7 +63,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
     MalakasRewardHandler malakasRewardHandler;
 
     @Override
-    public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MalakasGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 生成-游戏滚轮

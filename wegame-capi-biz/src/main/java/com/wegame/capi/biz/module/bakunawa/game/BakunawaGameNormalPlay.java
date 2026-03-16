@@ -5,6 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -43,7 +44,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
     BakunawaRewardHandler bakunawaRewardHandler;
 
     @Override
-    public List<BakunawaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<BakunawaGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         // 生成滚轮
         WheelDo<SymbolDo> wheel = generateNormalWheel();
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);

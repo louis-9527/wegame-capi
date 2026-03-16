@@ -65,6 +65,9 @@ public abstract class AbsJackpotHandler {
             // 获取奖池金额
             JackpotRewardPoolDo rewardPoolDo = jackpotRewardPoolService.selectOneByType(jackpotRewardPoolType, getJackpotType());
             AssertUtil.assertNotNull(rewardPoolDo, ErrorCode.ERR_PARAM);
+            // 再次判断奖池是否能抽奖
+            AssertUtil.assertTrue(rewardPoolDo.canDrawJackpot(), ErrorCode.ERR_PARAM, "jackpot amount not enough");
+
             // 保底金额 > 当前jackpot金额，使用预留池，否则使用jackpot奖池
             JackpotRewardAmountTypeEnum rewardAmountTypeEnum = guaranteed > rewardPoolDo.getAmount() ?
                     JackpotRewardAmountTypeEnum.RESERVED_POOL_AMOUNT : JackpotRewardAmountTypeEnum.JACKPOT_POOL_AMOUNT;

@@ -16,14 +16,16 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
+import com.wegame.capi.common.utils.JackpotAmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
-import static com.wegame.capi.common.Constants.CONST_10000000;
+import static com.wegame.capi.common.Constants.CONST_1000000000;
 
 @Slf4j
 @Service
@@ -36,6 +38,14 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     private RandomService randomService;
     @Autowired
     private JackpotRewardPoolService jackpotRewardPoolService;
+
+    private static final BigDecimal BASE_CONTRIBUTION = new BigDecimal("0.001");
+
+    private static final BigDecimal SUM_WEIGHT = new BigDecimal(CONST_1000000000);
+
+    private static final BigDecimal MULTIPLE = new BigDecimal(CONST_1000000000);
+
+    private static final String NON_JACKPOT = "none";
 
     @Override
     public AbstractJackpotManager jackpotManager() {
@@ -95,7 +105,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
                 return null;
             }
 
-            JackpotWinPrizeDo jackpotWinPrizeDo = this.checkReward(reqDo.getBetAmount(), reqDo.getGameCount());
+            JackpotWinPrizeDo jackpotWinPrizeDo = this.checkReward(reqDo);
             if (jackpotWinPrizeDo == null) {
                 // 未中奖
                 return null;
@@ -114,8 +124,10 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
 
     }
 
-    private TreeMap<String, BigDecimal> getJackpotTriggerBetAmountConfig(Long amount) {
-        LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig = lamangConfig.getJackPotConfig().getJackpotTriggerBetAmountConfig();
+    private TreeMap<String, BigDecimal> getJackpotTriggerBetAmountConfig(BetTypeEnum betTypeEnum, Long amount) {
+        LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig = Objects.equals(BetTypeEnum.NORMAL_BET, betTypeEnum) ?
+                lamangConfig.getJackPotConfig().getJackpotTriggerNormalBetAmountConfig() :
+                lamangConfig.getJackPotConfig().getJackpotTriggerBuyBetAmountConfig();
         for (Long poolAmount : jackpotTriggerBetAmountConfig.keySet()) {
             if (amount > poolAmount) {
                 return jackpotTriggerBetAmountConfig.get(poolAmount);
@@ -124,26 +136,22 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         return null;
     }
 
-    private JackpotWinPrizeDo checkReward(Long amount, Map<Long, Integer> gameCountMap) {
+    private JackpotWinPrizeDo checkReward(JackpotDrawAndAwardDo jackpotDrawAndAwardDo) {
+        Map<Long,Integer> gameCountMap = jackpotDrawAndAwardDo.getGameCount();
         if (Objects.isNull(gameCountMap) || gameCountMap.isEmpty()) {
             return null;
         }
+        Long amount = jackpotDrawAndAwardDo.getBetAmount();
         JackpotRewardPoolTypeEnum poolTypeEnum = null;
-        TreeMap<String, BigDecimal> originalConfig = this.getJackpotTriggerBetAmountConfig(amount);
+        TreeMap<String, BigDecimal> originalConfig = this.getJackpotTriggerBetAmountConfig(jackpotDrawAndAwardDo.getBetType(), amount);
         if (Objects.isNull(originalConfig) || originalConfig.isEmpty()) {
             return null;
         }
         // 创建副本，避免修改原始配置
         TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig = new TreeMap<>(originalConfig);
-        //todo jackpot 保底池未满不允许中奖
-        List<JackpotRewardPoolDo> rewardPoolDos = jackpotRewardPoolService.listAllWithCache(getJackpotType());
-        for (JackpotRewardPoolDo rewardPoolDo : rewardPoolDos) {
-            if (!rewardPoolDo.canDrawJackpot()) {
-                jackpotTriggerBetAmountConfig.remove(rewardPoolDo.getType().getName());
-            }
-        }
         // 初始化权重
-        Map<String, Integer> weightMap = initWeight(jackpotTriggerBetAmountConfig);
+        Map<String, Integer> weightMap = initWeight(jackpotTriggerBetAmountConfig, jackpotDrawAndAwardDo.getContribution());
+        log.info("jackpot actual weightMap:{}", weightMap);
         for (Map.Entry<Long, Integer> entry : gameCountMap.entrySet()) {
             Long gameRecordId = entry.getKey();   // 获取游戏投注记录ID
             Integer count = entry.getValue(); // 获取对应的游戏计数
@@ -162,11 +170,39 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         return null;
     }
 
-    private Map<String, Integer> initWeight(TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig) {
-        Map<String, Integer> weightMap = new HashMap<>();
-        for (Map.Entry<String, BigDecimal> entry : jackpotTriggerBetAmountConfig.entrySet()) {
-            weightMap.put(entry.getKey(), entry.getValue().multiply(new BigDecimal(CONST_10000000)).intValue());
+    private Map<String, Integer> initWeight(TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig,
+                                            Map<JackpotRewardPoolTypeEnum, Long> contributionMap) {
+        // 预留池的金额不够不参与jackpot抽奖
+        List<JackpotRewardPoolDo> rewardPoolDos = jackpotRewardPoolService.listAllWithCache(getJackpotType());
+        for (JackpotRewardPoolDo rewardPoolDo : rewardPoolDos) {
+            if (!rewardPoolDo.canDrawJackpot()) {
+                jackpotTriggerBetAmountConfig.remove(rewardPoolDo.getType().getName());
+            }
         }
+        // 根据贡献值算出权重
+        Map<String, Integer> weightMap = new HashMap<>();
+        // 中jackpot的权重和，用于计算不中奖的权重
+        int jackpotWeightSum = 0;
+        for (Map.Entry<String, BigDecimal> entry : jackpotTriggerBetAmountConfig.entrySet()) {
+            String poolTypeName = entry.getKey();
+            JackpotRewardPoolTypeEnum poolType = JackpotRewardPoolTypeEnum.valueOfName(poolTypeName);
+            Long contribution = contributionMap.get(poolType);
+            // 没有贡献值的奖池不参与抽奖
+            if (Objects.nonNull(contribution)) {
+                BigDecimal contributionAmount = JackpotAmountUtil.toBigDecimal(contribution);
+                // 基础权重
+                BigDecimal baseWeight = entry.getValue().multiply(MULTIPLE);
+                // 倍率
+                BigDecimal multiple = contributionAmount.divide(BASE_CONTRIBUTION, 3, RoundingMode.HALF_UP);
+                // 实际权重: 基础权重 * 倍率
+                BigDecimal actualWeight = multiple.multiply(baseWeight);
+                // 去掉小数位
+                int result = actualWeight.setScale(0, RoundingMode.HALF_UP).intValue();
+                weightMap.put(poolTypeName, result);
+                jackpotWeightSum += result;
+            }
+        }
+        weightMap.put(NON_JACKPOT, SUM_WEIGHT.subtract(new BigDecimal(jackpotWeightSum)).intValue());
         return weightMap;
     }
 

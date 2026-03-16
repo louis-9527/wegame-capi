@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -45,7 +46,7 @@ public class BakunawaGameEventPlay extends AbstractGame<BakunawaGameRecordDo> {
     OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
-    public List<BakunawaGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<BakunawaGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), BAKUNAUWA);
