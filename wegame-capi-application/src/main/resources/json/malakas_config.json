@@ -460,7 +460,7 @@
                             }
                         },
                         "10_50": {
-                            "winProbability": 5,
+                            "winProbability": 0.05,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -471,7 +471,7 @@
                             }
                         },
                         "50_100": {
-                            "winProbability": 10,
+                            "winProbability": 0.1,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -482,7 +482,7 @@
                             }
                         },
                         "100_200": {
-                            "winProbability": 15,
+                            "winProbability": 0.15,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -493,7 +493,7 @@
                             }
                         },
                         "200_500": {
-                            "winProbability": 20,
+                            "winProbability": 0.20,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -504,7 +504,7 @@
                             }
                         },
                         "500_1000": {
-                            "winProbability": 30,
+                            "winProbability": 0.30,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -515,7 +515,7 @@
                             }
                         },
                         "1000_2000": {
-                            "winProbability": 40,
+                            "winProbability": 0.40,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -526,7 +526,7 @@
                             }
                         },
                         "2000_5000": {
-                            "winProbability": 50,
+                            "winProbability": 0.50,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -537,7 +537,7 @@
                             }
                         },
                         "5000_10000": {
-                            "winProbability": 80,
+                            "winProbability": 0.80,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -548,7 +548,7 @@
                             }
                         },
                         "5000_2147483647": {
-                            "winProbability": 100,
+                            "winProbability": 1,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -576,7 +576,7 @@
                             }
                         },
                         "10_50": {
-                            "winProbability": 5,
+                            "winProbability": 0.05,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -587,7 +587,7 @@
                             }
                         },
                         "50_100": {
-                            "winProbability": 10,
+                            "winProbability": 0.10,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -598,7 +598,7 @@
                             }
                         },
                         "100_200": {
-                            "winProbability": 15,
+                            "winProbability": 0.15,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -609,7 +609,7 @@
                             }
                         },
                         "200_500": {
-                            "winProbability": 20,
+                            "winProbability": 0.20,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -620,7 +620,7 @@
                             }
                         },
                         "500_1000": {
-                            "winProbability": 30,
+                            "winProbability": 0.30,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -631,7 +631,7 @@
                             }
                         },
                         "1000_2000": {
-                            "winProbability": 40,
+                            "winProbability": 0.40,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -642,7 +642,7 @@
                             }
                         },
                         "2000_5000": {
-                            "winProbability": 50,
+                            "winProbability": 0.50,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -653,7 +653,7 @@
                             }
                         },
                         "5000_10000": {
-                            "winProbability": 80,
+                            "winProbability": 0.80,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -664,7 +664,7 @@
                             }
                         },
                         "5000_2147483647": {
-                            "winProbability": 100,
+                            "winProbability": 1,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -692,7 +692,7 @@
                             }
                         },
                         "10_50": {
-                            "winProbability": 5,
+                            "winProbability": 0.05,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -703,7 +703,7 @@
                             }
                         },
                         "50_100": {
-                            "winProbability": 10,
+                            "winProbability": 0.10,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -714,7 +714,7 @@
                             }
                         },
                         "100_200": {
-                            "winProbability": 15,
+                            "winProbability": 0.15,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -725,7 +725,7 @@
                             }
                         },
                         "200_500": {
-                            "winProbability": 20,
+                            "winProbability": 0.20,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -736,7 +736,7 @@
                             }
                         },
                         "500_1000": {
-                            "winProbability": 30,
+                            "winProbability": 0.30,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -747,7 +747,7 @@
                             }
                         },
                         "1000_2000": {
-                            "winProbability": 40,
+                            "winProbability": 0.40,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -758,7 +758,7 @@
                             }
                         },
                         "2000_5000": {
-                            "winProbability": 50,
+                            "winProbability": 0.50,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -769,7 +769,7 @@
                             }
                         },
                         "5000_10000": {
-                            "winProbability": 80,
+                            "winProbability": 0.80,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -780,7 +780,7 @@
                             }
                         },
                         "5000_2147483647": {
-                            "winProbability": 100,
+                            "winProbability": 1,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -808,7 +808,7 @@
                             }
                         },
                         "10_50": {
-                            "winProbability": 5,
+                            "winProbability": 0.05,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -819,7 +819,7 @@
                             }
                         },
                         "50_100": {
-                            "winProbability": 10,
+                            "winProbability": 0.10,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -830,7 +830,7 @@
                             }
                         },
                         "100_200": {
-                            "winProbability": 15,
+                            "winProbability": 0.15,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -841,7 +841,7 @@
                             }
                         },
                         "200_500": {
-                            "winProbability": 20,
+                            "winProbability": 0.20,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -852,7 +852,7 @@
                             }
                         },
                         "500_1000": {
-                            "winProbability": 30,
+                            "winProbability": 0.30,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -863,7 +863,7 @@
                             }
                         },
                         "1000_2000": {
-                            "winProbability": 40,
+                            "winProbability": 0.40,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -874,7 +874,7 @@
                             }
                         },
                         "2000_5000": {
-                            "winProbability": 50,
+                            "winProbability": 0.50,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -885,7 +885,7 @@
                             }
                         },
                         "5000_10000": {
-                            "winProbability": 80,
+                            "winProbability": 0.80,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
@@ -896,7 +896,7 @@
                             }
                         },
                         "5000_2147483647": {
-                            "winProbability": 100,
+                            "winProbability": 1,
                             "normalBetProbabilityConfig": {
                                 "winRewardConfigId": "rewardConfig_normalBetProbabilityConfig_win",
                                 "loseRewardConfigId": "rewardConfig_normalBetProbabilityConfig_lose"
