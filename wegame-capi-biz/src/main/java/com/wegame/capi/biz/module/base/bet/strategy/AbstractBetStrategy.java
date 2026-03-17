@@ -188,8 +188,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                     return;
                 }
             } else {
-                // 派彩金额 < 2000 && 倍数 < 30x 则不发，反之则发送大奖通知
-                if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD && multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+                // 倍数 < 30x 则不发，反之则发送大奖通知
+                if (multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
                     return;
                 }
             }
