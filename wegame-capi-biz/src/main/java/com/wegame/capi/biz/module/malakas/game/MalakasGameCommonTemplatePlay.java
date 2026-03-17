@@ -50,13 +50,13 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
     MalakasRewardHandler malakasRewardHandler;
 
     @Override
-    public List<MalakasGameRecordDo> templatePlay(BetDo betDo, GamePlayDo gamePlayDo, TemplateMultipleRange templateMultipleRange, MalakasBetRecordTemplateEsDo template) {
+    public List<MalakasGameRecordDo> templatePlay(BetDo betDo, GamePlayDo gamePlayDo, MalakasBetRecordTemplateEsDo template) {
         AssertUtil.assertNotNull(gamePlayDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
         List<GameRecordTemplateDo> configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
         if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlayDo.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlayDo.getBetType());
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> ret = new ArrayList<>();
@@ -107,7 +107,8 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
                 .sum();
         gamePlayDo.setTemplateId(template.getId());
         gamePlayDo.setOverallRewardAmount(totalRewardAmount);
-        gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
+        // todo获取到倍率模版范围，设置到上下文中
+        // gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
         return ret;
     }
 

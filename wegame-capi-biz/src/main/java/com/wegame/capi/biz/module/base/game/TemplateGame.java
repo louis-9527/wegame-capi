@@ -21,10 +21,9 @@ public interface TemplateGame<R, T extends BetRecordTemplateEsDo> {
      *
      * @param betDo                 投注上下文
      * @param gamePlayDo            游戏上下文
-     * @param templateMultipleRange 模版倍率范围 todo delete 该参数
      * @param template              es模版
      * @return 游戏记录
      */
-    List<R> templatePlay(BetDo betDo, GamePlayDo gamePlayDo, TemplateMultipleRange templateMultipleRange, T template);
+    List<R> templatePlay(BetDo betDo, GamePlayDo gamePlayDo, T template);
 
 }

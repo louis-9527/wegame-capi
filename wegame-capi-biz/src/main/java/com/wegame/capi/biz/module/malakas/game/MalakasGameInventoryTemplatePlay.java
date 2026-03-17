@@ -50,7 +50,7 @@ public class MalakasGameInventoryTemplatePlay extends AbstractGameInventoryTempl
 
     // todo 改造， 支持通用模版获取， 迁移到 AbstractGameTemplatePlay
     @Override
-    public MalakasBetRecordTemplateEsDo getTemplate(BetDo betDo, GamePlayDo gamePlayDo, TemplateMultipleRange templateMultipleRange) {
+    public MalakasBetRecordTemplateEsDo getTemplateByRange(BetDo betDo, GamePlayDo gamePlayDo, TemplateMultipleRange templateMultipleRange) {
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);

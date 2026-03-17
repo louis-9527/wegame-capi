@@ -27,17 +27,14 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
 
     public abstract TemplateGame<R, T> templateGame();
 
-    public abstract TemplateMultipleRange getTemplateMultipleRange(BetDo betDo, GamePlayDo gamePlayDo);
-
-    public abstract T getTemplate(BetDo betDo, GamePlayDo gamePlayDo, TemplateMultipleRange templateMultipleRange);
+    public abstract T getTemplate(BetDo betDo, GamePlayDo gamePlayDo);
 
     @Override
     public List<R> play(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(betDo, gamePlayDo);
-        T template = getTemplate(betDo, gamePlayDo, templateMultipleRange);
-        return templateGame().templatePlay(betDo, gamePlayDo, templateMultipleRange, template);
+        T template = getTemplate(betDo, gamePlayDo);
+        return templateGame().templatePlay(betDo, gamePlayDo, template);
     }
 
     public TemplateMultipleRange getTemplateMultipleRange(TreeMap<String, Integer> treeMap) {
