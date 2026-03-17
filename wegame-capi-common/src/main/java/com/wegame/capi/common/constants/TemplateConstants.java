@@ -21,4 +21,6 @@ public class TemplateConstants {
     public static final String MANGKUKULAM_BET_RECORD_TEMPLATE_V3 = "mangkukulam_bet_record_template_v3";
 
     public static final String ATLANTIS_BET_RECORD_TEMPLATE = "atlantis_bet_record_template";
+
+    public static final String BAYANIHAN_BET_RECORD_TEMPLATE_V1 = "bayanihan_bet_record_template";
 }
