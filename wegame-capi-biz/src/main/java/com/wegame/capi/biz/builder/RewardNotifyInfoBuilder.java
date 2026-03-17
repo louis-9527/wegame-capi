@@ -28,16 +28,9 @@ public class RewardNotifyInfoBuilder {
         // 处理playerId脱敏 规则：前面2位，后面两位明文，中间固定的6位星号
         String content = String.format(Constants.DELAY_REWARD_NOTIFY_CONTENT_FORMAT,
                 desensitizePlayerId(userInfo.getPlayerId()),
-                multi.stripTrailingZeros().toPlainString(),
+                cn.hutool.core.date.DateUtil.format(new Date(rewardTime), "MMM dd hh:mm a"),
                 AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(payOutAmount)),
-                DateUtil.format(new Date(rewardTime), "yyyy-MM-dd HH:mm:ss"));
-        if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
-            content = String.format(Constants.LAMANG_DELAY_REWARD_NOTIFY_CONTENT_FORMAT,
-                    desensitizePlayerId(userInfo.getPlayerId()),
-                    cn.hutool.core.date.DateUtil.format(new Date(rewardTime), "MMM dd h:mm a"),
-                    AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(payOutAmount)),
-                    multi.stripTrailingZeros().toPlainString());
-        }
+                multi.stripTrailingZeros().toPlainString());
         return RewardNotifyInfoDo.builder()
                 .gameId(gameType.getId())
                 .gameName(gameType.getName())
@@ -46,6 +39,10 @@ public class RewardNotifyInfoBuilder {
                 .rewardTime(rewardTime)
                 .rewardContent(content)
                 .build();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(cn.hutool.core.date.DateUtil.format(new Date(), "MMM dd hh:mm a"));
     }
 
     /**

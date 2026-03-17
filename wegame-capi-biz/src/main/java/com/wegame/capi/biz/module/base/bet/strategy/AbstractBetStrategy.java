@@ -184,12 +184,12 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             // 5、发送判断：发送大奖通知
             if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.LAM_ANG)) {
                 // 倍数 < 100x 则不发，反之则发送大奖通知
-                if (multi.compareTo(LAMANG_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+                if (multi.compareTo(DELAY_REWARD_100X_MULTIPLIER_THRESHOLD) < 0) {
                     return;
                 }
             } else {
-                // 派彩金额 < 2000 && 倍数 < 30x 则不发，反之则发送大奖通知
-                if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD && multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+                // 倍数 < 30x 则不发，反之则发送大奖通知
+                if (multi.compareTo(DELAY_REWARD_30X_MULTIPLIER_THRESHOLD) < 0) {
                     return;
                 }
             }
