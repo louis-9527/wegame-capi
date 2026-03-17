@@ -185,7 +185,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
             // 5、发送判断：发送大奖通知
             if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.LAM_ANG) ||
-                    Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)) {
+                    Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI) ||
+                    Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MANGKUKULAM)) {
                 // 倍数 < 100x 则不发，反之则发送大奖通知
                 if (multi.compareTo(DELAY_REWARD_100X_MULTIPLIER_THRESHOLD) < 0) {
                     return;
