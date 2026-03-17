@@ -405,6 +405,10 @@
             "rewardBlankProbability": {
                 "NORMAL_BET": 0.7
             },
+            "rewardFloorMultiple": {
+                "NORMAL_BET": "0_1",
+                "BUY_BET": "0_1"
+            },
             "rewardConfigMap": {
                 "rewardConfig_normalBetProbabilityConfig_lose": {
                     "0_0": 128316922,

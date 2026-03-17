@@ -58,10 +58,10 @@ public class CommonInventoryControlConfig implements Serializable {
          */
         private TreeMap<String, TreeMap<String, Integer>> rewardConfigMap;
         /**
-         * 中奖兜底赔率
+         * 中奖兜底模版倍率
          * TreeMap<投注类型，中奖兜底赔率区间（左赔率_右赔率）>
          */
-        private TreeMap<BetTypeEnum, String> rewardFloorOdds;
+        private TreeMap<BetTypeEnum, String> rewardFloorMultiple;
     }
 
     @Data
@@ -206,7 +206,7 @@ public class CommonInventoryControlConfig implements Serializable {
         Assert.notNull(rewardConfig, "rewardConfig is null");
         Assert.isTrue(MapUtils.isNotEmpty(rewardConfig.getRewardBlankProbability()), "rewardConfig Err");
         Assert.isTrue(MapUtils.isNotEmpty(rewardConfig.getRewardConfigMap()), "rewardConfig Err");
-        Assert.isTrue(MapUtils.isNotEmpty(rewardConfig.getRewardFloorOdds()), "rewardConfig Err");
+        Assert.isTrue(MapUtils.isNotEmpty(rewardConfig.getRewardFloorMultiple()), "rewardConfig Err");
         // 校验-轮空率配置
         rewardConfig.getRewardBlankProbability().entrySet().forEach(item -> {
             Assert.isTrue(Objects.equals(item.getKey(), BetTypeEnum.NORMAL_BET), "rewardConfig Err");
@@ -228,7 +228,7 @@ public class CommonInventoryControlConfig implements Serializable {
         });
         // 校验-中奖兜底赔率配置
         Arrays.stream(BetTypeEnum.values()).forEach(item -> {
-            String oddsRangeStr = rewardConfig.getRewardFloorOdds().get(item);
+            String oddsRangeStr = rewardConfig.getRewardFloorMultiple().get(item);
             Assert.notEmpty(oddsRangeStr, "rewardConfig rewardFloorOdds ERR");
             validateRange(oddsRangeStr);
         });

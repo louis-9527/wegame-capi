@@ -91,7 +91,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
             ////
             if (betDo.getBetInventoryControl().getRetryTimes() > MAX_RETRY_TIMES) {
                 // 扣减次数大于最大重试次数，走兜底逻辑
-                String floorTemplateMultipleRangeStr = inventoryControlConfig.getRewardConfig().getRewardFloorOdds().get(gamePlayDo.getBetType());
+                String floorTemplateMultipleRangeStr = inventoryControlConfig.getRewardConfig().getRewardFloorMultiple().get(gamePlayDo.getBetType());
                 AssertUtil.assertStrNotEmpty(floorTemplateMultipleRangeStr, ErrorCode.ERR_INTER);
                 templateMultipleRange = TemplateMultipleRange.build(floorTemplateMultipleRangeStr);
                 templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
