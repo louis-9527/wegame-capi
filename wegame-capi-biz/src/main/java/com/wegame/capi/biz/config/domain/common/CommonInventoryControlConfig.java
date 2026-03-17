@@ -5,9 +5,9 @@ import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.domain.BetAmountRange;
 import com.wegame.capi.common.domain.InventoryRange;
 import com.wegame.capi.common.enums.InventoryTypeEnum;
-import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -76,10 +76,10 @@ public class CommonInventoryControlConfig implements Serializable {
         private TreeMap<InventoryTypeEnum, InventoryConfigItem> inventoryConfigMap;
 
         public Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> match(Long betAmount) {
-            return inventoryConfigMap.entrySet().stream().filter(item ->
-                            item.getValue().getBetAmountRange().getKey().multiply(new BigDecimal(1000)).longValue() >= betAmount
-                                    && item.getValue().getBetAmountRange().getValue().multiply(new BigDecimal(1000)).longValue() <= betAmount)
-                    .findFirst().orElse(null);
+            return inventoryConfigMap.entrySet().stream().filter(item -> {
+                BetAmountRange betAmountRange = BetAmountRange.build(item.getValue().getBetAmountRange());
+                return betAmountRange.inRange(betAmount);
+            }).findFirst().orElse(null);
         }
     }
 
@@ -91,7 +91,7 @@ public class CommonInventoryControlConfig implements Serializable {
         /**
          * 投注范围(左闭右闭)
          */
-        private Pair<BigDecimal, BigDecimal> betAmountRange;
+        private String betAmountRange;
         /**
          * 库存入池率
          */
@@ -104,7 +104,8 @@ public class CommonInventoryControlConfig implements Serializable {
 
         public void validate() {
             Assert.notNull(betAmountRange, "betAmountRange is null");
-            Assert.isTrue(betAmountRange.getKey().compareTo(betAmountRange.getValue()) <= 0, "betAmountRange left val must <= right val");
+            BetAmountRange betAmountRangeDo = BetAmountRange.build(betAmountRange);
+            Assert.notNull(betAmountRangeDo, "betAmountRange is null");
             Assert.notNull(inventoryInputRate, "inventoryInputRate is null");
             Assert.isTrue(inventoryInputRate.compareTo(BigDecimal.ZERO) > 0, "inventoryInputRate must > 0");
             Assert.isTrue(inventoryInputRate.compareTo(BigDecimal.ONE) <= 0, "inventoryInputRate must <= 1");
