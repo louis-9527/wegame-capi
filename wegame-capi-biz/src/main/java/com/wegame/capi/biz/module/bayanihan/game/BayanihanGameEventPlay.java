@@ -23,10 +23,12 @@ import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -34,8 +36,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.common.Constants.TRUE_VAL;
+
 @Slf4j
 @Component("bayanihanGameEventPlay")
+@ConditionalOnProperty(name = Constants.BAYANIHAN_PROP, havingValue = TRUE_VAL)
 public class BayanihanGameEventPlay extends AbstractGame<BayanihanGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;

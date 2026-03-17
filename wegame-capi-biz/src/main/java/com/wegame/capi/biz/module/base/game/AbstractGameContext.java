@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.base.game;
 
-import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -77,6 +76,10 @@ public abstract class AbstractGameContext<R> {
                 case TEMPLATE_PLAY:
                     AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
                     AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
+                    if (Objects.equals(gamePlayDo.getGameType(), GameTypeEnum.BAYANIHAN)) {
+                        //todo 添加校验
+                        return;
+                    }
                     if (Objects.equals(gamePlayDo.getGameType(), GameTypeEnum.MANGKUKULAM)) {
                         //todo 添加mangkukulam的校验
                         mangkukulamTemplatePlayValidate(gamePlayDo);

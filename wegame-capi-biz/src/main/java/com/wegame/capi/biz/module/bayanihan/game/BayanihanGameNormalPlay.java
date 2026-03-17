@@ -31,19 +31,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.wegame.capi.common.Constants.CONST_1;
-import static com.wegame.capi.common.Constants.CONST_1000000;
+import static com.wegame.capi.common.Constants.*;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 @Component("bayanihanGameNormalPlay")
+@ConditionalOnProperty(name = Constants.BAYANIHAN_PROP, havingValue = TRUE_VAL)
 public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo> {
 
     private static final GameInfoDo GAME_INFO = BayanihanGameHelper.BAYANIHAN_GAME_INFO;

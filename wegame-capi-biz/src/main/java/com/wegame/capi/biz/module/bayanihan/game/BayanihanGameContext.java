@@ -19,8 +19,8 @@ public class BayanihanGameContext<R> extends AbstractGameContext<R> {
 
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "bayanihanGameNormalPlay")
-//            .put(GamePlayTypeEnum.EVENT_PLAY, "bayanihanGameEventPlay")
-//            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "bayanihanGameTemplatePlay")
+            .put(GamePlayTypeEnum.EVENT_PLAY, "bayanihanGameEventPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "bayanihanGameTemplatePlay")
             .build();
 
     @Autowired

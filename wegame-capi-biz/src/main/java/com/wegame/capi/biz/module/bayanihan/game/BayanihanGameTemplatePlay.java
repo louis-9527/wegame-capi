@@ -17,7 +17,7 @@ import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.BayanihanSymbolDo;
-import com.wegame.capi.biz.domain.biz.template.mangkukulam.MangkukulamBetRecordTemplateEsDo;
+import com.wegame.capi.biz.domain.biz.template.bayanihan.BayanihanBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.bayanihan.BayanihanGameHelper;
@@ -49,7 +49,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
 @Component("bayanihanGameTemplatePlay")
-@ConditionalOnProperty(name = Constants.ATLANTIS_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = Constants.BAYANIHAN_PROP, havingValue = TRUE_VAL)
 public class BayanihanGameTemplatePlay extends AbstractGame<BayanihanGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
@@ -60,7 +60,7 @@ public class BayanihanGameTemplatePlay extends AbstractGame<BayanihanGameRecordD
     @Autowired
     BayanihanConfig bayanihanConfig;
     @Autowired
-    BetRecordTemplateEsService<MangkukulamBetRecordTemplateEsDo> betRecordTemplateEsService;
+    BetRecordTemplateEsService<BayanihanBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
     public List<BayanihanGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
@@ -106,8 +106,12 @@ public class BayanihanGameTemplatePlay extends AbstractGame<BayanihanGameRecordD
             // 处理免费轮
             processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId, totalRewardAmount);
         }
-        //// 总中奖金额
-//        gamePlay.setOverallRewardAmount(totalRewardAmount.get());
+        //// 总中奖金额 不准
+        gamePlay.setOverallRewardAmount(totalRewardAmount.get());
+//        for (BayanihanGameRecordDo recordDo : ret) {
+//            log.info("current collectionInfo: {}", recordDo.getCollectionInfo());
+//            BayanihanSymbolUtil.print(recordDo.getWheel().getSymbolArr(), recordDo.getWheel().getIndex());
+//        }
         return ret;
     }
 
@@ -122,21 +126,21 @@ public class BayanihanGameTemplatePlay extends AbstractGame<BayanihanGameRecordD
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, betType, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, betType, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), BayanihanBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         log.info("templatePlay: template: {}, es index: {}, template betRecordId :{}, range:{} - {} ", templateType.name(),
                 templateType.getBetRecordTemplateName(), betRecordId, templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         List<GameRecordTemplateDo> configRecordList;
-        MangkukulamBetRecordTemplateEsDo template;
+        BayanihanBetRecordTemplateEsDo template;
         TemplateMultipleWarmUpEnum warmUp = TemplateMultipleWarmUpEnum.valueOfCode(GameTypeEnum.MANGKUKULAM);
         AssertUtil.assertNotNull(warmUp, ErrorCode.ERR_INTER, "error warmUp");
         if (bayanihanConfig.getTemplateConfig().supportWarmUp(betType, templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
-            template = betRecordTemplateEsService.getTemplateWithLocalCache(templateType, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
+            template = betRecordTemplateEsService.getTemplateWithLocalCache(templateType, betRecordId, BayanihanBetRecordTemplateEsDo.class);
         } else {
             // 没有被预热的倍率，需要重新查询
-            template = betRecordTemplateEsService.findById(templateType, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
+            template = betRecordTemplateEsService.findById(templateType, betRecordId, BayanihanBetRecordTemplateEsDo.class);
         }
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
 //        log.info("templatePlay: template betRecordId :{}, range:{} - {}, actual multi:{} ", betRecordId, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), template.getMultiple());
