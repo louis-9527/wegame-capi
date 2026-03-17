@@ -43,11 +43,11 @@ public class MariamakilingPulsarConfig {
     String mariaMakilingBetDeadLetterTopic;
 
 
-    @Value("${pulsar.dynamic.maria_makiling.pulsar.auth.issuer_url}")
+    @Value("${pulsar.dynamic.maria_makiling.auth.issuer_url}")
     String mariaMakilingAuthIssuerUrl;
-    @Value("${pulsar.dynamic.maria_makiling.pulsar.auth.credentials_file_path}")
+    @Value("${pulsar.dynamic.maria_makiling.auth.credentials_file_path}")
     String mariaMakilingAuthCredentialsFilePath;
-    @Value("${pulsar.dynamic.maria_makiling.pulsar.auth.audience}")
+    @Value("${pulsar.dynamic.maria_makiling.auth.audience}")
     String mariaMakilingAuthAudience;
 
     @Bean(name = mariaMakilingPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)

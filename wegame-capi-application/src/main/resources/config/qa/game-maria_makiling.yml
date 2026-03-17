@@ -16,9 +16,7 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
-      ## new add
-      pulsar:
-        auth:
-          issuer_url: "https://auth.streamnative.cloud/"
-          credentials_file_path: /game_pulsar_privateKey.json
-          audience: "urn:sn:pulsar:o-cv5fz:egame-qat"
+      auth:
+        issuer_url: "https://auth.streamnative.cloud/"
+        credentials_file_path: /game_pulsar_privateKey.json
+        audience: "urn:sn:pulsar:o-cv5fz:egame-qat"
