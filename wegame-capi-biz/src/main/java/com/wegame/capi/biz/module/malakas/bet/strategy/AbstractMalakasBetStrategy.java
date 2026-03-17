@@ -115,7 +115,6 @@ public abstract class AbstractMalakasBetStrategy
         if (malakasConfig.getInventoryControlConfig().isEnable()) {
             // 库存控制开关“开”，则走库存控制TemplatePlay生成游戏记录
             betDo.setGamePlayType(GamePlayTypeEnum.INVENTORY_TEMPLATE_PLAY);
-            betDo.setBetInventoryControl(new BetInventoryControlDo());
             list = gameContext().play(betDo, GamePlayBuilder.build(betDo, betRecordId));
         } else {
             // 库存控制开关“关”，则走原逻辑

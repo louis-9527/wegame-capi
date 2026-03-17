@@ -74,22 +74,24 @@ public class InventoryService {
     }
 
     @Async(inventoryThreadPoolExecutor)
-    public boolean increaseInventory(GameTypeEnum gameType, InventoryTypeEnum inventoryType, long increaseInventoryAmount) {
+    public void increaseInventory(GameTypeEnum gameType, InventoryTypeEnum inventoryType, long increaseInventoryAmount) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
-        AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
+        if (!SUPPORT_GAME_TYPE_LIST.contains(gameType)) {
+            log.info("increaseInventory fail, not support game");
+
+            return;
+        }
         AssertUtil.assertNotNull(inventoryType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(increaseInventoryAmount > 0L, ErrorCode.ERR_INTER);
         String key = String.format(INVENTORY_KEY_FORMAT, gameType.getId());
         try {
             long newInventory = redisTemplate.opsForHash().increment(key, inventoryType.getCode(), increaseInventoryAmount);
             log.info("increaseInventory success, key: {}, inventoryType: {}, newInventory: {}, increaseInventoryAmount: {}", key, inventoryType, newInventory, increaseInventoryAmount);
-            return true;
+            return;
         } catch (RedisTimeoutException e) {
             log.error("increaseInventory error, found RedisTimeoutException, key: {}, inventoryType: {}, increaseInventoryAmount: {}", key, inventoryType, increaseInventoryAmount, e);
-            return false;
         } catch (Exception e) {
             log.error("increaseInventory error, found Exception, key: {}, inventoryType: {}, increaseInventoryAmount: {}", key, inventoryType, increaseInventoryAmount, e);
-            return false;
         }
     }
 

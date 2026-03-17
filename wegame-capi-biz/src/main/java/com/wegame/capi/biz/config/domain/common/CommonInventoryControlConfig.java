@@ -5,6 +5,7 @@ import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.domain.InventoryRange;
 import com.wegame.capi.common.enums.InventoryTypeEnum;
 import javafx.util.Pair;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,6 @@ import static com.wegame.capi.common.Constants.COMMON_CONFIG_SPLIT;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommonInventoryControlConfig implements Serializable {
-
     /**
      * 启用/禁用
      */
@@ -102,11 +102,6 @@ public class CommonInventoryControlConfig implements Serializable {
          */
         private TreeMap<String, InventoryControlConfigItem> controlConfig;
 
-        public InventoryControlConfigItem matchControlConfig(Long inventoryRemain, InventoryConfigItem value) {
-            // todo
-            return null;
-        }
-
         public void validate() {
             Assert.notNull(betAmountRange, "betAmountRange is null");
             Assert.isTrue(betAmountRange.getKey().compareTo(betAmountRange.getValue()) <= 0, "betAmountRange left val must <= right val");
@@ -120,10 +115,19 @@ public class CommonInventoryControlConfig implements Serializable {
             controlConfig.entrySet().forEach(item -> {
                 String inventoryRangeStr = item.getKey();
                 Assert.notEmpty(inventoryRangeStr, "inventoryRangeStr is null");
+                InventoryRange inventoryRange = InventoryRange.build(item.getKey());
+                Assert.notNull(inventoryRange, "inventoryRangeStr is error");
                 InventoryControlConfigItem inventoryControlConfigItem = item.getValue();
                 Assert.notNull(inventoryControlConfigItem, "inventoryControlConfigItem is null");
                 inventoryControlConfigItem.validate();
             });
+        }
+
+        public InventoryControlConfigItem matchControlConfig(Long currentInventoryVal) {
+            return controlConfig.entrySet().stream().filter(item -> {
+                InventoryRange inventoryRange = InventoryRange.build(item.getKey());
+                return inventoryRange.inRange(currentInventoryVal);
+            }).findFirst().map(Map.Entry::getValue).orElse(null);
         }
     }
 
@@ -145,13 +149,13 @@ public class CommonInventoryControlConfig implements Serializable {
          */
         private ProbabilisticConfig buyBetProbabilityConfig;
 
-        public String getRewardConfigId(BetTypeEnum betType, boolean winOrNot) {
+        public String getRewardConfigId(BetTypeEnum betType, boolean winRet) {
             switch (betType) {
                 case NORMAL_BET:
-                    return winOrNot ? normalBetProbabilityConfig.winRewardConfigId :
+                    return winRet ? normalBetProbabilityConfig.winRewardConfigId :
                             normalBetProbabilityConfig.loseRewardConfigId;
                 case BUY_BET:
-                    return winOrNot ? buyBetProbabilityConfig.winRewardConfigId :
+                    return winRet ? buyBetProbabilityConfig.winRewardConfigId :
                             buyBetProbabilityConfig.loseRewardConfigId;
                 default:
                     throw new BusinessException(ErrorCode.ERR_INTER);

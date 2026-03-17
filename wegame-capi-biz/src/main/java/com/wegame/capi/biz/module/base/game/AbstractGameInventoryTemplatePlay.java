@@ -5,6 +5,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.common.CommonInventoryControlConfig;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetInventoryControlDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.RandomService;
@@ -18,11 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
+import static com.wegame.capi.biz.domain.biz.bet.BetInventoryControlDo.DEFAULT_RETRY_TIMES;
 import static com.wegame.capi.common.Constants.CONST_1;
 import static com.wegame.capi.common.Constants.CONST_10000;
 
@@ -51,20 +52,23 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
     public T getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        // 设置-投注上下文（库存控制）
-        CommonInventoryControlConfig inventoryControlConfig = inventoryControlConfig();
         // 匹配库存控制级别
+        CommonInventoryControlConfig inventoryControlConfig = inventoryControlConfig();
         Long betAmount = gamePlayDo.getBetAmount();
         Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> matchInventory = inventoryControlConfig.getInventoryConfig().match(betAmount);
         AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
-        betDo.getBetInventoryControl().setInventoryType(matchInventory.getKey());
         long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(betAmount)).longValue();
-        betDo.getBetInventoryControl().setInventoryContributionAmount(inventoryContributeAmount);
+        // 设置-投注上下文（库存控制）
+        betDo.setBetInventoryControl(BetInventoryControlDo.builder()
+                .retryTimes(DEFAULT_RETRY_TIMES)
+                .inventoryType(matchInventory.getKey())
+                .inventoryContributionAmount(inventoryContributeAmount)
+                .build());
         log.info("match inventory info: betAmount: {}, inventoryType: {}, inventoryContributeAmount: {}", betAmount, matchInventory.getKey().getCode(), inventoryContributeAmount);
         Map<InventoryTypeEnum, Long> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), userInfo.getPId(), userInfo.getChannelId());
-        Long inventoryValue = Objects.isNull(inventorySnapshot.get(matchInventory.getKey())) ?
+        Long currentInventoryValue = Objects.isNull(inventorySnapshot.get(matchInventory.getKey())) ?
                 inventorySnapshot.get(matchInventory.getKey()) : 0L;
-        CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(inventoryValue, matchInventory.getValue());
+        CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(currentInventoryValue);
         AssertUtil.assertNotNull(inventoryControlConfigItem, ErrorCode.ERR_INTER);
         T templateEsDo;
         TemplateMultipleRange templateMultipleRange;

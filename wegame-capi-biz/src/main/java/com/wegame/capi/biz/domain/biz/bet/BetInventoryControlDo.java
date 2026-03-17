@@ -14,6 +14,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class BetInventoryControlDo implements Serializable {
     private static final long serialVersionUID = -226630893710848L;
+
+    public static final int DEFAULT_RETRY_TIMES = -1;
     /**
      * 重试次数
      */
