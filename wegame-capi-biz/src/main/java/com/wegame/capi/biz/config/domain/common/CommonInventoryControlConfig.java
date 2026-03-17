@@ -5,8 +5,8 @@ import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.domain.BetAmountRange;
-import com.wegame.capi.common.domain.InventoryRange;
+import com.wegame.capi.common.domain.BetAmountRangeDo;
+import com.wegame.capi.common.domain.InventoryRangeDo;
 import com.wegame.capi.common.enums.InventoryTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -77,7 +77,7 @@ public class CommonInventoryControlConfig implements Serializable {
 
         public Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> match(Long betAmount) {
             return inventoryConfigMap.entrySet().stream().filter(item -> {
-                BetAmountRange betAmountRange = BetAmountRange.build(item.getValue().getBetAmountRange());
+                BetAmountRangeDo betAmountRange = BetAmountRangeDo.build(item.getValue().getBetAmountRange());
                 return betAmountRange.inRange(betAmount);
             }).findFirst().orElse(null);
         }
@@ -104,7 +104,7 @@ public class CommonInventoryControlConfig implements Serializable {
 
         public void validate() {
             Assert.notNull(betAmountRange, "betAmountRange is null");
-            BetAmountRange betAmountRangeDo = BetAmountRange.build(betAmountRange);
+            BetAmountRangeDo betAmountRangeDo = BetAmountRangeDo.build(betAmountRange);
             Assert.notNull(betAmountRangeDo, "betAmountRange is null");
             Assert.notNull(inventoryInputRate, "inventoryInputRate is null");
             Assert.isTrue(inventoryInputRate.compareTo(BigDecimal.ZERO) > 0, "inventoryInputRate must > 0");
@@ -116,7 +116,7 @@ public class CommonInventoryControlConfig implements Serializable {
             controlConfig.entrySet().forEach(item -> {
                 String inventoryRangeStr = item.getKey();
                 Assert.notEmpty(inventoryRangeStr, "inventoryRangeStr is null");
-                InventoryRange inventoryRange = InventoryRange.build(item.getKey());
+                InventoryRangeDo inventoryRange = InventoryRangeDo.build(item.getKey());
                 Assert.notNull(inventoryRange, "inventoryRangeStr is error");
                 InventoryControlConfigItem inventoryControlConfigItem = item.getValue();
                 Assert.notNull(inventoryControlConfigItem, "inventoryControlConfigItem is null");
@@ -126,7 +126,7 @@ public class CommonInventoryControlConfig implements Serializable {
 
         public InventoryControlConfigItem matchControlConfig(Long currentInventoryVal) {
             return controlConfig.entrySet().stream().filter(item -> {
-                InventoryRange inventoryRange = InventoryRange.build(item.getKey());
+                InventoryRangeDo inventoryRange = InventoryRangeDo.build(item.getKey());
                 return inventoryRange.inRange(currentInventoryVal);
             }).findFirst().map(Map.Entry::getValue).orElse(null);
         }
