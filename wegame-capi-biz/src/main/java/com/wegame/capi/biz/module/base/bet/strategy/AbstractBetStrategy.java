@@ -184,14 +184,15 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             // 4、计算倍数
             BigDecimal multi = new BigDecimal(betRecord.getPayOutAmount()).divide(new BigDecimal(amount), 2, RoundingMode.FLOOR);
             // 5、发送判断：发送大奖通知
-            if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.LAM_ANG)) {
+            if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.LAM_ANG) ||
+                    Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)) {
                 // 倍数 < 100x 则不发，反之则发送大奖通知
-                if (multi.compareTo(LAMANG_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+                if (multi.compareTo(DELAY_REWARD_100X_MULTIPLIER_THRESHOLD) < 0) {
                     return;
                 }
             } else {
-                // 派彩金额 < 2000 && 倍数 < 30x 则不发，反之则发送大奖通知
-                if (betRecord.getPayOutAmount() < DEFAULT_DELAY_REWARD_PAYOUT_AMOUNT_THRESHOLD && multi.compareTo(DEFAULT_DELAY_REWARD_MULTIPLIER_THRESHOLD) < 0) {
+                // 倍数 < 30x 则不发，反之则发送大奖通知
+                if (multi.compareTo(DELAY_REWARD_30X_MULTIPLIER_THRESHOLD) < 0) {
                     return;
                 }
             }
