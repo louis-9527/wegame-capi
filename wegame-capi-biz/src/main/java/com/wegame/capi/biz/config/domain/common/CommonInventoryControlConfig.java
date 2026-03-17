@@ -2,6 +2,8 @@ package com.wegame.capi.biz.config.domain.common;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.NumberUtil;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.InventoryTypeEnum;
 import javafx.util.Pair;
@@ -15,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
@@ -24,7 +27,7 @@ import static com.wegame.capi.common.Constants.COMMON_CONFIG_SPLIT;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventoryControlConfig implements Serializable {
+public class CommonInventoryControlConfig implements Serializable {
 
     /**
      * 启用/禁用
@@ -71,6 +74,13 @@ public class InventoryControlConfig implements Serializable {
          * TreeMap<名称，<左开赔率_右闭赔率，权重>>
          */
         private TreeMap<InventoryTypeEnum, InventoryConfigItem> inventoryConfigMap;
+
+        public Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> match(Long betAmount) {
+            return inventoryConfigMap.entrySet().stream().filter(item ->
+                            item.getValue().getBetAmountRange().getKey().multiply(new BigDecimal(1000)).longValue() >= betAmount
+                                    && item.getValue().getBetAmountRange().getValue().multiply(new BigDecimal(1000)).longValue() <= betAmount)
+                    .findFirst().orElse(null);
+        }
     }
 
     @Data
@@ -87,10 +97,15 @@ public class InventoryControlConfig implements Serializable {
          */
         private BigDecimal inventoryInputRate;
         /**
-         * 中奖兜底赔率
-         * TreeMap<投注类型，中奖兜底赔率区间（左赔率_右赔率）>
+         * 库存控制配置
+         * TreeMap<库存区间（左开右闭），库存控制配置>
          */
         private TreeMap<String, InventoryControlConfigItem> controlConfig;
+
+        public InventoryControlConfigItem matchControlConfig(Long inventoryRemain, InventoryConfigItem value) {
+            // todo
+            return null;
+        }
 
         public void validate() {
             Assert.notNull(betAmountRange, "betAmountRange is null");
@@ -129,6 +144,19 @@ public class InventoryControlConfig implements Serializable {
          * 购买投注概率配置
          */
         private ProbabilisticConfig buyBetProbabilityConfig;
+
+        public String getRewardConfigId(BetTypeEnum betType, boolean winOrNot) {
+            switch (betType) {
+                case NORMAL_BET:
+                    return winOrNot ? normalBetProbabilityConfig.winRewardConfigId :
+                            normalBetProbabilityConfig.loseRewardConfigId;
+                case BUY_BET:
+                    return winOrNot ? buyBetProbabilityConfig.winRewardConfigId :
+                            buyBetProbabilityConfig.loseRewardConfigId;
+                default:
+                    throw new BusinessException(ErrorCode.ERR_INTER);
+            }
+        }
 
         public void validate() {
             Assert.notNull(winProbability, "winProbability is null");

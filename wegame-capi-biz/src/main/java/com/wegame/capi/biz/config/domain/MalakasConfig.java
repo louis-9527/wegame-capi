@@ -4,7 +4,7 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.config.domain.common.InventoryControlConfig;
+import com.wegame.capi.biz.config.domain.common.CommonInventoryControlConfig;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -50,7 +50,7 @@ public class MalakasConfig extends GameBizConfig implements Serializable {
     /**
      * 库存控制配置
      */
-    private InventoryControlConfig inventoryControlConfig;
+    private CommonInventoryControlConfig inventoryControlConfig;
 
     @Data
     @SuperBuilder

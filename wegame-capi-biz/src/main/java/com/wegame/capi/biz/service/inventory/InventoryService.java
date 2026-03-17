@@ -1,9 +1,10 @@
-package com.wegame.capi.biz.service;
+package com.wegame.capi.biz.service.inventory;
 
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.InventoryTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.client.RedisTimeoutException;
@@ -45,7 +46,7 @@ public class InventoryService {
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
-    public boolean deductInventory(GameTypeEnum gameType, int pid, int channelId, InventoryTypeEnum inventoryType, long deductInventoryAmount) {
+    public boolean deductInventory(GameTypeEnum gameType, String pid, String channelId, InventoryTypeEnum inventoryType, long deductInventoryAmount) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
         if (Objects.isNull(inventoryType) || deductInventoryAmount <= 0) {
@@ -92,12 +93,14 @@ public class InventoryService {
         }
     }
 
-    public Map<Object, Object> getInventory(GameTypeEnum gameType, int pid, int channelId) {
+    public Map<InventoryTypeEnum, Long> getInventory(GameTypeEnum gameType, String pid, String channelId) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
         String key = String.format(INVENTORY_KEY_FORMAT, gameType.getId(), pid, channelId);
         Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
         log.info("inventory info after get: key: {}, inventory: {}", key, map);
-        return map;
+        Map<InventoryTypeEnum, Long> ret = FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(map), new TypeReference<Map<InventoryTypeEnum, Long>>() {
+        });
+        return ret;
     }
 }
