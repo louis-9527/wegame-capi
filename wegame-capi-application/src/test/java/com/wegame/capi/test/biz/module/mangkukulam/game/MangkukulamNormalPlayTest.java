@@ -92,7 +92,7 @@ public class MangkukulamNormalPlayTest extends BaseTest {
                 .continuePlayContext(context)
                 .build();
         long currentTime = System.currentTimeMillis();
-        List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        List<MangkukulamGameRecordDo> recordList = normalPlay.play(null, playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
@@ -117,7 +117,7 @@ public class MangkukulamNormalPlayTest extends BaseTest {
                 .betAmount(100L)
                 .build();
         long currentTime = System.currentTimeMillis();
-        List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        List<MangkukulamGameRecordDo> recordList = normalPlay.play(null, playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
@@ -142,7 +142,7 @@ public class MangkukulamNormalPlayTest extends BaseTest {
                 .payAmount(35000L)
                 .build();
         long currentTime = System.currentTimeMillis();
-        List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        List<MangkukulamGameRecordDo> recordList = normalPlay.play(null, playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
