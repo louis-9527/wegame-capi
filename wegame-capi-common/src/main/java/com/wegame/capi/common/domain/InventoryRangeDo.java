@@ -30,8 +30,8 @@ public class InventoryRangeDo implements Serializable {
         AssertUtil.assertStrNotEmpty(rangeStr, ErrorCode.ERR_PARAM);
         String[] rangArr = rangeStr.split(SPLIT);
         AssertUtil.assertTrue(rangArr.length == ARR_SIZE, ErrorCode.ERR_PARAM);
-        Long tempStart = Long.valueOf(rangArr[0]);
-        Long tempEnd = Long.valueOf(rangArr[1]);
+        long tempStart = Long.valueOf(rangArr[0]);
+        long tempEnd = Long.valueOf(rangArr[1]);
         AssertUtil.assertTrue(tempStart <= tempEnd, ErrorCode.ERR_PARAM);
         return InventoryRangeDo.builder()
                 .start(tempStart)
