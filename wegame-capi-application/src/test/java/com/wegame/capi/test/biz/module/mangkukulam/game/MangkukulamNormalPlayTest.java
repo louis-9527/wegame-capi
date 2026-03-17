@@ -3,6 +3,7 @@ package com.wegame.capi.test.biz.module.mangkukulam.game;//package com.wegame.ca
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.utils.ThreadMdcUtil;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
@@ -92,7 +93,7 @@ public class MangkukulamNormalPlayTest extends BaseTest {
                 .continuePlayContext(context)
                 .build();
         long currentTime = System.currentTimeMillis();
-        List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        List<MangkukulamGameRecordDo> recordList = normalPlay.play(new BetDo(), playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
@@ -117,7 +118,7 @@ public class MangkukulamNormalPlayTest extends BaseTest {
                 .betAmount(100L)
                 .build();
         long currentTime = System.currentTimeMillis();
-        List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        List<MangkukulamGameRecordDo> recordList = normalPlay.play(new BetDo(), playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
@@ -142,7 +143,7 @@ public class MangkukulamNormalPlayTest extends BaseTest {
                 .payAmount(35000L)
                 .build();
         long currentTime = System.currentTimeMillis();
-        List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        List<MangkukulamGameRecordDo> recordList = normalPlay.play(new BetDo(), playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
