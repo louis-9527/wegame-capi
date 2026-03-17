@@ -36,7 +36,7 @@ public class BetRecordBuilder {
             extendInfo = BetRecordDo.ExtendInfo.builder()
                     .ieId(betDo.getGameOperationEvent().getOperationEvent().getEventId())
                     .build();
-        }else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.STAR_CARD)) {
+        } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.STAR_CARD)) {
             extendInfo = BetRecordDo.ExtendInfo.builder()
                     .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
                     .build();
@@ -61,6 +61,12 @@ public class BetRecordBuilder {
                 .payAmount(betDo.getPayAmount())
                 .payOutAmount(payOutAmount)
                 .reachMaxMultiple(reachMaxMultiple)
+                .inventoryType(Objects.nonNull(betDo.getBetInventoryControl()) && Objects.nonNull(betDo.getBetInventoryControl().getInventoryType())
+                        ? betDo.getBetInventoryControl().getInventoryType().getCode()
+                        : null)
+                .inventoryContributeAmount(Objects.nonNull(betDo.getBetInventoryControl())
+                        ? betDo.getBetInventoryControl().getInventoryContributeAmount()
+                        : null)
                 .status(BetStatusEnum.ING.getCode())
                 .jackpot(jackpot)
                 .extendInfo(extendInfo)

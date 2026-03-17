@@ -8,7 +8,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
-import com.wegame.capi.biz.module.base.game.AbstractInventoyTemplatePlay;
+import com.wegame.capi.biz.module.base.game.AbstractInventoryTemplatePlay;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.biz.service.inventory.InventoryService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
@@ -37,7 +37,7 @@ import static com.wegame.capi.common.utils.ListUtil.getRandomElement;
 @Slf4j
 @Component("malakasGameInventoryTemplatePlay")
 @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
-public class MalakasGameInventoryTemplatePlay extends AbstractInventoyTemplatePlay<MalakasGameRecordDo> {
+public class MalakasGameInventoryTemplatePlay extends AbstractInventoryTemplatePlay<MalakasGameRecordDo> {
 
     private static final int MAX_RETRY_TIMES = 2;
     private static final String NO_REWARD_TEMPLATE_MULTIPLE_RANGE = "0_0";
@@ -46,11 +46,11 @@ public class MalakasGameInventoryTemplatePlay extends AbstractInventoyTemplatePl
     @Autowired
     MalakasConfig malakasConfig;
     @Autowired
-    BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
+    InventoryService inventoryService;
     @Autowired
     MalakasGameCommonTemplatePlay malakasGameCommonTemplatePlay;
     @Autowired
-    InventoryService inventoryService;
+    BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
     public List<MalakasGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {

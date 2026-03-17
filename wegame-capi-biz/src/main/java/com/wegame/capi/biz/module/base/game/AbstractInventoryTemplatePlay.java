@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 库存控制服务
  */
 @Slf4j
-public abstract class AbstractInventoyTemplatePlay<R extends ToVoConverter> implements Game<R> {
+public abstract class AbstractInventoryTemplatePlay<R extends ToVoConverter> implements Game<R> {
 
     @Autowired
     InventoryService inventoryService;

@@ -90,6 +90,14 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Boolean reachMaxMultiple;
     /**
+     * 库存类型
+     */
+    private Integer inventoryType;
+    /**
+     * 库存类型
+     */
+    private Long inventoryContributeAmount;
+    /**
      * 投注状态 0进行中 1已完结 2无效
      */
     private Integer status;
