@@ -18,7 +18,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.base.game.template.TemplateGame;
+import com.wegame.capi.biz.module.base.game.TemplateGame;
 import com.wegame.capi.biz.module.malakas.reward.MalakasRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -50,13 +50,13 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
     MalakasRewardHandler malakasRewardHandler;
 
     @Override
-    public List<MalakasGameRecordDo> commonTemplatePlay(BetDo bet, GamePlayDo gamePlay, TemplateMultipleRange templateMultipleRange, MalakasBetRecordTemplateEsDo template) {
-        AssertUtil.assertNotNull(gamePlay, ErrorCode.ERR_INTER);
+    public List<MalakasGameRecordDo> templatePlay(BetDo betDo, GamePlayDo gamePlayDo, TemplateMultipleRange templateMultipleRange, MalakasBetRecordTemplateEsDo template) {
+        AssertUtil.assertNotNull(gamePlayDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
         List<GameRecordTemplateDo> configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
         if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlayDo.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> ret = new ArrayList<>();
@@ -68,7 +68,7 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
 
         // 处理首轮
         long firstGameRecordId = generateGameRecordId();
-        MalakasGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO, false);
+        MalakasGameRecordDo firstGameRecord = this.processGameRecord(gamePlayDo, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO, false);
         ret.add(firstGameRecord);
         // 按 batchId 分组 & 记录 ID 映射
         Map<Long, List<GameRecordTemplateDo>> groupedByBatchId = configRecordList.stream()
@@ -88,7 +88,7 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
             if (recordDo.getParentId() != 0L) {
                 // 处理首轮普通轮
                 long gameRecordId = generateGameRecordId();
-                MalakasGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO, false);
+                MalakasGameRecordDo gameRecord = processGameRecord(gamePlayDo, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO, false);
                 ret.add(gameRecord);
                 lastGameRecord = gameRecord;
             }
@@ -97,7 +97,7 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
                 continue;
             }
             // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId, maxBatchId);
+            processFreeRounds(ret, gamePlayDo, recordDo, lastGameRecord, groupedByBatchId, maxBatchId);
         }
         // 结果验证数据添加
         //// 总中奖金额
@@ -105,9 +105,9 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        gamePlay.setTemplateId(template.getId());
-        gamePlay.setOverallRewardAmount(totalRewardAmount);
-        gamePlay.setTemplateMultipleRange(templateMultipleRange);
+        gamePlayDo.setTemplateId(template.getId());
+        gamePlayDo.setOverallRewardAmount(totalRewardAmount);
+        gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
         return ret;
     }
 

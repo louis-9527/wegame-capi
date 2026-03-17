@@ -1,0 +1,126 @@
+package com.wegame.capi.biz.module.base.game;
+
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.common.CommonInventoryControlConfig;
+import com.wegame.capi.biz.converter.ToVoConverter;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
+import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.biz.service.inventory.InventoryService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.InventoryTypeEnum;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+
+import static com.wegame.capi.common.Constants.CONST_1;
+import static com.wegame.capi.common.Constants.CONST_10000;
+
+/**
+ * 库存控制游戏模版Play
+ */
+@Slf4j
+public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter, T extends BetRecordTemplateEsDo> extends AbstractGameTemplatePlay<R, T> {
+
+    public static final int MAX_RETRY_TIMES = 2;
+    public static final String NO_REWARD_TEMPLATE_MULTIPLE_RANGE = "0_0";
+
+    @Autowired
+    RandomService randomService;
+    @Autowired
+    InventoryService inventoryService;
+
+    public abstract CommonInventoryControlConfig inventoryControlConfig();
+
+    @Override
+    public TemplateMultipleRange getTemplateMultipleRange(BetDo betDo, GamePlayDo gamePlayDo) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        // 设置-投注上下文（库存控制）
+        CommonInventoryControlConfig inventoryControlConfig = inventoryControlConfig();
+        // 匹配库存控制级别
+        Long betAmount = gamePlayDo.getBetAmount();
+        Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> matchInventory = inventoryControlConfig.getInventoryConfig().match(betAmount);
+        AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
+        betDo.getBetInventoryControl().setInventoryType(matchInventory.getKey());
+        long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(betAmount)).longValue();
+        betDo.getBetInventoryControl().setInventoryContributionAmount(inventoryContributeAmount);
+        log.info("match inventory info: betAmount: {}, inventoryType: {}, inventoryContributeAmount: {}", betAmount, matchInventory.getKey().getCode(), inventoryContributeAmount);
+        Map<InventoryTypeEnum, Long> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), userInfo.getPId(), userInfo.getChannelId());
+        Long inventoryValue = Objects.isNull(inventorySnapshot.get(matchInventory.getKey())) ?
+                inventorySnapshot.get(matchInventory.getKey()) : 0L;
+        CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(inventoryValue, matchInventory.getValue());
+        AssertUtil.assertNotNull(inventoryControlConfigItem, ErrorCode.ERR_INTER);
+        T templateEsDo;
+        TemplateMultipleRange templateMultipleRange;
+        boolean orNotRewardBlank = orNotHitRewardBlank(gamePlayDo, inventoryControlConfig);
+        if (orNotRewardBlank) {
+            // 命中轮空：则不中奖
+            templateMultipleRange = TemplateMultipleRange.build(NO_REWARD_TEMPLATE_MULTIPLE_RANGE);
+        } else {
+            // 未命中轮空：中奖
+            //// 循环处理
+            do {
+                betDo.getBetInventoryControl().addRetryTimes();
+                boolean winRet = judgeWinRet(inventoryControlConfigItem.getWinProbability());
+                String rewardConfigId = inventoryControlConfigItem.getRewardConfigId(gamePlayDo.getBetType(), winRet);
+                TreeMap<String, Integer> treeMap = inventoryControlConfig.getRewardConfig().getRewardConfigMap().get(rewardConfigId);
+                templateMultipleRange = getTemplateMultipleRange(treeMap);
+                templateEsDo = getTemplate(betDo, gamePlayDo, templateMultipleRange);
+            } while (!deductInventory(betDo, userInfo, templateEsDo));
+            ////
+            if (betDo.getBetInventoryControl().getRetryTimes() > MAX_RETRY_TIMES) {
+                // 扣减次数大于最大重试次数，走兜底逻辑
+                String floorTemplateMultipleRangeStr = inventoryControlConfig.getRewardConfig().getRewardFloorOdds().get(gamePlayDo.getBetType());
+                AssertUtil.assertStrNotEmpty(floorTemplateMultipleRangeStr, ErrorCode.ERR_INTER);
+                templateMultipleRange = TemplateMultipleRange.build(floorTemplateMultipleRangeStr);
+                log.info("reach max retryTimes, floor inventory flow, floorTemplateMultipleRangeStr: {}", floorTemplateMultipleRangeStr);
+            }
+        }
+        return templateMultipleRange;
+    }
+
+    /// 默认实现 /////////////
+    public boolean orNotHitRewardBlank(GamePlayDo gamePlay, CommonInventoryControlConfig inventoryControlConfig) {
+        if (Objects.equals(BetTypeEnum.BUY_BET, gamePlay.getBetType())) {
+            return false;
+        }
+        // 正常投注轮空率
+        BigDecimal normalBetRewardBlankProbability = inventoryControlConfig.getRewardConfig().getRewardBlankProbability().get(gamePlay.getBetType());
+        int randomVal = randomService.randomInt(CONST_1, CONST_10000);
+        return normalBetRewardBlankProbability.multiply(new BigDecimal(CONST_10000)).longValue() <= randomVal;
+    }
+
+    public boolean judgeWinRet(BigDecimal winProbability) {
+        if (BigDecimal.ZERO.equals(winProbability)) {
+            return false;
+        } else if (BigDecimal.ONE.equals(winProbability)) {
+            return true;
+        } else {
+            int randomVal = randomService.randomInt(CONST_1, CONST_10000);
+            return winProbability.multiply(new BigDecimal(CONST_10000)).longValue() <= randomVal;
+        }
+    }
+
+    public boolean deductInventory(BetDo betDo, UserInfo userInfo, T templateEsDo) {
+        if (betDo.getBetInventoryControl().getRetryTimes() > MAX_RETRY_TIMES) {
+            return true;
+        } else {
+            long deductInventoryVal = new BigDecimal(templateEsDo.getMultiple()).multiply(new BigDecimal(betDo.getBetAmount())).longValue();
+            return inventoryService.deductInventory(betDo.getGameType(),
+                    userInfo.getPId(),
+                    userInfo.getChannelId(),
+                    betDo.getBetInventoryControl().getInventoryType(),
+                    deductInventoryVal);
+        }
+    }
+}
