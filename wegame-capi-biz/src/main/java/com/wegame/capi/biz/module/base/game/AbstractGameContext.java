@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
@@ -46,13 +47,13 @@ public abstract class AbstractGameContext<R> {
      */
     public abstract GameInfoDo gameInfo();
 
-    public List<R> play(GamePlayDo gamePlayDo) {
+    public List<R> play(BetDo betDo, GamePlayDo gamePlayDo) {
         AssertUtil.assertNotNull(gamePlayDo, ErrorCode.ERR_INTER);
         String strategyName = playStrategyNameMap().get(gamePlayDo.getGamePlayType());
         AssertUtil.assertStrNotEmpty(strategyName, ErrorCode.ERR_PARAM, "Not Support GamePlayType");
         Game<R> game = playStrategyMap().get(strategyName);
         AssertUtil.assertNotNull(game, ErrorCode.ERR_PARAM, "Not Support GamePlayType");
-        List<R> play = game.play(gamePlayDo);
+        List<R> play = game.play(betDo, gamePlayDo);
         // play结果验证
         this.playResultValidate(gamePlayDo);
         return play;

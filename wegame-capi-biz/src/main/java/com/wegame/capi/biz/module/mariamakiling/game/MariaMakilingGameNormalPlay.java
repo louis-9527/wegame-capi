@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -54,7 +55,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
     RandomService randomService;
 
     @Override
-    public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MariaMakilingGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = MARIA_MAKILING_GAME_INFO;
