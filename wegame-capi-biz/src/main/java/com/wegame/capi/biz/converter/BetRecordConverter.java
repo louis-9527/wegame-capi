@@ -67,6 +67,12 @@ public class BetRecordConverter {
                     .miniContributionAmount(po.getJackpot().getMiniContributionAmount())
                     .build());
         }
+        if (Objects.nonNull(po.getInventory())) {
+            betRecordDo.setInventory(BetRecordDo.Inventory.builder()
+                    .inventoryType(po.getInventory().getInventoryType())
+                    .inventoryContributionAmount(po.getInventory().getInventoryContributionAmount())
+                    .build());
+        }
         betRecordDo.setCreator(po.getCreator());
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
@@ -110,6 +116,12 @@ public class BetRecordConverter {
                     .majorContributionAmount(betRecordDo.getJackpot().getMajorContributionAmount())
                     .minorContributionAmount(betRecordDo.getJackpot().getMinorContributionAmount())
                     .miniContributionAmount(betRecordDo.getJackpot().getMiniContributionAmount())
+                    .build());
+        }
+        if (Objects.nonNull(betRecordDo.getInventory())) {
+            po.setInventory(BetRecordPo.Inventory.builder()
+                    .inventoryType(betRecordDo.getInventory().getInventoryType())
+                    .inventoryContributionAmount(betRecordDo.getInventory().getInventoryContributionAmount())
                     .build());
         }
         if (OptEnum.ADD.equals(optEnum)) {

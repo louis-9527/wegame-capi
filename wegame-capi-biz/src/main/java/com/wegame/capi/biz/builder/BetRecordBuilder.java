@@ -45,6 +45,14 @@ public class BetRecordBuilder {
                     .campaignId(betDo.getCampaignId())
                     .build();
         }
+        BetRecordDo.Inventory inventory = null;
+        if (Objects.nonNull(betDo.getBetInventoryControl())) {
+            inventory = BetRecordDo.Inventory.builder()
+                    .inventoryType(Objects.nonNull(betDo.getBetInventoryControl().getInventoryType()) ?
+                            betDo.getBetInventoryControl().getInventoryType().getCode() : null)
+                    .inventoryContributionAmount(betDo.getBetInventoryControl().getInventoryContributionAmount())
+                    .build();
+        }
         return BetRecordDo.<T>builder()
                 .id(betRecordId)
                 .pId(userInfo.getPId())
@@ -61,14 +69,9 @@ public class BetRecordBuilder {
                 .payAmount(betDo.getPayAmount())
                 .payOutAmount(payOutAmount)
                 .reachMaxMultiple(reachMaxMultiple)
-                .inventoryType(Objects.nonNull(betDo.getBetInventoryControl()) && Objects.nonNull(betDo.getBetInventoryControl().getInventoryType())
-                        ? betDo.getBetInventoryControl().getInventoryType().getCode()
-                        : null)
-                .inventoryContributeAmount(Objects.nonNull(betDo.getBetInventoryControl())
-                        ? betDo.getBetInventoryControl().getInventoryContributeAmount()
-                        : null)
                 .status(BetStatusEnum.ING.getCode())
                 .jackpot(jackpot)
+                .inventory(inventory)
                 .extendInfo(extendInfo)
                 .creator(operator.getName())
                 .updater(operator.getName())

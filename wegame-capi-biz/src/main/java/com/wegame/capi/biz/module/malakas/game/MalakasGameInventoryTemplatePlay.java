@@ -64,7 +64,7 @@ public class MalakasGameInventoryTemplatePlay extends AbstractInventoryTemplateP
         AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
         betDo.getBetInventoryControl().setInventoryType(matchInventory.getKey());
         long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(betAmount)).longValue();
-        betDo.getBetInventoryControl().setInventoryContributeAmount(inventoryContributeAmount);
+        betDo.getBetInventoryControl().setInventoryContributionAmount(inventoryContributeAmount);
         log.info("match inventory info: betAmount: {}, inventoryType: {}, inventoryContributeAmount: {}", betAmount, matchInventory.getKey().getCode(), inventoryContributeAmount);
         Map<InventoryTypeEnum, Long> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), userInfo.getPId(), userInfo.getChannelId());
         Long inventoryValue = Objects.isNull(inventorySnapshot.get(matchInventory.getKey())) ?

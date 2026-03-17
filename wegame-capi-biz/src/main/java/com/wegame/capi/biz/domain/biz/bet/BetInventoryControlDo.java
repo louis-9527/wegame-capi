@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.Map;
 
 @Data
 @ToString
@@ -26,7 +25,7 @@ public class BetInventoryControlDo implements Serializable {
     /**
      * 库存贡献金额
      */
-    private Long inventoryContributeAmount;
+    private Long inventoryContributionAmount;
 
     public void addRetryTimes() {
         this.retryTimes = this.retryTimes + 1;

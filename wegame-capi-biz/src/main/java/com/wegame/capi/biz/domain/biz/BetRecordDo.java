@@ -90,14 +90,6 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Boolean reachMaxMultiple;
     /**
-     * 库存类型
-     */
-    private Integer inventoryType;
-    /**
-     * 库存类型
-     */
-    private Long inventoryContributeAmount;
-    /**
      * 投注状态 0进行中 1已完结 2无效
      */
     private Integer status;
@@ -109,6 +101,10 @@ public class BetRecordDo<T> implements Serializable {
      * jackpot
      */
     private Jackpot jackpot;
+    /**
+     * 库存信息
+     */
+    private Inventory inventory;
     /**
      * 扩展信息
      */
@@ -185,6 +181,23 @@ public class BetRecordDo<T> implements Serializable {
          * mini奖池贡献金额
          */
         private Long miniContributionAmount;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class Inventory implements Serializable {
+        /**
+         * 库存类型
+         */
+        private Integer inventoryType;
+        /**
+         * 库存贡献金额
+         */
+        private Long inventoryContributionAmount;
     }
 }
 
