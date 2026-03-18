@@ -42,11 +42,19 @@ public class InventoryRangeDo implements Serializable {
     /**
      * 库存范围：左开右闭
      */
-    public boolean inRange(Long currentInventory) {
-        if (start == end) {
-            return start == currentInventory;
+    public boolean inRange(long currentInventory) {
+        if (currentInventory != 0L) {
+            if (start == end) {
+                return start == currentInventory;
+            } else {
+                return start < currentInventory && currentInventory <= end;
+            }
         } else {
-            return start < currentInventory && currentInventory <= end;
+            if (start == end) {
+                return start == currentInventory;
+            } else {
+                return start <= currentInventory && currentInventory <= end;
+            }
         }
     }
 }
