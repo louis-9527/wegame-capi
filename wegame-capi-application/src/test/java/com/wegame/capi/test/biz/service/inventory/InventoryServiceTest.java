@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @Slf4j
@@ -23,8 +24,8 @@ public class InventoryServiceTest extends BaseTest {
 
     private static final UserInfo userInfo = UserInfo.builder()
             .id("10000")
-            .pId("30")
-            .channelId("3050")
+            .pId("test")
+            .channelId("test")
             .playerId("123456")
             .playerName("123456")
             .userName("system")
@@ -39,7 +40,44 @@ public class InventoryServiceTest extends BaseTest {
     public void test_getInventory() {
         UserInfoContext.setUserInfo(userInfo);
         Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId());
-        log.info("getInventory ret: {}", FastJsonUtils.toJSONString(map));
+        log.info("test_getInventory ret: {}", FastJsonUtils.toJSONString(map));
+    }
+
+    @Test
+    public void test_increaseInventory() {
+        UserInfoContext.setUserInfo(userInfo);
+        Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
+            inventoryService.increaseInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId(), item, 99);
+            Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId());
+            log.info("test_getInventory ret: {}", FastJsonUtils.toJSONString(map));
+        });
+    }
+
+    @Test
+    public void test_deductInventory() {
+        UserInfoContext.setUserInfo(userInfo);
+        Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
+            inventoryService.deductInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId(), item, 9);
+            Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId());
+            log.info("test_deductInventory ret: {}", FastJsonUtils.toJSONString(map));
+        });
+    }
+
+    @Test
+    public void test_all() {
+        UserInfoContext.setUserInfo(userInfo);
+        Map<InventoryTypeEnum, Long> map2 = inventoryService.getInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId());
+        log.info("test_all ret: {}", map2);
+        Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
+            inventoryService.increaseInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId(), item, 99);
+            Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId());
+            log.info("test_all ret: {}", map);
+        });
+        Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
+            inventoryService.deductInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId(), item, 7);
+            Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId());
+            log.info("test_all ret: {}", FastJsonUtils.toJSONString(map));
+        });
     }
 
 }
