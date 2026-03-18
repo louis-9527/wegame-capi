@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.BetAmountRangeDo;
 import com.wegame.capi.common.domain.InventoryRangeDo;
@@ -70,10 +71,21 @@ public class CommonInventoryControlConfig implements Serializable {
     @AllArgsConstructor
     public static class InventoryConfig implements Serializable {
         /**
+         * 库存池子Map
+         * TreeMap<pid，<channelId，poolName>>
+         */
+        private TreeMap<String, TreeMap<String, String>> inventoryPoolMap;
+        /**
          * 库存配置Map
          * TreeMap<名称，<左开赔率_右闭赔率，权重>>
          */
         private TreeMap<InventoryTypeEnum, InventoryConfigItem> inventoryConfigMap;
+
+        public String getInventoryPoolName(String pid, String channelId) {
+            TreeMap<String, String> map = inventoryPoolMap.get(pid);
+            AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+            return map.get(channelId);
+        }
 
         public Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> match(Long betAmount) {
             return inventoryConfigMap.entrySet().stream().filter(item -> {
@@ -124,7 +136,7 @@ public class CommonInventoryControlConfig implements Serializable {
             });
         }
 
-        public InventoryControlConfigItem matchControlConfig(Long currentInventoryVal) {
+        public InventoryControlConfigItem matchControlConfig(long currentInventoryVal) {
             return controlConfig.entrySet().stream().filter(item -> {
                 InventoryRangeDo inventoryRange = InventoryRangeDo.build(item.getKey());
                 return inventoryRange.inRange(currentInventoryVal);

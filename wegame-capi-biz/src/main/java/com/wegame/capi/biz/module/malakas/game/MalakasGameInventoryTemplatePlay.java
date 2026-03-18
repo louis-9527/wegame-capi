@@ -20,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -74,5 +77,15 @@ public class MalakasGameInventoryTemplatePlay extends AbstractGameInventoryTempl
         //            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         //        }
         //        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
+    }
+
+    @Override
+    public long getTotalRewardAmount(List<MalakasGameRecordDo> gameRecordList) {
+        return Optional.ofNullable(gameRecordList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
     }
 }

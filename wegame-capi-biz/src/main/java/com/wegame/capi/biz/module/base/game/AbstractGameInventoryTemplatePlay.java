@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -48,6 +49,8 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
 
     public abstract T getTemplateByRange(BetDo betDo, GamePlayDo gamePlayDo, TemplateMultipleRange templateMultipleRange);
 
+    public abstract long getTotalRewardAmount(List<R> gameRecordList);
+
     @Override
     public T getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -65,21 +68,22 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 .inventoryContributionAmount(inventoryContributeAmount)
                 .build());
         log.info("match inventory info: betAmount: {}, inventoryType: {}, inventoryContributeAmount: {}", betAmount, matchInventory.getKey().getCode(), inventoryContributeAmount);
-        Map<InventoryTypeEnum, Long> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), userInfo.getPId(), userInfo.getChannelId());
-        Long currentInventoryValue = Objects.isNull(inventorySnapshot.get(matchInventory.getKey())) ?
+        Map<InventoryTypeEnum, Long> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), getPoolName(userInfo));
+        long currentInventoryValue = Objects.nonNull(inventorySnapshot.get(matchInventory.getKey())) ?
                 inventorySnapshot.get(matchInventory.getKey()) : 0L;
         CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(currentInventoryValue);
         AssertUtil.assertNotNull(inventoryControlConfigItem, ErrorCode.ERR_INTER);
         T templateEsDo;
         TemplateMultipleRange templateMultipleRange;
-        boolean orNotRewardBlank = orNotHitRewardBlank(gamePlayDo, inventoryControlConfig);
-        if (orNotRewardBlank) {
+        boolean isHitRewardBlank = isHitRewardBlank(gamePlayDo, inventoryControlConfig);
+        if (isHitRewardBlank) {
             // 命中轮空：则不中奖
             templateMultipleRange = TemplateMultipleRange.build(NO_REWARD_TEMPLATE_MULTIPLE_RANGE);
             templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
         } else {
             // 未命中轮空：中奖
             //// 循环处理
+            long totalRewardAmount;
             do {
                 betDo.getBetInventoryControl().addRetryTimes();
                 boolean winRet = judgeWinRet(inventoryControlConfigItem.getWinProbability());
@@ -87,7 +91,9 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 TreeMap<String, Integer> treeMap = inventoryControlConfig.getRewardConfig().getRewardConfigMap().get(rewardConfigId);
                 templateMultipleRange = getTemplateMultipleRange(treeMap);
                 templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
-            } while (!deductInventory(betDo, userInfo, templateEsDo));
+                List<R> gameRecordList = templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
+                totalRewardAmount = getTotalRewardAmount(gameRecordList);
+            } while (!deductInventory(betDo, userInfo, templateEsDo, totalRewardAmount));
             ////
             if (betDo.getBetInventoryControl().getRetryTimes() > MAX_RETRY_TIMES) {
                 // 扣减次数大于最大重试次数，走兜底逻辑
@@ -104,14 +110,15 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
     }
 
     /// 默认实现 /////////////
-    public boolean orNotHitRewardBlank(GamePlayDo gamePlay, CommonInventoryControlConfig inventoryControlConfig) {
+    public boolean isHitRewardBlank(GamePlayDo gamePlay, CommonInventoryControlConfig inventoryControlConfig) {
         if (Objects.equals(BetTypeEnum.BUY_BET, gamePlay.getBetType())) {
             return false;
         }
         // 正常投注轮空率
         BigDecimal normalBetRewardBlankProbability = inventoryControlConfig.getRewardConfig().getRewardBlankProbability().get(gamePlay.getBetType());
+        AssertUtil.assertNotNull(normalBetRewardBlankProbability, ErrorCode.ERR_INTER);
         int randomVal = randomService.randomInt(CONST_1, CONST_10000);
-        return normalBetRewardBlankProbability.multiply(new BigDecimal(CONST_10000)).longValue() <= randomVal;
+        return randomVal <= normalBetRewardBlankProbability.multiply(new BigDecimal(CONST_10000)).longValue();
     }
 
     public boolean judgeWinRet(BigDecimal winProbability) {
@@ -125,16 +132,22 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         }
     }
 
-    public boolean deductInventory(BetDo betDo, UserInfo userInfo, T templateEsDo) {
+    public boolean deductInventory(BetDo betDo, UserInfo userInfo, T templateEsDo, Long totalRewardAmount) {
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(totalRewardAmount, ErrorCode.ERR_INTER);
         if (betDo.getBetInventoryControl().getRetryTimes() > MAX_RETRY_TIMES) {
             return true;
         } else {
-            long deductInventoryVal = new BigDecimal(templateEsDo.getMultiple()).multiply(new BigDecimal(betDo.getBetAmount())).longValue();
+            // long deductInventoryVal = new BigDecimal(templateEsDo.getMultiple()).multiply(new BigDecimal(betDo.getBetAmount())).longValue();
             return inventoryService.deductInventory(betDo.getGameType(),
-                    userInfo.getPId(),
-                    userInfo.getChannelId(),
+                    getPoolName(userInfo),
                     betDo.getBetInventoryControl().getInventoryType(),
-                    deductInventoryVal);
+                    totalRewardAmount);
         }
+    }
+
+    private String getPoolName(UserInfo userInfo) {
+        return inventoryControlConfig().getInventoryConfig().getInventoryPoolName(userInfo.getPId(), userInfo.getChannelId());
     }
 }

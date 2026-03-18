@@ -179,8 +179,6 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         // 构建时还原
         malakasSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, malakasSymbolWheel, rewardResult, lastGameFlag);
-
-
     }
 
     private MalakasGameRecordDo buildGameRecord(Long id,

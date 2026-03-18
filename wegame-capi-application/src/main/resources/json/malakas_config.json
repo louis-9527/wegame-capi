@@ -443,6 +443,18 @@
             }
         },
         "inventoryConfig": {
+            "inventoryPoolMap": {
+                "50": {
+                    "1050": "pool1",
+                    "1087": "pool1"
+                },
+                "55": {
+                    "1051": "pool2"
+                },
+                "777": {
+                    "9004": "pool3"
+                }
+            },
             "inventoryConfigMap": {
                 "JUNIOR": {
                     "betAmountRange": "0.3_3",

@@ -46,20 +46,21 @@ public class InventoryService {
             "end";
 
     private static final List<GameTypeEnum> SUPPORT_GAME_TYPE_LIST = Arrays.asList(GameTypeEnum.MALAKAS);
-    // wegame:capi:inventory:{gameId}:{pid}:{channelId}
-    private static final String INVENTORY_KEY_FORMAT = "wegame:capi:inventory:%s:%s:%s";
+    // wegame:capi:inventory:{gameId}:{poolName}
+    private static final String INVENTORY_KEY_FORMAT = "wegame:capi:inventory:%s:%s";
     // 初始化RedisScript对象（指定返回值类型为Long）
     private static final RedisScript<Long> DECR_SCRIPT = new DefaultRedisScript<>(DEDUCT_INVENTORY_LUA_SCRIPT, Long.class);
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
-    public boolean deductInventory(GameTypeEnum gameType, String pid, String channelId, InventoryTypeEnum inventoryType, long deductInventoryAmount) {
+    public boolean deductInventory(GameTypeEnum gameType, String poolName, InventoryTypeEnum inventoryType, long deductInventoryAmount) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
+        AssertUtil.assertStrNotEmpty(poolName, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(inventoryType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(deductInventoryAmount > 0, ErrorCode.ERR_INTER);
-        String key = key(gameType, pid, channelId);
+        String key = key(gameType, poolName);
         Integer filed = inventoryType.getCode();
         try {
             Long newInventory = redisTemplate.execute(DECR_SCRIPT, Collections.singletonList(key), filed, deductInventoryAmount);
@@ -80,12 +81,13 @@ public class InventoryService {
     }
 
     @Async(inventoryThreadPoolExecutor)
-    public void increaseInventory(GameTypeEnum gameType, String pid, String channelId, InventoryTypeEnum inventoryType, long increaseInventoryAmount) {
+    public void increaseInventory(GameTypeEnum gameType, String poolName, InventoryTypeEnum inventoryType, long increaseInventoryAmount) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
+        AssertUtil.assertStrNotEmpty(poolName, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(inventoryType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(increaseInventoryAmount > 0L, ErrorCode.ERR_INTER);
-        String key = key(gameType, pid, channelId);
+        String key = key(gameType, poolName);
         String field = String.valueOf(inventoryType.getCode());
         try {
             long newInventory = redisTemplate.opsForHash().increment(key, field, increaseInventoryAmount);
@@ -97,10 +99,11 @@ public class InventoryService {
         }
     }
 
-    public Map<InventoryTypeEnum, Long> getInventory(GameTypeEnum gameType, String pid, String channelId) {
+    public Map<InventoryTypeEnum, Long> getInventory(GameTypeEnum gameType, String poolName) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
-        String key = key(gameType, pid, channelId);
+        AssertUtil.assertStrNotEmpty(poolName, ErrorCode.ERR_INTER);
+        String key = key(gameType, poolName);
         try {
             Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
             log.info("inventory info after get: key: {}, inventory: {}", key, map);
@@ -115,7 +118,7 @@ public class InventoryService {
         }
     }
 
-    private String key(GameTypeEnum gameType, String pid, String channelId) {
-        return String.format(INVENTORY_KEY_FORMAT, gameType.getId(), pid, channelId);
+    private String key(GameTypeEnum gameType, String poolName) {
+        return String.format(INVENTORY_KEY_FORMAT, gameType.getId(), poolName);
     }
 }
