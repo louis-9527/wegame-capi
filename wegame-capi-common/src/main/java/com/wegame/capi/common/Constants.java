@@ -17,7 +17,7 @@ public class Constants {
     // 推送中大奖redis key
     public static final String WEGAME_REWARD_NOTIFY_KEY_FORMAT = "wegame:reward.notify:%s_%s_%s";
     /** 所有游戏通用延迟大奖通知内容模板：Player {playerId} {时间}\n₱{派奖金额} won at %sX */
-    public static final String DELAY_REWARD_NOTIFY_CONTENT_FORMAT = "Player %s %s\n₱%s won at {倍数}X";
+    public static final String DELAY_REWARD_NOTIFY_CONTENT_FORMAT = "Player %s %s\n₱%s won at %sX";
     /** 延迟大奖通知列表在 Redis 中的默认最大条数（子类可重写 getDelayRewardNotifyListSize 使用不同值） */
     public static final int DEFAULT_DELAY_REWARD_NOTIFY_LIST_SIZE = 10;
     /** 延迟大奖通知的默认倍数阈值 30X*/
