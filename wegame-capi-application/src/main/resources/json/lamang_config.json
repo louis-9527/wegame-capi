@@ -260,7 +260,7 @@
 			"BUY_BET": -1
 		},
 		"promotionTemplateMapping": {
-			"FREE_SPIN": "LAM_ANG_V3"
+			"FREE_SPIN": "LAM_ANG_FREE_SPIN_V1"
 		},
 		"abTemplateMapping": {
 			"A": "LAM_ANG",
@@ -325,7 +325,7 @@
 					"70_100": 5
 				}
 			},
-			"LAM_ANG_V3" : {
+			"LAM_ANG_FREE_SPIN_V1" : {
 				"mainGame": {
 					"0_0": 2810000,
 					"0_0.5": 364262,
