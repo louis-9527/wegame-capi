@@ -71,6 +71,7 @@ public class BetRecordConverter {
             betRecordDo.setInventory(BetRecordDo.Inventory.builder()
                     .inventoryType(po.getInventory().getInventoryType())
                     .inventoryContributionAmount(po.getInventory().getInventoryContributionAmount())
+                    .inventoryPoolName(po.getInventory().getInventoryPoolName())
                     .build());
         }
         betRecordDo.setCreator(po.getCreator());
@@ -122,6 +123,7 @@ public class BetRecordConverter {
             po.setInventory(BetRecordPo.Inventory.builder()
                     .inventoryType(betRecordDo.getInventory().getInventoryType())
                     .inventoryContributionAmount(betRecordDo.getInventory().getInventoryContributionAmount())
+                    .inventoryPoolName(betRecordDo.getInventory().getInventoryPoolName())
                     .build());
         }
         if (OptEnum.ADD.equals(optEnum)) {

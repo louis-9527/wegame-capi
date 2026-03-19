@@ -25,6 +25,10 @@ public class BetInventoryControlDo implements Serializable {
      */
     private InventoryTypeEnum inventoryType;
     /**
+     * 库存池名称
+     */
+    private String inventoryPoolName;
+    /**
      * 库存贡献金额
      */
     private Long inventoryContributionAmount;

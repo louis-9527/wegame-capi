@@ -195,6 +195,10 @@ public class BetRecordDo<T> implements Serializable {
          */
         private Integer inventoryType;
         /**
+         * 库存池名称
+         */
+        private String inventoryPoolName;
+        /**
          * 库存贡献金额
          */
         private Long inventoryContributionAmount;

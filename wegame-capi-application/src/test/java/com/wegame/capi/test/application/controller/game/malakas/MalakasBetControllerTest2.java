@@ -31,8 +31,8 @@ public class MalakasBetControllerTest2 extends BetControllerTest {
     public static void beforeTest() {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
-                .pId("30")
-                .channelId("3050")
+                .pId("50")
+                .channelId("1087")
                 .userName("system")
                 .build());
         OperatorContext.setOperator(Operator.builder()

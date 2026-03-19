@@ -50,6 +50,7 @@ public class BetRecordBuilder {
             inventory = BetRecordDo.Inventory.builder()
                     .inventoryType(Objects.nonNull(betDo.getBetInventoryControl().getInventoryType()) ?
                             betDo.getBetInventoryControl().getInventoryType().getCode() : null)
+                    .inventoryPoolName(betDo.getBetInventoryControl().getInventoryPoolName())
                     .inventoryContributionAmount(betDo.getBetInventoryControl().getInventoryContributionAmount())
                     .build();
         }

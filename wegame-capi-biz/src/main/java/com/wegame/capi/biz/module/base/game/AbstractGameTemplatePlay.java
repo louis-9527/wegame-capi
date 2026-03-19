@@ -27,7 +27,10 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
 
     public abstract TemplateGame<R, T> templateGame();
 
-    public abstract T getTemplate(BetDo betDo, GamePlayDo gamePlayDo);
+    public T getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
+        // do nothing, subClass override this method
+        return null;
+    }
 
     @Override
     public List<R> play(BetDo betDo, GamePlayDo gamePlayDo) {

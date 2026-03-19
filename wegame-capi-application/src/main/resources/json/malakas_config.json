@@ -403,7 +403,7 @@
         "enable": true,
         "rewardConfig": {
             "rewardBlankProbability": {
-                "NORMAL_BET": 0.7
+                "NORMAL_BET": 0.001
             },
             "rewardFloorMultiple": {
                 "NORMAL_BET": "0_1",

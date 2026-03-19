@@ -123,7 +123,9 @@ public class CommonInventoryControlConfig implements Serializable {
             Assert.isTrue(inventoryInputRate.compareTo(BigDecimal.ONE) <= 0, "inventoryInputRate must <= 1");
             int actualScale = inventoryInputRate.stripTrailingZeros().scale();
             // 库存入库率最大支持四位小数
-            Assert.isTrue(actualScale >= 0 && actualScale <= 4, "inventoryInputRate Scale mulst <= 4");
+            Assert.isTrue(actualScale >= 0 && actualScale <= 3, "inventoryInputRate Scale mulst <= 4");
+            Assert.isTrue(inventoryInputRate.compareTo(new BigDecimal(0.9)) >= 0
+                    && inventoryInputRate.compareTo(new BigDecimal(1)) <= 0, "inventoryInputRate must in range [0.9, 1]");
             Assert.isTrue(MapUtils.isNotEmpty(controlConfig), "controlConfig is empty");
             controlConfig.entrySet().forEach(item -> {
                 String inventoryRangeStr = item.getKey();

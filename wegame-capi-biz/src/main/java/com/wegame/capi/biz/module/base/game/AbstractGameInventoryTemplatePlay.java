@@ -52,7 +52,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
     public abstract long getTotalRewardAmount(List<R> gameRecordList);
 
     @Override
-    public T getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
+    public List<R> play(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 匹配库存控制级别
@@ -62,13 +62,14 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
         long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(betAmount)).longValue();
         // 设置-投注上下文（库存控制）
+        String inventoryPoolName = getInventoryPoolName(userInfo);
         betDo.setBetInventoryControl(BetInventoryControlDo.builder()
                 .retryTimes(DEFAULT_RETRY_TIMES)
                 .inventoryType(matchInventory.getKey())
                 .inventoryContributionAmount(inventoryContributeAmount)
                 .build());
         log.info("match inventory info: betAmount: {}, inventoryType: {}, inventoryContributeAmount: {}", betAmount, matchInventory.getKey().getCode(), inventoryContributeAmount);
-        Map<InventoryTypeEnum, Long> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), getPoolName(userInfo));
+        Map<InventoryTypeEnum, Long> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), getInventoryPoolName(userInfo));
         long currentInventoryValue = Objects.nonNull(inventorySnapshot.get(matchInventory.getKey())) ?
                 inventorySnapshot.get(matchInventory.getKey()) : 0L;
         CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(currentInventoryValue);
@@ -80,8 +81,11 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
             // 命中轮空：则不中奖
             templateMultipleRange = TemplateMultipleRange.build(NO_REWARD_TEMPLATE_MULTIPLE_RANGE);
             templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
+            gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
+            return templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
         } else {
             // 未命中轮空：中奖
+            List<R> gameRecordList;
             //// 循环处理
             long totalRewardAmount;
             do {
@@ -91,7 +95,8 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 TreeMap<String, Integer> treeMap = inventoryControlConfig.getRewardConfig().getRewardConfigMap().get(rewardConfigId);
                 templateMultipleRange = getTemplateMultipleRange(treeMap);
                 templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
-                List<R> gameRecordList = templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
+                gameRecordList = templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
+                gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
                 totalRewardAmount = getTotalRewardAmount(gameRecordList);
             } while (!deductInventory(betDo, userInfo, templateEsDo, totalRewardAmount));
             ////
@@ -102,11 +107,11 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 templateMultipleRange = TemplateMultipleRange.build(floorTemplateMultipleRangeStr);
                 templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
                 log.info("reach max retryTimes, floor inventory flow, floorTemplateMultipleRangeStr: {}", floorTemplateMultipleRangeStr);
+                return templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
+            } else {
+                return gameRecordList;
             }
         }
-        // 设置倍率范围到play上下文， 用于后续统一数据验证
-        gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
-        return templateEsDo;
     }
 
     /// 默认实现 /////////////
@@ -141,13 +146,13 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         } else {
             // long deductInventoryVal = new BigDecimal(templateEsDo.getMultiple()).multiply(new BigDecimal(betDo.getBetAmount())).longValue();
             return inventoryService.deductInventory(betDo.getGameType(),
-                    getPoolName(userInfo),
+                    betDo.getBetInventoryControl().getInventoryPoolName(),
                     betDo.getBetInventoryControl().getInventoryType(),
                     totalRewardAmount);
         }
     }
 
-    private String getPoolName(UserInfo userInfo) {
+    private String getInventoryPoolName(UserInfo userInfo) {
         return inventoryControlConfig().getInventoryConfig().getInventoryPoolName(userInfo.getPId(), userInfo.getChannelId());
     }
 }
