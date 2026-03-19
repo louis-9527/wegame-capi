@@ -274,6 +274,7 @@ public class LamangConfig extends GameBizConfig {
         private TreeMap<String, BigDecimal> proportionCommissionConfig;
     }
 
+    @Override
     public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
