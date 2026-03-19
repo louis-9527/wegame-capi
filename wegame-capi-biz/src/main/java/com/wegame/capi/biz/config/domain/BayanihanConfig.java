@@ -159,6 +159,7 @@ public class BayanihanConfig extends GameBizConfig{
         private Map<String, Integer> freeGame;
     }
 
+    @Override
     public void bizValidate() {
         this.oddsConfigValidate();
         this.probabilisticConfigValidate();
