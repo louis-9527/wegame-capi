@@ -13,12 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.inventoryThreadPoolExecutor;
 
 /**
  * 库存服务
@@ -80,7 +77,6 @@ public class InventoryService {
         }
     }
 
-    @Async(inventoryThreadPoolExecutor)
     public void increaseInventory(GameTypeEnum gameType, String poolName, InventoryTypeEnum inventoryType, long increaseInventoryAmount) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
