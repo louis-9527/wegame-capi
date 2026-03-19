@@ -170,6 +170,7 @@ public class DiwataMayariConfig extends GameBizConfig{
         }
     }
 
+    @Override
     public void bizValidate() {
         this.oddsConfigValidate();
         this.probabilisticConfigValidate();
