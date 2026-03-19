@@ -10,6 +10,7 @@ import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.BizInterfereConfig;
 import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bizinterfere.BizInterfereContextDo;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -68,7 +69,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
     private BizInterfereService bizInterfereService;
 
     @Override
-    public List<DiwataMayariGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<DiwataMayariGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         List<DiwataMayariGameRecordDo> ret = new ArrayList<>();
         List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
         // 获取首轮(batchId == 0 and index == 0)

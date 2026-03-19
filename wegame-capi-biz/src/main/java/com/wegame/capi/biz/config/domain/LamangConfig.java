@@ -3,6 +3,10 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -55,7 +59,7 @@ public class LamangConfig extends GameBizConfig {
     /**
      * 模板配置
      */
-    private TemplateRangeConfig templateRangeConfig;
+    private TemplateConfig templateConfig;
 
     @Data
     @SuperBuilder
@@ -66,6 +70,38 @@ public class LamangConfig extends GameBizConfig {
          * TreeMap<元素ID，<赔率类型，具体赔率>>
          */
         private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateConfig implements Serializable {
+
+        private static final long serialVersionUID = -4036721298176088906L;
+        /**
+         * 预热Map
+         */
+        private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
+
+        private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
+
+        private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfig;
+
+        public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
+            BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
+            AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
+            return multipleRange.getEnd().compareTo(endOdds) <= 0;
+        }
+
+        public TemplateRangeConfig getTemplateRangeConfig(AbTypeEnum abType) {
+            TemplateTypeEnum templateTypeEnum = abTemplateMapping.get(abType);
+            AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
+            return templateRangeConfig.get(templateTypeEnum);
+        }
+
     }
 
     @Data
@@ -167,12 +203,20 @@ public class LamangConfig extends GameBizConfig {
         @Setter
         private CommissionConfig buyCommissionConfig;
         /**
-         * 奖池中奖触发投注金额配置
+         * 奖池中奖触发投注金额配置 普通投注
          * TreeMap<满足条件最小投注金额(从大到小配置), TreeMap<奖池名称, 中奖概率>>
          * 为什么使用linkedHashMap？需要按照配置顺序进行赋值
          */
         @Getter
-        private LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig;
+        private LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerNormalBetAmountConfig;
+
+        /**
+         * 奖池中奖触发投注金额配置 购买投注
+         * TreeMap<满足条件最小投注金额(从大到小配置), TreeMap<奖池名称, 中奖概率>>
+         * 为什么使用linkedHashMap？需要按照配置顺序进行赋值
+         */
+        @Getter
+        private LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBuyBetAmountConfig;
         /**
          * jackpot保底金额配置
          * TreeMap<奖池名称, 保底金额>
@@ -188,15 +232,27 @@ public class LamangConfig extends GameBizConfig {
         @Setter
         private TreeMap<String, Long> reservedPoolGuaranteedAmount;
 
-        public void setJackpotTriggerBetAmountConfig(LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig) {
+        public void setJackpotTriggerNormalBetAmountConfig(LinkedHashMap<Long, TreeMap<String, BigDecimal>> configMap) {
             // 对数据进行排序
-            if (jackpotTriggerBetAmountConfig != null) {
+            if (configMap != null) {
                 LinkedHashMap<Long, TreeMap<String, BigDecimal>> sortedMap = new LinkedHashMap<>();
-                jackpotTriggerBetAmountConfig.entrySet()
+                configMap.entrySet()
                         .stream()
                         .sorted(Collections.reverseOrder(Map.Entry.comparingByKey()))
                         .forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));
-                this.jackpotTriggerBetAmountConfig = sortedMap;
+                this.jackpotTriggerNormalBetAmountConfig = sortedMap;
+            }
+        }
+
+        public void setJackpotTriggerBuyBetAmountConfig(LinkedHashMap<Long, TreeMap<String, BigDecimal>> configMap) {
+            // 对数据进行排序
+            if (configMap != null) {
+                LinkedHashMap<Long, TreeMap<String, BigDecimal>> sortedMap = new LinkedHashMap<>();
+                configMap.entrySet()
+                        .stream()
+                        .sorted(Collections.reverseOrder(Map.Entry.comparingByKey()))
+                        .forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));
+                this.jackpotTriggerBuyBetAmountConfig = sortedMap;
             }
         }
     }
@@ -218,6 +274,7 @@ public class LamangConfig extends GameBizConfig {
         private TreeMap<String, BigDecimal> proportionCommissionConfig;
     }
 
+    @Override
     public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
@@ -231,7 +288,8 @@ public class LamangConfig extends GameBizConfig {
         AssertUtil.assertNotNull(jackPotConfig, ErrorCode.ERR_PARAM, "jackPotConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.commonCommissionConfig, ErrorCode.ERR_PARAM, "commonCommissionConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.buyCommissionConfig, ErrorCode.ERR_PARAM, "buyCommissionConfig is null");
-        AssertUtil.assertNotNull(jackPotConfig.jackpotTriggerBetAmountConfig, ErrorCode.ERR_PARAM, "jackpotTriggerBetAmountConfig is null");
+        AssertUtil.assertNotNull(jackPotConfig.jackpotTriggerNormalBetAmountConfig, ErrorCode.ERR_PARAM, "jackpotTriggerNormalBetAmountConfig is null");
+        AssertUtil.assertNotNull(jackPotConfig.jackpotTriggerBuyBetAmountConfig, ErrorCode.ERR_PARAM, "jackpotTriggerBuyBetAmountConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.guaranteedAmount, ErrorCode.ERR_PARAM, "guaranteedAmount is null");
 
         this.commissionConfigValidate(jackPotConfig.commonCommissionConfig);
@@ -249,8 +307,15 @@ public class LamangConfig extends GameBizConfig {
     }
 
     private void jackpotTriggerBetAmountConfigValidate() {
-        LinkedHashMap<Long, TreeMap<String, BigDecimal>> config = jackPotConfig.jackpotTriggerBetAmountConfig;
-        config.values().forEach(item -> {
+        LinkedHashMap<Long, TreeMap<String, BigDecimal>> normalConfig = jackPotConfig.jackpotTriggerNormalBetAmountConfig;
+        normalConfig.values().forEach(item -> {
+            item.keySet().forEach(poolName -> {
+                AssertUtil.assertNotNull(poolName, ErrorCode.ERR_PARAM, "jackpotTriggerBetAmountConfig validate error,poolName " + poolName + " is not exist");
+            });
+        });
+
+        LinkedHashMap<Long, TreeMap<String, BigDecimal>> buyConfig = jackPotConfig.jackpotTriggerBuyBetAmountConfig;
+        buyConfig.values().forEach(item -> {
             item.keySet().forEach(poolName -> {
                 AssertUtil.assertNotNull(poolName, ErrorCode.ERR_PARAM, "jackpotTriggerBetAmountConfig validate error,poolName " + poolName + " is not exist");
             });

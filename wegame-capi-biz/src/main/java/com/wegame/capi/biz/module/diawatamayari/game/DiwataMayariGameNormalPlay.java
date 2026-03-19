@@ -8,6 +8,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -57,7 +58,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
     DiwataMayariRewardHandler diwataMayariRewardHandler;
 
     @Override
-    public List<DiwataMayariGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<DiwataMayariGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         List<DiwataMayariGameRecordDo> ret = new ArrayList<>();
         // 生成-游戏滚轮
         WheelDo<DiwataMayariSymbolDo> wheel;
