@@ -7,7 +7,6 @@ import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.BetInventoryControlDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;

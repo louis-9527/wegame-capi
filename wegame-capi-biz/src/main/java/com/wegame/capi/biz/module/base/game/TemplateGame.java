@@ -4,7 +4,6 @@ package com.wegame.capi.biz.module.base.game;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
-import com.wegame.capi.common.domain.TemplateMultipleRange;
 
 import java.util.List;
 
