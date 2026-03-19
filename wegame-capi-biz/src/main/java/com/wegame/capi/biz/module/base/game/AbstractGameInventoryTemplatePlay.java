@@ -98,7 +98,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
             return true;
         } else {
             int randomVal = randomService.randomInt(CONST_1, CONST_10000);
-            return winProbability.multiply(new BigDecimal(CONST_10000)).longValue() <= randomVal;
+            return randomVal <= winProbability.multiply(new BigDecimal(CONST_10000)).longValue();
         }
     }
 
