@@ -165,6 +165,7 @@ public class AtlantisConfig extends GameBizConfig implements Serializable {
         }
     }
 
+    @Override
     public void bizValidate() {
         rewardMaxMultipleValidate();
         freeWheelTimesConfigValidate();
