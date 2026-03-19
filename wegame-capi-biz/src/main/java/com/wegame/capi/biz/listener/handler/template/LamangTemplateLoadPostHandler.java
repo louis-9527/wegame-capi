@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import static com.wegame.capi.common.Constants.LAMANG_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
@@ -107,7 +108,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                 log.info("loadLocalCache start, templateType : {}, betType: {}, size: {}",templateType.getBetRecordTemplateName(), betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    List<LamangBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.LAM_ANG, idList, LamangBetRecordTemplateEsDo.class);
+                    List<LamangBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, LamangBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
