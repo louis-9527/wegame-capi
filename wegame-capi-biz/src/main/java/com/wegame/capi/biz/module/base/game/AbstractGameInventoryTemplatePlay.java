@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import static com.wegame.capi.biz.domain.biz.bet.BetInventoryControlDo.DEFAULT_RETRY_TIMES;
 import static com.wegame.capi.common.Constants.CONST_1;
 import static com.wegame.capi.common.Constants.CONST_10000;
 
@@ -35,6 +34,7 @@ import static com.wegame.capi.common.Constants.CONST_10000;
 public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter, T extends BetRecordTemplateEsDo> extends AbstractGameTemplatePlay<R, T> {
 
     public static final int MAX_RETRY_TIMES = 2;
+    public static final int DEFAULT_RETRY_TIMES = -1;
     public static final String NO_REWARD_TEMPLATE_MULTIPLE_RANGE = "0_0";
     @Autowired
     RandomService randomService;
@@ -60,26 +60,21 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> matchInventory = inventoryControlConfig.getInventoryConfig().match(betAmount);
         AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
         long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(betAmount)).longValue();
+        String inventoryPoolName = getInventoryPoolName(userInfo);
         // 设置-投注上下文（库存控制）
         betDo.setBetInventoryControl(BetInventoryControlDo.builder()
-                .retryTimes(DEFAULT_RETRY_TIMES)
                 .inventoryType(matchInventory.getKey())
-                .inventoryPoolName(getInventoryPoolName(userInfo))
+                .inventoryPoolName(inventoryPoolName)
                 .inventoryContributionAmount(inventoryContributeAmount)
                 .build());
-        log.info("matchInventoryInfo: betAmount: {}, inventoryType: {}, poolName: {}, contributeAmount: {}", betAmount, matchInventory.getKey().getCode(), betDo.getBetInventoryControl().getInventoryPoolName(), inventoryContributeAmount);
-        // 轮空-判断
-        boolean isHitRewardBlank = isHitRewardBlank(gamePlayDo, inventoryControlConfig);
-        if (isHitRewardBlank) {
-            // 命中轮空：不中奖
+        log.info("matchInventoryInfo: betAmount: {}, inventoryType: {}, poolName: {}, contributeAmount: {}", betAmount, matchInventory.getKey().getCode(), inventoryPoolName, inventoryContributeAmount);
+        if (isHitRewardBlank(gamePlayDo, inventoryControlConfig)) {
             return handleOnHitRewardBlank(betDo, gamePlayDo);
         } else {
-            // 未命中轮空：中奖
             return handleOnHitReward(userInfo, betDo, gamePlayDo, inventoryControlConfig, matchInventory);
         }
     }
 
-    /// 默认实现 /////////////
     public boolean isHitRewardBlank(GamePlayDo gamePlay, CommonInventoryControlConfig inventoryControlConfig) {
         if (Objects.equals(BetTypeEnum.BUY_BET, gamePlay.getBetType())) {
             return false;
@@ -98,10 +93,9 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
             return true;
         } else {
             int randomVal = randomService.randomInt(CONST_1, CONST_10000);
-            return winProbability.multiply(new BigDecimal(CONST_10000)).longValue() <= randomVal;
+            return randomVal <= winProbability.multiply(new BigDecimal(CONST_10000)).longValue();
         }
     }
-
 
     private String getInventoryPoolName(UserInfo userInfo) {
         return inventoryControlConfig().getInventoryConfig().getInventoryPoolName(userInfo.getPId(), userInfo.getChannelId());
@@ -126,11 +120,12 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(currentInventoryValue);
         AssertUtil.assertNotNull(inventoryControlConfigItem, ErrorCode.ERR_INTER);
         List<R> gameRecordList;
-        boolean deductInventoryRet = false;
+        boolean deductInventoryRet;
+        int retryTimes = DEFAULT_RETRY_TIMES;
         //// 循环处理: 循环退出条件（扣减成功 || 达到最大重试次数）
         do {
-            betDo.getBetInventoryControl().addRetryTimes();
-            log.info("doWhile, betRecordId: {}, retryTimes: {}", gamePlayDo.getBetRecordId(), betDo.getBetInventoryControl().getRetryTimes());
+            retryTimes ++;
+            log.info("doWhile, betRecordId: {}, retryTimes: {}", gamePlayDo.getBetRecordId(), retryTimes);
             boolean winRet = judgeWinRet(inventoryControlConfigItem.getWinProbability());
             String rewardConfigId = inventoryControlConfigItem.getRewardConfigId(gamePlayDo.getBetType(), winRet);
             TreeMap<String, Integer> treeMap = inventoryControlConfig.getRewardConfig().getRewardConfigMap().get(rewardConfigId);
@@ -143,7 +138,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 // 扣减成功，退出循环
                 break;
             }
-        } while (betDo.getBetInventoryControl().getRetryTimes() < MAX_RETRY_TIMES);
+        } while (retryTimes < MAX_RETRY_TIMES);
         if (deductInventoryRet) {
             // 扣减成功，直接返回结果
             return gameRecordList;
