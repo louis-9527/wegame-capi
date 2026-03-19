@@ -36,14 +36,13 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
 
     public static final int MAX_RETRY_TIMES = 2;
     public static final String NO_REWARD_TEMPLATE_MULTIPLE_RANGE = "0_0";
-
     @Autowired
     RandomService randomService;
     @Autowired
     InventoryService inventoryService;
 
     /**
-     * 统一库存控制配置
+     * 通用库存控制配置
      */
     public abstract CommonInventoryControlConfig inventoryControlConfig();
 
@@ -93,9 +92,9 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
     }
 
     public boolean judgeWinRet(BigDecimal winProbability) {
-        if (BigDecimal.ZERO.equals(winProbability)) {
+        if (BigDecimal.ZERO.compareTo(winProbability) == 0) {
             return false;
-        } else if (BigDecimal.ONE.equals(winProbability)) {
+        } else if (BigDecimal.ONE.compareTo(winProbability) == 0) {
             return true;
         } else {
             int randomVal = randomService.randomInt(CONST_1, CONST_10000);
@@ -103,19 +102,6 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         }
     }
 
-    public boolean deductInventory(BetDo betDo, UserInfo userInfo, Long totalRewardAmount) {
-        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        AssertUtil.assertNotNull(totalRewardAmount, ErrorCode.ERR_INTER);
-        if (betDo.getBetInventoryControl().getRetryTimes() > MAX_RETRY_TIMES) {
-            return true;
-        } else {
-            return inventoryService.deductInventory(betDo.getGameType(),
-                    betDo.getBetInventoryControl().getInventoryPoolName(),
-                    betDo.getBetInventoryControl().getInventoryType(),
-                    totalRewardAmount);
-        }
-    }
 
     private String getInventoryPoolName(UserInfo userInfo) {
         return inventoryControlConfig().getInventoryConfig().getInventoryPoolName(userInfo.getPId(), userInfo.getChannelId());
@@ -140,7 +126,8 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(currentInventoryValue);
         AssertUtil.assertNotNull(inventoryControlConfigItem, ErrorCode.ERR_INTER);
         List<R> gameRecordList;
-        //// 循环处理
+        boolean deductInventoryRet = false;
+        //// 循环处理: 循环退出条件（扣减成功 || 达到最大重试次数）
         do {
             betDo.getBetInventoryControl().addRetryTimes();
             log.info("doWhile, betRecordId: {}, retryTimes: {}", gamePlayDo.getBetRecordId(), betDo.getBetInventoryControl().getRetryTimes());
@@ -151,12 +138,17 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
             gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
             T templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
             gameRecordList = templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
-        } while (!deductInventory(betDo, userInfo, getTotalRewardAmount(betDo, gamePlayDo, gameRecordList)));
-        if (betDo.getBetInventoryControl().getRetryTimes() <= MAX_RETRY_TIMES) {
-            // 扣减成功（扣减次数小于等于最大重试次数）
+            deductInventoryRet = deductInventory(betDo, userInfo, getTotalRewardAmount(betDo, gamePlayDo, gameRecordList));
+            if (deductInventoryRet) {
+                // 扣减成功，退出循环
+                break;
+            }
+        } while (betDo.getBetInventoryControl().getRetryTimes() < MAX_RETRY_TIMES);
+        if (deductInventoryRet) {
+            // 扣减成功，直接返回结果
             return gameRecordList;
         } else {
-            // 扣减失败（扣减次数大于最大重试次数）：走兜底中奖逻辑
+            // 扣减失败，走兜底中奖逻辑
             return handleOnFloorReward(betDo, gamePlayDo, inventoryControlConfig);
         }
     }
@@ -169,5 +161,15 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         T templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
         log.info("reach max retryTimes, floor inventory flow, floorTemplateMultipleRangeStr: {}", floorTemplateMultipleRangeStr);
         return templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
+    }
+
+    private boolean deductInventory(BetDo betDo, UserInfo userInfo, Long totalRewardAmount) {
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(totalRewardAmount, ErrorCode.ERR_INTER);
+        return inventoryService.deductInventory(betDo.getGameType(),
+                betDo.getBetInventoryControl().getInventoryPoolName(),
+                betDo.getBetInventoryControl().getInventoryType(),
+                totalRewardAmount);
     }
 }
