@@ -181,6 +181,7 @@ public class MariaMakilingConfig extends GameBizConfig implements Serializable {
         private Map<String, Integer> freeGame;
     }
 
+    @Override
     public void bizValidate() {
         rewardMaxMultipleValidate();
         oddsConfigValidate();
