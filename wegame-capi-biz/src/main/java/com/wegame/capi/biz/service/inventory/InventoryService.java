@@ -95,7 +95,11 @@ public class InventoryService {
         }
     }
 
-    public Map<InventoryTypeEnum, Long> getInventory(GameTypeEnum gameType, String poolName) {
+    /**
+     * 获取库存信息
+     * @retrun <inventoryType.code, val>
+     */
+    public Map<Object, Object> getInventory(GameTypeEnum gameType, String poolName) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(poolName, ErrorCode.ERR_INTER);
@@ -103,8 +107,10 @@ public class InventoryService {
         try {
             Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
             log.info("inventory info after get: key: {}, inventory: {}", key, map);
-            return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(map), new TypeReference<Map<InventoryTypeEnum, Long>>() {
-            });
+            return map;
+            //            Map<InventoryTypeEnum, Long> hashMap = new HashMap<>();
+            //            return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(map), new TypeReference<Map<InventoryTypeEnum, Long>>() {
+            //            });
         } catch (RedisTimeoutException e) {
             log.error("getInventory error, found RedisTimeoutException, key: {}", key, e);
             throw new BusinessException(ErrorCode.ERR_INTER);

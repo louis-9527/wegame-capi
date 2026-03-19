@@ -62,16 +62,16 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
         long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(betAmount)).longValue();
         // 设置-投注上下文（库存控制）
-        String inventoryPoolName = getInventoryPoolName(userInfo);
         betDo.setBetInventoryControl(BetInventoryControlDo.builder()
                 .retryTimes(DEFAULT_RETRY_TIMES)
                 .inventoryType(matchInventory.getKey())
+                .inventoryPoolName(getInventoryPoolName(userInfo))
                 .inventoryContributionAmount(inventoryContributeAmount)
                 .build());
         log.info("match inventory info: betAmount: {}, inventoryType: {}, inventoryContributeAmount: {}", betAmount, matchInventory.getKey().getCode(), inventoryContributeAmount);
-        Map<InventoryTypeEnum, Long> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), getInventoryPoolName(userInfo));
-        long currentInventoryValue = Objects.nonNull(inventorySnapshot.get(matchInventory.getKey())) ?
-                inventorySnapshot.get(matchInventory.getKey()) : 0L;
+        Map<Object, Object> inventorySnapshot = inventoryService.getInventory(betDo.getGameType(), getInventoryPoolName(userInfo));
+        long currentInventoryValue = (Long) (Objects.nonNull(inventorySnapshot.get(String.valueOf(matchInventory.getKey().getCode()))) ?
+                inventorySnapshot.get(String.valueOf(matchInventory.getKey().getCode())) : 0L);
         CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(currentInventoryValue);
         AssertUtil.assertNotNull(inventoryControlConfigItem, ErrorCode.ERR_INTER);
         T templateEsDo;

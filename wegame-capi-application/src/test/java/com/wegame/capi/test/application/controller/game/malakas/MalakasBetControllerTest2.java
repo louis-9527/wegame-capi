@@ -32,7 +32,7 @@ public class MalakasBetControllerTest2 extends BetControllerTest {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .pId("50")
-                .channelId("1087")
+                .channelId("1050")
                 .userName("system")
                 .build());
         OperatorContext.setOperator(Operator.builder()
@@ -75,20 +75,6 @@ public class MalakasBetControllerTest2 extends BetControllerTest {
         Assert.isTrue(commonResponse.getData().getResultDetail() instanceof MalakasBetResultDetailVo);
         MalakasBetResultDetailVo resultVo = (MalakasBetResultDetailVo) commonResponse.getData().getResultDetail();
         Assert.notNull(resultVo);
-        // 查询免费轮
-        String betRecordId = commonResponse.getData().getBetRecordId();
-        //        List<String> gameRecordIds = resultVo.getGameRecordIds();
-        //        for (String gameRecordId : CollectionUtils.emptyIfNull(gameRecordIds)) {
-        //            BetRequest queryBetRequest = buildQueryBuyBetRequest(gameRecordId, betRecordId);
-        //            CommonResponse<BetResultVo> res = betController.bet(queryBetRequest);
-        //            Assert.notNull(res);
-        //            Assert.notNull(res.getData());
-        //            Assert.isTrue(StringUtils.equals(res.getCode(), CommonResponse.SUC_CODE));
-        //            Assert.isTrue(StringUtils.isNotEmpty(res.getData().getBetRecordId()));
-        //            Assert.isTrue(commonResponse.getData().getResultDetail() instanceof MalakasBetResultDetailVo);
-        //            MalakasBetResultDetailVo vo = (MalakasBetResultDetailVo) commonResponse.getData().getResultDetail();
-        //            Assert.notNull(vo);
-        //        }
     }
 
     private BetRequest buildNormalBetRequest() {

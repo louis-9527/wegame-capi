@@ -43,7 +43,7 @@ public class InventoryServiceTest extends BaseTest {
     public void test_getInventory() {
         UserInfoContext.setUserInfo(userInfo);
         String poolName = getPoolName(userInfo);
-        Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
+        Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
         log.info("test_getInventory ret: {}", FastJsonUtils.toJSONString(map));
     }
 
@@ -52,8 +52,8 @@ public class InventoryServiceTest extends BaseTest {
         UserInfoContext.setUserInfo(userInfo);
         String poolName = getPoolName(userInfo);
         Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
-            inventoryService.increaseInventory(GameTypeEnum.MALAKAS, poolName, item, 99);
-            Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
+            inventoryService.increaseInventory(GameTypeEnum.MALAKAS, poolName, item, 1000000000);
+            Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
             log.info("test_getInventory ret: {}", FastJsonUtils.toJSONString(map));
         });
     }
@@ -64,7 +64,7 @@ public class InventoryServiceTest extends BaseTest {
         String poolName = getPoolName(userInfo);
         Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
             inventoryService.deductInventory(GameTypeEnum.MALAKAS, poolName, item, 9);
-            Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
+            Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
             log.info("test_deductInventory ret: {}", FastJsonUtils.toJSONString(map));
         });
     }
@@ -73,16 +73,16 @@ public class InventoryServiceTest extends BaseTest {
     public void test_all() {
         UserInfoContext.setUserInfo(userInfo);
         String poolName = getPoolName(userInfo);
-        Map<InventoryTypeEnum, Long> map2 = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
+        Map<Object, Object> map2 = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
         log.info("test_all ret: {}", map2);
         Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
-            inventoryService.increaseInventory(GameTypeEnum.MALAKAS, poolName, item, 99);
-            Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
+            inventoryService.increaseInventory(GameTypeEnum.MALAKAS, poolName, item, 1000000000);
+            Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
             log.info("test_all ret: {}", map);
         });
         Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
             inventoryService.deductInventory(GameTypeEnum.MALAKAS, poolName, item, 7);
-            Map<InventoryTypeEnum, Long> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
+            Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
             log.info("test_all ret: {}", FastJsonUtils.toJSONString(map));
         });
     }
