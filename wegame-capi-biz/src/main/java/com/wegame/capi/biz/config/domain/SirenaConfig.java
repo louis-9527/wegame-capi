@@ -141,6 +141,7 @@ public class SirenaConfig extends GameBizConfig implements Serializable {
     }
 
 
+    @Override
     public void bizValidate() {
         this.oddsConfigValidate();
         this.probabilisticConfigValidate();

@@ -118,6 +118,7 @@ public class KapreConfig extends GameBizConfig implements Serializable {
         private TreeMap<String, List<List<String>>> buy;
     }
 
+    @Override
     public void bizValidate() {
         rewardMaxMultipleValidate();
         freeWheelTimesValidate();
