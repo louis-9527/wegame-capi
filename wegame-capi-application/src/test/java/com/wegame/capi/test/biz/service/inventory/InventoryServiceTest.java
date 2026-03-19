@@ -1,6 +1,5 @@
 package com.wegame.capi.test.biz.service.inventory;
 
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.service.inventory.InventoryService;
@@ -15,7 +14,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
-import java.util.Map;
 
 @Slf4j
 public class InventoryServiceTest extends BaseTest {
@@ -43,8 +41,10 @@ public class InventoryServiceTest extends BaseTest {
     public void test_getInventory() {
         UserInfoContext.setUserInfo(userInfo);
         String poolName = getPoolName(userInfo);
-        Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
-        log.info("test_getInventory ret: {}", FastJsonUtils.toJSONString(map));
+        Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
+            Object val = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName, item);
+            log.info("test_getInventory val: {}", val);
+        });
     }
 
     @Test
@@ -53,8 +53,8 @@ public class InventoryServiceTest extends BaseTest {
         String poolName = getPoolName(userInfo);
         Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
             inventoryService.increaseInventory(GameTypeEnum.MALAKAS, poolName, item, 1000000000);
-            Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
-            log.info("test_getInventory ret: {}", FastJsonUtils.toJSONString(map));
+            Object val = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName, item);
+            log.info("test_increaseInventory ret: {}", val);
         });
     }
 
@@ -63,9 +63,9 @@ public class InventoryServiceTest extends BaseTest {
         UserInfoContext.setUserInfo(userInfo);
         String poolName = getPoolName(userInfo);
         Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
-            inventoryService.deductInventory(GameTypeEnum.MALAKAS, poolName, item, 9);
-            Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
-            log.info("test_deductInventory ret: {}", FastJsonUtils.toJSONString(map));
+            boolean ret = inventoryService.deductInventory(GameTypeEnum.MALAKAS, poolName, item, 7);
+            Object val = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName, item);
+            log.info("test_deductInventory ret: {}, val: {}", ret, val);
         });
     }
 
@@ -73,20 +73,22 @@ public class InventoryServiceTest extends BaseTest {
     public void test_all() {
         UserInfoContext.setUserInfo(userInfo);
         String poolName = getPoolName(userInfo);
-        Map<Object, Object> map2 = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
-        log.info("test_all ret: {}", map2);
+        Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
+            Object val = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName, item);
+            log.info("test_all val: {}", val);
+        });
         Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
             inventoryService.increaseInventory(GameTypeEnum.MALAKAS, poolName, item, 1000000000);
-            Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
-            log.info("test_all ret: {}", map);
+            Object val = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName, item);
+            log.info("test_all ret: {}", val);
         });
         Arrays.stream(InventoryTypeEnum.values()).forEach(item -> {
-            inventoryService.deductInventory(GameTypeEnum.MALAKAS, poolName, item, 7);
-            Map<Object, Object> map = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName);
-            log.info("test_all ret: {}", FastJsonUtils.toJSONString(map));
+            boolean ret = inventoryService.deductInventory(GameTypeEnum.MALAKAS, poolName, item, 7);
+            Object val = inventoryService.getInventory(GameTypeEnum.MALAKAS, poolName, item);
+            log.info("test_all ret: {}, val: {}", ret, val);
         });
     }
-    
+
     private String getPoolName(UserInfo userInfo) {
         return malakasConfig.getInventoryControlConfig().getInventoryConfig().getInventoryPoolName(userInfo.getPId(), userInfo.getChannelId());
     }

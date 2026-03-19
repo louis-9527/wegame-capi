@@ -1,10 +1,8 @@
 package com.wegame.capi.biz.service.inventory;
 
-import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.InventoryTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -95,22 +93,16 @@ public class InventoryService {
         }
     }
 
-    /**
-     * 获取库存信息
-     * @retrun <inventoryType.code, val>
-     */
-    public Map<Object, Object> getInventory(GameTypeEnum gameType, String poolName) {
+    public Object getInventory(GameTypeEnum gameType, String poolName, InventoryTypeEnum inventoryType) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(poolName, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(inventoryType, ErrorCode.ERR_INTER);
         String key = key(gameType, poolName);
         try {
-            Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
-            log.info("inventory info after get: key: {}, inventory: {}", key, map);
-            return map;
-            //            Map<InventoryTypeEnum, Long> hashMap = new HashMap<>();
-            //            return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(map), new TypeReference<Map<InventoryTypeEnum, Long>>() {
-            //            });
+            Object value = redisTemplate.opsForHash().get(key, String.valueOf(inventoryType.getCode()));
+            log.info("inventory info after get: key: {}, inventoryType: {}, inventoryAmount: {}", key, inventoryType.getCode(), value);
+            return value;
         } catch (RedisTimeoutException e) {
             log.error("getInventory error, found RedisTimeoutException, key: {}", key, e);
             throw new BusinessException(ErrorCode.ERR_INTER);
