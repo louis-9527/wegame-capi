@@ -202,6 +202,7 @@ public class MangkukulamConfig extends GameBizConfig{
         return mainGame;
     }
 
+    @Override
     public void bizValidate() {
         rewardMaxMultipleValidate();
         mgToFgScValidate();
