@@ -29,6 +29,7 @@ public class MalakasGameXxxTemplatePlay extends AbstractGameTemplatePlay<Malakas
 
     @Override
     public MalakasBetRecordTemplateEsDo getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
+        // todo 扩展 星卡投注，freeSpin 投注
         return null;
     }
 }

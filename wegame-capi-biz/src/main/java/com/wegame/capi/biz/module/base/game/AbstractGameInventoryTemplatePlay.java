@@ -49,7 +49,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
 
     public abstract T getTemplateByRange(BetDo betDo, GamePlayDo gamePlayDo, TemplateMultipleRange templateMultipleRange);
 
-    public abstract long getTotalRewardAmount(List<R> gameRecordList);
+    public abstract long getTotalRewardAmount(BetDo betDo, GamePlayDo gamePlayDo, List<R> gameRecordList);
 
     @Override
     public List<R> play(BetDo betDo, GamePlayDo gamePlayDo) {
@@ -151,7 +151,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
             gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
             T templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
             gameRecordList = templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
-        } while (!deductInventory(betDo, userInfo, getTotalRewardAmount(gameRecordList)));
+        } while (!deductInventory(betDo, userInfo, getTotalRewardAmount(betDo, gamePlayDo, gameRecordList)));
         if (betDo.getBetInventoryControl().getRetryTimes() <= MAX_RETRY_TIMES) {
             // 扣减成功（扣减次数小于等于最大重试次数）
             return gameRecordList;
