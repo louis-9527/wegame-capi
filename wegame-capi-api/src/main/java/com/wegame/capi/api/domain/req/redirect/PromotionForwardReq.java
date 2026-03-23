@@ -17,5 +17,8 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class PromotionForwardReq extends BaseReq {
     private static final long serialVersionUID = 1L;
+    /**
+     * 业务参数map
+     */
     private Map<String, Object> data;
 }
