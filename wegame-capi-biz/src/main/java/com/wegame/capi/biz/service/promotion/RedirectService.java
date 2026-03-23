@@ -1,13 +1,11 @@
 package com.wegame.capi.biz.service.promotion;
 
-import com.wegame.capi.api.domain.res.promotion.GetRedirectGameUrlRes;
 import com.wegame.capi.api.promotion.RedirectApi;
-import com.wegame.capi.biz.builder.req.GetRedirectGameUrlReqBuilder;
-import com.wegame.capi.biz.converter.promotion.GameRedirectGameUrlConverter;
-import com.wegame.capi.biz.domain.biz.promotion.GetRedirectGameUrlDo;
+import com.wegame.capi.biz.builder.req.PromotionForwardReqBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 
 /**
  * 游戏转发 service
@@ -18,8 +16,7 @@ public class RedirectService {
     @Autowired
     RedirectApi redirectApi;
 
-    public GetRedirectGameUrlDo getRedirectGameUrl(String gameId) {
-        GetRedirectGameUrlRes res = redirectApi.getRedirectGameUrl(GetRedirectGameUrlReqBuilder.buildRedirectReq(gameId));
-        return GameRedirectGameUrlConverter.resToDo(res);
+    public Map<String, Object> forward(String urlPath, Map<String, Object> data) {
+        return redirectApi.forward(urlPath, PromotionForwardReqBuilder.build(data));
     }
 }

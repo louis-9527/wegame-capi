@@ -10,6 +10,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Map;
 
 @Data
 @SuperBuilder
@@ -21,15 +22,14 @@ import java.io.Serializable;
 public class GreRedirectUrlRequest extends BaseRequest implements Validate, Serializable {
     private static final long serialVersionUID = 5858563029658968111L;
 
-    @ApiModelProperty(value = "action", required = true)
+    @ApiModelProperty(value = "对应第三方 URL 路径片段，如 getRedirectGameUrl", required = true)
     private String action;
-    @ApiModelProperty(value = "data", required = true)
-    private GreRedirectUrlDataRequest data;
+    @ApiModelProperty(value = "业务参数 JSON 对象，将与单钱包公共字段平铺后请求第三方", required = true)
+    private Map<String, Object> data;
 
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(action, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(data, ErrorCode.ERR_PARAM);
-//        AssertUtil.assertStrNotEmpty(data.getGameId(), ErrorCode.ERR_PARAM);
     }
 }
