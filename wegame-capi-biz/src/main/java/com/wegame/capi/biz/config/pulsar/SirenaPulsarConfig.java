@@ -3,12 +3,15 @@ package com.wegame.capi.biz.config.pulsar;
 import com.wegame.base.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -39,12 +42,38 @@ public class SirenaPulsarConfig {
     @Value("${pulsar.dynamic.sirena.bet_deadLetter_topic}")
     String betDeadLetterTopic;
 
+    @Value("${pulsar.dynamic.sirena.auth.issuer_url}")
+    String sirenaAuthIssuerUrl;
+    @Value("${pulsar.dynamic.sirena.auth.credentials_file_path}")
+    String sirenaAuthCredentialsFilePath;
+    @Value("${pulsar.dynamic.sirena.auth.audience}")
+    String sirenaAuthAudience;
+
     @Bean(name = sirenaPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient sirenaPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, sirenaPulsarClient);
-        return PulsarClient.builder()
+//        return PulsarClient.builder()
+//                .serviceUrl(url)
+//                .keepAliveInterval(30, TimeUnit.SECONDS)
+//                .build();
+        Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
+                new URL(sirenaAuthIssuerUrl),
+                Objects.requireNonNull(getClass().getResource(sirenaAuthCredentialsFilePath)),
+                sirenaAuthAudience
+        );
+        return  PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
+                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
+                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
+                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+                .listenerThreads(Runtime.getRuntime().availableProcessors())
+                .connectionsPerBroker(60)
+                .connectionMaxIdleSeconds(3000)
+                .enableTcpNoDelay(true)
+                // 10分钟打印一次统计信息
+                .statsInterval(600, TimeUnit.SECONDS)
+                .authentication(authentication)
                 .build();
     }
 
