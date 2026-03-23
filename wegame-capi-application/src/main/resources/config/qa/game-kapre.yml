@@ -11,8 +11,12 @@ spring:
 pulsar:
   dynamic:
     kapre:
-      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      url: pulsar+ssl://pc-74b7ea33.alicloud-apse1-qat-w7nwc.ali.snio.cloud:6651
       tenant: ${spring.application.name}_Kapre
       namespace: ${spring.application.env}
       bet_topic: Kapre_topic
       bet_deadLetter_topic: Kapre_deadLetter_topic
+      auth:
+        issuer_url: "https://auth.streamnative.cloud/"
+        credentials_file_path: /game_pulsar_privateKey.json
+        audience: "urn:sn:pulsar:o-cv5fz:egame-qat"
