@@ -53,32 +53,4 @@ public class BeanFlatReadableUtil {
         // 6. 返回最终的扁平Map（仅展平指定层，内层嵌套完整保留）
         return originalBeanMap;
     }
-
-    // 测试方法（高可读性，步骤清晰）
-    public static void main(String[] args) {
-        // ========== 1. 构造多层嵌套的测试对象 ==========
-        // 内层嵌套Map（要保留，不展平）
-        Map<String, Object> innerNestedMap = new HashMap<>();
-        innerNestedMap.put("subKey1", "subValue1");
-        innerNestedMap.put("subKey2", 12345);
-
-        // 要展平的data层Map（仅展平这一层）
-        Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("gameId", "G7890");
-        dataMap.put("innerNestedMap", innerNestedMap); // 内层嵌套保留
-        dataMap.put("timestamp", 1711888888888L);
-
-        // 构造核心Bean对象
-        PromotionForwardReq req = new PromotionForwardReq();
-        req.setPId("P123456");
-        req.setPlayerName("test_player_001");
-        req.setData(dataMap);
-
-        // ========== 2. 调用高可读性的展平方法 ==========
-        Map<String, Object> flatMap = flatBeanOneLayerReadable(req, "data");
-
-        // ========== 3. 格式化打印结果（验证仅展平一层） ==========
-        System.out.println("===== 仅展平一层的结果（高可读性版） =====");
-        // Hutool格式化输出，缩进+换行，更易读
-    }
 }
