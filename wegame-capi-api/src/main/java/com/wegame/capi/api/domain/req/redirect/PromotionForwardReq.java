@@ -1,6 +1,5 @@
 package com.wegame.capi.api.domain.req.redirect;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,6 +17,5 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class PromotionForwardReq extends BaseReq {
     private static final long serialVersionUID = 1L;
-    @JsonUnwrapped
     private Map<String, Object> data;
 }
