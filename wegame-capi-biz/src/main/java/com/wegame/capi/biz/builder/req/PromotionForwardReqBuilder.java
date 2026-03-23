@@ -6,6 +6,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.redirect.PromotionForwardReq;
 import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import org.slf4j.MDC;
 
 import java.util.Date;
@@ -14,11 +15,7 @@ import java.util.Map;
 public class PromotionForwardReqBuilder extends Builder {
 
     public static PromotionForwardReq build(Map<String, Object> data) {
-        UserInfo userInfo = new UserInfo();//UserInfoContext.getUserInfo();
-        userInfo.setPId("50");
-        userInfo.setChannelId("1050");
-        userInfo.setPlayerName("test001");
-        userInfo.setGameId("zhumeng001");
+        UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         return PromotionForwardReq.builder()
                 .pId(userInfo.getPId())
