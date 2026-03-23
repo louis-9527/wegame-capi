@@ -1,11 +1,11 @@
 package com.wegame.capi.api.promotion;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.base.PromotionBaseApi;
+import com.wegame.capi.api.domain.req.redirect.BeanFlatReadableUtil;
 import com.wegame.capi.api.domain.req.redirect.PromotionForwardReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import lombok.extern.slf4j.Slf4j;
@@ -39,12 +39,9 @@ public class RedirectApi extends PromotionBaseApi {
             assembleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             URI uri = URI.create(String.format(PROMOTION_PATH_FORMAT, promotionDomain(req.getPId()), urlPath));
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonResult = objectMapper.writerWithDefaultPrettyPrinter()
-                    .writeValueAsString(req);
-            log.info(jsonResult);
-            RequestEntity<PromotionForwardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, uri);
+            // 展平data
+            Map<String, Object> reqMap = BeanFlatReadableUtil.flatBeanOneLayerReadable(req, "data");
+            RequestEntity<Map<String, Object>> requestEntity = new RequestEntity<>(reqMap, headers, HttpMethod.POST, uri);
             ResponseEntity<CommonRes<Map<String, Object>>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<Map<String, Object>>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
