@@ -1,5 +1,6 @@
 package com.wegame.capi.application.controller.promotion;
 
+import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.service.promotion.RedirectService;
 import com.wegame.capi.client.domain.request.promotion.GreRedirectUrlRequest;
@@ -25,7 +26,7 @@ public class RedirectGameUrlController {
     @Autowired
     RedirectService redirectService;
 
-//    @LoginRequired
+    @LoginRequired
     @ApiOperation(value = "Promotion 通用转发（path 由 action 指定）", httpMethod = "POST")
     @PostMapping("/getRedirectGameUrl")
     public CommonResponse<Map<String, Object>> getRedirectGameUrl(@RequestBody GreRedirectUrlRequest request) {
