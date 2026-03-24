@@ -50,11 +50,13 @@ public class InventoryService {
     RedisTemplate<String, Object> redisTemplate;
 
     public boolean deductInventory(GameTypeEnum gameType, String poolName, InventoryTypeEnum inventoryType, long deductInventoryAmount) {
+        if (deductInventoryAmount <= 0) {
+            return true;
+        }
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(poolName, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(inventoryType, ErrorCode.ERR_INTER);
-        AssertUtil.assertTrue(deductInventoryAmount > 0, ErrorCode.ERR_INTER);
         String key = key(gameType, poolName);
         Integer filed = inventoryType.getCode();
         try {
@@ -76,6 +78,9 @@ public class InventoryService {
     }
 
     public void increaseInventory(GameTypeEnum gameType, String poolName, InventoryTypeEnum inventoryType, long increaseInventoryAmount) {
+        if (increaseInventoryAmount <= 0) {
+            return;
+        }
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(poolName, ErrorCode.ERR_INTER);
