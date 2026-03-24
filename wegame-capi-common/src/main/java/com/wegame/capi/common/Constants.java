@@ -15,6 +15,8 @@ public class Constants {
 
     public static final String COMMON_JSON_CONFIG_SEPARATOR = "_";
 
+    public static final String MANGKUKULAM_JSON_CONFIG_SEPARATOR = "-";
+
 
     // 推送中大奖redis key
     public static final String WEGAME_REWARD_NOTIFY_KEY_FORMAT = "wegame:reward.notify:%s_%s_%s";

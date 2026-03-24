@@ -49,6 +49,9 @@ spring:
           - data-id: wegame-capi-local-lamang_config.json
             group: wegame-capi-local
             refresh: true
+          - data-id: wegame-capi-local-mangkukulam_config.json
+            group: wegame-capi-local
+            refresh: true
 #game switch
 game:
   enable:

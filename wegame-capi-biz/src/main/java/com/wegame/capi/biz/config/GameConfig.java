@@ -2,8 +2,9 @@ package com.wegame.capi.biz.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
+import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
-import com.wegame.capi.biz.config.domain.*;
+import com.wegame.capi.biz.config.domain.KapreConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -109,17 +110,17 @@ public class GameConfig {
         }
     }
 
-    @Bean
-    MangkukulamConfig mangkukulamConfig() throws IOException {
-        String path = "/mangkukulam.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read kapre_config.json file err！！！");
-        } else {
-            MangkukulamConfig config = new ObjectMapper().readValue(inputStream, MangkukulamConfig.class);
-            config.validate();
-            return config;
-        }
-    }
+//    @Bean
+//    MangkukulamConfig mangkukulamConfig() throws IOException {
+//        String path = "/mangkukulam.json";
+//        InputStream inputStream = getClass().getResourceAsStream(path);
+//        if (inputStream == null) {
+//            throw new RuntimeException("read kapre_config.json file err！！！");
+//        } else {
+//            MangkukulamConfig config = new ObjectMapper().readValue(inputStream, MangkukulamConfig.class);
+//            config.validate();
+//            return config;
+//        }
+//    }
 
 }

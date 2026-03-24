@@ -10,29 +10,38 @@ import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MangkukulamTagEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.MANGKUKULAM_JSON_ROOT_NAME;
+
 /**
  * 游戏配置主类
  * yaml 配置文件形式
  * <a href="https://casinoplus.sg.larksuite.com/docx/HEnhdEWwioZpMFxRF4MlX7Azgig"/>
  */
-@Slf4j
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = MANGKUKULAM_JSON_ROOT_NAME)
 public class MangkukulamConfig extends GameBizConfig{
     private static final long serialVersionUID = 1838987094825913716L;
     /**
@@ -532,7 +541,7 @@ public class MangkukulamConfig extends GameBizConfig{
         stage.symbolWeights.forEach((key, valueMap) -> {
             valueMap.forEach((symbolStr, weight) -> {
                 // symbolStr 校验
-                String[] symbolArr = symbolStr.split(",");
+                String[] symbolArr = symbolStr.split(Constants.MANGKUKULAM_JSON_CONFIG_SEPARATOR);
                 for (String symbol : symbolArr) {
                     AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
                 }
