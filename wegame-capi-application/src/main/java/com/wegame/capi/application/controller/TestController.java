@@ -1,23 +1,28 @@
-//package com.wegame.capi.application.controller;
-//
-//import com.alibaba.fastjson.JSON;
-//import com.wegame.base.domain.CommonResponse;
-//import com.wegame.capi.api.SingleWalletApi;
-//import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
-//import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
-//import io.swagger.annotations.Api;
-//import io.swagger.annotations.ApiOperation;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.web.bind.annotation.*;
-//
-//
-//@Slf4j
-//@RestController
-//@RequestMapping("test")
-//@Api(value = "测试模块", tags = {"测试模块"})
-//public class TestController {
-//
+package com.wegame.capi.application.controller;
+
+import com.alibaba.fastjson.JSON;
+import com.wegame.base.domain.CommonResponse;
+import com.wegame.base.utils.LarkUtil;
+import com.wegame.capi.api.SingleWalletApi;
+import com.wegame.capi.biz.config.domain.MalakasConfig;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+
+
+@Slf4j
+@RestController
+@RequestMapping("test")
+@Api(value = "测试模块", tags = {"测试模块"})
+public class TestController {
+
 //    @Autowired
 //    MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
 //
@@ -65,5 +70,27 @@
 //        singleWalletApi.healthCheck();
 //        return CommonResponse.build(true);
 //    }
-//
-//}
+
+    @Autowired
+    MariaMakilingConfig mariaMakilingConfig;
+    @Autowired
+    MalakasConfig malakasConfig;
+
+    @ApiOperation(value = "config", httpMethod = "GET")
+    @GetMapping("/config")
+    public CommonResponse<String> config(HttpServletResponse response) {
+        new Thread(() -> {
+            try {
+                while(true) {
+                    System.out.println("malakasConfig: " + malakasConfig.getRewardMaxMultiple());
+                }
+            } catch (Exception e) {
+                String bootId = "b7a6477c-b829-41d4-acac-599c15aee2dc";
+                LarkUtil.sendTextMsg(bootId, String.format("config test error"));
+                log.error("config test error: " + e.getMessage());
+            }
+        }).start();
+        return CommonResponse.build("pong");
+    }
+
+}

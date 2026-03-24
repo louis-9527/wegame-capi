@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.net.URL;
 import java.util.Objects;
@@ -24,6 +25,7 @@ import static com.wegame.capi.common.Constants.*;
  * 干预事件Pulsar配置
  */
 @Slf4j
+@Profile({"dev", "qa", "pre", "prod"})
 @Configuration
 public class OperationEventPulsarConfig {
     private static final String operationEventPulsarClient = "operationEventPulsarClient";

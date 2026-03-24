@@ -13,6 +13,7 @@ public class Constants {
     public static final String APP_SECRET = "MIIEowIBAAKCAQEAmP8M8b1C12VA9hB3iIHjvQYnda1QovLp+zKTbY2WRRAIGPfT";
     public static final Long REQUEST_TIME_OUT = 5 * 60 * 1000L;
 
+    public static final String COMMON_JSON_CONFIG_SEPARATOR = "_";
     public static final String COMMON_CONFIG_SPLIT = "_";
 
 
