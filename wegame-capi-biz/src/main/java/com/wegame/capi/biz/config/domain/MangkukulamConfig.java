@@ -42,7 +42,7 @@ import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.MANGKUKU
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = MANGKUKULAM_JSON_ROOT_NAME)
-public class MangkukulamConfig extends GameBizConfig{
+public class MangkukulamConfig extends GameBizConfig implements Serializable{
     private static final long serialVersionUID = 1838987094825913716L;
     /**
      * 中奖最大倍数
