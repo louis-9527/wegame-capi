@@ -135,7 +135,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             // 异步发送更新消息: 更新为投注成功
             pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
-            return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步发送更新消息: 更新为投注失败
