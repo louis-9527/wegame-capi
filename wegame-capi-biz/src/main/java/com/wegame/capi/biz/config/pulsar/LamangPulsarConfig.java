@@ -52,7 +52,7 @@ public class LamangPulsarConfig {
 
     @Bean(name = lamangPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient lamangPulsarClient() throws Exception {
-//        log.debug(BUILD_BEAN_FORMAT, lamangPulsarClient);
+        log.debug(BUILD_BEAN_FORMAT, lamangPulsarClient);
 //        PulsarClient pulsarClient = PulsarClient.builder()
 //                .serviceUrl(lamangUrl)
 //                .keepAliveInterval(30, TimeUnit.SECONDS)
