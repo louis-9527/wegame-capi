@@ -59,7 +59,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         Long betAmount = gamePlayDo.getBetAmount();
         Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> matchInventory = inventoryControlConfig.getInventoryConfig().match(betAmount);
         AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
-        long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(betAmount)).longValue();
+        long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(gamePlayDo.getPayAmount())).longValue();
         String inventoryPoolName = getInventoryPoolName(userInfo, inventoryControlConfig);
         // 设置-投注上下文（库存控制）
         betDo.setBetInventoryControl(BetInventoryControlDo.builder()
