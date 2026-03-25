@@ -12,10 +12,10 @@ pulsar:
   dynamic:
     sirena:
       url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
-      tenant: ${spring.application.name}_Srena
+      tenant: ${spring.application.name}_Sirena
       namespace: ${spring.application.env}
-      bet_topic: Srena_topic
-      bet_deadLetter_topic: Srena_deadLetter_topic
+      bet_topic: Sirena_topic
+      bet_deadLetter_topic: Sirena_deadLetter_topic
       auth:
         issuer_url: "https://auth.streamnative.cloud/"
         credentials_file_path: /game_pulsar_privateKey.json
