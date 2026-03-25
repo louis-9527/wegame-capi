@@ -63,7 +63,7 @@ public class InventoryService {
             Long newInventory = redisTemplate.execute(DECR_SCRIPT, Collections.singletonList(key), filed, deductInventoryAmount);
             boolean ret = Optional.ofNullable(newInventory).map(r -> r > -1).orElse(false);
             if (ret) {
-                log.info("deductInventory success, key: {}, inventoryType: {}, deductInventoryAmount: {}", key, inventoryType, deductInventoryAmount);
+                log.info("deductInventory success, key: {}, inventoryType: {}, deductInventoryAmount: {}, newInventory: {}", key, inventoryType, deductInventoryAmount, newInventory);
             } else {
                 log.warn("deductInventory fail, key: {}, inventoryType: {}, deductInventoryAmount: {}", key, inventoryType, deductInventoryAmount);
             }
