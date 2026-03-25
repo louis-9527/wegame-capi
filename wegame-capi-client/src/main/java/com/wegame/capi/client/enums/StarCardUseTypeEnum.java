@@ -52,6 +52,10 @@ public enum StarCardUseTypeEnum {
             GameTypeEnum.ATLANTIS,
             "atlantis_star_card_record"
     ),
+    BAYANIHAN(
+            GameTypeEnum.BAYANIHAN,
+            "bayanihan_star_card_record"
+    ),
 
     ;
     /**
