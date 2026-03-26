@@ -37,11 +37,15 @@ public class IbongAdarnaConfig extends GameBizConfig {
      * Map<线路号，坐标：行号 & 列号>
      */
     private TreeMap<Integer, List<List<Integer>>> rewardFixedLinesConfig;
-
     /**
      * 中奖通知最小倍数
      */
     private Integer rewardNotifyMinMultiple;
+
+    /**
+     * 模版配置
+     */
+    private TemplateRangeConfig templateRangeConfig;
 
     @Data
     @SuperBuilder
@@ -84,11 +88,35 @@ public class IbongAdarnaConfig extends GameBizConfig {
         private List<TreeMap<String, BigDecimal>> perColumSymbolRepeatProbabilisticConfig;
     }
 
-    public void validate() {
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -73484243536450751L;
+        /**
+         * Map<Normal, Map<1-10, 100>>
+         * <li>Normal:{@link com.wegame.capi.client.enums.BetSubTypeEnum}</li>
+         * <li>1-10:倍率范围</li>
+         * <li>100:权重</li>
+         */
+        private LinkedHashMap<String, LinkedHashMap<String, Integer>> templateRangeConfigMap;
+    }
+
+    @Override
+    public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         rewardFixedLinesConfigValidate();
         rewardNotifyMinMultipleValidate();
+        templateRangeConfigValidate();
+    }
+
+    private void templateRangeConfigValidate() {
+        AssertUtil.assertNotNull(this.templateRangeConfig, ErrorCode.ERR_PARAM, "templateRangeConfig is null");
+        AssertUtil.assertNotNull(this.templateRangeConfig.templateRangeConfigMap, ErrorCode.ERR_PARAM, "templateRangeConfig.templateRangeConfigMap is null");
     }
 
     private void oddsConfigValidate() {

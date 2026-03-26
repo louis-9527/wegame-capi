@@ -7,5 +7,7 @@ logging:
 game:
   enable:
     MariaMakiling: false
-    Malakas: true
-    IbongAdarna: false
+    Malakas: false
+    IbongAdarna: true
+    Bakunawa: false
+    Lamang: false

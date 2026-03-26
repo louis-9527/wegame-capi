@@ -29,15 +29,15 @@ public enum GamePlayTypeEnum {
     /**
      * 枚举码.
      */
-    private final String id;
+    private final String code;
     /**
      * 描述信息.
      */
     private final String desc;
 
-    public static GamePlayTypeEnum valueOfId(String id) {
+    public static GamePlayTypeEnum valueOfCode(String code) {
         for (GamePlayTypeEnum item : GamePlayTypeEnum.values()) {
-            if (StringUtils.equals(item.getId(), id)) {
+            if (StringUtils.equals(item.getCode(), code)) {
                 return item;
             }
         }
