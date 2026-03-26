@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -31,6 +32,7 @@ import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
+import static com.wegame.capi.common.Constants.COMMON_JSON_CONFIG_SEPARATOR;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
@@ -53,7 +55,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
     RandomService randomService;
 
     @Override
-    public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
+    public List<MariaMakilingGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = MARIA_MAKILING_GAME_INFO;
@@ -190,7 +192,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         boolean hasScatter = false;
         int row = gameInfo.getRow() - 1;
         while (row >= 0) {
-            String[] symbolArray = randomService.randomKeyByWeight(symbolWeights).split(",");
+            String[] symbolArray = randomService.randomKeyByWeight(symbolWeights).split(COMMON_JSON_CONFIG_SEPARATOR);
             for (int i = 0; i < symbolArray.length; i++) {
                 if (row < 0) {
                     continue;
@@ -315,7 +317,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         boolean hasScatter = false;
         int row = gameInfo.getRow() - 1;
         while (row >= 0) {
-            String[] symbolArray = randomService.randomKeyByWeight(reelConfig.getSymbolWeights()).split(",");
+            String[] symbolArray = randomService.randomKeyByWeight(reelConfig.getSymbolWeights()).split(COMMON_JSON_CONFIG_SEPARATOR);
             for (int i = 0; i < symbolArray.length; i++) {
                 if (row < 0) {
                     continue;
