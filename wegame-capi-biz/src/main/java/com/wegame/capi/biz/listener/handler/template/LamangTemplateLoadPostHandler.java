@@ -7,7 +7,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
-import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
@@ -45,8 +44,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
             return;
         }
         Map<TemplateTypeEnum, LamangConfig.TemplateRangeConfig> templateConfigMapping = lamangConfig.getTemplateConfig().getTemplateRangeConfig();
-        Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping = lamangConfig.getTemplateConfig().getAbTemplateMapping();
-        for (TemplateTypeEnum templateType : abTemplateMapping.values()) {
+        for (TemplateTypeEnum templateType : templateConfigMapping.keySet()) {
             LamangConfig.TemplateRangeConfig config = templateConfigMapping.get(templateType);
             AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER, "template config can not be null");
             loadTemplate(config, templateType);
@@ -110,7 +108,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                 log.info("loadLocalCache start, templateType : {}, betType: {}, size: {}",templateType.getBetRecordTemplateName(), betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    List<LamangBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.LAM_ANG, idList, LamangBetRecordTemplateEsDo.class);
+                    List<LamangBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, LamangBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
