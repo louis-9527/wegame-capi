@@ -13,9 +13,10 @@ import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+
+import static com.wegame.capi.common.Constants.CONST_10000;
+import static com.wegame.capi.common.Constants.CONST_1000000;
 
 /**
  * bayanihan 配置
@@ -184,6 +185,39 @@ public class BayanihanConfig extends GameBizConfig{
     private void probabilisticConfigValidate() {
         Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
         //todo
+        int colum = 5;
+
+        // freeGame
+        for (int columIndex = 0; columIndex < colum; columIndex++) {
+            Integer columNo = columIndex;
+            Map<String, Integer> map = new HashMap<>();
+            probabilisticConfig.getFreeGameProbabilisticConfig().entrySet().forEach(item -> {
+                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                if (val > 0) {
+                    map.put(item.getKey(), val);
+                }
+            });
+            Integer sumProbabilistic = map.values()
+                    .stream()
+                    .reduce(0, Integer::sum);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+        }
+
+        // mainGame
+        for (int columIndex = 0; columIndex < colum; columIndex++) {
+            Integer columNo = columIndex;
+            Map<String, Integer> map = new HashMap<>();
+            probabilisticConfig.getMainGameProbabilisticConfig().entrySet().forEach(item -> {
+                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                if (val > 0) {
+                    map.put(item.getKey(), val);
+                }
+            });
+            Integer sumProbabilistic = map.values()
+                    .stream()
+                    .reduce(0, Integer::sum);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+        }
     }
 
 }
