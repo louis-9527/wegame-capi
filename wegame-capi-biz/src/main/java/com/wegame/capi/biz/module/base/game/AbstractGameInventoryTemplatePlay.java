@@ -118,7 +118,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 matchInventory.getKey());
         long currentInventoryValue = Objects.nonNull(currentInventory) ? Long.valueOf(currentInventory.toString()) : 0L;
         CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(currentInventoryValue);
-        log.info("match inventoryControlConfigItem: {}", inventoryControlConfigItem);
+        log.info("matchInventoryLevelInfo, currentInventory: {}, inventoryControlConfigItem: {}", currentInventory, inventoryControlConfigItem);
         AssertUtil.assertNotNull(inventoryControlConfigItem, ErrorCode.ERR_INTER);
         List<R> gameRecordList;
         boolean deductInventoryRet;
@@ -128,7 +128,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
             retryTimes ++;
             boolean winRet = judgeWinRet(inventoryControlConfigItem.getWinProbability());
             String rewardConfigId = inventoryControlConfigItem.getRewardConfigId(gamePlayDo.getBetType(), winRet);
-            log.info("doWhile, betRecordId: {}, retryTimes: {}, rewardConfigId: {}", gamePlayDo.getBetRecordId(), retryTimes, rewardConfigId);
+            log.info("doWhile, rewardConfigInfo, betRecordId: {}, retryTimes: {}, rewardConfigId: {}", gamePlayDo.getBetRecordId(), retryTimes, rewardConfigId);
             TreeMap<String, Integer> treeMap = inventoryControlConfig().getRewardConfig().getRewardConfigMap().get(rewardConfigId);
             TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(treeMap);
             gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
