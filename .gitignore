@@ -3,6 +3,7 @@
 /log/
 wegame-capi-application/log/
 .DS_Store
+.cursor
 /wegame-capi-application/target/
 /wegame-capi-client/target/
 /wegame-capi-common/target/
