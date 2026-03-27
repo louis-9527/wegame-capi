@@ -232,6 +232,7 @@ public class CommonInventoryControlConfig implements Serializable {
             Assert.isTrue(actualScale >= 0 && actualScale <= 4, "rewardConfig Err");
         });
         // 校验-奖励配置map校验
+        Assert.isTrue(MapUtils.isNotEmpty(rewardConfig.getRewardConfigMap()), "rewardConfig Err");
         rewardConfig.getRewardConfigMap().entrySet().forEach(item -> {
             Assert.notNull(item.getKey(), "rewardConfig Err");
             Assert.isTrue(MapUtils.isNotEmpty(item.getValue()), "rewardConfig Err");
