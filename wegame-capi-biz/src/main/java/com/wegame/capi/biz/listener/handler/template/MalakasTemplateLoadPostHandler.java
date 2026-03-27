@@ -91,6 +91,7 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
     }
 
     private List<Long> loadTemplateIdList(BetTypeEnum betType, String rangeStr) {
+        log.info("before loadTemplateIdList: betType: {}, rangeStr: {}", betType.getCode(), rangeStr);
         if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
             if (normalBetRangeMap.containsKey(rangeStr)) {
                 return Collections.emptyList();
