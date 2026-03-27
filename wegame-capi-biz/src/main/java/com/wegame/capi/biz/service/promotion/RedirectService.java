@@ -16,7 +16,7 @@ public class RedirectService {
     @Autowired
     RedirectApi redirectApi;
 
-    public Map<String, Object> forward(String urlPath, Map<String, Object> data) {
-        return redirectApi.forward(urlPath, PromotionForwardReqBuilder.build(data));
+    public Map<String, Object> redirect(String urlPath, Map<String, Object> data) {
+        return redirectApi.redirect(urlPath, PromotionForwardReqBuilder.build(data));
     }
 }

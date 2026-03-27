@@ -21,16 +21,16 @@ import static com.wegame.base.domain.CommonResponse.build;
 @RestController
 @RequestMapping("promotion")
 @Api(value = "转发模块", tags = {"转发模块"})
-public class ForwardController {
+public class RedirectController {
 
     @Autowired
     RedirectService redirectService;
 
     @LoginRequired
     @ApiOperation(value = "Promotion 通用转发（path 由 action 指定）", httpMethod = "POST")
-    @PostMapping("/forward")
-    public CommonResponse<Map<String, Object>> getRedirectGameUrl(@RequestBody GreRedirectUrlRequest request) {
+    @PostMapping("/redirect")
+    public CommonResponse<Map<String, Object>> redirect(@RequestBody GreRedirectUrlRequest request) {
         request.validate();
-        return build(redirectService.forward(request.getAction(), request.getData()));
+        return build(redirectService.redirect(request.getAction(), request.getData()));
     }
 }
