@@ -9,6 +9,7 @@ import com.wegame.capi.api.domain.req.redirect.BeanFlatReadableUtil;
 import com.wegame.capi.api.domain.req.redirect.PromotionForwardReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -36,7 +37,12 @@ public class RedirectApi extends PromotionBaseApi {
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public Map<String, Object> forward(String urlPath, PromotionForwardReq req) {
         try {
-            assembleSignature(req);
+            // todo 目前特殊处理待成就系统那边改成造再移除特殊逻辑
+            if (StringUtils.equals(urlPath, "getRedirectGameUrl")) {
+                assembleSignature(req);
+            } else {
+                assembleSingleSignature(req);
+            }
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             URI uri = URI.create(String.format(PROMOTION_PATH_FORMAT, promotionDomain(req.getPId()), urlPath));
             // 展平data
