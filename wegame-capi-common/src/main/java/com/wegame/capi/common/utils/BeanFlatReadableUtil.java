@@ -1,4 +1,4 @@
-package com.wegame.capi.api.domain.req.redirect;
+package com.wegame.capi.common.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.map.MapUtil;
