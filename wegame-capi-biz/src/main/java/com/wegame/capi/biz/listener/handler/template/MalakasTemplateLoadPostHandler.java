@@ -17,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -35,6 +33,9 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
     MalakasConfig malakasConfig;
     @Autowired
     BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
+
+    public static Map<String, String> normalBetRangeMap = new HashMap<>();
+    public static Map<String, String> buyBetRangeMap = new HashMap<>();
 
     protected TemplateTypeEnum getTemplateType() {
         return TemplateTypeEnum.MALAKAS;
@@ -54,6 +55,13 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
         }
         loadTemplate(BetTypeEnum.NORMAL_BET);
         loadTemplate(BetTypeEnum.BUY_BET);
+        malakasConfig.getInventoryControlConfig().getRewardConfig().getRewardConfigMap().forEach((key, value) -> {
+            value.forEach((subKey, subValue) -> {
+                value.forEach((thirdKey, thirdValue) -> {
+                    loadTemplateIdList(key, thirdKey);
+                });
+            });
+        });
     }
 
     private void loadTemplate(BetTypeEnum betType) {
@@ -62,14 +70,14 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
             List<Long> templateIdList = new LinkedList<>();
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
                 malakasConfig.getTemplateRangeConfig().getMainGame().keySet().forEach((String key) -> {
-                    List<Long> idList = loadTemplateIdList(betType, TemplateMultipleRange.build(key));
+                    List<Long> idList = loadTemplateIdList(betType, key);
                     if (CollectionUtils.isNotEmpty(idList)) {
                         templateIdList.addAll(idList);
                     }
                 });
             } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
                 malakasConfig.getTemplateRangeConfig().getFreeGame().keySet().forEach((String key) -> {
-                    List<Long> idList = loadTemplateIdList(betType, TemplateMultipleRange.build(key));
+                    List<Long> idList = loadTemplateIdList(betType, key);
                     if (CollectionUtils.isNotEmpty(idList)) {
                         templateIdList.addAll(idList);
                     }
@@ -82,11 +90,26 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
         }
     }
 
-    private List<Long> loadTemplateIdList(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
+    private List<Long> loadTemplateIdList(BetTypeEnum betType, String rangeStr) {
+        if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+            if (normalBetRangeMap.containsKey(rangeStr)) {
+                return Collections.emptyList();
+            }
+        } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+            if (buyBetRangeMap.containsKey(rangeStr)) {
+                return Collections.emptyList();
+            }
+        }
+        TemplateMultipleRange multipleRange = TemplateMultipleRange.build(rangeStr);
         TemplateTypeEnum templateType = this.getTemplateType();
         log.info("templateIdList load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd(), MalakasBetRecordTemplateEsDo.class);
+            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+                normalBetRangeMap.put(rangeStr, rangeStr);
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+                buyBetRangeMap.put(rangeStr, rangeStr);
+            }
             if (!TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MALAKAS, betType, multipleRange)) {
                 log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;

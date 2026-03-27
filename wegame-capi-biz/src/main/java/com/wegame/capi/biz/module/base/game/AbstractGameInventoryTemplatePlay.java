@@ -129,7 +129,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
             boolean winRet = judgeWinRet(inventoryControlConfigItem.getWinProbability());
             String rewardConfigId = inventoryControlConfigItem.getRewardConfigId(gamePlayDo.getBetType(), winRet);
             log.info("doWhile, rewardConfigInfo, betRecordId: {}, retryTimes: {}, rewardConfigId: {}", gamePlayDo.getBetRecordId(), retryTimes, rewardConfigId);
-            TreeMap<String, Integer> treeMap = inventoryControlConfig().getRewardConfig().getRewardConfigMap().get(rewardConfigId);
+            TreeMap<String, Integer> treeMap = inventoryControlConfig().getRewardConfig().getRewardConfigMap().get(gamePlayDo.getBetType()).get(rewardConfigId);
             TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(treeMap);
             gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
             T templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);

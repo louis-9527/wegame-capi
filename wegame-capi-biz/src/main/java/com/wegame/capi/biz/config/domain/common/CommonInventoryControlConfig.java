@@ -55,9 +55,9 @@ public class CommonInventoryControlConfig implements Serializable {
         private TreeMap<BetTypeEnum, BigDecimal> rewardBlankProbability;
         /**
          * 奖励配置Map
-         * TreeMap<名称，<左开赔率_右闭赔率，权重>>
+         * TreeMap<投注类型，TreeMap<名称，<左开赔率_右闭赔率，权重>>>
          */
-        private TreeMap<String, TreeMap<String, Integer>> rewardConfigMap;
+        private TreeMap<BetTypeEnum, TreeMap<String, TreeMap<String, Integer>>> rewardConfigMap;
         /**
          * 中奖兜底模版倍率
          * TreeMap<投注类型，中奖兜底赔率区间（左赔率_右赔率）>
@@ -233,11 +233,16 @@ public class CommonInventoryControlConfig implements Serializable {
         });
         // 校验-奖励配置map校验
         rewardConfig.getRewardConfigMap().entrySet().forEach(item -> {
-            Assert.isTrue(StringUtils.isNotEmpty(item.getKey()), "rewardConfig Err");
+            Assert.notNull(item.getKey(), "rewardConfig Err");
             Assert.isTrue(MapUtils.isNotEmpty(item.getValue()), "rewardConfig Err");
-            item.getValue().entrySet().forEach(subItem -> {
-                validateRange(subItem.getKey());
-                Assert.isTrue(subItem.getValue() >= 0, "rewardConfig inventory range weight must >= 0");
+            TreeMap<String, TreeMap<String, Integer>> treeMap = item.getValue();
+            treeMap.entrySet().forEach(treeMapItem -> {
+                Assert.isTrue(StringUtils.isNotEmpty(treeMapItem.getKey()), "rewardConfig Err");
+                Assert.isTrue(MapUtils.isNotEmpty(treeMapItem.getValue()), "rewardConfig Err");
+                treeMapItem.getValue().entrySet().forEach(subItem -> {
+                    validateRange(subItem.getKey());
+                    Assert.isTrue(subItem.getValue() >= 0, "rewardConfig inventory range weight must >= 0");
+                });
             });
         });
         // 校验-中奖兜底赔率配置
