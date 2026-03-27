@@ -57,7 +57,7 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
         loadTemplate(BetTypeEnum.BUY_BET);
         malakasConfig.getInventoryControlConfig().getRewardConfig().getRewardConfigMap().forEach((key, value) -> {
             value.forEach((subKey, subValue) -> {
-                value.forEach((thirdKey, thirdValue) -> {
+                subValue.forEach((thirdKey, thirdValue) -> {
                     loadTemplateIdList(key, thirdKey);
                 });
             });
