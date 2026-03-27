@@ -19,7 +19,7 @@ import java.util.Map;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "转发模块请求模型")
-public class GreRedirectUrlRequest extends BaseRequest implements Validate, Serializable {
+public class ForwardRequest extends BaseRequest implements Validate, Serializable {
     private static final long serialVersionUID = 5858563029658968111L;
 
     @ApiModelProperty(value = "对应第三方 URL 路径片段，如 getRedirectGameUrl", required = true)

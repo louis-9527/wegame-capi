@@ -23,19 +23,17 @@ import java.util.Map;
 
 /**
  * 游戏转发 Redirect-api
- *
  * @see
  * <a href="https://casinoplus.sg.larksuite.com/docx/AllddxYUvoE3N1xl3jUl0MC7gqg"/>
- * 2.22 HTTP getRedirectGameUrl  (BP) 及同域名下其它 path
  */
 @Slf4j
 @Component
-public class RedirectApi extends PromotionBaseApi {
+public class ForwardApi extends PromotionBaseApi {
 
     private static final String PROMOTION_PATH_FORMAT = "%s/%s";
 
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
-    public Map<String, Object> redirect(String urlPath, PromotionForwardReq req) {
+    public Map<String, Object> forward(String urlPath, PromotionForwardReq req) {
         try {
             // todo 目前特殊处理待成就系统那边改成造再移除特殊逻辑
             if (StringUtils.equals(urlPath, "getRedirectGameUrl")) {
