@@ -155,7 +155,8 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         TemplateMultipleRange templateMultipleRange = TemplateMultipleRange.build(floorTemplateMultipleRangeStr);
         gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
         T templateEsDo = getTemplateByRange(betDo, gamePlayDo, templateMultipleRange);
-        log.info("reach max retryTimes, floor inventory flow, floorTemplateMultipleRangeStr: {}", floorTemplateMultipleRangeStr);
+        log.info("betType: {}, reach max retryTimes, floor inventory flow, floorTemplateMultipleRangeStr: {}",
+                gamePlayDo.getBetType().getCode(), floorTemplateMultipleRangeStr);
         return templateGame().templatePlay(betDo, gamePlayDo, templateEsDo);
     }
 
