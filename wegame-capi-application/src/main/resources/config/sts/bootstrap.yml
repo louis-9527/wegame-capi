@@ -3,6 +3,24 @@ logging:
   level:
     com.wegame: info
     org.mongodb: error
+#spring-cloud
+spring:
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+        server-addr: mse-98afa3410-nacos-ans.mse.aliyuncs.com:8848
+        group: wegame-capi-sts
+        namespace: 081e693f-6bfc-47f9-abc6-79194f174caa
+        refresh-enabled: true
+        extension-configs:
+          - data-id: wegame-capi-sts-maria_makiling_config.json
+            group: wegame-capi-sts
+            refresh: true
+          - data-id: wegame-capi-sts-malakas_config.json
+            group: wegame-capi-sts
+            refresh: true
 ## game switch
 game:
   enable:
