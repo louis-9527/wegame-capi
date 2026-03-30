@@ -58,18 +58,18 @@ public class GameConfig {
         }
     }
 
-    @Bean
-    BakunawaConfig bakunawaConfig() throws IOException {
-        String path = "/bakunawa.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read bakunawa.json file err！！！");
-        } else {
-            BakunawaConfig config = new ObjectMapper().readValue(inputStream, BakunawaConfig.class);
-            config.validate();
-            return config;
-        }
-    }
+    //@Bean
+    //BakunawaConfig bakunawaConfig() throws IOException {
+    //    String path = "/bakunawa.json";
+    //    InputStream inputStream = getClass().getResourceAsStream(path);
+    //    if (inputStream == null) {
+    //        throw new RuntimeException("read bakunawa.json file err！！！");
+    //    } else {
+    //        BakunawaConfig config = new ObjectMapper().readValue(inputStream, BakunawaConfig.class);
+    //        config.validate();
+    //        return config;
+    //    }
+    //}
 
     @Bean
     LamangConfig lamangConfig() throws IOException {
