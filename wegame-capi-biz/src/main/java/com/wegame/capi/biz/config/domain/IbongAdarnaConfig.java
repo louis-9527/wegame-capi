@@ -4,10 +4,12 @@ import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,6 +23,7 @@ import static com.wegame.capi.common.Constants.*;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@ConfigurationProperties(prefix = NacosConfigRefresherUtil.IBONGADARNA_JSON_ROOT_NAME)
 public class IbongAdarnaConfig extends GameBizConfig {
 
     /**
