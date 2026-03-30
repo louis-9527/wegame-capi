@@ -9,18 +9,27 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.MARIAMAKILING_JSON_ROOT_NAME;
+import static com.wegame.capi.common.Constants.COMMON_JSON_CONFIG_SEPARATOR;
+
 @Data
-@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = MARIAMAKILING_JSON_ROOT_NAME) // 匹配JSON根节点, 推荐以游戏命名（不可带任何分隔符，所有字母小写）
 public class MariaMakilingConfig extends GameBizConfig implements Serializable {
 
     private static final long serialVersionUID = -7867808743045979621L;
@@ -296,7 +305,7 @@ public class MariaMakilingConfig extends GameBizConfig implements Serializable {
         for (Map.Entry<String, Integer> entry : reelWeightMap.entrySet()) {
             Integer weight = reelWeightMap.get(entry.getKey());
             if (weight > 0) {
-                String[] symbols = entry.getKey().split(",");
+                String[] symbols = entry.getKey().split(COMMON_JSON_CONFIG_SEPARATOR);
                 for (String s : symbols) {
                     SymbolDo symbol = symbolDoMap.get(s);
                     Assert.notNull(symbol, "symbol is null, symbol is " + entry.getKey());

@@ -3,6 +3,7 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -11,6 +12,9 @@ import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -38,6 +42,11 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = NacosConfigRefresherUtil.DIWATA_JSON_ROOT_NAME)
 public class DiwataMayariConfig extends GameBizConfig{
 
     private final static int REEL_NUMBERS = 6;
