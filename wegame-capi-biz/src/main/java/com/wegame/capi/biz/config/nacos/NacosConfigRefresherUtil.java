@@ -28,6 +28,7 @@ public class NacosConfigRefresherUtil {
     public static final String DIWATA_JSON_ROOT_NAME = "diwatamayari";
     public static final String IBONGADARNA_JSON_ROOT_NAME = "ibongadarna";
     public static final String KAPRE_JSON_ROOT_NAME = "kapre";
+    public static final String ATLANTIS_JSON_ROOT_NAME = "atlantis";
 
     private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new ImmutableMap.Builder<String, Class<? extends ConfigValidate>>()
             .put("maria_makiling_config.json", MariaMakilingConfig.class)
@@ -36,6 +37,7 @@ public class NacosConfigRefresherUtil {
             .put("diwata_mayari_config.json", DiwataMayariConfig.class)
             .put("ibong_adarna_config.json", IbongAdarnaConfig.class)
             .put("kapre_config.json", KapreConfig.class)
+            .put("atlantis_config.json", AtlantisConfig.class)
             .build();
     private static final Map<String, String> TO_JSON_ROOT_MAP = new ImmutableMap.Builder<String, String>()
             .put("maria_makiling_config.json", MARIAMAKILING_JSON_ROOT_NAME)
@@ -44,6 +46,7 @@ public class NacosConfigRefresherUtil {
             .put("bakunawa_config.json", BAKUNAWA_JSON_ROOT_NAME)
             .put("diwata_mayari_config.json", DIWATA_JSON_ROOT_NAME)
             .put("kapre_config.json", KAPRE_JSON_ROOT_NAME)
+            .put("atlantis_config.json", ATLANTIS_JSON_ROOT_NAME)
             .build();
 
     public static boolean validate(String dataId, String groupId, String configInfo) {

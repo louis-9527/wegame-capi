@@ -58,6 +58,9 @@ spring:
           - data-id: wegame-capi-local-kapre_config.json
             group: wegame-capi-local
             refresh: true
+          - data-id: wegame-capi-local-atlantis_config.json
+            group: wegame-capi-local
+            refresh: true
 #game switch
 game:
   enable:
