@@ -42,11 +42,11 @@ public class AtlantisPulsarConfig {
     @Value("${pulsar.dynamic.atlantis.bet_deadLetter_topic}")
     String betDeadLetterTopic;
 
-    @Value("${pulsar.dynamic.kapre.auth.issuer_url}")
+    @Value("${pulsar.dynamic.atlantis.auth.issuer_url}")
     String authIssuerUrl;
-    @Value("${pulsar.dynamic.kapre.auth.credentials_file_path}")
+    @Value("${pulsar.dynamic.atlantis.auth.credentials_file_path}")
     String authCredentialsFilePath;
-    @Value("${pulsar.dynamic.kapre.auth.audience}")
+    @Value("${pulsar.dynamic.atlantis.auth.audience}")
     String authAudience;
 
     @Bean(name = atlantisPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
