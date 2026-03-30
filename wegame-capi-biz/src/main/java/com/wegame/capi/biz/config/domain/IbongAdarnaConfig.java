@@ -105,6 +105,7 @@ public class IbongAdarnaConfig extends GameBizConfig {
         private LinkedHashMap<String, LinkedHashMap<String, Integer>> templateRangeConfigMap;
     }
 
+    @Override
     public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();

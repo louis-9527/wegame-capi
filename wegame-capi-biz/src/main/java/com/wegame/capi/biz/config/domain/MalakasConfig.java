@@ -120,7 +120,8 @@ public class MalakasConfig extends GameBizConfig implements Serializable {
         private Map<String, Integer> freeGame;
     }
 
-    public void validate() {
+    @Override
+    public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         scatterFreeWheelTimesConfigValidate();
