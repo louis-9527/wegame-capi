@@ -96,17 +96,17 @@ public class GameConfig {
 //        }
 //    }
 
-    @Bean
-    KapreConfig kapreConfig() throws IOException {
-        String path = "/kapre_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read kapre_config.json file err！！！");
-        } else {
-            KapreConfig config = new ObjectMapper().readValue(inputStream, KapreConfig.class);
-            config.validate();
-            return config;
-        }
-    }
+//    @Bean
+//    KapreConfig kapreConfig() throws IOException {
+//        String path = "/kapre_config.json";
+//        InputStream inputStream = getClass().getResourceAsStream(path);
+//        if (inputStream == null) {
+//            throw new RuntimeException("read kapre_config.json file err！！！");
+//        } else {
+//            KapreConfig config = new ObjectMapper().readValue(inputStream, KapreConfig.class);
+//            config.validate();
+//            return config;
+//        }
+//    }
 
 }

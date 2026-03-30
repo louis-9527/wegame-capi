@@ -30,6 +30,9 @@ spring:
           - data-id: wegame-capi-sts-ibong_adarna_config.json
             group: wegame-capi-sts
             refresh: true
+          - data-id: wegame-capi-sts-kapre_config.json
+            group: wegame-capi-sts
+            refresh: true
 ## game switch
 game:
   enable:
