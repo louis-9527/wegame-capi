@@ -31,6 +31,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
 import com.wegame.capi.common.enums.BizInterfereTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
@@ -57,6 +58,8 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final GameInfoDo gameInfo = DiwataMayariGameHelper.DIWATA_MAYARI_GAME_INFO;
+
+    private static final Double FREE_SPIN_MAX_MULTIPLE = 70.0;
 
     @Autowired
     DiwataMayariRewardHandler diwataMayariRewardHandler;
@@ -124,7 +127,16 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
     }
 
     private List<GameRecordTemplateDo> getGameRecordTemplate(GamePlayDo gamePlay) {
-        DiwataBetRecordTemplateEsDo template = this.cycleGetTemplateEsDo(gamePlay);
+        // todo 临时解决方案:防止feespin超发
+        DiwataBetRecordTemplateEsDo template;
+        if (Objects.equals(gamePlay.getBetPromotionType(), BetPromotionTypeEnum.FREE_SPIN)) {
+            do {
+                template = this.cycleGetTemplateEsDo(gamePlay);
+                log.info("getGameRecordTemplate freeSpin template result:{}", FastJsonUtils.toJSONString(template));
+            } while (Objects.nonNull(template) && template.getMultiple() < FREE_SPIN_MAX_MULTIPLE);
+        } else {
+            template = this.cycleGetTemplateEsDo(gamePlay);
+        }
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
         List<GameRecordTemplateDo> configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
@@ -142,12 +154,12 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
             AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
 
             final BizInterfereContextDo bizInterfereContext = gamePlay.getBizInterfereContext();
-            if (Objects.isNull(bizInterfereContext)){
+            if (Objects.isNull(bizInterfereContext)) {
                 return template;
             }
 
             // 购买轮不干预
-            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)){
+            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
                 return template;
             }
 
