@@ -35,6 +35,9 @@ spring:
           - data-id: wegame-capi-dev-bakunawa_config.json
             group: wegame-capi-dev
             refresh: true
+          - data-id: wegame-capi-dev-diwata_mayari_config.json
+            group: wegame-capi-dev
+            refresh: true
 ##game switch
 game:
   enable:

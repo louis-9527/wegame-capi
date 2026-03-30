@@ -85,17 +85,17 @@ public class GameConfig {
         }
     }
 
-    @Bean
-    DiwataMayariConfig diwataMayariConfig() throws IOException {
-        String path = "/diwata_mayari_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read diwata_mayari_config.json file err！！！");
-        } else {
-            DiwataMayariConfig config = new ObjectMapper().readValue(inputStream, DiwataMayariConfig.class);
-            config.validate();
-            return config;
-        }
-    }
+//    @Bean
+//    DiwataMayariConfig diwataMayariConfig() throws IOException {
+//        String path = "/diwata_mayari_config.json";
+//        InputStream inputStream = getClass().getResourceAsStream(path);
+//        if (inputStream == null) {
+//            throw new RuntimeException("read diwata_mayari_config.json file err！！！");
+//        } else {
+//            DiwataMayariConfig config = new ObjectMapper().readValue(inputStream, DiwataMayariConfig.class);
+//            config.validate();
+//            return config;
+//        }
+//    }
 
 }
