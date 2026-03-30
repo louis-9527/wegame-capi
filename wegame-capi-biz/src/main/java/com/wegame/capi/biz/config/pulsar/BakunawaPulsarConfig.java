@@ -72,7 +72,7 @@ public class BakunawaPulsarConfig {
                 bakunawaAuthAudience
         );
         return  PulsarClient.builder()
-                .serviceUrl(bakunawaAuthIssuerUrl)
+                .serviceUrl(bakunawaUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 //                .operationTimeout(100, TimeUnit.MILLISECONDS)
                 .connectionTimeout(2000, TimeUnit.MILLISECONDS)
