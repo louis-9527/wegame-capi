@@ -6,15 +6,16 @@ import com.wegame.base.utils.AssertUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 
 @Data
-@ToString
+@ToString(callSuper = true)
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBizConfig implements Serializable {
+public class GameBizConfig implements Serializable, ConfigValidate {
 
     /**
      * 派彩金额限制配置
@@ -30,6 +31,8 @@ public class GameBizConfig implements Serializable {
         throw new BusinessException(ErrorCode.ERR_INTER, "no support");
     }
 
+    @Override
+    @PostConstruct
     public void validate() {
         AssertUtil.assertNotNull(payoutAmountLimitConfig, ErrorCode.ERR_PARAM);
         payoutAmountLimitConfig.validate();
