@@ -133,7 +133,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
             do {
                 template = this.cycleGetTemplateEsDo(gamePlay);
                 log.info("getGameRecordTemplate freeSpin template result:{}", FastJsonUtils.toJSONString(template));
-            } while (Objects.nonNull(template) && template.getMultiple() < FREE_SPIN_MAX_MULTIPLE);
+            } while (Objects.isNull(template) || template.getMultiple() > FREE_SPIN_MAX_MULTIPLE);
         } else {
             template = this.cycleGetTemplateEsDo(gamePlay);
         }
