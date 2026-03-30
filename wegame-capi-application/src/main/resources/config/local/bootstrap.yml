@@ -52,6 +52,9 @@ spring:
           - data-id: wegame-capi-local-diwata_mayari_config.json
             group: wegame-capi-local
             refresh: true
+          - data-id: wegame-capi-local-ibong_adarna_config.json
+            group: wegame-capi-local
+            refresh: true
 #game switch
 game:
   enable:
