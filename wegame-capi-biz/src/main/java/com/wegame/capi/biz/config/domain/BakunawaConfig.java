@@ -5,19 +5,31 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.BAKUNAWA_JSON_ROOT_NAME;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 
+/**
+ * Bakunawa游戏配置
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BakunawaConfig extends GameBizConfig implements Serializable {
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = BAKUNAWA_JSON_ROOT_NAME)
+public class BakunawaConfig extends GameBizConfig implements Serializable, ConfigValidate {
     private static final long serialVersionUID = -4811887935435114L;
     /**
      * 元素概率配置
