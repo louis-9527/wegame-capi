@@ -86,16 +86,17 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         // 数据模型转换
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         Long maxBatchId = Collections.max(configRecordList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
-        BigDecimal totalMultipleAmount = BigDecimal.ZERO;
+        BigDecimal totalMultiple = BigDecimal.ZERO;
         for (GameRecordTemplateDo templateItem : configRecordList) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
             // 开始执行免费轮的第一回合时重新将 totalMultipleAmoun 赋值为0
             WheelDo<MalakasSymbolDo> wheel = this.convertWheel(templateItem.getWheel());
-            if (wheel.isFreeFlag() && Objects.equals(totalMultipleAmount, BigDecimal.ONE)) {
-                totalMultipleAmount = BigDecimal.ZERO;
+            if (wheel.isFreeFlag() && Objects.equals(totalMultiple, BigDecimal.ONE)) {
+                totalMultiple = BigDecimal.ZERO;
             }
-            MalakasGameRecordDo gameRecordDo = this.buildGameRecord(gamePlayDo, templateItem, totalMultipleAmount, idMap, lastGameFlag);
-            totalMultipleAmount = gameRecordDo.getRewardResult().getTotalMultiple();
+            MalakasGameRecordDo gameRecordDo = this.buildGameRecord(gamePlayDo, templateItem, totalMultiple, idMap, lastGameFlag);
+            totalMultiple = gameRecordDo.getRewardResult().getTotalMultiple();
+            log.info("betRecordId: {}, gameRecordId: {}, malakas totalMultiple: {}", gamePlayDo.getBetRecordId(), gameRecordDo.getId(), totalMultiple);
             ret.add(gameRecordDo);
         }
         // 占位元素-将占位元素设置为空:
