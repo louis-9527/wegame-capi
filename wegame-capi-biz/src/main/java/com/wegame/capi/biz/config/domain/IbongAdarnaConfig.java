@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
+import com.wegame.capi.common.utils.NacosKeyUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -29,8 +30,6 @@ import static com.wegame.capi.common.Constants.*;
 @RefreshScope
 @ConfigurationProperties(prefix = NacosConfigRefresherUtil.IBONGADARNA_JSON_ROOT_NAME)
 public class IbongAdarnaConfig extends GameBizConfig {
-    private static final String POINT_REPLACE_SPLIT="point";
-    private static final String TRUE_POINT_DATA_FORMAT="%s.%s";
 
     /**
      * 赔率配置
@@ -99,17 +98,7 @@ public class IbongAdarnaConfig extends GameBizConfig {
         public void setMultiPleProbabilisticConfig(TreeMap<String, TreeMap<String, BigDecimal>> multiPleProbabilisticConfig) {
             TreeMap<BigDecimal, TreeMap<String, BigDecimal>> trueMultiPleProbabilisticConfig = new TreeMap<>();
             AssertUtil.assertNotNull(multiPleProbabilisticConfig, ErrorCode.ERR_INTER, "multiPleProbabilisticConfig is null");
-            multiPleProbabilisticConfig.forEach((key, value) -> {
-                String[] split = key.split(POINT_REPLACE_SPLIT);
-                if (split.length == 2){
-                    String s1 = split[0].trim();
-                    String s2 = split[1].trim();
-                    BigDecimal trueKey = new BigDecimal(String.format(TRUE_POINT_DATA_FORMAT, s1, s2));
-                    trueMultiPleProbabilisticConfig.put(trueKey,value);
-                }else {
-                    trueMultiPleProbabilisticConfig.put(new BigDecimal( key),value);
-                }
-            });
+            multiPleProbabilisticConfig.forEach((key, value) -> trueMultiPleProbabilisticConfig.put(NacosKeyUtil.transformToDecimal(key), value));
             this.multiPleProbabilisticConfig = trueMultiPleProbabilisticConfig;
         }
     }
