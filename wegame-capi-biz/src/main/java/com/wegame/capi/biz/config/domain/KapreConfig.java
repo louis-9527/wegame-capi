@@ -25,9 +25,9 @@ import java.util.TreeMap;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@Component
+//@Component
 @RefreshScope
-@ConfigurationProperties(prefix = NacosConfigRefresherUtil.KAPRE_JSON_ROOT_NAME)
+//@ConfigurationProperties(prefix = NacosConfigRefresherUtil.KAPRE_JSON_ROOT_NAME)
 public class KapreConfig extends GameBizConfig implements Serializable {
     private static final long serialVersionUID = 5550628498801680050L;
     /**

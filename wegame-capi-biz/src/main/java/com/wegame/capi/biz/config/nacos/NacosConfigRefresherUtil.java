@@ -35,7 +35,7 @@ public class NacosConfigRefresherUtil {
             .put("bakunawa_config.json", BakunawaConfig.class)
             .put("diwata_mayari_config.json", DiwataMayariConfig.class)
             .put("ibong_adarna_config.json", IbongAdarnaConfig.class)
-            .put("kapre_config.json", KapreConfig.class)
+//            .put("kapre_config.json", KapreConfig.class)
             .build();
     private static final Map<String, String> TO_JSON_ROOT_MAP = new ImmutableMap.Builder<String, String>()
             .put("maria_makiling_config.json", MARIAMAKILING_JSON_ROOT_NAME)
@@ -43,7 +43,7 @@ public class NacosConfigRefresherUtil {
             .put("ibong_adarna_config.json", IBONGADARNA_JSON_ROOT_NAME)
             .put("bakunawa_config.json", BAKUNAWA_JSON_ROOT_NAME)
             .put("diwata_mayari_config.json", DIWATA_JSON_ROOT_NAME)
-            .put("kapre_config.json", KAPRE_JSON_ROOT_NAME)
+//            .put("kapre_config.json", KAPRE_JSON_ROOT_NAME)
             .build();
 
     public static boolean validate(String dataId, String groupId, String configInfo) {
