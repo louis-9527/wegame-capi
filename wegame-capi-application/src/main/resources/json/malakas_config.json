@@ -373,17 +373,28 @@
     "rewardMaxMultiple": "10250",
     "templateRangeConfig": {
         "mainGame": {
-            "0_0": 128316922,
-            "0_0.5": 31011196,
-            "0.5_1": 15590023,
-            "1_3": 17227000,
-            "3_5": 6700000,
-            "5_8": 4600000,
-            "8_15": 3012000,
-            "15_30": 1200000,
-            "30_50": 500000,
-            "50_70": 180000,
-            "70_100": 94000
+            "0_0.2": 1,
+            "0.2_0.5": 1,
+            "0.5_1": 1,
+            "1_3": 1,
+            "3_5": 1,
+            "5_8": 1,
+            "8_10": 1,
+            "10_15": 1,
+            "15_30": 1,
+            "30_50": 1,
+            "50_80": 1,
+            "80_120": 1,
+            "120_150": 1,
+            "150_200": 1,
+            "200_300": 1,
+            "300_500": 1,
+            "500_800": 1,
+            "800_1200": 1,
+            "1200_1500": 1,
+            "1500_2000": 1,
+            "2000_3000": 1,
+            "3000_5000": 60000
         },
         "freeGame": {
             "0_0.5": 110789,
@@ -398,5 +409,555 @@
     "payoutAmountLimitConfig": {
         "retryCount": 1,
         "limitAmount": 1000000000
+    },
+    "inventoryControlConfig": {
+        "enable": true,
+        "rewardConfig": {
+            "rewardBlankProbability": {
+                "NORMAL_BET": 0.0001
+            },
+            "rewardFloorMultiple": {
+                "NORMAL_BET": "3000_5000",
+                "BUY_BET": "0_1"
+            },
+            "rewardConfigMap": {
+                "NORMAL_BET": {
+                    "1": {
+                        "1_3": 0,
+                        "3_5": 0,
+                        "5_8": 0,
+                        "8_10": 0,
+                        "10_15": 0,
+                        "15_30": 0,
+                        "30_50": 0,
+                        "50_80": 0,
+                        "80_120": 0,
+                        "120_150": 0,
+                        "150_200": 0,
+                        "200_300": 0,
+                        "300_500": 0,
+                        "500_800": 0,
+                        "800_1200": 0,
+                        "1200_1500": 0,
+                        "1500_2000": 0,
+                        "2000_3000": 0,
+                        "3000_5000": 1941
+                    },
+                    "2": {
+                        "0_0.2": 0,
+                        "0.2_0.5": 0,
+                        "3000_5000": 1941
+                    },
+                    "3": {
+                        "100_200": 0,
+                        "200_500": 0,
+                        "500_1000": 0,
+                        "1000_1500": 0,
+                        "1500_2000": 0,
+                        "2000_3000": 0,
+                        "3000_5000": 1941
+                    }
+                },
+                "BUY_BET": {
+                    "1": {
+                        "0_0.2": 22000,
+                        "0.2_0.5": 18000,
+                        "0.5_1": 14000,
+                        "1_3": 12000,
+                        "3_5": 8500,
+                        "5_8": 6500,
+                        "8_10": 4500,
+                        "10_15": 3500,
+                        "15_30": 2800,
+                        "30_50": 2000,
+                        "50_80": 1500,
+                        "80_120": 1200,
+                        "120_150": 900,
+                        "150_200": 700,
+                        "200_300": 500
+                    }
+                }
+            }
+        },
+        "inventoryConfig": {
+            "inventoryPoolMap": {
+                "50": {
+                    "1050": "pool1",
+                    "1087": "pool1"
+                },
+                "55": {
+                    "1051": "pool2"
+                },
+                "777": {
+                    "7004": "pool3"
+                }
+            },
+            "inventoryConfigMap": {
+                "JUNIOR": {
+                    "betAmountRange": "0.3_3",
+                    "inventoryInputRate": 0.96,
+                    "controlConfig": {
+                        "0_10000": {
+                            "winProbability": 0,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "10000_50000": {
+                            "winProbability": 0.05,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "50000_100000": {
+                            "winProbability": 0.1,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "100000_200000": {
+                            "winProbability": 0.15,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "200000_500000": {
+                            "winProbability": 0.2,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "500000_1000000": {
+                            "winProbability": 0.3,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "1000000_2000000": {
+                            "winProbability": 0.4,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "2000000_5000000": {
+                            "winProbability": 0.5,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "5000000_10000000": {
+                            "winProbability": 0.8,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "10000000_10000000000000": {
+                            "winProbability": 1,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "3",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        }
+                    }
+                },
+                "INTERMEDIATE": {
+                    "betAmountRange": "5_40",
+                    "inventoryInputRate": 0.96,
+                    "controlConfig": {
+                        "0_50000": {
+                            "winProbability": 0,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "50000_250000": {
+                            "winProbability": 0.05,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "250000_500000": {
+                            "winProbability": 0.1,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "500000_1000000": {
+                            "winProbability": 0.15,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "1000000_2500000": {
+                            "winProbability": 0.2,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "2500000_5000000": {
+                            "winProbability": 0.3,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "5000000_10000000": {
+                            "winProbability": 0.4,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "10000000_25000000": {
+                            "winProbability": 0.5,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "25000000_50000000": {
+                            "winProbability": 0.8,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "50000000_10000000000000": {
+                            "winProbability": 1,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "3",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        }
+                    }
+                },
+                "SENIOR": {
+                    "betAmountRange": "50_500",
+                    "inventoryInputRate": 0.96,
+                    "controlConfig": {
+                        "0_250000": {
+                            "winProbability": 0,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "250000_1250000": {
+                            "winProbability": 0.05,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "1250000_2500000": {
+                            "winProbability": 0.1,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "2500000_5000000": {
+                            "winProbability": 0.15,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "5000000_12500000": {
+                            "winProbability": 0.2,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "12500000_25000000": {
+                            "winProbability": 0.3,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "25000000_50000000": {
+                            "winProbability": 0.4,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "50000000_125000000": {
+                            "winProbability": 0.5,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "125000000_250000000": {
+                            "winProbability": 0.8,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "250000000_10000000000000": {
+                            "winProbability": 1,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "3",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        }
+                    }
+                },
+                "MASTER": {
+                    "betAmountRange": "1000_10000",
+                    "inventoryInputRate": 0.96,
+                    "controlConfig": {
+                        "0_1250000": {
+                            "winProbability": 0,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "1250000_6250000": {
+                            "winProbability": 0.05,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "6250000_12500000": {
+                            "winProbability": 0.1,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "12500000_25000000": {
+                            "winProbability": 0.15,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "25000000_62500000": {
+                            "winProbability": 0.2,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "62500000_125000000": {
+                            "winProbability": 0.3,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "125000000_250000000": {
+                            "winProbability": 0.4,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "250000000_625000000": {
+                            "winProbability": 0.5,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "625000000_1250000000": {
+                            "winProbability": 0.8,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        },
+                        "1250000000_10000000000000": {
+                            "winProbability": 1,
+                            "normalBetProbabilityConfig": {
+                                "winRewardConfigId": "3",
+                                "loseRewardConfigId": "2"
+                            },
+                            "buyBetProbabilityConfig": {
+                                "winRewardConfigId": "1",
+                                "loseRewardConfigId": "1"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
