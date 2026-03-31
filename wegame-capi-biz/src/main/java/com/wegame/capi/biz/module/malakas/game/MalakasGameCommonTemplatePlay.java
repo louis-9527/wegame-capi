@@ -60,7 +60,13 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         Map<Long, Long> idMap = new HashMap<>();
         idMap.put(RECORD_DEFAULT_PARENT_ID, RECORD_DEFAULT_PARENT_ID);
-        configRecordList = configRecordList.stream().sorted(Comparator.comparing(GameRecordTemplateDo::getBatchId)).sorted(Comparator.comparing(GameRecordTemplateDo::getIndex)).collect(Collectors.toList());
+        //configRecordList = configRecordList.stream().sorted(Comparator.comparing(GameRecordTemplateDo::getBatchId)).sorted(Comparator.comparing(GameRecordTemplateDo::getIndex)).collect(Collectors.toList());
+        configRecordList = configRecordList.stream()
+                .sorted(
+                        Comparator.comparing(GameRecordTemplateDo::getBatchId)  // 第一排序（主）
+                                .thenComparing(GameRecordTemplateDo::getIndex) // 第二排序（次，仅主字段相同时生效）
+                )
+                .collect(Collectors.toList());
         for (GameRecordTemplateDo item : CollectionUtils.emptyIfNull(configRecordList)) {
             if (!idMap.containsKey(item.getId())) {
                 idMap.putIfAbsent(item.getId(), generateGameRecordId());
