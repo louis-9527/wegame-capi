@@ -87,11 +87,13 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         Long maxBatchId = Collections.max(configRecordList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
         BigDecimal totalMultiple = BigDecimal.ZERO;
+        boolean flag = false;
         for (GameRecordTemplateDo templateItem : configRecordList) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
-            // 开始执行免费轮的第一回合时重新将 totalMultipleAmoun 赋值为0
+            // 开始执行免费轮的第一回合时重新将 totalMultiple 赋值为0
             WheelDo<MalakasSymbolDo> wheel = this.convertWheel(templateItem.getWheel());
-            if (wheel.isFreeFlag() && Objects.equals(totalMultiple, BigDecimal.ONE)) {
+            if (!flag && wheel.isFreeFlag() && Objects.equals(totalMultiple, BigDecimal.ONE)) {
+                flag = true;
                 totalMultiple = BigDecimal.ZERO;
             }
             MalakasGameRecordDo gameRecordDo = this.buildGameRecord(gamePlayDo, templateItem, totalMultiple, idMap, lastGameFlag);
