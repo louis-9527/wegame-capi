@@ -25,10 +25,12 @@ import static com.wegame.capi.common.Constants.*;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-//@Component
-//@RefreshScope
-//@ConfigurationProperties(prefix = NacosConfigRefresherUtil.IBONGADARNA_JSON_ROOT_NAME)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = NacosConfigRefresherUtil.IBONGADARNA_JSON_ROOT_NAME)
 public class IbongAdarnaConfig extends GameBizConfig {
+    private static final String POINT_REPLACE_SPLIT="point";
+    private static final String TRUE_POINT_DATA_FORMAT="%s.%s";
 
     /**
      * 赔率配置
@@ -93,6 +95,23 @@ public class IbongAdarnaConfig extends GameBizConfig {
          * Map<重复类型，概率>
          */
         private List<TreeMap<String, BigDecimal>> perColumSymbolRepeatProbabilisticConfig;
+
+        public void setMultiPleProbabilisticConfig(TreeMap<String, TreeMap<String, BigDecimal>> multiPleProbabilisticConfig) {
+            TreeMap<BigDecimal, TreeMap<String, BigDecimal>> trueMultiPleProbabilisticConfig = new TreeMap<>();
+            AssertUtil.assertNotNull(multiPleProbabilisticConfig, ErrorCode.ERR_INTER, "multiPleProbabilisticConfig is null");
+            multiPleProbabilisticConfig.forEach((key, value) -> {
+                String[] split = key.split(POINT_REPLACE_SPLIT);
+                if (split.length == 2){
+                    String s1 = split[0].trim();
+                    String s2 = split[1].trim();
+                    BigDecimal trueKey = new BigDecimal(String.format(TRUE_POINT_DATA_FORMAT, s1, s2));
+                    trueMultiPleProbabilisticConfig.put(trueKey,value);
+                }else {
+                    trueMultiPleProbabilisticConfig.put(new BigDecimal( key),value);
+                }
+            });
+            this.multiPleProbabilisticConfig = trueMultiPleProbabilisticConfig;
+        }
     }
 
     @Data
