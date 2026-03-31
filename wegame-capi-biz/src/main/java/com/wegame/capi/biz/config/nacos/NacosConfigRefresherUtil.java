@@ -32,12 +32,12 @@ public class NacosConfigRefresherUtil {
     private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new ImmutableMap.Builder<String, Class<? extends ConfigValidate>>()
             .put("maria_makiling_config.json", MariaMakilingConfig.class)
             .put("malakas_config.json", MalakasConfig.class)
-            .put("ibong_adarna_config.json", IbongAdarnaConfig.class)
+//            .put("ibong_adarna_config.json", IbongAdarnaConfig.class)
             .build();
     private static final Map<String, String> TO_JSON_ROOT_MAP = new ImmutableMap.Builder<String, String>()
             .put("maria_makiling_config.json", MARIAMAKILING_JSON_ROOT_NAME)
             .put("malakas_config.json", MALAKAS_JSON_ROOT_NAME)
-            .put("ibong_adarna_config.json", IBONGADARNA_JSON_ROOT_NAME)
+//            .put("ibong_adarna_config.json", IBONGADARNA_JSON_ROOT_NAME)
             .build();
 
     public static boolean validate(String dataId, String groupId, String configInfo) {
