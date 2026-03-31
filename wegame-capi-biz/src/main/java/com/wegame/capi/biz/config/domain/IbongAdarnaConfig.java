@@ -10,6 +10,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,6 +25,8 @@ import static com.wegame.capi.common.Constants.*;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
 @ConfigurationProperties(prefix = NacosConfigRefresherUtil.IBONGADARNA_JSON_ROOT_NAME)
 public class IbongAdarnaConfig extends GameBizConfig {
 
