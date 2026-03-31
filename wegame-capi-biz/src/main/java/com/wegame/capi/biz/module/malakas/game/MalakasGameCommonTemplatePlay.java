@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.malakas.game;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
@@ -44,6 +45,8 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
 
     @Autowired
     MalakasRewardHandler malakasRewardHandler;
+    @Autowired
+    public SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Override
     public List<MalakasGameRecordDo> templatePlay(BetDo betDo, GamePlayDo gamePlayDo, MalakasBetRecordTemplateEsDo template) {
@@ -80,7 +83,7 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         BigDecimal totalMultipleAmount = BigDecimal.ZERO;
         for (GameRecordTemplateDo templateItem : configRecordList) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
-            MalakasGameRecordDo gameRecordDo = buildGameRecord(gamePlayDo, templateItem, totalMultipleAmount, idMap, lastGameFlag);
+            MalakasGameRecordDo gameRecordDo = this.buildGameRecord(gamePlayDo, templateItem, totalMultipleAmount, idMap, lastGameFlag);
             totalMultipleAmount = gameRecordDo.getRewardResult().getTotalMultiple();
             ret.add(gameRecordDo);
         }
@@ -103,11 +106,27 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
             gameRecordIds.add(map.get(gameRecordId));
         }
 
+        Long id = map.get(template.getId());
+        if (Objects.isNull(template.getId())) {
+            //log.error("get id is null template.id={}", template.getId());
+        }
+        Long parentId = map.get(template.getParentId());
+        if (Objects.isNull(template.getParentId())) {
+            //log.error("get id is null template.parentId={}", template.getParentId());
+        }
+        Long betRecordId = gamePlay.getBetRecordId();
+        if (Objects.isNull(template.getBetRecordId())) {
+            //log.error("get betRecordId is null template.betRecordId={}", template.getBetRecordId());
+        }
+        Long batchId = map.get(template.getBatchId());
+        if (Objects.isNull(template.getBatchId())) {
+            //log.error("get batchId is null template.batchId={}", template.getBatchId());
+        }
         return MalakasGameRecordDo.builder()
-                .id(map.get(template.getId()))
-                .parentId(map.get(template.getParentId()))
-                .betRecordId(gamePlay.getBetRecordId())
-                .batchId(map.get(template.getBatchId()))
+                .id(id)
+                .parentId(parentId)
+                .betRecordId(betRecordId)
+                .batchId(batchId)
                 .playerId(userInfo.getPlayerId())
                 .playerName(userInfo.getPlayerName())
                 .index(template.getIndex())
@@ -130,6 +149,6 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
     }
 
     private long generateGameRecordId() {
-        return generateGameRecordId();
+        return snowflakeIdGenerator.nextId();
     }
 }
