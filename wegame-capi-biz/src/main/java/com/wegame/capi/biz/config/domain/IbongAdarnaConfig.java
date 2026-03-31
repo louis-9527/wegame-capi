@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
+import com.wegame.capi.common.utils.NacosKeyUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -93,6 +94,13 @@ public class IbongAdarnaConfig extends GameBizConfig {
          * Map<重复类型，概率>
          */
         private List<TreeMap<String, BigDecimal>> perColumSymbolRepeatProbabilisticConfig;
+
+        public void setMultiPleProbabilisticConfig(TreeMap<String, TreeMap<String, BigDecimal>> multiPleProbabilisticConfig) {
+            TreeMap<BigDecimal, TreeMap<String, BigDecimal>> trueMultiPleProbabilisticConfig = new TreeMap<>();
+            AssertUtil.assertNotNull(multiPleProbabilisticConfig, ErrorCode.ERR_INTER, "multiPleProbabilisticConfig is null");
+            multiPleProbabilisticConfig.forEach((key, value) -> trueMultiPleProbabilisticConfig.put(NacosKeyUtil.transformToDecimal(key), value));
+            this.multiPleProbabilisticConfig = trueMultiPleProbabilisticConfig;
+        }
     }
 
     @Data
