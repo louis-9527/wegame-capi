@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
+import com.wegame.capi.common.utils.NacosKeyUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -25,9 +26,9 @@ import java.util.TreeMap;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-//@Component
+@Component
 @RefreshScope
-//@ConfigurationProperties(prefix = NacosConfigRefresherUtil.KAPRE_JSON_ROOT_NAME)
+@ConfigurationProperties(prefix = NacosConfigRefresherUtil.KAPRE_JSON_ROOT_NAME)
 public class KapreConfig extends GameBizConfig implements Serializable {
     private static final long serialVersionUID = 5550628498801680050L;
     /**
@@ -115,6 +116,25 @@ public class KapreConfig extends GameBizConfig implements Serializable {
          * 付费轮轮带表倍率概率
          */
         private TreeMap<BigDecimal, BigDecimal> payProbabilisticConfig;
+
+        public void setFreeProbabilisticConfig(TreeMap<String, BigDecimal> freeProbabilisticConfig) {
+            TreeMap<BigDecimal, BigDecimal> trueFreeProbabilisticConfig = new TreeMap<>();
+            AssertUtil.assertNotNull(freeProbabilisticConfig, ErrorCode.ERR_INTER, "freeProbabilisticConfig is null");
+            freeProbabilisticConfig.forEach((key, value) -> {
+                trueFreeProbabilisticConfig.put(NacosKeyUtil.transformToDecimal( key), value);
+            });
+
+            this.freeProbabilisticConfig = trueFreeProbabilisticConfig;
+        }
+
+        public void setPayProbabilisticConfig(TreeMap<String, BigDecimal> payProbabilisticConfig) {
+            TreeMap<BigDecimal, BigDecimal> truePayProbabilisticConfig = new TreeMap<>();
+            AssertUtil.assertNotNull(payProbabilisticConfig, ErrorCode.ERR_INTER, "payProbabilisticConfig is null");
+            payProbabilisticConfig.forEach((key, value) -> {
+                truePayProbabilisticConfig.put(NacosKeyUtil.transformToDecimal( key), value);
+            });
+            this.payProbabilisticConfig = truePayProbabilisticConfig;
+        }
     }
 
     @Data
