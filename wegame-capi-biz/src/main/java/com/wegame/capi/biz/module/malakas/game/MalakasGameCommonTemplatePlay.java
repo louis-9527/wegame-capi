@@ -46,51 +46,31 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
     @Autowired
     MalakasRewardHandler malakasRewardHandler;
     @Autowired
-    public SnowflakeIdGenerator snowflakeIdGenerator;
+    SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Override
     public List<MalakasGameRecordDo> templatePlay(BetDo betDo, GamePlayDo gamePlayDo, MalakasBetRecordTemplateEsDo template) {
         AssertUtil.assertNotNull(gamePlayDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        List<GameRecordTemplateDo> configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+        List<GameRecordTemplateDo> templateList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
-        if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}", gamePlayDo.getBetType());
-        }
-        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
-        Map<Long, Long> idMap = new HashMap<>();
-        idMap.put(RECORD_DEFAULT_PARENT_ID, RECORD_DEFAULT_PARENT_ID);
-        //configRecordList = configRecordList.stream().sorted(Comparator.comparing(GameRecordTemplateDo::getBatchId)).sorted(Comparator.comparing(GameRecordTemplateDo::getIndex)).collect(Collectors.toList());
-        configRecordList = configRecordList.stream()
-                .sorted(
-                        Comparator.comparing(GameRecordTemplateDo::getBatchId)  // 第一排序（主）
-                                .thenComparing(GameRecordTemplateDo::getIndex) // 第二排序（次，仅主字段相同时生效）
-                )
+        AssertUtil.assertNotEmpty(templateList, ErrorCode.ERR_INTER);
+        // 预处理：排序升序（batchId， index）
+        templateList = templateList.stream()
+                .sorted(Comparator.comparing(GameRecordTemplateDo::getBatchId).thenComparing(GameRecordTemplateDo::getIndex)) // 第二排序（次，仅主字段相同时生效）
                 .collect(Collectors.toList());
-        for (GameRecordTemplateDo item : CollectionUtils.emptyIfNull(configRecordList)) {
-            if (!idMap.containsKey(item.getId())) {
-                idMap.putIfAbsent(item.getId(), generateGameRecordId());
-            }
-            //if (!idMap.containsKey(item.getParentId())) {
-            //    idMap.putIfAbsent(item.getParentId(), Objects.equals(item.getParentId(), RECORD_DEFAULT_PARENT_ID) ? RECORD_DEFAULT_PARENT_ID : generateGameRecordId());
-            //}
-            //if (!idMap.containsKey(item.getBatchId())) {
-            //    idMap.putIfAbsent(item.getBatchId(), generateGameRecordId());
-            //}
-            //for (Long gameRecordId : item.getGameRecordIds()) {
-            //    if (!idMap.containsKey(gameRecordId)) {
-            //        idMap.putIfAbsent(gameRecordId, generateGameRecordId());
-            //    }
-            //}
-        }
-        // 数据模型转换
-        List<MalakasGameRecordDo> ret = new ArrayList<>();
-        Long maxBatchId = Collections.max(configRecordList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
+        Map<Long, Long> idMap = buildIdMap(templateList);
+        return convertTemplateList(gamePlayDo, templateList, idMap);
+    }
+
+    private List<MalakasGameRecordDo> convertTemplateList(GamePlayDo gamePlayDo, List<GameRecordTemplateDo> templateList, Map<Long, Long> idMap) {
+        List<MalakasGameRecordDo> ret = new ArrayList<>();;
+        Long maxBatchId = Collections.max(templateList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
         BigDecimal totalMultiple = BigDecimal.ZERO;
         boolean flag = false;
-        for (GameRecordTemplateDo templateItem : configRecordList) {
+        for (GameRecordTemplateDo templateItem : templateList) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
-            // 开始执行免费轮的第一回合时重新将 totalMultiple 赋值为0
+            // 开始执行免费轮的第一回合时重新将 totalMultiple 赋值为0 // todo 优化 @maidong
             WheelDo<MalakasSymbolDo> wheel = this.convertWheel(templateItem.getWheel());
             if (!flag && wheel.isFreeFlag()) {
                 flag = true;
@@ -106,40 +86,40 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         return ret;
     }
 
+    private WheelDo<MalakasSymbolDo> convertWheel(Object obj) {
+        WheelDo<MalakasSymbolDo> wheel = JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
+        });
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
+        return wheel;
+    }
+
+    private Map<Long, Long> buildIdMap(List<GameRecordTemplateDo> configRecordList) {
+        Map<Long, Long> idMap = new HashMap<>();;
+        idMap.put(RECORD_DEFAULT_PARENT_ID, RECORD_DEFAULT_PARENT_ID);
+        for (GameRecordTemplateDo item : CollectionUtils.emptyIfNull(configRecordList)) {
+            if (!idMap.containsKey(item.getId())) {
+                idMap.put(item.getId(), snowflakeIdGenerator.nextId());
+            }
+        }
+        return idMap;
+    }
+
     private MalakasGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal totalMultiple, Map<Long, Long> map, boolean lastGameFlag) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-
-        WheelDo<MalakasSymbolDo> wheel = this.convertWheel(template.getWheel());
-        // 处理空值
-        wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
+        WheelDo<MalakasSymbolDo> wheel = convertWheel(template.getWheel());
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, totalMultiple));
-
-        List<Long> gameRecordIds = new ArrayList<>();
-        for (Long gameRecordId : CollectionUtils.emptyIfNull(template.getGameRecordIds())) {
-            gameRecordIds.add(map.get(gameRecordId));
-        }
-
         Long id = map.get(template.getId());
-        if (Objects.isNull(template.getId())) {
-            //log.error("get id is null template.id={}", template.getId());
-        }
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         Long parentId = map.get(template.getParentId());
-        if (Objects.isNull(template.getParentId())) {
-            //log.error("get id is null template.parentId={}", template.getParentId());
-        }
-        Long betRecordId = gamePlay.getBetRecordId();
-        if (Objects.isNull(template.getBetRecordId())) {
-            //log.error("get betRecordId is null template.betRecordId={}", template.getBetRecordId());
-        }
+        AssertUtil.assertNotNull(parentId, ErrorCode.ERR_INTER);
         Long batchId = map.get(template.getBatchId());
-        if (Objects.isNull(template.getBatchId())) {
-            //log.error("get batchId is null template.batchId={}", template.getBatchId());
-        }
+        AssertUtil.assertNotNull(batchId, ErrorCode.ERR_INTER);
         return MalakasGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
-                .betRecordId(betRecordId)
+                .betRecordId(gamePlay.getBetRecordId())
                 .batchId(batchId)
                 .playerId(userInfo.getPlayerId())
                 .playerName(userInfo.getPlayerName())
@@ -147,7 +127,12 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
                 .freeWheelFlag(wheel.isFreeFlag())
                 .wheel(wheel)
                 .rewardResult(rewardResult)
-                .gameRecordIds(gameRecordIds)
+                .gameRecordIds(Optional.ofNullable(template.getGameRecordIds())
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(map::get)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()))
                 .lastGameFlag(lastGameFlag)
                 .creator(userInfo.getPlayerId())
                 .createTime(DateUtil.getCurrentMilli())
@@ -155,14 +140,5 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
                 .updateTime(DateUtil.getCurrentMilli())
                 .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
-    }
-
-    private WheelDo<MalakasSymbolDo> convertWheel(Object obj) {
-        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
-        });
-    }
-
-    private long generateGameRecordId() {
-        return snowflakeIdGenerator.nextId();
     }
 }
