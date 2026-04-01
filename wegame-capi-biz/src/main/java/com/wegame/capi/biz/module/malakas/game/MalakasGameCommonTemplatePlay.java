@@ -67,13 +67,13 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         List<MalakasGameRecordDo> ret = new ArrayList<>();;
         Long maxBatchId = Collections.max(templateList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
         BigDecimal totalMultiple = BigDecimal.ZERO;
-        boolean flag = false;
+        boolean resetTotalMultipleFlag = false;
         for (GameRecordTemplateDo templateItem : templateList) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
             MalakasGameRecordDo gameRecordDo = this.buildGameRecord(gamePlayDo, templateItem, totalMultiple, idMap, lastGameFlag);
-            if (!flag && gameRecordDo.getRewardResult().isHasRewardFreeWheel()) {
+            if (!resetTotalMultipleFlag && gameRecordDo.getRewardResult().isHasRewardFreeWheel()) {
                 // 第一次命中免费了， 重置倍率为0
-                flag = true;
+                resetTotalMultipleFlag = true;
                 totalMultiple = BigDecimal.ZERO;
             } else {
                 totalMultiple = gameRecordDo.getRewardResult().getTotalMultiple();
