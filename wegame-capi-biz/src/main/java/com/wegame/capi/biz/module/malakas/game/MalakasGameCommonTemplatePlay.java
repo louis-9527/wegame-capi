@@ -92,7 +92,7 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
             // 开始执行免费轮的第一回合时重新将 totalMultiple 赋值为0
             WheelDo<MalakasSymbolDo> wheel = this.convertWheel(templateItem.getWheel());
-            if (!flag && wheel.isFreeFlag() && Objects.equals(totalMultiple, BigDecimal.ONE)) {
+            if (!flag && wheel.isFreeFlag()) {
                 flag = true;
                 totalMultiple = BigDecimal.ZERO;
             }
