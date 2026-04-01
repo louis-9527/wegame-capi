@@ -85,13 +85,16 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         // 占位元素-将占位元素设置为空:
         postProcessPlaceholderSymbol(ret);
         // 计算总中奖金额（设置到上下文用于playResultValidate校验）
-        long totalRewardAmount = ret.stream()
+        gamePlayDo.setOverallRewardAmount(getTotalRewardAmount(ret));
+        // 返回
+        return ret;
+    }
+
+    private static long getTotalRewardAmount(List<MalakasGameRecordDo> ret) {
+        return ret.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        gamePlayDo.setOverallRewardAmount(totalRewardAmount);
-        // 返回
-        return ret;
     }
 
     private WheelDo<MalakasSymbolDo> convertWheel(Object obj) {
