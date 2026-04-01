@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
+import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.postProcessPlaceholderSymbol;
 
 @Slf4j
@@ -132,7 +133,11 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
     }
 
     private WheelDo<MalakasSymbolDo> convertWheel(Object obj) {
-        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
+        WheelDo<MalakasSymbolDo> wheel = JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
         });
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        // 空元素置为占位元素（以用于中奖计算）
+        wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
+        return wheel;
     }
 }
