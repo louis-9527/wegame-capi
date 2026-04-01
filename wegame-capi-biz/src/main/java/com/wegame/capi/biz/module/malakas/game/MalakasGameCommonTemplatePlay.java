@@ -68,7 +68,7 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         Long maxBatchId = Collections.max(templateList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
         BigDecimal totalMultiple = BigDecimal.ZERO;
         boolean resetTotalMultipleFlag = false;
-        for (GameRecordTemplateDo templateItem : templateList) {
+        for (GameRecordTemplateDo templateItem : CollectionUtils.emptyIfNull(templateList)) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
             MalakasGameRecordDo gameRecordDo = this.buildGameRecord(gamePlayDo, templateItem, totalMultiple, idMap, lastGameFlag);
             if (!resetTotalMultipleFlag && gameRecordDo.getRewardResult().isHasRewardFreeWheel()) {
@@ -78,12 +78,13 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
             } else {
                 totalMultiple = gameRecordDo.getRewardResult().getTotalMultiple();
             }
-            // todo delete
+            // todo delete log
             log.info("betRecordId: {}, gameRecordId: {}, malakas totalMultiple: {}", gamePlayDo.getBetRecordId(), gameRecordDo.getId(), totalMultiple);
             ret.add(gameRecordDo);
         }
         // 占位元素-将占位元素设置为空:
         postProcessPlaceholderSymbol(ret);
+        // 返回
         return ret;
     }
 
@@ -91,6 +92,7 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         WheelDo<MalakasSymbolDo> wheel = JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
         });
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        // 空元素置为占位元素（以用于中奖计算）
         wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
         return wheel;
     }
@@ -106,16 +108,16 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         return idMap;
     }
 
-    private MalakasGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal totalMultiple, Map<Long, Long> map, boolean lastGameFlag) {
+    private MalakasGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal totalMultiple, Map<Long, Long> idMap, boolean lastGameFlag) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         WheelDo<MalakasSymbolDo> wheel = convertWheel(template.getWheel());
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, totalMultiple));
-        Long id = map.get(template.getId());
+        Long id = idMap.get(template.getId());
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
-        Long parentId = map.get(template.getParentId());
+        Long parentId = idMap.get(template.getParentId());
         AssertUtil.assertNotNull(parentId, ErrorCode.ERR_INTER);
-        Long batchId = map.get(template.getBatchId());
+        Long batchId = idMap.get(template.getBatchId());
         AssertUtil.assertNotNull(batchId, ErrorCode.ERR_INTER);
         return MalakasGameRecordDo.builder()
                 .id(id)
@@ -131,7 +133,7 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
                 .gameRecordIds(Optional.ofNullable(template.getGameRecordIds())
                         .orElse(Collections.emptyList())
                         .stream()
-                        .map(map::get)
+                        .map(idMap::get)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList()))
                 .lastGameFlag(lastGameFlag)
