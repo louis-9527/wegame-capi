@@ -73,6 +73,7 @@ public abstract class AbstractGameContext<R> {
             Long betAmount = gamePlayDo.getBetAmount();
             switch (gamePlayDo.getGamePlayType()) {
                 case TEMPLATE_PLAY:
+                case INVENTORY_TEMPLATE_PLAY:
                     AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
                     AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
                     Long byDivideAmount = payAmount > 0 ? payAmount : betAmount;
