@@ -70,14 +70,15 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         boolean flag = false;
         for (GameRecordTemplateDo templateItem : templateList) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
-            // 开始执行免费轮的第一回合时重新将 totalMultiple 赋值为0 // todo 优化 @maidong
-            WheelDo<MalakasSymbolDo> wheel = this.convertWheel(templateItem.getWheel());
-            if (!flag && wheel.isFreeFlag()) {
+            MalakasGameRecordDo gameRecordDo = this.buildGameRecord(gamePlayDo, templateItem, totalMultiple, idMap, lastGameFlag);
+            if (!flag && gameRecordDo.getRewardResult().isHasRewardFreeWheel()) {
+                // 第一次命中免费了， 重置倍率为0
                 flag = true;
                 totalMultiple = BigDecimal.ZERO;
+            } else {
+                totalMultiple = gameRecordDo.getRewardResult().getTotalMultiple();
             }
-            MalakasGameRecordDo gameRecordDo = this.buildGameRecord(gamePlayDo, templateItem, totalMultiple, idMap, lastGameFlag);
-            totalMultiple = gameRecordDo.getRewardResult().getTotalMultiple();
+            // todo delete
             log.info("betRecordId: {}, gameRecordId: {}, malakas totalMultiple: {}", gamePlayDo.getBetRecordId(), gameRecordDo.getId(), totalMultiple);
             ret.add(gameRecordDo);
         }
