@@ -36,6 +36,7 @@ import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -89,6 +90,7 @@ public class BayanihanGameTemplatePlay extends AbstractGame<BayanihanGameRecordD
         // 处理每个批次
         BayanihanGameRecordDo lastGameRecord = firstGameRecord;
 
+        LinkedList<Pair<GameRecordTemplateDo,BayanihanGameRecordDo>> queue = new LinkedList<>();
         for (GameRecordTemplateDo recordDo : recordBatchList) {
             if (recordDo.getParentId() != 0L) {
                 // 处理首轮普通轮
@@ -102,9 +104,12 @@ public class BayanihanGameTemplatePlay extends AbstractGame<BayanihanGameRecordD
             if (CollectionUtils.isEmpty(recordDo.getGameRecordIds())) {
                 continue;
             }
-
-            // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId, totalRewardAmount);
+            queue.add(Pair.of(recordDo, lastGameRecord));
+        }
+        // 首轮和免费轮分开处理，广度优先
+        while (!queue.isEmpty()) {
+            Pair<GameRecordTemplateDo,BayanihanGameRecordDo> currentBatch  = queue.removeFirst();
+            processFreeRounds(ret, gamePlay, currentBatch.getKey(), currentBatch.getValue(), groupedByBatchId, totalRewardAmount, queue);
         }
         //// 总中奖金额 不准
         gamePlay.setOverallRewardAmount(totalRewardAmount.get());
@@ -182,9 +187,8 @@ public class BayanihanGameTemplatePlay extends AbstractGame<BayanihanGameRecordD
             GameRecordTemplateDo recordDo,
             BayanihanGameRecordDo parent,
             Map<Long, List<GameRecordTemplateDo>> groupedByBatchId,
-            AtomicLong totalRewardAmount) {
-
-        Map<GameRecordTemplateDo, BayanihanGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
+            AtomicLong totalRewardAmount,
+            LinkedList<Pair<GameRecordTemplateDo,BayanihanGameRecordDo>> queue) {
 
         List<Long> gameRecordIds = new ArrayList<>();
         for (Long batchId : recordDo.getGameRecordIds()) {
@@ -206,16 +210,11 @@ public class BayanihanGameTemplatePlay extends AbstractGame<BayanihanGameRecordD
                 }
                 preGameRecord = gameRecord;
                 if (CollectionUtils.isNotEmpty(record.getGameRecordIds())) {
-                    nextLevelGameRecordMap.put(record, gameRecord);
+                    queue.offer(Pair.of(record, gameRecord));
                 }
             }
         }
         parent.setGameRecordIds(gameRecordIds);
-        for (Map.Entry<GameRecordTemplateDo, BayanihanGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
-            GameRecordTemplateDo key = entry.getKey();
-            BayanihanGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, totalRewardAmount);
-        }
     }
 
     /**
