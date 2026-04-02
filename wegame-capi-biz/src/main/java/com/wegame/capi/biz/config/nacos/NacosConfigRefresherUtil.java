@@ -47,10 +47,11 @@ public class NacosConfigRefresherUtil {
                 AssertUtil.assertTrue(obj instanceof ConfigValidate, ErrorCode.ERR_INTER);
                 ConfigValidate config = (ConfigValidate) obj;
                 config.validate();
+                log.info("config refresh suc, dataId: {}, groupId: {}", dataId, groupId);
                 return true;
             } catch (Exception e) {
-                log.error("config validate error", e);
-                LarkUtil.sendTextMsg(bootId, String.format("%s, %s config validate error", dataId, groupId));
+                log.error("config validate error, dataId: {}, groupId: {}, configInfo: {}", dataId, groupId, configInfo, e);
+                LarkUtil.sendTextMsg(bootId, String.format("%s, %s config validate error. %s", dataId, groupId, e.getMessage()));
                 return false;
             }
         }
