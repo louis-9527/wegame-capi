@@ -6,7 +6,7 @@ spring:
       connection-timeout: 5
       username: elastic
       password: Innovatech@2025
-      read-timeout: 2
+      read-timeout: 1
   data:
     elasticsearch:
       repositories:
