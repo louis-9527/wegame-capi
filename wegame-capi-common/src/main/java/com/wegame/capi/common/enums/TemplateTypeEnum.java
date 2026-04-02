@@ -20,8 +20,9 @@ public enum TemplateTypeEnum {
 
     MALAKAS(GameTypeEnum.MALAKAS, TemplateConstants.MALAKAS_BET_RECORD_TEMPLATE),
 
-    ;
+    IBONG_ADARNA(GameTypeEnum.IBONG_ADARNA, TemplateConstants.IBONGADARNA_BET_RECORD_TEMPLATE),
 
+    ;
 
     /**
      * 枚举码.
