@@ -54,6 +54,8 @@ public class NacosConfigRefresherUtil {
                 LarkUtil.sendTextMsg(bootId, String.format("%s, %s config validate error. %s", dataId, groupId, e.getMessage()));
                 return false;
             }
+        } else {
+            log.warn("config not in validate list, dataId: {}, groupId: {}", dataId, groupId);
         }
         return true;
     }
@@ -63,6 +65,8 @@ public class NacosConfigRefresherUtil {
         if (StringUtils.isNotEmpty(rootName)) {
             JSONObject root = JSON.parseObject(configInfo);
             return Objects.nonNull(root) ? FastJsonUtils.toJSONString(root.getJSONObject(rootName)) : null;
+        } else {
+            log.warn("not contains rootName, dataId: {}, rootName: {}", dataId, rootName);
         }
         return null;
     }
