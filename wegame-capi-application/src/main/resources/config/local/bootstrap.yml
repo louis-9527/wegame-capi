@@ -22,22 +22,15 @@ logging:
 spring:
   cloud:
     nacos:
-      username: nacos
-      password: nacos
-      #      discovery:
-      #        server-addr: localhost:8848
-      #        group: wegame-capi-local
-      #        namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
-      #        cluster-name: wegame-capi
       config:
         import-check:
           enabled: false
         server-addr: mse-98afa3410-p.nacos-ans.mse.aliyuncs.com:8848
-        username: nacos
-        password: nacos
         group: wegame-capi-local
         namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
         refresh-enabled: true
+        access-key: LTAI5tMTvh5AJtTDvsFJ941L
+        secret-key: 57yeby8QIcmSE5uue5tQH1CvGj4kZu
         extension-configs:
           - data-id: wegame-capi-local-maria_makiling_config.json
             group: wegame-capi-local
