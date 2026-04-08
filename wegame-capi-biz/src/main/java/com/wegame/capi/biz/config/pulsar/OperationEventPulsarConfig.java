@@ -25,8 +25,8 @@ import static com.wegame.capi.common.Constants.*;
  * 干预事件Pulsar配置
  */
 @Slf4j
-@Profile({"dev", "qa", "pre", "prod"})
 @Configuration
+@ConditionalOnProperty(name = DYNAMIC_OPERATION_SWITCH, havingValue = TRUE_VAL)
 public class OperationEventPulsarConfig {
     private static final String operationEventPulsarClient = "operationEventPulsarClient";
     private static final String mariaMakilingOperationEventConsumer = "mariaMakilingOperationEventConsumer";
