@@ -60,7 +60,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> matchInventory = inventoryControlConfig.getInventoryConfig().match(betAmount);
         AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
         long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(gamePlayDo.getPayAmount())).longValue();
-        String inventoryPoolName = getInventoryPoolName(userInfo, inventoryControlConfig);
+        String inventoryPoolName = getInventoryPoolName(betDo, userInfo, inventoryControlConfig);
         // 设置-投注上下文（库存控制）
         betDo.setBetInventoryControl(BetInventoryControlDo.builder()
                 .inventoryType(matchInventory.getKey())
@@ -97,8 +97,8 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         }
     }
 
-    private String getInventoryPoolName(UserInfo userInfo, CommonInventoryControlConfig inventoryControlConfig) {
-        return inventoryControlConfig.getInventoryConfig().getInventoryPoolName(userInfo.getPId(), userInfo.getChannelId());
+    private String getInventoryPoolName(BetDo betDo, UserInfo userInfo, CommonInventoryControlConfig inventoryControlConfig) {
+        return inventoryControlConfig.getInventoryConfig().getInventoryPoolName(betDo.getBetType(), userInfo.getPId(), userInfo.getChannelId());
     }
 
     private List<R> handleOnHitRewardBlank(BetDo betDo, GamePlayDo gamePlayDo) {
@@ -117,7 +117,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 betDo.getBetInventoryControl().getInventoryPoolName(),
                 matchInventory.getKey());
         long currentInventoryValue = Objects.nonNull(currentInventory) ? Long.valueOf(currentInventory.toString()) : 0L;
-        CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(currentInventoryValue);
+        CommonInventoryControlConfig.InventoryControlConfigItem inventoryControlConfigItem = matchInventory.getValue().matchControlConfig(betDo.getBetType(), currentInventoryValue);
         log.info("matchInventoryLevelInfo, currentInventory: {}, inventoryControlConfigItem: {}", currentInventory, inventoryControlConfigItem);
         AssertUtil.assertNotNull(inventoryControlConfigItem, ErrorCode.ERR_INTER);
         List<R> gameRecordList;
@@ -127,8 +127,8 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         do {
             retryTimes ++;
             boolean winRet = judgeWinRet(inventoryControlConfigItem.getWinProbability());
-            String rewardConfigId = inventoryControlConfigItem.getRewardConfigId(gamePlayDo.getBetType(), winRet);
-            log.info("doWhile, rewardConfigInfo, betRecordId: {}, retryTimes: {}, rewardConfigId: {}", gamePlayDo.getBetRecordId(), retryTimes, rewardConfigId);
+            String rewardConfigId = inventoryControlConfigItem.getRewardConfigId(winRet);
+            log.info("doWhile, rewardConfigInfo, betRecordId: {}, retryTimes: {}, rewardConfigId: {}, betType: {}", gamePlayDo.getBetRecordId(), retryTimes, rewardConfigId, gamePlayDo.getBetType().getCode());
             TreeMap<String, Integer> treeMap = inventoryControlConfig().getRewardConfig().getRewardConfigMap().get(gamePlayDo.getBetType()).get(rewardConfigId);
             TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(treeMap);
             gamePlayDo.setTemplateMultipleRange(templateMultipleRange);

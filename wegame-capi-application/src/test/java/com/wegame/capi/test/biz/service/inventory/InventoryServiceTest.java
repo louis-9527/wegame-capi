@@ -5,6 +5,7 @@ import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.service.inventory.InventoryService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.InventoryTypeEnum;
 import com.wegame.capi.test.BaseTest;
@@ -90,7 +91,7 @@ public class InventoryServiceTest extends BaseTest {
     }
 
     private String getPoolName(UserInfo userInfo) {
-        return malakasConfig.getInventoryControlConfig().getInventoryConfig().getInventoryPoolName(userInfo.getPId(), userInfo.getChannelId());
+        return malakasConfig.getInventoryControlConfig().getInventoryConfig().getInventoryPoolName(BetTypeEnum.BUY_BET, userInfo.getPId(), userInfo.getChannelId());
     }
 
 }

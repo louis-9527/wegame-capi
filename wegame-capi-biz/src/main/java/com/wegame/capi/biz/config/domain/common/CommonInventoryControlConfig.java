@@ -3,7 +3,6 @@ package com.wegame.capi.biz.config.domain.common;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.BetAmountRangeDo;
@@ -72,17 +71,19 @@ public class CommonInventoryControlConfig implements Serializable {
     public static class InventoryConfig implements Serializable {
         /**
          * 库存池子Map
-         * TreeMap<pid，<channelId，poolName>>
+         * TreeMap<投注类型，TreeMap<pid，TreeMap<channelId，poolName>>
          */
-        private TreeMap<String, TreeMap<String, String>> inventoryPoolMap;
+        private TreeMap<BetTypeEnum, TreeMap<String, TreeMap<String, String>>> inventoryPoolMap;
         /**
          * 库存配置Map
          * TreeMap<名称，<左开赔率_右闭赔率，权重>>
          */
         private TreeMap<InventoryTypeEnum, InventoryConfigItem> inventoryConfigMap;
 
-        public String getInventoryPoolName(String pid, String channelId) {
-            TreeMap<String, String> map = inventoryPoolMap.get(pid);
+        public String getInventoryPoolName(BetTypeEnum betType, String pid, String channelId) {
+            TreeMap<String, TreeMap<String, String>> amap = inventoryPoolMap.get(betType);
+            AssertUtil.assertTrue(MapUtils.isNotEmpty(amap), ErrorCode.ERR_INTER);
+            TreeMap<String, String> map = amap.get(pid);
             AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
             return map.get(channelId);
         }
@@ -110,9 +111,9 @@ public class CommonInventoryControlConfig implements Serializable {
         private BigDecimal inventoryInputRate;
         /**
          * 库存控制配置
-         * TreeMap<库存区间（左开右闭），库存控制配置>
+         * TreeMap<投注类型，TreeMap<库存区间（左开右闭），库存控制配置>
          */
-        private TreeMap<String, InventoryControlConfigItem> controlConfig;
+        private TreeMap<BetTypeEnum, TreeMap<String, InventoryControlConfigItem>> controlConfig;
 
         public void validate() {
             Assert.notNull(betAmountRange, "betAmountRange is null");
@@ -127,7 +128,20 @@ public class CommonInventoryControlConfig implements Serializable {
             Assert.isTrue(inventoryInputRate.compareTo(new BigDecimal(0.9)) >= 0
                     && inventoryInputRate.compareTo(new BigDecimal(1)) <= 0, "inventoryInputRate must in range [0.9, 1]");
             Assert.isTrue(MapUtils.isNotEmpty(controlConfig), "controlConfig is empty");
-            controlConfig.entrySet().forEach(item -> {
+            TreeMap<String, InventoryControlConfigItem> normalBetMap = controlConfig.get(BetTypeEnum.NORMAL_BET);
+            Assert.isTrue(MapUtils.isNotEmpty(normalBetMap), "controlConfig is empty");
+            normalBetMap.entrySet().forEach(item -> {
+                String inventoryRangeStr = item.getKey();
+                Assert.notEmpty(inventoryRangeStr, "inventoryRangeStr is null");
+                InventoryRangeDo inventoryRange = InventoryRangeDo.build(item.getKey());
+                Assert.notNull(inventoryRange, "inventoryRangeStr is error");
+                InventoryControlConfigItem inventoryControlConfigItem = item.getValue();
+                Assert.notNull(inventoryControlConfigItem, "inventoryControlConfigItem is null");
+                inventoryControlConfigItem.validate();
+            });
+            TreeMap<String, InventoryControlConfigItem> buyBetMap = controlConfig.get(BetTypeEnum.BUY_BET);
+            Assert.isTrue(MapUtils.isNotEmpty(buyBetMap), "controlConfig is empty");
+            buyBetMap.entrySet().forEach(item -> {
                 String inventoryRangeStr = item.getKey();
                 Assert.notEmpty(inventoryRangeStr, "inventoryRangeStr is null");
                 InventoryRangeDo inventoryRange = InventoryRangeDo.build(item.getKey());
@@ -138,8 +152,8 @@ public class CommonInventoryControlConfig implements Serializable {
             });
         }
 
-        public InventoryControlConfigItem matchControlConfig(long currentInventoryVal) {
-            return controlConfig.entrySet().stream().filter(item -> {
+        public InventoryControlConfigItem matchControlConfig(BetTypeEnum betType, long currentInventoryVal) {
+            return controlConfig.get(betType).entrySet().stream().filter(item -> {
                 InventoryRangeDo inventoryRange = InventoryRangeDo.build(item.getKey());
                 return inventoryRange.inRange(currentInventoryVal);
             }).findFirst().map(Map.Entry::getValue).orElse(null);
@@ -156,25 +170,24 @@ public class CommonInventoryControlConfig implements Serializable {
          */
         private BigDecimal winProbability;
         /**
-         * 正常投注概率配置
+         * 赢：中奖配置id
          */
-        private ProbabilisticConfig normalBetProbabilityConfig;
+        private String winRewardConfigId;
         /**
-         * 购买投注概率配置
+         * 输：中奖配置id
          */
-        private ProbabilisticConfig buyBetProbabilityConfig;
+        private String loseRewardConfigId;
+        ///**
+        // * 正常投注概率配置
+        // */
+        //private ProbabilisticConfig normalBetProbabilityConfig;
+        ///**
+        // * 购买投注概率配置
+        // */
+        //private ProbabilisticConfig buyBetProbabilityConfig;
 
-        public String getRewardConfigId(BetTypeEnum betType, boolean winRet) {
-            switch (betType) {
-                case NORMAL_BET:
-                    return winRet ? normalBetProbabilityConfig.winRewardConfigId :
-                            normalBetProbabilityConfig.loseRewardConfigId;
-                case BUY_BET:
-                    return winRet ? buyBetProbabilityConfig.winRewardConfigId :
-                            buyBetProbabilityConfig.loseRewardConfigId;
-                default:
-                    throw new BusinessException(ErrorCode.ERR_INTER);
-            }
+        public String getRewardConfigId(boolean winRet) {
+            return winRet ? winRewardConfigId : loseRewardConfigId;
         }
 
         public void validate() {
@@ -184,32 +197,34 @@ public class CommonInventoryControlConfig implements Serializable {
             int actualScale = winProbability.stripTrailingZeros().scale();
             // 赢的概率最大支持四位小数
             Assert.isTrue(actualScale >= 0 && actualScale <= 4, "winProbability actualScale must <= 4");
-            Assert.notNull(normalBetProbabilityConfig, "normalBetProbabilityConfig is null");
-            normalBetProbabilityConfig.validate();
-            Assert.notNull(buyBetProbabilityConfig, "buyBetProbabilityConfig is null");
-            buyBetProbabilityConfig.validate();
-        }
-    }
-
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ProbabilisticConfig implements Serializable {
-        /**
-         * 赢：中奖配置id
-         */
-        private String winRewardConfigId;
-        /**
-         * 输：中奖配置id
-         */
-        private String loseRewardConfigId;
-
-        public void validate() {
             Assert.notEmpty(winRewardConfigId, "winRewardConfigId is null");
-            Assert.notEmpty(loseRewardConfigId, "winRewardConfigId is null");
+            Assert.notEmpty(loseRewardConfigId, "loseRewardConfigId is null");
         }
     }
+
+    //@Data
+    //@SuperBuilder
+    //@NoArgsConstructor
+    //@AllArgsConstructor
+    //public static class ProbabilisticConfig implements Serializable {
+    //    /**
+    //     * 赢的概率
+    //     */
+    //    private BigDecimal winProbability;
+    //    /**
+    //     * 赢：中奖配置id
+    //     */
+    //    private String winRewardConfigId;
+    //    /**
+    //     * 输：中奖配置id
+    //     */
+    //    private String loseRewardConfigId;
+    //
+    //    public void validate() {
+    //        Assert.notEmpty(winRewardConfigId, "winRewardConfigId is null");
+    //        Assert.notEmpty(loseRewardConfigId, "winRewardConfigId is null");
+    //    }
+    //}
 
     public void validate() {
         rewardConfigValidate();
