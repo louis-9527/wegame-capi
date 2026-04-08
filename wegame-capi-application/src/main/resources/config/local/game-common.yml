@@ -4,7 +4,7 @@ dynamic:
     switch: true
   internal:
     operation:
-      pulsar_url: pulsar+ssl://pc-c2f76b54.aws-apse1-qat-snsoft-public.o-sn9dy.aws-apse1-qat-snsoft.aws.snio.cloud:6651
+      pulsar_url: pulsar+ssl://pc-f71ef0a1.alicloud-apse1-qat-a8kpr.ali.snio.cloud:6651
       pulsar_topic: dos_game_slot_event
       pulsar_group:
         maria_makiling: cd_MariaMakiling
@@ -17,14 +17,15 @@ dynamic:
         mangkukulam: cd_Mangkukulam
         sirena: cd_Sirena
         atlantis: cd_Atlantis
+        bayanihan: cd_Bayanihan
       pulsar:
         auth:
           issuer_url: https://auth.streamnative.cloud
           credentials_file_path: /operation_pulsar_privateKey.json
-          audience:  urn:sn:pulsar:o-sn9dy:qat
+          audience: urn:sn:pulsar:o-h9vm9:platform-aliyun-qat
   external:
     operation:
-      pulsar_url: pulsar+ssl://pc-3f23fd60.alicloud-apse1-prod-scx3f.ali.snio.cloud:6651
+      pulsar_url: pulsar+ssl://pc-f71ef0a1.alicloud-apse1-qat-a8kpr.ali.snio.cloud:6651
       pulsar_topic: dos_bp_game_slot_event
       pulsar_group:
         maria_makiling: ${spring.application.name}_${spring.application.env}_cd_External_MariaMakiling
@@ -37,8 +38,9 @@ dynamic:
         mangkukulam: ${spring.application.name}_${spring.application.env}_cd_External_Mangkukulam
         sirena: ${spring.application.name}_${spring.application.env}_cd_External_Sirena
         atlantis: ${spring.application.name}_${spring.application.env}_cd_External_Atlantis
+        bayanihan: ${spring.application.name}_${spring.application.env}_cd_External_Bayanihan
       pulsar:
         auth:
           issuer_url: https://auth.streamnative.cloud
           credentials_file_path: /operation_pulsar_external_privateKey.json
-          audience:  urn:sn:pulsar:o-iylfk:platform-pulsar-external-platform
+          audience:  urn:sn:pulsar:o-h9vm9:platform-aliyun-qat
