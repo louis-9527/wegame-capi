@@ -1,18 +1,12 @@
 ## log
 logging:
   level:
-    #    org.apache.pulsar: DEBUG
-    #    org.springframework.web: trace
+    org.apache.pulsar: DEBUG
+    #    org.springframework.web: info
     #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    com.wegame: DEBUG
-    com.wegame.capi.biz.listener.betRecord.AbstractPulsarListener: ERROR
-    com.wegame.base.config: ERROR
-    org.apache.pulsar: ERROR
-    #    org.apache.ibatis: trace
-    org.mongodb: ERROR
-    #    org.springframework.data.redis: DEBUG
-    #    com.mongodb.internal.connection: DEBUG
-    #    org.apache.http: DEBUG
+    com.wegame: INFO
+    #    org.mongodb: error
+    #    org.apache.ibatis: info
     # Nacos客户端核心模块：打印配置加载、更新、监听日志
     com.alibaba.nacos.client.config: DEBUG
     # Spring Cloud Nacos配置模块：打印配置绑定、刷新日志
