@@ -43,13 +43,26 @@ public class GameConfig {
     //    }
 
 //    @Bean
-//    IbongAdarnaConfig ibongAdarnaConfig() throws IOException {
-//        String path = "/ibong_adarna_config.json";
+//    DiwataMayariConfig diwataMayariConfig() throws IOException {
+//        String path = "/diwata_mayari_config.json";
 //        InputStream inputStream = getClass().getResourceAsStream(path);
 //        if (inputStream == null) {
-//            throw new RuntimeException("read maria_makiling_config.json file err！！！");
+//            throw new RuntimeException("read diwata_mayari_config.json file err！！！");
 //        } else {
-//            IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
+//            DiwataMayariConfig config = new ObjectMapper().readValue(inputStream, DiwataMayariConfig.class);
+//            config.validate();
+//            return config;
+//        }
+//    }
+
+//    @Bean
+//    KapreConfig kapreConfig() throws IOException {
+//        String path = "/kapre_config.json";
+//        InputStream inputStream = getClass().getResourceAsStream(path);
+//        if (inputStream == null) {
+//            throw new RuntimeException("read kapre_config.json file err！！！");
+//        } else {
+//            KapreConfig config = new ObjectMapper().readValue(inputStream, KapreConfig.class);
 //            config.validate();
 //            return config;
 //        }

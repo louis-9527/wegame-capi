@@ -27,6 +27,9 @@ spring:
           - data-id: wegame-capi-sts-lamang_config.json
             group: wegame-capi-sts
             refresh: true
+          - data-id: wegame-capi-sts-mangkukulam_config.json
+            group: wegame-capi-sts
+            refresh: true
           - data-id: wegame-capi-sts-sirena_config.json
             group: wegame-capi-sts
             refresh: true
