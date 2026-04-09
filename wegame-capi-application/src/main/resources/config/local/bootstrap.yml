@@ -66,6 +66,9 @@ spring:
           - data-id: wegame-capi-local-sirena_config.json
             group: wegame-capi-local
             refresh: true
+          - data-id: wegame-capi-local-bayanihan_config.json
+            group: wegame-capi-local
+            refresh: true
 #game switch
 game:
   enable:

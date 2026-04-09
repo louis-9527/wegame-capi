@@ -10,11 +10,15 @@ import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.BAYANIHAN_JSON_ROOT_NAME;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 
@@ -26,6 +30,11 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = BAYANIHAN_JSON_ROOT_NAME)
 public class BayanihanConfig extends GameBizConfig{
 
     private static final long serialVersionUID = -3176807225114663395L;
