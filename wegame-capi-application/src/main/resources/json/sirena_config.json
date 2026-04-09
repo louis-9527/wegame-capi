@@ -203,6 +203,27 @@
     "freeWheelStepForScatter1": "1",
     "maxFreeWheelTimes": "12"
   },
+  "templateRangeConfig" : {
+      "mainGame": {
+        "0_1": 1,
+        "1_3": 1,
+        "3_5": 1,
+        "5_8": 1,
+        "8_15": 1,
+        "15_30": 1,
+        "30_50": 1
+      },
+      "freeGame": {
+        "0_1": 1,
+        "1_3": 1,
+        "3_5": 1,
+        "5_8": 1,
+        "8_15": 1,
+        "15_30": 1,
+        "30_50": 1,
+        "50_70": 8
+      }
+    },
   "rewardMaxMultiple": "10250",
   "rewardNotifyMinMultiple": "20",
   "payoutAmountLimitConfig": {

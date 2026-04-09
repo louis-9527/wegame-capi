@@ -28,6 +28,7 @@ import static com.wegame.capi.common.Constants.*;
         IBONG_ADARNA_PROP + "} || ${" +
         MALAKAS_PROP + "} || ${" +
         MANGKUKULAM_PROP + "} || ${" +
+        SIRENA_PROP + "} || ${" +
         MARIA_MAKILING_PROP
         + "}")
 public class EsRestClientConfig {

@@ -80,7 +80,7 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         List<GameRecordTemplateDo> configRecordList = null;
         if (Objects.nonNull(gamePlay.getContinuePlayContext()) && Objects.nonNull(gamePlay.getContinuePlayContext().getParentBetRecordId())) {
             Pair<TemplateTypeEnum, Long> pair = loadTemplateFromContext(gamePlay);
-            loadTemplateFromId(pair.getKey(), pair.getValue());
+            configRecordList = loadTemplateFromId(pair.getKey(), pair.getValue());
         } else {
             configRecordList = getTemplateConfigList(betDo, gamePlay);
         }
@@ -252,7 +252,7 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
             GameRecordTemplateDo recordDo,
             SirenaGameRecordDo parent,
             Map<Long, List<GameRecordTemplateDo>> groupedByBatchId) {
-        Map<GameRecordTemplateDo, SirenaGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
+        Map<GameRecordTemplateDo, SirenaGameRecordDo> nextLevelGameRecordMap = new LinkedHashMap<>();
 
         List<Long> gameRecordIds = new ArrayList<>();
         for (Long batchId : recordDo.getGameRecordIds()) {
