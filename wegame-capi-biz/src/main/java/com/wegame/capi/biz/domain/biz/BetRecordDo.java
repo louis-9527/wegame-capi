@@ -150,6 +150,11 @@ public class BetRecordDo<T> implements Serializable {
     private String freeWheelHandleStatus;
 
     /**
+     * 模板类型
+     */
+    private String templateType;
+
+    /**
      * 下一局模板id
      *
      */

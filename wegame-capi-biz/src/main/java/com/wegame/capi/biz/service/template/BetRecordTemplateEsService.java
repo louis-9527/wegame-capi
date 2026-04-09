@@ -9,6 +9,7 @@ import com.wegame.capi.biz.config.es.EsRestClientConfig;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,10 +41,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
@@ -83,11 +81,20 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         //                        restHighLevelClient.asyncSearch().get()
         try {
             // 1. 组装请求
-            GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
-                    .fetchSourceContext(new FetchSourceContext(true,
-                            new String[]{"id", "bytes","multiple"},
+            GetRequest getRequest = null;
+            if (Objects.equals(templateType.getGameType(), GameTypeEnum.SIRENA)) {
+                getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
+                        .fetchSourceContext(new FetchSourceContext(true,
+                                new String[]{"id", "bytes", "multiple", "avgMultiple", "nextBetRecordId"},
 //                            new String[]{"id", "bytes","multiple"},   // 包含
-                            null));
+                                null));
+            }else {
+                getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
+                        .fetchSourceContext(new FetchSourceContext(true,
+                                new String[]{"id", "bytes", "multiple"},
+//                            new String[]{"id", "bytes","multiple"},   // 包含
+                                null));
+            }
             long start = System.currentTimeMillis();
             // 2. 执行
             GetResponse resp = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
