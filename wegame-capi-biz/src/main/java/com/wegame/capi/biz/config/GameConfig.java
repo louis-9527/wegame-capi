@@ -42,17 +42,17 @@ public class GameConfig {
     //        }
     //    }
 
-    @Bean
-    IbongAdarnaConfig ibongAdarnaConfig() throws IOException {
-        String path = "/ibong_adarna_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read maria_makiling_config.json file err！！！");
-        } else {
-            IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
-            config.validate();
-            return config;
-        }
-    }
+//    @Bean
+//    IbongAdarnaConfig ibongAdarnaConfig() throws IOException {
+//        String path = "/ibong_adarna_config.json";
+//        InputStream inputStream = getClass().getResourceAsStream(path);
+//        if (inputStream == null) {
+//            throw new RuntimeException("read maria_makiling_config.json file err！！！");
+//        } else {
+//            IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
+//            config.validate();
+//            return config;
+//        }
+//    }
 
 }
