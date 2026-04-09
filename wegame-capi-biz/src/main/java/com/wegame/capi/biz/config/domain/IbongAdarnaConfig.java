@@ -4,10 +4,14 @@ import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -19,7 +23,12 @@ import static com.wegame.capi.common.Constants.*;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IbongAdarnaConfig extends GameBizConfig{
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = NacosConfigRefresherUtil.IBONGADARNA_JSON_ROOT_NAME)
+public class IbongAdarnaConfig extends GameBizConfig {
 
     /**
      * 赔率配置

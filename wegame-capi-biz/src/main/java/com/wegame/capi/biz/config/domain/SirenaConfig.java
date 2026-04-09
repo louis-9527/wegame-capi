@@ -10,6 +10,9 @@ import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -19,12 +22,18 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.SIRENA_JSON_ROOT_NAME;
 import static com.wegame.capi.common.Constants.CONST_100;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = SIRENA_JSON_ROOT_NAME)
 public class SirenaConfig extends GameBizConfig implements Serializable {
     private static final long serialVersionUID = 5555098765480050L;
     /**

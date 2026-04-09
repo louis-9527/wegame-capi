@@ -4,9 +4,45 @@ logging:
     org.apache.pulsar: DEBUG
     #    org.springframework.web: info
     #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    #    com.wegame: info
+    com.wegame: INFO
     #    org.mongodb: error
     #    org.apache.ibatis: info
+    # Nacos客户端核心模块：打印配置加载、更新、监听日志
+    com.alibaba.nacos.client.config: DEBUG
+    # Spring Cloud Nacos配置模块：打印配置绑定、刷新日志
+    com.alibaba.cloud.nacos: DEBUG
+    # Spring配置绑定模块：打印配置注入、更新日志（可选）
+    # org.springframework.boot.context.properties: DEBUG
+#spring-cloud
+spring:
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+        server-addr: mse-98afa3410-nacos-ans.mse.aliyuncs.com:8848
+        group: wegame-capi-qa
+        namespace: fa26b1e9-a8c1-4d6b-b56c-4985e459094b
+        refresh-enabled: true
+        extension-configs:
+          - data-id: wegame-capi-qa-maria_makiling_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-malakas_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-ibong_adarna_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-lamang_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-mangkukulam_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-sirena_config.json
+            group: wegame-capi-qa
+            refresh: true
 #game switch
 game:
   enable:
