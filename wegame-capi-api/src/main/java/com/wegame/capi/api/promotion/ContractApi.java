@@ -46,7 +46,6 @@ public class ContractApi extends PromotionBaseApi {
             if (!responseEntity.getBody().isSuc()) {
                 throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
-            //AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
             log.error("getPlayerContract BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);

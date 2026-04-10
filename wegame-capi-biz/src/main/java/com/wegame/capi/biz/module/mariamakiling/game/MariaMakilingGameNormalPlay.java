@@ -32,6 +32,7 @@ import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
+import static com.wegame.capi.common.Constants.COMMON_JSON_CONFIG_SEPARATOR;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
@@ -191,7 +192,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         boolean hasScatter = false;
         int row = gameInfo.getRow() - 1;
         while (row >= 0) {
-            String[] symbolArray = randomService.randomKeyByWeight(symbolWeights).split(",");
+            String[] symbolArray = randomService.randomKeyByWeight(symbolWeights).split(COMMON_JSON_CONFIG_SEPARATOR);
             for (int i = 0; i < symbolArray.length; i++) {
                 if (row < 0) {
                     continue;
@@ -316,7 +317,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         boolean hasScatter = false;
         int row = gameInfo.getRow() - 1;
         while (row >= 0) {
-            String[] symbolArray = randomService.randomKeyByWeight(reelConfig.getSymbolWeights()).split(",");
+            String[] symbolArray = randomService.randomKeyByWeight(reelConfig.getSymbolWeights()).split(COMMON_JSON_CONFIG_SEPARATOR);
             for (int i = 0; i < symbolArray.length; i++) {
                 if (row < 0) {
                     continue;

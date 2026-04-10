@@ -5,7 +5,6 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.base.PromotionBaseApi;
-import com.wegame.capi.common.utils.BeanFlatReadableUtil;
 import com.wegame.capi.api.domain.req.promotion.PromotionForwardReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import lombok.extern.slf4j.Slf4j;
@@ -43,9 +42,7 @@ public class ForwardApi extends PromotionBaseApi {
             }
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             URI uri = URI.create(String.format(PROMOTION_PATH_FORMAT, promotionDomain(req.getPId()), urlPath));
-            // 展平data
-            Map<String, Object> reqMap = BeanFlatReadableUtil.flatBeanOneLayerReadable(req, "data");
-            RequestEntity<Map<String, Object>> requestEntity = new RequestEntity<>(reqMap, headers, HttpMethod.POST, uri);
+            RequestEntity<Map<String, Object>> requestEntity = new RequestEntity<>(req.getParamesMap(), headers, HttpMethod.POST, uri);
             ResponseEntity<CommonRes<Map<String, Object>>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<Map<String, Object>>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
