@@ -112,7 +112,7 @@ public class FailedBetPostProcessService {
             return;
         }
         rebuildBetRecord(betRecordDo);
-        SingleWalletBetResultDo resultDo = singleWalletService.betWithPayout(betRecordDo);
+        SingleWalletBetResultDo resultDo = singleWalletService.betWithPayout(null, betRecordDo);
         handle(betRecordDo, gameType, resultDo);
     }
 
