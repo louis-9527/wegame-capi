@@ -1,22 +1,24 @@
-package com.wegame.capi.api.domain.req.redirect;
+package com.wegame.capi.api.domain.req.promotion;
 
 import com.wegame.capi.api.domain.req.BaseReq;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Map;
+
+/**
+ *
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class GetRedirectGameUrlReq extends BaseReq {
-
+public class PromotionForwardReq extends BaseReq {
     private static final long serialVersionUID = 1L;
     /**
-     * 游戏id
+     * 业务参数map
      */
-    private String gameId;
+    private Map<String, Object> data;
 }
