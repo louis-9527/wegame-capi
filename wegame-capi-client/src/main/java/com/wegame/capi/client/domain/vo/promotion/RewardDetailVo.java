@@ -54,5 +54,7 @@ public class RewardDetailVo implements Serializable {
         private Integer periodDay;
         @ApiModelProperty(value = "Reward valid hour", required = true)
         private Integer periodHour;
+        @ApiModelProperty(value = "is Free Bet", required = true)
+        private Boolean isFreeBet;
     }
 }
