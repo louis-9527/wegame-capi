@@ -82,5 +82,9 @@ public class GetRewardDetailRes implements Serializable {
          * Reward valid hour todo @TUTU
          */
         private Integer PeriodHour;
+        /**
+         * is Free Bet
+         */
+        private Boolean isFreeBet;
     }
 }

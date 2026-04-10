@@ -24,7 +24,7 @@ import java.net.URI;
 /**
  * 成就api
  *
- * @see https://casinoplus.sg.larksuite.com/docx/O5d4dhv05ouRRTxdLA9lPNKzgxb
+ * @see https://casinoplus.sg.larksuite.com/docx/WrVgdk0Tcoxstqx9WNpl7hgEgdn
  */
 @Slf4j
 @Component
@@ -46,7 +46,6 @@ public class ContractApi extends PromotionBaseApi {
             if (!responseEntity.getBody().isSuc()) {
                 throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
             log.error("getPlayerContract BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
