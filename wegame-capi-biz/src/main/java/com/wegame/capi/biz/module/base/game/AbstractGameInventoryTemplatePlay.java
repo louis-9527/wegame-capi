@@ -56,10 +56,10 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 匹配-库存控制级别
         CommonInventoryControlConfig inventoryControlConfig = inventoryControlConfig();
-        Long betAmount = gamePlayDo.getBetAmount();
-        Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> matchInventory = inventoryControlConfig.getInventoryConfig().match(betAmount);
-        AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "bet amount error");
-        long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(gamePlayDo.getPayAmount())).longValue();
+        Long payAmount = gamePlayDo.getPayAmount();
+        Map.Entry<InventoryTypeEnum, CommonInventoryControlConfig.InventoryConfigItem> matchInventory = inventoryControlConfig.getInventoryConfig().match(payAmount);
+        AssertUtil.assertNotNull(matchInventory, ErrorCode.ERR_INTER, "pay amount error");
+        long inventoryContributeAmount = matchInventory.getValue().getInventoryInputRate().multiply(new BigDecimal(payAmount)).longValue();
         String inventoryPoolName = getInventoryPoolName(userInfo, inventoryControlConfig);
         // 设置-投注上下文（库存控制）
         betDo.setBetInventoryControl(BetInventoryControlDo.builder()
@@ -67,7 +67,7 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 .inventoryPoolName(inventoryPoolName)
                 .inventoryContributionAmount(inventoryContributeAmount)
                 .build());
-        log.info("matchInventoryInfo: betAmount: {}, inventoryType: {}, poolName: {}, contributeAmount: {}", betAmount, matchInventory.getKey().getCode(), inventoryPoolName, inventoryContributeAmount);
+        log.info("matchInventoryInfo: payAmount: {}, inventoryType: {}, poolName: {}, contributeAmount: {}", payAmount, matchInventory.getKey().getCode(), inventoryPoolName, inventoryContributeAmount);
         if (isHitRewardBlank(gamePlayDo, inventoryControlConfig)) {
             return handleOnHitRewardBlank(betDo, gamePlayDo);
         } else {
