@@ -44,7 +44,7 @@ public class BetWithPayoutReqBuilder {
     public static BetStarSpinReq buildStarSpinReq(BetDo betDo, BetRecordDo betRecordDo) {
         long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
         RewardDetailDo rewardDetail = betDo.getRewardDetail();
-        Boolean isFreeBet = Optional.ofNullable(rewardDetail.getDetails()).map(RewardDetailDo.RewardDetail::getIsFreeBet).orElse(false);
+        boolean isFreeBet = Optional.ofNullable(rewardDetail.getDetails()).map(RewardDetailDo.RewardDetail::getIsFreeBet).orElse(false);
 
         BetStarSpinReq betStarSpinReq = BetStarSpinReq.builder()
                 .pId(betRecordDo.getPId())
