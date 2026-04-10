@@ -2,9 +2,8 @@ package com.wegame.capi.biz.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
-import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
