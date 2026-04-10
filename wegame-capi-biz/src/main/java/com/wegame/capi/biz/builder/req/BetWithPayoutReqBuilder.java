@@ -44,8 +44,7 @@ public class BetWithPayoutReqBuilder {
     public static BetStarSpinReq buildStarSpinReq(BetDo betDo, BetRecordDo betRecordDo) {
         long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
         RewardDetailDo rewardDetail = betDo.getRewardDetail();
-        //Boolean isFreeBet = Optional.ofNullable(rewardDetail.getDetails()).map(RewardDetailDo.RewardDetail::getIsFreeBet).orElse(false);
-        Boolean isFreeBet = false;
+        Boolean isFreeBet = Optional.ofNullable(rewardDetail.getDetails()).map(RewardDetailDo.RewardDetail::getIsFreeBet).orElse(false);
 
         BetStarSpinReq betStarSpinReq = BetStarSpinReq.builder()
                 .pId(betRecordDo.getPId())
@@ -56,10 +55,9 @@ public class BetWithPayoutReqBuilder {
                 .isFreeBet(isFreeBet)
                 .build();
         if (isFreeBet) {
-            // todo
-            //betStarSpinReq.setBonusAmount();
-            //betStarSpinReq.setBonusId();
-            //betStarSpinReq.setEvent();
+            betStarSpinReq.setBonusAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()));
+            betStarSpinReq.setBonusId(betDo.getRewardId());
+            betStarSpinReq.setEvent(Optional.of(rewardDetail).map(RewardDetailDo::getDetails).map(RewardDetailDo.RewardDetail::getName).orElse(""));
         } else {
             betStarSpinReq.setBetAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()));
             betStarSpinReq.setPayoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()));
