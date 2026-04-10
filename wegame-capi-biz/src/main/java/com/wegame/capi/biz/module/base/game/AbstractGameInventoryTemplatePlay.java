@@ -67,7 +67,11 @@ public abstract class AbstractGameInventoryTemplatePlay<R extends ToVoConverter,
                 .inventoryPoolName(inventoryPoolName)
                 .inventoryContributionAmount(inventoryContributeAmount)
                 .build());
-        log.info("matchInventoryInfo: payAmount: {}, inventoryType: {}, poolName: {}, contributeAmount: {}", payAmount, matchInventory.getKey().getCode(), inventoryPoolName, inventoryContributeAmount);
+        log.info("matchInventoryInfo: betType: {}, payAmount: {}, inventoryType: {}, poolName: {}, contributeAmount: {}",
+                gamePlayDo.getBetType().getCode(),
+                payAmount, matchInventory.getKey().getCode(),
+                inventoryPoolName,
+                inventoryContributeAmount);
         if (isHitRewardBlank(gamePlayDo, inventoryControlConfig)) {
             return handleOnHitRewardBlank(betDo, gamePlayDo);
         } else {
