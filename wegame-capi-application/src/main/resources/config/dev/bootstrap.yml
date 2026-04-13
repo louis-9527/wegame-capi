@@ -35,6 +35,6 @@ spring:
 #game switch
 game:
   enable:
-    MariaMakiling: false
-    Malakas: true
+    MariaMakiling: true
+    Malakas: false
     IbongAdarna: false

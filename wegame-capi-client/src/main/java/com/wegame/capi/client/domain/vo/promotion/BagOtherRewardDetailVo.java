@@ -32,4 +32,6 @@ public class BagOtherRewardDetailVo implements Serializable {
     private String imgUrl;
     @ApiModelProperty(value = "奖励总数", required = true)
     private Integer totalCount;
+    @ApiModelProperty(value = "是否免费下注", required = true)
+    private Boolean isFreeBet;
 }
