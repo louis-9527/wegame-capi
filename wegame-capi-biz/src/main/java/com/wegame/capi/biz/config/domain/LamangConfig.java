@@ -3,9 +3,11 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -86,6 +88,15 @@ public class LamangConfig extends GameBizConfig {
          */
         private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
 
+        /**
+         * 干预类型 → 模板类型，优先级高于 abTemplateMapping
+         * 未配置的 promotionType 自动下沉到 abTemplateMapping 兜底
+         */
+        private Map<BetPromotionTypeEnum, TemplateTypeEnum> promotionTemplateMapping;
+
+        /**
+         * AB 分组 → 模板类型（兜底）
+         */
         private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
 
         private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfig;
@@ -96,10 +107,21 @@ public class LamangConfig extends GameBizConfig {
             return multipleRange.getEnd().compareTo(endOdds) <= 0;
         }
 
-        public TemplateRangeConfig getTemplateRangeConfig(AbTypeEnum abType) {
-            TemplateTypeEnum templateTypeEnum = abTemplateMapping.get(abType);
-            AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
-            return templateRangeConfig.get(templateTypeEnum);
+        /**
+         * 模板选择：promotionType 优先，未命中则按 AB 兜底
+         *
+         * @param ctx 本次投注的选择上下文
+         */
+        public TemplateTypeEnum select(TemplateSelectionContext ctx) {
+            if (Objects.nonNull(ctx.getPromotionType())) {
+                TemplateTypeEnum t = promotionTemplateMapping.get(ctx.getPromotionType());
+                if (Objects.nonNull(t)) return t;
+            }
+            return abTemplateMapping.get(ctx.getAbType());
+        }
+
+        public TemplateRangeConfig getTemplateRangeConfig(TemplateTypeEnum templateType) {
+            return templateRangeConfig.get(templateType);
         }
 
     }

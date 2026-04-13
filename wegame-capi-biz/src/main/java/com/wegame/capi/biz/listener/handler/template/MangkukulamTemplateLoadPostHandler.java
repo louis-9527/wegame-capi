@@ -134,7 +134,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
                 log.info("loadLocalCache start, index : {}, tag: {}, size: {}", templateType.getBetRecordTemplateName(), tag, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    List<MangkukulamBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MANGKUKULAM, idList, MangkukulamBetRecordTemplateEsDo.class);
+                    List<MangkukulamBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, MangkukulamBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
                         betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
