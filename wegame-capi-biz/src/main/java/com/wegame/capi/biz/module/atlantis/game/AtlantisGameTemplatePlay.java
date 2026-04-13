@@ -242,7 +242,9 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         if (Objects.isNull(recordDo.getExtInfo())) {
             return null;
         } else {
-            return (List<GameBizEventDo>) recordDo.getExtInfo();
+            Object extInfo = recordDo.getExtInfo();
+            String jsonString = JSON.toJSONString(extInfo);
+            return JSON.parseArray(jsonString, GameBizEventDo.class);
         }
     }
 
