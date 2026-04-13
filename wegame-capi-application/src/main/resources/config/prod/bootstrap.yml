@@ -3,7 +3,7 @@ logging:
   level:
     com.wegame: info
     org.mongodb: error
-## spring-cloud
+#spring-cloud
 spring:
   cloud:
     nacos:

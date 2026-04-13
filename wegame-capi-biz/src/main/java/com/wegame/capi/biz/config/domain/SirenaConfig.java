@@ -13,10 +13,7 @@ import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.CONST_100;
@@ -56,6 +53,30 @@ public class SirenaConfig extends GameBizConfig implements Serializable {
      * 大珍珠最小倍率
      */
     private BigDecimal minBigPearlMultiple;
+
+    /**
+     * 模板配置
+     */
+    private TemplateRangeConfig templateRangeConfig;
+
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 主游戏模板配置
+         */
+        private Map<String, Integer> mainGame;
+        /**
+         * 免费游戏模板配置
+         */
+        private Map<String, Integer> freeGame;
+    }
 
 
     @Data

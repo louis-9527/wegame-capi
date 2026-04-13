@@ -15,12 +15,24 @@ import java.math.BigDecimal;
 public class BetStarSpinReq extends BaseReq {
     private static final long serialVersionUID = 2474046915423606033L;
     private static final BigDecimal zero = BigDecimal.ZERO;
+    /**
+     * common params
+     */
+    private boolean isFreeBet;
 
+    /**
+     * Not Free Bet params
+     */
     private BigDecimal betAmount;
-
     private BigDecimal payoutAmount;
-
     private BetDetails betDetails;
+
+    /**
+     * Free Bet params
+     */
+    private BigDecimal bonusAmount;
+    private String bonusId;
+    private String event;
 
     @Data
     @SuperBuilder

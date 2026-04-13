@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.base.game;
 
-import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -75,6 +74,10 @@ public abstract class AbstractGameContext<R> {
             Long betAmount = gamePlayDo.getBetAmount();
             switch (gamePlayDo.getGamePlayType()) {
                 case TEMPLATE_PLAY:
+                    if (Objects.equals(gamePlayDo.getGameType(), GameTypeEnum.SIRENA)) {
+                        sirenTemplatePlayValidate(gamePlayDo);
+                        return;
+                    }
                     AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
                     AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
                     if (Objects.equals(gamePlayDo.getGameType(), GameTypeEnum.MANGKUKULAM)) {
@@ -127,5 +130,9 @@ public abstract class AbstractGameContext<R> {
         TemplateMultipleRange range = gamePlayDo.getTemplateMultipleRange();
         AssertUtil.assertTrue(range.getEnd().compareTo(divideValue) >= 0, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(range.getStart().compareTo(divideValue) <= 0, ErrorCode.ERR_INTER);
+    }
+
+    private void sirenTemplatePlayValidate(GamePlayDo gamePlayDo) {
+        //todo 添加sirena校验
     }
 }

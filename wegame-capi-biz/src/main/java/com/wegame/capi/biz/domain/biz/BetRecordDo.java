@@ -1,13 +1,14 @@
 package com.wegame.capi.biz.domain.biz;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * bet_record：投注记录
@@ -147,6 +148,18 @@ public class BetRecordDo<T> implements Serializable {
      * @see FreeWheelHandleStatusEnum
      */
     private String freeWheelHandleStatus;
+
+    /**
+     * 模板类型
+     */
+    private String templateType;
+
+    /**
+     * 下一局模板id
+     *
+     */
+    private Long nextTemplateId;
+
     ///////////////  above auto generated ///////////////
     /**
      * 游戏记录列表

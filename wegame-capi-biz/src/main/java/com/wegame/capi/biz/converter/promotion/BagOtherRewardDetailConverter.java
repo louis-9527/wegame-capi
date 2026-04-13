@@ -25,6 +25,7 @@ public class BagOtherRewardDetailConverter {
         detailVo.setGameName(detailDo.getGameName());
         detailVo.setImgUrl(detailDo.getImgUrl());
         detailVo.setTotalCount(detailDo.getTotalCount());
+        detailVo.setIsFreeBet(detailDo.getIsFreeBet());
         return detailVo;
     }
 
@@ -59,6 +60,7 @@ public class BagOtherRewardDetailConverter {
         rewordDetailDo.setGameName(rewardBag.getGameName());
         rewordDetailDo.setImgUrl(rewardBag.getImgUrl());
         rewordDetailDo.setTotalCount(rewardBag.getTotalCount());
+        rewordDetailDo.setIsFreeBet(rewardBag.getIsFreeBet());
         return rewordDetailDo;
     }
 

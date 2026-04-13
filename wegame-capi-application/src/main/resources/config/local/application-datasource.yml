@@ -13,7 +13,7 @@ spring:
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 10
+            initial-size: 0
             min-idle: 10
             max-active: 2000
             max-wait: 1000
@@ -31,7 +31,7 @@ spring:
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 10
+            initial-size: 0
             min-idle: 10
             max-active: 1000
             max-wait: 1000

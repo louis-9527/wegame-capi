@@ -46,9 +46,9 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
 
     @Override
     public void handle() {
-        if (env.equals(EnvEnum.LOCAL.getValue())) {
-            return;
-        }
+        //if (env.equals(EnvEnum.LOCAL.getValue())) {
+        //    return;
+        //}
         if (!supportGame(GameTypeEnum.MARIA_MAKILING)) {
             log.warn("not support game MARIA_MAKILING");
             return;

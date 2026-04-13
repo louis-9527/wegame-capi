@@ -29,6 +29,14 @@ public enum TemplateMultipleWarmUpEnum {
                     .build(),
             "MANGKUKULAM"),
 
+    SIRENA(GameTypeEnum.SIRENA,
+            new ImmutableMap.Builder<String, WarmUpValidator>()
+                    .put(SirenaTagEnum.SIRENA_FIRST_ROUND.getCode(), new WarmUpValidator(new BigDecimal("5")))
+                    .put(SirenaTagEnum.SIRENA_NEXT_ROUND.getCode(), new WarmUpValidator(new BigDecimal("-1")))
+                    .put(SirenaTagEnum.SIRENA_BUY_BET.getCode(), new WarmUpValidator(new BigDecimal("-1")))
+                    .build(),
+            "SIRENA"),
+
     ;
 
     /**
