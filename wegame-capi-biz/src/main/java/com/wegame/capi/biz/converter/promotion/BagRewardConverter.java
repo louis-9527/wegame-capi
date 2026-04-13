@@ -41,6 +41,7 @@ public class BagRewardConverter {
         detailVo.setRewardType(detailDo.getRewardType());
         detailVo.setBetValue(detailDo.getBetValue());
         detailVo.setImgUrl(detailDo.getImgUrl());
+        detailVo.setIsFreeBet(detailDo.getIsFreeBet());
         return detailVo;
     }
 
@@ -72,6 +73,7 @@ public class BagRewardConverter {
         rewordDetailDo.setRewardType(rewardRecord.getRewardType());
         rewordDetailDo.setBetValue(AmountUtil.toLong(rewardRecord.getBetValue()));
         rewordDetailDo.setImgUrl(rewardRecord.getImgUrl());
+        rewordDetailDo.setIsFreeBet(rewardRecord.getIsFreeBet());
         return rewordDetailDo;
     }
 }
