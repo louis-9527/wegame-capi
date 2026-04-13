@@ -192,14 +192,14 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
         log.info("random templateType: {}", templateType);
         // 2 加载记录idList
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), SirenaBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByTagAndAvgMultipleRange(templateType, tag.getCode(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), SirenaBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
 
         // 3 随机一个betRecordId
         Long betRecordId = getRandomElement(betRecordIdList);
 
         // 4 加载模板 & 解压
-        log.info("templatePlay: templateIndex: {}, betType: {}, templateId: {}, range: {}-{}", templateType.getBetRecordTemplateName(),gamePlay.getBetType().getCode(), betRecordId,  templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        log.info("templatePlay: templateIndex: {}, tag: {}, templateId: {}, range: {}-{}", templateType.getBetRecordTemplateName(),tag.getCode(), betRecordId,  templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         SirenaBetRecordTemplateEsDo template = loadTemplate(tag, templateType, betRecordId, templateMultipleRange);
         List<GameRecordTemplateDo> configRecordList = decompressGameRecordList(template);
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
