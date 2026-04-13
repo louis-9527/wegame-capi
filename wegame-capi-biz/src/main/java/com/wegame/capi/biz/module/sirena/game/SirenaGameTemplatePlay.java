@@ -159,6 +159,7 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
                     || gamePlay.getBetAmount().longValue() != oneBetRecordByTimeLast.getBetAmount().longValue()) {
                 throw new BusinessException(ErrorCode.ERR_PARENT_BET_RECORD_ID);
             }
+            AssertUtil.assertNotNull(oneBetRecordByTimeLast.getTemplateType(), ErrorCode.ERR_INTER);
             TemplateTypeEnum templateTypeEnum = TemplateTypeEnum.valueOf(oneBetRecordByTimeLast.getTemplateType());
             AssertUtil.assertNotNull(templateTypeEnum,ErrorCode.ERR_INTER);
             Long nextTemplateId = oneBetRecordByTimeLast.getNextTemplateId();
