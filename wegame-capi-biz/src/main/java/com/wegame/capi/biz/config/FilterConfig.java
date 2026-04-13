@@ -39,7 +39,7 @@ public class FilterConfig {
             "/treasure/*",
             "/freeSpin/*",
             "/contract/*",
-            "/redirect/*",
+            "/promotion/*",
             "/redeem/*",
     };
 
