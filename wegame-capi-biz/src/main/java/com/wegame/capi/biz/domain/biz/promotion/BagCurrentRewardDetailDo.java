@@ -75,4 +75,8 @@ public class BagCurrentRewardDetailDo implements Serializable {
      * 图标URL
      */
     private String imgUrl;
+    /**
+     * is Free Bet
+     */
+    private Boolean isFreeBet;
 }

@@ -47,12 +47,15 @@ public class NacosConfigRefresherUtil {
                 AssertUtil.assertTrue(obj instanceof ConfigValidate, ErrorCode.ERR_INTER);
                 ConfigValidate config = (ConfigValidate) obj;
                 config.validate();
+                log.info("config refresh suc, dataId: {}, groupId: {}", dataId, groupId);
                 return true;
             } catch (Exception e) {
-                log.error("config validate error", e);
-                LarkUtil.sendTextMsg(bootId, String.format("%s, %s config validate error", dataId, groupId));
+                log.error("config validate error, dataId: {}, groupId: {}, configInfo: {}", dataId, groupId, configInfo, e);
+                LarkUtil.sendTextMsg(bootId, String.format("%s, %s config validate error. %s", dataId, groupId, e.getMessage()));
                 return false;
             }
+        } else {
+            log.warn("config not in validate list, dataId: {}, groupId: {}", dataId, groupId);
         }
         return true;
     }
@@ -62,6 +65,8 @@ public class NacosConfigRefresherUtil {
         if (StringUtils.isNotEmpty(rootName)) {
             JSONObject root = JSON.parseObject(configInfo);
             return Objects.nonNull(root) ? FastJsonUtils.toJSONString(root.getJSONObject(rootName)) : null;
+        } else {
+            log.warn("not contains rootName, dataId: {}, rootName: {}", dataId, rootName);
         }
         return null;
     }

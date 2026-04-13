@@ -159,12 +159,12 @@ public class BetWithPayoutReqBuilder {
                 .isFreeBet(isFreeBet)
                 .build();
         if (isFreeBet) {
-            betStarSpinReq.setBonusAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()));
+            betStarSpinReq.setBonusAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()));
             betStarSpinReq.setBonusId(betDo.getRewardId());
             betStarSpinReq.setEvent(Optional.of(rewardDetail).map(RewardDetailDo::getDetails).map(RewardDetailDo.RewardDetail::getName).orElse(""));
         } else {
             betStarSpinReq.setBetAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()));
-            betStarSpinReq.setPayoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()));
+            betStarSpinReq.setPayoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()));
             betStarSpinReq.setBetDetails(BetStarSpinReq.BetDetails.builder()
                     .gameId(betRecordDo.getGameId())
                     .roundNo(betRecordDo.getBetSerialNo())
