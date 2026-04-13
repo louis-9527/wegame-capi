@@ -19,4 +19,4 @@ pulsar:
       auth:
         issuer_url: "https://auth.streamnative.cloud/"
         credentials_file_path: /game_pulsar_privateKey.json
-        audience: "urn:sn:pulsar:c-mi1czx1:innovatech-prod"
+        audience: "urn:sn:pulsar:o-5d4ps:innovatech-prod"
