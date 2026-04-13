@@ -21,7 +21,7 @@ spring:
       config:
         import-check:
           enabled: false
-        server-addr: mse-98afa3410-nacos-ans.mse.aliyuncs.com:8848
+        server-addr: mse-98afa3410-p.nacos-ans.mse.aliyuncs.com:8848
         group: wegame-capi-dev
         namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
         refresh-enabled: true
@@ -35,6 +35,6 @@ spring:
 #game switch
 game:
   enable:
-    MariaMakiling: false
-    Malakas: true
+    MariaMakiling: true
+    Malakas: false
     IbongAdarna: false

@@ -101,5 +101,9 @@ public class GetBagCurrentRewardRes implements Serializable {
          * 过期日期
          */
         private Date expiryDate;
+        /**
+         * is Free Bet
+         */
+        private Boolean isFreeBet;
     }
 }
