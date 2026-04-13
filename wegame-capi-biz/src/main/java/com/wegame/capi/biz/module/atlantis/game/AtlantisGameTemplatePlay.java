@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.AtlantisConfig;
@@ -36,6 +37,7 @@ import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
+import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +72,7 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(gamePlay);
-
+        log.info("play templateMultipleRange :{}", JSON.toJSONString(templateMultipleRange));
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(ATLANTIS, gamePlay.getBetType(), this.getTemplateBetSubType(gamePlay.getBetSubType()), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), AtlantisBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = this.getRandomElement(betRecordIdList);
@@ -240,7 +242,9 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         if (Objects.isNull(recordDo.getExtInfo())) {
             return null;
         } else {
-            return (List<GameBizEventDo>) recordDo.getExtInfo();
+            Object extInfo = recordDo.getExtInfo();
+            String jsonString = JSON.toJSONString(extInfo);
+            return JSON.parseArray(jsonString, GameBizEventDo.class);
         }
     }
 
@@ -303,6 +307,11 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(false)
+                .creator(userInfo.getPlayerId())
+                .createTime(DateUtil.getCurrentMilli())
+                .updater(userInfo.getPlayerId())
+                .updateTime(DateUtil.getCurrentMilli())
+                .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
     }
 

@@ -102,5 +102,15 @@ public class BetDo implements Serializable {
      * 参数和结果接受判断
      */
     private BizInterfereContextDo bizInterfereContext;
+
+    /**
+     * sirena 下一局模板id
+     */
+    private Long nextTemplateId;
+
+    /**
+     * sirena 下一局使用esIndex
+     */
+    private String templateType;
 }
 

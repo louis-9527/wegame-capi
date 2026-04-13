@@ -20,6 +20,7 @@ public class SirenaGameContext<R> extends AbstractGameContext<R> {
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "sirenaGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "sirenaGameEventPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "sirenaGameTemplatePlay")
             .build();
 
     @Autowired

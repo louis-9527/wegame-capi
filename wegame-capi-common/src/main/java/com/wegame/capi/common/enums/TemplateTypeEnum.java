@@ -43,6 +43,8 @@ public enum TemplateTypeEnum {
 
     MANGKUKULAM_V3(GameTypeEnum.MANGKUKULAM, TemplateConstants.MANGKUKULAM_BET_RECORD_TEMPLATE_V3),
 
+    SIRENA(GameTypeEnum.SIRENA, TemplateConstants.SIRENA_BET_RECORD_TEMPLATE),
+
     BAYANIHAN_V1(GameTypeEnum.BAYANIHAN, TemplateConstants.BAYANIHAN_BET_RECORD_TEMPLATE_V1),
 
     ;

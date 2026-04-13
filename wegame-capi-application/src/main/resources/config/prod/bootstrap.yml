@@ -45,6 +45,9 @@ spring:
           - data-id: wegame-capi-prod-bayanihan_config.json
             group: wegame-capi-prod
             refresh: true
+          - data-id: wegame-capi-prod-atlantis_config.json
+            group: wegame-capi-prod
+            refresh: true
 ## game switch
 game:
   enable:

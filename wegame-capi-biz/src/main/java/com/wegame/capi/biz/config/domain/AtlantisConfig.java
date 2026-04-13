@@ -4,11 +4,15 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
 import com.wegame.capi.common.enums.BizEventEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,6 +25,11 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = NacosConfigRefresherUtil.ATLANTIS_JSON_ROOT_NAME)
 public class AtlantisConfig extends GameBizConfig implements Serializable {
     private static final long serialVersionUID = 5550628498801680050L;
     /**

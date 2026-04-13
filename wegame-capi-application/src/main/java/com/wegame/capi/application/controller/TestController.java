@@ -76,21 +76,21 @@ public class TestController {
     @Autowired
     MalakasConfig malakasConfig;
 
-    @ApiOperation(value = "config", httpMethod = "GET")
-    @GetMapping("/config")
-    public CommonResponse<String> config(HttpServletResponse response) {
-        new Thread(() -> {
-            try {
-                while(true) {
-                    System.out.println("malakasConfig: " + malakasConfig.getRewardMaxMultiple());
-                }
-            } catch (Exception e) {
-                String bootId = "b7a6477c-b829-41d4-acac-599c15aee2dc";
-                LarkUtil.sendTextMsg(bootId, String.format("config test error"));
-                log.error("config test error: " + e.getMessage());
-            }
-        }).start();
-        return CommonResponse.build("pong");
-    }
+    //@ApiOperation(value = "config", httpMethod = "GET")
+    //@GetMapping("/config")
+    //public CommonResponse<String> config(HttpServletResponse response) {
+    //    new Thread(() -> {
+    //        try {
+    //            while(true) {
+    //                System.out.println("malakasConfig: " + malakasConfig.getRewardMaxMultiple());
+    //            }
+    //        } catch (Exception e) {
+    //            String bootId = "b7a6477c-b829-41d4-acac-599c15aee2dc";
+    //            LarkUtil.sendTextMsg(bootId, String.format("config test error"));
+    //            log.error("config test error: " + e.getMessage());
+    //        }
+    //    }).start();
+    //    return CommonResponse.build("pong");
+    //}
 
 }

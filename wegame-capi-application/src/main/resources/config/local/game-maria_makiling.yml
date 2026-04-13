@@ -13,7 +13,8 @@ pulsar:
     maria_makiling:
       url: pulsar+ssl://pc-74b7ea33.alicloud-apse1-qat-w7nwc.ali.snio.cloud:6651
       tenant: ${spring.application.name}_MariaMakiling
-      namespace: ${spring.application.env}
+#      namespace: ${spring.application.env}  todo 新pulsar 创建 local namespace
+      namespace: qa
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
       auth:

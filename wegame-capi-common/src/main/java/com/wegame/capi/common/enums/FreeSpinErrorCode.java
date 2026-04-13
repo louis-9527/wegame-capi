@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @ToString
 @AllArgsConstructor
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum FreeSpinErrorCode {
     DUPLICATE_REFERENCE_ID("4001", "duplicate reference id", ErrorCode.FREE_SPIN_DUPLICATE_REFERENCE_ID),
     REFERENCE_ID_EMPTY("4002", "reference id / bet id empty", ErrorCode.FREE_SPIN_REFERENCE_ID_EMPTY),

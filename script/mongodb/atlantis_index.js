@@ -1,14 +1,14 @@
 // ----------------------------
 //  Collection structure for atlantis_bet_record
 // ----------------------------
-use malakas;
+use atlantis;
 db.getCollection("atlantis_bet_record").drop();
 db.createCollection("atlantis_bet_record");
 // 索引atlantis_bet_record-c端查询需要
 db.atlantis_bet_record.createIndex({playerId: 1, channelId: 1, status: 1, createTime: -1})
 db.atlantis_bet_record.createIndex({createTime: -1, status: 1, _id: 1})
 // 索引atlantis_bet_record-b端查询需要-使用覆盖索引
-db.atlantis_bet_record.createIndex({createTime: -1, channelId: 1, status:1, payAmount:1, payOutAmount:1 ,userId:1, betPromotionType:1})
+// db.atlantis_bet_record.createIndex({createTime: -1, channelId: 1, status:1, payAmount:1, payOutAmount:1 ,userId:1, betPromotionType:1})
 
 
 // ----------------------------

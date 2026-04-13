@@ -9,6 +9,7 @@ import com.wegame.capi.biz.config.es.EsRestClientConfig;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -80,11 +81,20 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         //                        restHighLevelClient.asyncSearch().get()
         try {
             // 1. 组装请求
-            GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
-                    .fetchSourceContext(new FetchSourceContext(true,
-                            new String[]{"id", "bytes","multiple"},
+            GetRequest getRequest = null;
+            if (Objects.equals(templateType.getGameType(), GameTypeEnum.SIRENA)) {
+                getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
+                        .fetchSourceContext(new FetchSourceContext(true,
+                                new String[]{"id", "bytes", "multiple", "avgMultiple", "nextBetRecordId"},
 //                            new String[]{"id", "bytes","multiple"},   // 包含
-                            null));
+                                null));
+            }else {
+                getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
+                        .fetchSourceContext(new FetchSourceContext(true,
+                                new String[]{"id", "bytes", "multiple"},
+//                            new String[]{"id", "bytes","multiple"},   // 包含
+                                null));
+            }
             long start = System.currentTimeMillis();
             // 2. 执行
             GetResponse resp = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
@@ -210,6 +220,47 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         } else {
             // 范围条件 (大于start，小于等于end)
             boolQuery.filter(QueryBuilders.rangeQuery("multiple")
+                    .gt(multipleRangeStart.doubleValue())
+                    .lte(multipleRangeEnd.doubleValue()));
+        }
+        List<Long> result = new ArrayList<>();
+        // 第一次不带 search_after
+        Object[] searchAfter = null;
+        do {
+            List<Long> batch = fetchBatch(templateType, boolQuery, searchAfter, 5000);
+            if (batch.isEmpty()) break;
+            result.addAll(batch);
+            searchAfter = new Object[]{batch.get(batch.size() - 1)}; // 最后一条 id
+        } while (true);
+        return result;
+    }
+
+    /**
+     * 根据tag和平均倍率查询id列表
+     * @param templateType
+     * @param tag
+     * @param multipleRangeStart
+     * @param multipleRangeEnd
+     * @param clazz
+     * @return
+     */
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_'+ #tag +'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByTagAndAvgMultipleRange(TemplateTypeEnum templateType, String tag, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
+        log.info("listIdByMultipleRange query, tag: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}",
+                tag, multipleRangeStart, multipleRangeEnd, templateType);
+        // 构建ES查询
+        // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
+        // 创建布尔查询构建器
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        // 添加betType条件
+        boolQuery.filter(QueryBuilders.termQuery("tag", tag));
+        // 添加multiple范围条件
+        if (multipleRangeStart.compareTo(multipleRangeEnd) == 0) {
+            // 等于条件
+            boolQuery.filter(QueryBuilders.termQuery("avgMultiple", multipleRangeStart.doubleValue()));
+        } else {
+            // 范围条件 (大于start，小于等于end)
+            boolQuery.filter(QueryBuilders.rangeQuery("avgMultiple")
                     .gt(multipleRangeStart.doubleValue())
                     .lte(multipleRangeEnd.doubleValue()));
         }

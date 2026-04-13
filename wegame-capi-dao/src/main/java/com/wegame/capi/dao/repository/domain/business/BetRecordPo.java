@@ -148,6 +148,13 @@ public class BetRecordPo implements Serializable {
     private String freeWheelHandleStatus;
 
     /**
+     * 模板类型
+     */
+    private String templateType;
+
+    private Long nextTemplateId;
+
+    /**
      * 免费轮信息
      */
     private FreeGameInfo freeGameInfo;

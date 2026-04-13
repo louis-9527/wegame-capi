@@ -36,6 +36,7 @@ public class RewardDetailConverter {
         rewordDetail.setStarLevel(resDetails.getStarLevel());
         rewordDetail.setPeriodDay(resDetails.getPeriodDay());
         rewordDetail.setPeriodHour(resDetails.getPeriodHour());
+        rewordDetail.setIsFreeBet(resDetails.getIsFreeBet());
         rewordDetailDo.setDetails(rewordDetail);
         return rewordDetailDo;
     }
@@ -64,6 +65,7 @@ public class RewardDetailConverter {
         vo.setStarLevel(details.getStarLevel());
         vo.setPeriodDay(details.getPeriodDay());
         vo.setPeriodHour(details.getPeriodHour());
+        vo.setIsFreeBet(details.getIsFreeBet());
         detailVo.setDetails(vo);
         return detailVo;
     }

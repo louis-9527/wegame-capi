@@ -25,7 +25,6 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -128,6 +127,8 @@ public abstract class AbstractSirenaBetStrategy
         List<SirenaGameRecordDo> firstBatchList = sirenaBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
         BetRecordDo<SirenaGameRecordDo> betRecord = sirenaBetHelper.buildBetRecord(betRecordId, betDo, list);
+        betRecord.setNextTemplateId(betDo.getNextTemplateId());
+        betRecord.setTemplateType(betDo.getTemplateType());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, sirenaBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 投注成功后发送延迟派奖通知
