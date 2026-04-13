@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @ToString
 @AllArgsConstructor
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum AchievementErrorCode {
     INVALID_REWARD("5001", "invalid reward", ErrorCode.ACHIEVEMENT_INVALID_REWARD),
     ACHIEVEMENT_NOT_FOUND("5002", "achievement not found", ErrorCode.ACHIEVEMENT_ACHIEVEMENT_NOT_FOUND),
