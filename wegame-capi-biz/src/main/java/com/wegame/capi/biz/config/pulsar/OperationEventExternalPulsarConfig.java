@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.net.URL;
 import java.util.Objects;
@@ -23,8 +22,8 @@ import static com.wegame.capi.common.Constants.*;
  * 干预事件Pulsar外部配置
  */
 @Slf4j
-@Profile({"qa","prod"})
 @Configuration
+@ConditionalOnProperty(name = DYNAMIC_OPERATION_SWITCH, havingValue = TRUE_VAL)
 public class OperationEventExternalPulsarConfig {
     private static final String operationEventExternalPulsarClient = "operationEventExternalPulsarClient";
     private static final String mariaMakilingOperationEventExternalConsumer = "mariaMakilingOperationEventExternalConsumer";
@@ -91,7 +90,7 @@ public class OperationEventExternalPulsarConfig {
     @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MariamakilingOperationEventPulsarListener.class)
     public Consumer<byte[]> mariaMakilingOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
-                                                                @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
+                                                                        @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, mariaMakilingOperationEventExternalConsumer);
         return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -105,7 +104,7 @@ public class OperationEventExternalPulsarConfig {
     @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
     public Consumer<byte[]> malakasOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
-                                                          @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
+                                                                  @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, malakasOperationEventExternalConsumer);
         return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -119,7 +118,7 @@ public class OperationEventExternalPulsarConfig {
     @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(IbongOperationEventPulsarListener.class)
     public Consumer<byte[]> ibongOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
-                                                        @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
+                                                                @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, ibongOperationEventExternalConsumer);
         return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)

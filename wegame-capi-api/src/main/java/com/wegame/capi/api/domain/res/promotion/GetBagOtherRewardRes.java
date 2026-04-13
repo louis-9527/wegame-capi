@@ -92,5 +92,9 @@ public class GetBagOtherRewardRes implements Serializable {
          * totalCount
          */
         private Integer totalCount;
+        /**
+         * is Free Bet
+         */
+        private Boolean isFreeBet;
     }
 }
