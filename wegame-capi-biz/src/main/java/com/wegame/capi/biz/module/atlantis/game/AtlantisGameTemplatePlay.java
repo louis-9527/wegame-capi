@@ -72,7 +72,7 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(gamePlay);
-
+        log.info("play templateMultipleRange :{}", JSON.toJSONString(templateMultipleRange));
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(ATLANTIS, gamePlay.getBetType(), this.getTemplateBetSubType(gamePlay.getBetSubType()), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), AtlantisBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = this.getRandomElement(betRecordIdList);
