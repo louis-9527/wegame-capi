@@ -7,7 +7,9 @@ import com.wegame.capi.api.domain.req.freespin.FreeSpinReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetStarSpinReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
+import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
@@ -15,10 +17,7 @@ import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.common.utils.JackpotAmountUtil;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BetWithPayoutReqBuilder {
@@ -146,29 +145,40 @@ public class BetWithPayoutReqBuilder {
     }
 
 
-    public static BetStarSpinReq buildStarSpinReq(BetRecordDo betRecordDo) {
+    public static BetStarSpinReq buildStarSpinReq(BetDo betDo, BetRecordDo betRecordDo) {
         long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
-        return BetStarSpinReq.builder()
+        RewardDetailDo rewardDetail = betDo.getRewardDetail();
+        boolean isFreeBet = Optional.ofNullable(rewardDetail.getDetails()).map(RewardDetailDo.RewardDetail::getIsFreeBet).orElse(false);
+
+        BetStarSpinReq betStarSpinReq = BetStarSpinReq.builder()
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())
                 .playerName(betRecordDo.getPlayerName())
                 .refId(buildRefId(betRecordDo))
                 .createTime(DateUtil.toUTC(new Date(betRecordDo.getCreateTime())))
-                .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
-                .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))
-                .betDetails(BetStarSpinReq.BetDetails.builder()
-                        .gameId(betRecordDo.getGameId())
-                        .roundNo(betRecordDo.getBetSerialNo())
-                        .wagersDate(uctSecond)
-                        .settlementDate(uctSecond)
-                        .isFreeRound(false)
-                        .jackpotDetails(new BetStarSpinReq.BetDetails.JackpotDetails())
-                        .build())
+                .isFreeBet(isFreeBet)
                 .build();
+        if (isFreeBet) {
+            betStarSpinReq.setBonusAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()));
+            betStarSpinReq.setBonusId(betDo.getRewardId());
+            betStarSpinReq.setEvent(Optional.of(rewardDetail).map(RewardDetailDo::getDetails).map(RewardDetailDo.RewardDetail::getName).orElse(""));
+        } else {
+            betStarSpinReq.setBetAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()));
+            betStarSpinReq.setPayoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()));
+            betStarSpinReq.setBetDetails(BetStarSpinReq.BetDetails.builder()
+                    .gameId(betRecordDo.getGameId())
+                    .roundNo(betRecordDo.getBetSerialNo())
+                    .wagersDate(uctSecond)
+                    .settlementDate(uctSecond)
+                    .isFreeRound(false)
+                    .jackpotDetails(new BetStarSpinReq.BetDetails.JackpotDetails())
+                    .build());
+        }
+        return betStarSpinReq;
     }
 
-    public static BetStarSpinReq buildStarSpinReq(BetRecordDo betRecordDo, List<JackpotRewardPoolDo> jackpotRewardPoolDos) {
-        BetStarSpinReq req = buildStarSpinReq(betRecordDo);
+    public static BetStarSpinReq buildStarSpinReq(BetDo betDo, BetRecordDo betRecordDo, List<JackpotRewardPoolDo> jackpotRewardPoolDos) {
+        BetStarSpinReq req = buildStarSpinReq(betDo, betRecordDo);
         BetStarSpinReq.BetDetails.JackpotDetails details = BetStarSpinReq.BetDetails.JackpotDetails.builder()
                 .jackpotPool(buildStarSpinJackpotPool(jackpotRewardPoolDos))
                 .jackpotContributionDetails(buildStarCardJackpotPoolCommission(betRecordDo))

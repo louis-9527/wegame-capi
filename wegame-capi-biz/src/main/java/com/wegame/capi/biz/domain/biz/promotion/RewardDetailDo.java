@@ -74,6 +74,10 @@ public class RewardDetailDo implements Serializable {
          * Reward valid hour
          */
         private Integer periodHour;
+        /**
+         * is Free Bet
+         */
+        private Boolean isFreeBet;
     }
 
 }

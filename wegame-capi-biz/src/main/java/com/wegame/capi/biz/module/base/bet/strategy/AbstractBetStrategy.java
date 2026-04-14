@@ -95,7 +95,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         Long betRecordId = betRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
         log.info("syncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordId);
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
-        SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
+        SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betDo, betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
             pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
@@ -119,7 +119,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         MessageId addMessageId = pulsarProducer.syncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage, RETRY_TIMES);
         AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
-        SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
+        SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betDo, betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
             if (syncOpt && Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
                     Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)

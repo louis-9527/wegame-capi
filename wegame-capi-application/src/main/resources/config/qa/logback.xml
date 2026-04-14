@@ -81,7 +81,7 @@
 <!--        <appender-ref ref="error_file"/>-->
 <!--    </appender>-->
 
-    <root level="info">
+    <root level="warn">
         <appender-ref ref="console"/>
 <!--        <appender-ref ref="async_info"/>-->
 <!--        <appender-ref ref="async_warn"/>-->

@@ -12,6 +12,7 @@ import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.builder.req.JackpotReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletJackpotResultDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotAwardDo;
@@ -75,7 +76,7 @@ public class SingleWalletService {
         return res.getCredit();
     }
 
-    public SingleWalletBetResultDo betWithPayout(BetRecordDo betRecordDo) {
+    public SingleWalletBetResultDo betWithPayout(BetDo betDo, BetRecordDo betRecordDo) {
         if (!gameApiProperty.isInvokeSingle(betRecordDo.getPId())) {
             return SingleWalletBetResultDo.builder()
                     .betId(RandomUtil.randomNumbers(8))
@@ -94,7 +95,7 @@ public class SingleWalletService {
                 if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
                     commonRes = freeSpinService.freeSpin(buildFreeSpinReq(betRecordDo));
                 } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
-                    commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
+                    commonRes = singleWalletApi.starSpin(buildStarSpinReq(betDo, betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
                 } else {
                     commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
                 }
@@ -102,7 +103,7 @@ public class SingleWalletService {
                 if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
                     commonRes = freeSpinService.freeSpin(buildFreeSpinReq(betRecordDo));
                 } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
-                    commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
+                    commonRes = singleWalletApi.starSpin(buildStarSpinReq(betDo, betRecordDo));
                 } else {
                     commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
                 }
