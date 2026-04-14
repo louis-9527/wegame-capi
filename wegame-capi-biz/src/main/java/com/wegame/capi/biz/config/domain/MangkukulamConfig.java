@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.config.domain;
 
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -189,6 +191,29 @@ public class MangkukulamConfig extends GameBizConfig implements Serializable{
             }
             return null;
         }
+
+        private void validate() {
+            Assert.notNull(normalBetMainGame, "templateRangeConfig.normalBetMainGame is null");
+            Assert.notNull(buyBetMainGame, "templateRangeConfig.buyBetMainGame is null");
+            Assert.notNull(normalBetFreeGameHigh, "templateRangeConfig.normalBetFreeGameHigh is null");
+            Assert.notNull(normalBetFreeGameLow, "templateRangeConfig.normalBetFreeGameLow is null");
+            Assert.notNull(buyBetFreeGameHigh, "templateRangeConfig.buyBetFreeGameHigh is null");
+            Assert.notNull(buyBetFreeGameLow, "templateRangeConfig.buyBetFreeGameLow is null");
+            normalBetMainGame.keySet().forEach(this::rangeKeyValidate);
+            buyBetMainGame.keySet().forEach(this::rangeKeyValidate);
+            normalBetFreeGameHigh.keySet().forEach(this::rangeKeyValidate);
+            buyBetFreeGameHigh.keySet().forEach(this::rangeKeyValidate);
+            normalBetFreeGameLow.keySet().forEach(this::rangeKeyValidate);
+            buyBetFreeGameLow.keySet().forEach(this::rangeKeyValidate);
+        }
+        private void rangeKeyValidate(String key) {
+            Assert.isTrue(key.contains("_"), "templateRangeConfig.mainGame.key not contain '_'");
+            String[] multipleRangeArr = key.split("_");
+            Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.mainGame.key length is not eqauls 2");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.mainGame.key first number must be number");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.mainGame.key first number must be number");
+            Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.mainGame.key first number must be less than or equal to the second number");
+        }
     }
 
     public MangkukulamConfig.MainGame getSupportMainGame(GamePlayDo gamePlay, boolean freeWheelFlag) {
@@ -218,7 +243,9 @@ public class MangkukulamConfig extends GameBizConfig implements Serializable{
         oddsTableValidate();
         betValidate(normalBet);
         betValidate(buyBet);
+        templateRangeConfigValidate();
     }
+
 
 
     /**
@@ -433,6 +460,13 @@ public class MangkukulamConfig extends GameBizConfig implements Serializable{
             }
             return index >= from && (index <= to || to == -1);
         }
+    }
+
+    private void templateRangeConfigValidate() {
+        templateConfig.getAbTemplateMapping().forEach((k, v) -> {
+            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfigMapping().get(v), ErrorCode.ERR_PARAM, "template is null");
+        });
+        templateConfig.getTemplateRangeConfigMapping().values().forEach(TemplateRangeConfig::validate);
     }
 
     private void rewardMaxMultipleValidate() {
