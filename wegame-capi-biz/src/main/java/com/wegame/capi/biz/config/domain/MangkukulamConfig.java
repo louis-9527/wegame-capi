@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.config.domain;
 
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -10,30 +12,39 @@ import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MangkukulamTagEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.MANGKUKULAM_JSON_ROOT_NAME;
+
 /**
  * 游戏配置主类
  * yaml 配置文件形式
  * <a href="https://casinoplus.sg.larksuite.com/docx/HEnhdEWwioZpMFxRF4MlX7Azgig"/>
  */
-@Slf4j
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MangkukulamConfig extends GameBizConfig{
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Component
+@RefreshScope
+@ConfigurationProperties(prefix = MANGKUKULAM_JSON_ROOT_NAME)
+public class MangkukulamConfig extends GameBizConfig implements Serializable{
     private static final long serialVersionUID = 1838987094825913716L;
     /**
      * 中奖最大倍数
@@ -180,6 +191,29 @@ public class MangkukulamConfig extends GameBizConfig{
             }
             return null;
         }
+
+        private void validate() {
+            Assert.notNull(normalBetMainGame, "templateRangeConfig.normalBetMainGame is null");
+            Assert.notNull(buyBetMainGame, "templateRangeConfig.buyBetMainGame is null");
+            Assert.notNull(normalBetFreeGameHigh, "templateRangeConfig.normalBetFreeGameHigh is null");
+            Assert.notNull(normalBetFreeGameLow, "templateRangeConfig.normalBetFreeGameLow is null");
+            Assert.notNull(buyBetFreeGameHigh, "templateRangeConfig.buyBetFreeGameHigh is null");
+            Assert.notNull(buyBetFreeGameLow, "templateRangeConfig.buyBetFreeGameLow is null");
+            normalBetMainGame.keySet().forEach(this::rangeKeyValidate);
+            buyBetMainGame.keySet().forEach(this::rangeKeyValidate);
+            normalBetFreeGameHigh.keySet().forEach(this::rangeKeyValidate);
+            buyBetFreeGameHigh.keySet().forEach(this::rangeKeyValidate);
+            normalBetFreeGameLow.keySet().forEach(this::rangeKeyValidate);
+            buyBetFreeGameLow.keySet().forEach(this::rangeKeyValidate);
+        }
+        private void rangeKeyValidate(String key) {
+            Assert.isTrue(key.contains("_"), "templateRangeConfig.mainGame.key not contain '_'");
+            String[] multipleRangeArr = key.split("_");
+            Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.mainGame.key length is not eqauls 2");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.mainGame.key first number must be number");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.mainGame.key first number must be number");
+            Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.mainGame.key first number must be less than or equal to the second number");
+        }
     }
 
     public MangkukulamConfig.MainGame getSupportMainGame(GamePlayDo gamePlay, boolean freeWheelFlag) {
@@ -210,7 +244,9 @@ public class MangkukulamConfig extends GameBizConfig{
         oddsTableValidate();
         betValidate(normalBet);
         betValidate(buyBet);
+        templateRangeConfigValidate();
     }
+
 
 
     /**
@@ -427,6 +463,13 @@ public class MangkukulamConfig extends GameBizConfig{
         }
     }
 
+    private void templateRangeConfigValidate() {
+        templateConfig.getAbTemplateMapping().forEach((k, v) -> {
+            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfigMapping().get(v), ErrorCode.ERR_PARAM, "template is null");
+        });
+        templateConfig.getTemplateRangeConfigMapping().values().forEach(TemplateRangeConfig::validate);
+    }
+
     private void rewardMaxMultipleValidate() {
         AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
         AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
@@ -533,7 +576,7 @@ public class MangkukulamConfig extends GameBizConfig{
         stage.symbolWeights.forEach((key, valueMap) -> {
             valueMap.forEach((symbolStr, weight) -> {
                 // symbolStr 校验
-                String[] symbolArr = symbolStr.split(",");
+                String[] symbolArr = symbolStr.split(Constants.MANGKUKULAM_JSON_CONFIG_SEPARATOR);
                 for (String symbol : symbolArr) {
                     AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
                 }

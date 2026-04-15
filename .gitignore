@@ -4,6 +4,7 @@
 wegame-capi-application/log/
 .DS_Store
 .cursor
+/docs/
 /wegame-capi-application/target/
 /wegame-capi-client/target/
 /wegame-capi-common/target/
@@ -18,4 +19,3 @@ wegame-capi-application/log/
 /wegame-capi-client/.idea/workspace.xml
 /wegame-capi-application/Users/
 /.vscode/settings.json
-/docs/

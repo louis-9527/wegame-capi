@@ -3,12 +3,15 @@ package com.wegame.capi.biz.config.pulsar;
 import com.wegame.base.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -39,10 +42,23 @@ public class IbongAdarnaPulsarConfig {
     @Value("${pulsar.dynamic.ibong_adarna.bet_deadLetter_topic}")
     String ibongAdarnaBetDeadLetterTopic;
 
+
+    @Value("${pulsar.dynamic.ibong_adarna.auth.issuer_url}")
+    String ibongAdarnaAuthIssuerUrl;
+    @Value("${pulsar.dynamic.ibong_adarna.auth.credentials_file_path}")
+    String ibongAdarnaAuthCredentialsFilePath;
+    @Value("${pulsar.dynamic.ibong_adarna.auth.audience}")
+    String ibongAdarnaAuthAudience;
+
     @Bean(name = ibongadarnaPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient ibongadarnaPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, ibongadarnaPulsarClient);
-        PulsarClient pulsarClient = PulsarClient.builder()
+        Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
+                new URL(ibongAdarnaAuthIssuerUrl),
+                Objects.requireNonNull(getClass().getResource(ibongAdarnaAuthCredentialsFilePath)),
+                ibongAdarnaAuthAudience
+        );
+        return  PulsarClient.builder()
                 .serviceUrl(ibongAdarnaUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 //                .operationTimeout(100, TimeUnit.MILLISECONDS)
@@ -54,8 +70,9 @@ public class IbongAdarnaPulsarConfig {
                 .enableTcpNoDelay(true)
                 // 10分钟打印一次统计信息
                 .statsInterval(600, TimeUnit.SECONDS)
+                .authentication(authentication)
                 .build();
-        return pulsarClient;
+
     }
 
     @Bean(name = ibongadarnaProducer, destroyMethod = COMMON_CLOSE_METHOD)
