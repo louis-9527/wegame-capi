@@ -21,6 +21,15 @@ spring:
           - data-id: wegame-capi-prod-malakas_config.json
             group: wegame-capi-prod
             refresh: true
+          - data-id: wegame-capi-prod-ibong_adarna_config.json
+            group: wegame-capi-prod
+            refresh: true
+          - data-id: wegame-capi-prod-lamang_config.json
+            group: wegame-capi-prod
+            refresh: true
+          - data-id: wegame-capi-prod-bakunawa_config.json
+            group: wegame-capi-prod
+            refresh: true
 ## game switch
 game:
   enable:
