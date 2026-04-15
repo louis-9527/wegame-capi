@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.common.CommonInventoryControlConfig;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -55,6 +56,10 @@ public class MalakasConfig extends GameBizConfig implements Serializable  {
      * 模板配置
      */
     private MalakasConfig.TemplateRangeConfig templateRangeConfig;
+    /**
+     * 库存控制配置
+     */
+    private CommonInventoryControlConfig inventoryControlConfig;
 
     @Data
     @SuperBuilder
@@ -126,6 +131,12 @@ public class MalakasConfig extends GameBizConfig implements Serializable  {
         scatterFreeWheelTimesConfigValidate();
         rewardMaxMultipleValidate();
         templateRangeConfigValidate();
+        inventoryControlConfigValidate();
+    }
+
+    private void inventoryControlConfigValidate() {
+        Assert.notNull(inventoryControlConfig, "inventoryControlConfig is null");
+        inventoryControlConfig.validate();
     }
 
     private void rewardMaxMultipleValidate() {
