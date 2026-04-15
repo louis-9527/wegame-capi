@@ -3,12 +3,15 @@ package com.wegame.capi.biz.config.pulsar;
 import com.wegame.base.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -39,10 +42,23 @@ public class DiwataMayariPulsarConfig {
     @Value("${pulsar.dynamic.diwataMayari.bet_deadLetter_topic}")
     String betDeadLetterTopic;
 
+    @Value("${pulsar.dynamic.diwataMayari.auth.issuer_url}")
+    String authIssuerUrl;
+    @Value("${pulsar.dynamic.diwataMayari.auth.credentials_file_path}")
+    String authCredentialsFilePath;
+    @Value("${pulsar.dynamic.diwataMayari.auth.audience}")
+    String authAudience;
+
     @Bean(name = diwatamayariPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient diwataMayariPulsarClient() throws Exception {
         log.debug(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
-        PulsarClient pulsarClient = PulsarClient.builder()
+
+        Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
+                new URL(authIssuerUrl),
+                Objects.requireNonNull(getClass().getResource(authCredentialsFilePath)),
+                authAudience
+        );
+        return  PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 //                .operationTimeout(100, TimeUnit.MILLISECONDS)
@@ -54,8 +70,8 @@ public class DiwataMayariPulsarConfig {
                 .enableTcpNoDelay(true)
                 // 10分钟打印一次统计信息
                 .statsInterval(600, TimeUnit.SECONDS)
+                .authentication(authentication)
                 .build();
-        return pulsarClient;
     }
 
     @Bean(name = diwatamayariProducer, destroyMethod = COMMON_CLOSE_METHOD)
