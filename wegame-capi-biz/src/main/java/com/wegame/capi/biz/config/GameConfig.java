@@ -1,13 +1,7 @@
 package com.wegame.capi.biz.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author apple
