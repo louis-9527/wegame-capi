@@ -14,6 +14,7 @@ public class Constants {
     public static final Long REQUEST_TIME_OUT = 5 * 60 * 1000L;
 
     public static final String COMMON_JSON_CONFIG_SEPARATOR = "_";
+    public static final String COMMON_CONFIG_SPLIT = "_";
 
     public static final String MANGKUKULAM_JSON_CONFIG_SEPARATOR = "-";
 
@@ -44,6 +45,7 @@ public class Constants {
     public static final int CONST_0 = 0;
     public static final int CONST_1 = 1;
     public static final int CONST_100 = 100;
+    public static final int CONST_1000 = 1000;
     public static final int CONST_10000 = 10000;
     public static final int CONST_100000 = 100000;
     public static final int CONST_1000000 = 1000000;
