@@ -16,10 +16,19 @@ logging:
 spring:
   cloud:
     nacos:
+      username: nacos
+      password: nacos
+      #      discovery:
+      #        server-addr: localhost:8848
+      #        group: wegame-capi-local
+      #        namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
+      #        cluster-name: wegame-capi
       config:
         import-check:
           enabled: false
-        server-addr: mse-98afa3410-p.nacos-ans.mse.aliyuncs.com:8848
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
         group: wegame-capi-local
         namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
         refresh-enabled: true
@@ -30,6 +39,18 @@ spring:
             group: wegame-capi-local
             refresh: true
           - data-id: wegame-capi-local-malakas_config.json
+            group: wegame-capi-local
+            refresh: true
+          - data-id: wegame-capi-local-bakunawa_config.json
+            group: wegame-capi-local
+            refresh: true
+          - data-id: wegame-capi-local-diwata_mayari_config.json
+            group: wegame-capi-local
+            refresh: true
+          - data-id: wegame-capi-local-ibong_adarna_config.json
+            group: wegame-capi-local
+            refresh: true
+          - data-id: wegame-capi-local-kapre_config.json
             group: wegame-capi-local
             refresh: true
 #game switch

@@ -10,15 +10,27 @@ spring:
       config:
         import-check:
           enabled: false
-        server-addr: mse-98afa3410-p.nacos-ans.mse.aliyuncs.com:8848
-        group: wegame-capi-sts
+        server-addr: mse-98afa3410-nacos-ans.mse.aliyuncs.com:8848
+        group: wegame-capi-qa
         namespace: 081e693f-6bfc-47f9-abc6-79194f174caa
         refresh-enabled: true
         extension-configs:
-          - data-id: wegame-capi-sts-maria_makiling_config.json
+          - data-id: wegame-capi-qa-maria_makiling_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-malakas_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-bakunawa_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-sts-diwata_mayari_config.json
             group: wegame-capi-sts
             refresh: true
-          - data-id: wegame-capi-sts-malakas_config.json
+          - data-id: wegame-capi-sts-ibong_adarna_config.json
+            group: wegame-capi-sts
+            refresh: true
+          - data-id: wegame-capi-sts-kapre_config.json
             group: wegame-capi-sts
             refresh: true
 ## game switch
