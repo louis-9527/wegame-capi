@@ -3,6 +3,7 @@ package com.wegame.capi.biz.config.pulsar;
 import com.wegame.base.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -40,10 +43,35 @@ public class LamangPulsarConfig {
     @Value("${pulsar.dynamic.lamang.bet_deadLetter_topic}")
     String lamangBetDeadLetterTopic;
 
+    @Value("${pulsar.dynamic.lamang.auth.issuer_url}")
+    String lamangAuthIssuerUrl;
+    @Value("${pulsar.dynamic.lamang.auth.credentials_file_path}")
+    String lamangAuthCredentialsFilePath;
+    @Value("${pulsar.dynamic.lamang.auth.audience}")
+    String lamangAuthAudience;
+
     @Bean(name = lamangPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient lamangPulsarClient() throws Exception {
         log.debug(BUILD_BEAN_FORMAT, lamangPulsarClient);
-        PulsarClient pulsarClient = PulsarClient.builder()
+//        PulsarClient pulsarClient = PulsarClient.builder()
+//                .serviceUrl(lamangUrl)
+//                .keepAliveInterval(30, TimeUnit.SECONDS)
+//                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
+//                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
+//                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+//                .listenerThreads(Runtime.getRuntime().availableProcessors())
+//                .connectionsPerBroker(60)
+//                .connectionMaxIdleSeconds(3000)
+//                .enableTcpNoDelay(true)
+//                // 10分钟打印一次统计信息
+//                .statsInterval(600, TimeUnit.SECONDS)
+//                .build();
+        Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
+                new URL(lamangAuthIssuerUrl),
+                Objects.requireNonNull(getClass().getResource(lamangAuthCredentialsFilePath)),
+                lamangAuthAudience
+        );
+        return  PulsarClient.builder()
                 .serviceUrl(lamangUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 //                .operationTimeout(100, TimeUnit.MILLISECONDS)
@@ -55,8 +83,8 @@ public class LamangPulsarConfig {
                 .enableTcpNoDelay(true)
                 // 10分钟打印一次统计信息
                 .statsInterval(600, TimeUnit.SECONDS)
+                .authentication(authentication)
                 .build();
-        return pulsarClient;
     }
 
     @Bean(name = lamangProducer, destroyMethod = COMMON_CLOSE_METHOD)
