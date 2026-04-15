@@ -71,7 +71,7 @@ public class MalakasPulsarConfig {
                 malakasAuthAudience
         );
         return  PulsarClient.builder()
-                .serviceUrl(malakasAuthIssuerUrl)
+                .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 //                .operationTimeout(100, TimeUnit.MILLISECONDS)
                 .connectionTimeout(2000, TimeUnit.MILLISECONDS)
