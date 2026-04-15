@@ -30,6 +30,9 @@ spring:
           - data-id: wegame-capi-prod-ibong_adarna_config.json
             group: wegame-capi-prod
             refresh: true
+          - data-id: wegame-capi-prod-lamang_config.json
+            group: wegame-capi-prod
+            refresh: true
           - data-id: wegame-capi-prod-kapre_config.json
             group: wegame-capi-prod
             refresh: true

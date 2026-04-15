@@ -8,6 +8,12 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.LarkUtil;
 import com.wegame.capi.biz.config.domain.*;
+import com.wegame.capi.biz.config.domain.BakunawaConfig;
+import com.wegame.capi.biz.config.domain.ConfigValidate;
+import com.wegame.capi.biz.config.domain.LamangConfig;
+import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
+import com.wegame.capi.biz.config.domain.MalakasConfig;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,6 +34,7 @@ public class NacosConfigRefresherUtil {
     public static final String DIWATA_JSON_ROOT_NAME = "diwatamayari";
     public static final String IBONGADARNA_JSON_ROOT_NAME = "ibongadarna";
     public static final String KAPRE_JSON_ROOT_NAME = "kapre";
+    public static final String LAMANG_JSON_ROOT_NAME = "lamang";
 
     private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new ImmutableMap.Builder<String, Class<? extends ConfigValidate>>()
             .put("maria_makiling_config.json", MariaMakilingConfig.class)
@@ -35,6 +42,7 @@ public class NacosConfigRefresherUtil {
             .put("bakunawa_config.json", BakunawaConfig.class)
             .put("diwata_mayari_config.json", DiwataMayariConfig.class)
             .put("ibong_adarna_config.json", IbongAdarnaConfig.class)
+            .put("lamang_config.json", LamangConfig.class)
             .put("kapre_config.json", KapreConfig.class)
             .build();
     private static final Map<String, String> TO_JSON_ROOT_MAP = new ImmutableMap.Builder<String, String>()
@@ -43,6 +51,7 @@ public class NacosConfigRefresherUtil {
             .put("ibong_adarna_config.json", IBONGADARNA_JSON_ROOT_NAME)
             .put("bakunawa_config.json", BAKUNAWA_JSON_ROOT_NAME)
             .put("diwata_mayari_config.json", DIWATA_JSON_ROOT_NAME)
+            .put("lamang_config.json", LAMANG_JSON_ROOT_NAME)
             .put("kapre_config.json", KAPRE_JSON_ROOT_NAME)
             .build();
 
