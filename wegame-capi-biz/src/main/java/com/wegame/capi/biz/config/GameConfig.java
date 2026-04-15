@@ -22,6 +22,20 @@ import java.io.InputStream;
 @Configuration
 public class GameConfig {
 
+    //@Bean 保留（example），勿删!!! 保留（example），勿删!!! 保留（example），勿删!!!
+    //MariaMakilingConfig mariaMakilingConfig() throws Exception {
+    //    String path = "/maria_makiling_config.json";
+    //    String content = FileUtil.readClasspathFile(path);
+    //    if (StringUtils.isEmpty(content)) {
+    //        throw new RuntimeException("read maria_makiling_config.json file err！！！");
+    //    } else {
+    //        String configInfo = FileUtil.getRealJsonInfo(MARIAMAKILING_JSON_ROOT_NAME, content);
+    //        MariaMakilingConfig config = FastJsonUtils.fromJSONString(configInfo, MariaMakilingConfig.class);
+    //        config.validate();
+    //        return config;
+    //    }
+    //}
+
     @Bean
     IbongAdarnaConfig ibongAdarnaConfig() throws IOException {
         String path = "/ibong_adarna_config.json";

@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.malakas.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
@@ -22,6 +23,7 @@ import com.wegame.capi.biz.module.malakas.game.MalakasGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -108,7 +110,15 @@ public abstract class AbstractMalakasBetStrategy
     private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<MalakasGameRecordDo> list = super.play(betDo, betRecordId, this.malakasConfig.getPayoutAmountLimitConfig(), null);
+        List<MalakasGameRecordDo> list;
+        if (malakasConfig.getInventoryControlConfig().isEnable()) {
+            // 库存控制开关“开”，则走库存控制TemplatePlay生成游戏记录
+            betDo.setGamePlayType(GamePlayTypeEnum.INVENTORY_TEMPLATE_PLAY);
+            list = gameContext().play(betDo, GamePlayBuilder.build(betDo, betRecordId));
+        } else {
+            // 库存控制开关“关”，则走原逻辑
+            list = super.play(betDo, betRecordId, this.malakasConfig.getPayoutAmountLimitConfig(), null);
+        }
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
