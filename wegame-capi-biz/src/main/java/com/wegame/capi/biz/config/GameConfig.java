@@ -61,18 +61,18 @@ public class GameConfig {
     //    }
     //}
 
-    @Bean
-    LamangConfig lamangConfig() throws IOException {
-        String path = "/lamang_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read lamang_config.json file err！！！");
-        } else {
-            LamangConfig config = new ObjectMapper().readValue(inputStream, LamangConfig.class);
-            config.validate();
-            return config;
-        }
-    }
+    //@Bean
+    //LamangConfig lamangConfig() throws IOException {
+    //    String path = "/lamang_config.json";
+    //    InputStream inputStream = getClass().getResourceAsStream(path);
+    //    if (inputStream == null) {
+    //        throw new RuntimeException("read lamang_config.json file err！！！");
+    //    } else {
+    //        LamangConfig config = new ObjectMapper().readValue(inputStream, LamangConfig.class);
+    //        config.validate();
+    //        return config;
+    //    }
+    //}
 
 //    @Bean
 //    LamangConfig lamangConfig() throws IOException {
