@@ -16,3 +16,7 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: IbongAdarna_topic
       bet_deadLetter_topic: IbongAdarna_deadLetter_topic
+      auth:
+        issuer_url: "https://auth.streamnative.cloud/"
+        credentials_file_path: /game_pulsar_privateKey.json
+        audience: "urn:sn:pulsar:o-cv5fz:egame-qat"
