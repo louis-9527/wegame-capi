@@ -31,9 +31,13 @@ public class TemplateMultipleRange implements Serializable {
         AssertUtil.assertStrNotEmpty(multipleRangeStr, ErrorCode.ERR_PARAM);
         String[] multipleRangeArr = multipleRangeStr.split(SPLIT);
         AssertUtil.assertTrue(multipleRangeArr.length == ARR_SIZE, ErrorCode.ERR_PARAM);
+        BigDecimal left = new BigDecimal(multipleRangeArr[0]);
+        AssertUtil.assertNotNull(left, ErrorCode.ERR_INTER);
+        BigDecimal right = new BigDecimal(multipleRangeArr[1]);
+        AssertUtil.assertNotNull(right, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.builder()
-                .start(new BigDecimal(multipleRangeArr[0]))
-                .end(new BigDecimal(multipleRangeArr[1]))
+                .start(left)
+                .end(right)
                 .build();
     }
 }
