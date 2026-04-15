@@ -1,8 +1,8 @@
 ## spring:redis
 spring:
   redis:
-    connectTimeout: 500
-    timeout: 500
+    connectTimeout: 1500
+    timeout: 1500
     cluster:
       nodes:
         - localhost:7001

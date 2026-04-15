@@ -19,7 +19,9 @@ import static com.wegame.capi.common.Constants.*;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IbongAdarnaConfig extends GameBizConfig{
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class IbongAdarnaConfig extends GameBizConfig {
 
     /**
      * 赔率配置
