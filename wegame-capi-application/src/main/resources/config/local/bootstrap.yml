@@ -38,11 +38,14 @@ spring:
           - data-id: wegame-capi-local-lamang_config.json
             group: wegame-capi-local
             refresh: true
+          - data-id: wegame-capi-local-bakunawa_config.json
+            group: wegame-capi-local
+            refresh: true
 #game switch
 game:
   enable:
     MariaMakiling: false
     Malakas: false
     IbongAdarna: false
-    Lamang: true
-    Bakunawa: false
+    Lamang: false
+    Bakunawa: true
