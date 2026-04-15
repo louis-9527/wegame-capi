@@ -93,6 +93,8 @@ public class BetDo implements Serializable {
      * gamePlayType
      */
     private GamePlayTypeEnum gamePlayType;
+
+    private BetInventoryControlDo betInventoryControl;
     /**
      * 业务干预上下文
      * 参数和结果接受判断

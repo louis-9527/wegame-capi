@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -18,6 +19,7 @@ public class BetStarSpinReq extends BaseReq {
     /**
      * common params
      */
+    @JsonProperty("isFreeBet")
     private boolean isFreeBet;
 
     /**
