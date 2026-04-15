@@ -33,6 +33,9 @@ spring:
           - data-id: wegame-capi-sts-diwata_mayari_config.json
             group: wegame-capi-sts
             refresh: true
+          - data-id: wegame-capi-sts-kapre_config.json
+            group: wegame-capi-sts
+            refresh: true
 ## game switch
 game:
   enable:
@@ -42,3 +45,4 @@ game:
     Bakunawa: false
     Lamang: false
     DiwataMayari: false
+    Kapre: true
