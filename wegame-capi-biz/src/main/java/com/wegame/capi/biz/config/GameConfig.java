@@ -35,27 +35,14 @@ public class GameConfig {
     //    }
     //}
 
-//    @Bean
-//    IbongAdarnaConfig ibongAdarnaConfig() throws IOException {
-//        String path = "/ibong_adarna_config.json";
-//        InputStream inputStream = getClass().getResourceAsStream(path);
-//        if (inputStream == null) {
-//            throw new RuntimeException("read maria_makiling_config.json file err！！！");
-//        } else {
-//            IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
-//            config.validate();
-//            return config;
-//        }
-//    }
-
     //@Bean
-    //BakunawaConfig bakunawaConfig() throws IOException {
-    //    String path = "/bakunawa.json";
+    //IbongAdarnaConfig ibongAdarnaConfig() throws IOException {
+    //    String path = "/ibong_adarna_config.json";
     //    InputStream inputStream = getClass().getResourceAsStream(path);
     //    if (inputStream == null) {
-    //        throw new RuntimeException("read bakunawa.json file err！！！");
+    //        throw new RuntimeException("read maria_makiling_config.json file err！！！");
     //    } else {
-    //        BakunawaConfig config = new ObjectMapper().readValue(inputStream, BakunawaConfig.class);
+    //        IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
     //        config.validate();
     //        return config;
     //    }
@@ -74,17 +61,17 @@ public class GameConfig {
     //    }
     //}
 
-//    @Bean
-//    LamangConfig lamangConfig() throws IOException {
-//        String path = "/lamang_config.json";
-//        InputStream inputStream = getClass().getResourceAsStream(path);
-//        if (inputStream == null) {
-//            throw new RuntimeException("read lamang_config.json file err！！！");
-//        } else {
-//            LamangConfig config = new ObjectMapper().readValue(inputStream, LamangConfig.class);
-//            config.validate();
-//            return config;
-//        }
-//    }
+    //@Bean
+    //BakunawaConfig bakunawaConfig() throws IOException {
+    //    String path = "/bakunawa.json";
+    //    InputStream inputStream = getClass().getResourceAsStream(path);
+    //    if (inputStream == null) {
+    //        throw new RuntimeException("read bakunawa.json file err！！！");
+    //    } else {
+    //        BakunawaConfig config = new ObjectMapper().readValue(inputStream, BakunawaConfig.class);
+    //        config.validate();
+    //        return config;
+    //    }
+    //}
 
 }
