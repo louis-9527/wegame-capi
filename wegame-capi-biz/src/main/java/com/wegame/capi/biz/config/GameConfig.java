@@ -30,17 +30,30 @@ public class GameConfig {
     //    }
     //}
 
-    @Bean
-    IbongAdarnaConfig ibongAdarnaConfig() throws IOException {
-        String path = "/ibong_adarna_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read ibong_adarna_config.json file err！！！");
-        } else {
-            IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
-            config.validate();
-            return config;
-        }
-    }
+    //    @Bean
+    //    MalakasConfig malakasConfig() throws IOException {
+    //        String path = "/malakas_config.json";
+    //        InputStream inputStream = getClass().getResourceAsStream(path);
+    //        if (inputStream == null) {
+    //            throw new RuntimeException("read malakas_config.json file err！！！");
+    //        } else {
+    //            MalakasConfig config = new ObjectMapper().readValue(inputStream, MalakasConfig.class);
+    //            config.validate();
+    //            return config;
+    //        }
+    //    }
+
+//    @Bean
+//    IbongAdarnaConfig ibongAdarnaConfig() throws IOException {
+//        String path = "/ibong_adarna_config.json";
+//        InputStream inputStream = getClass().getResourceAsStream(path);
+//        if (inputStream == null) {
+//            throw new RuntimeException("read maria_makiling_config.json file err！！！");
+//        } else {
+//            IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
+//            config.validate();
+//            return config;
+//        }
+//    }
 
 }
