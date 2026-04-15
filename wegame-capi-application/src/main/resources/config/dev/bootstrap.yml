@@ -47,6 +47,9 @@ spring:
           - data-id: wegame-capi-dev-kapre_config.json
             group: wegame-capi-dev
             refresh: true
+          - data-id: wegame-capi-dev-mangkukulam_config.json
+            group: wegame-capi-dev
+            refresh: true
 ##game switch
 game:
   enable:
