@@ -32,6 +32,12 @@ spring:
           - data-id: wegame-capi-local-malakas_config.json
             group: wegame-capi-local
             refresh: true
+          - data-id: wegame-capi-local-bakunawa_config.json
+            group: wegame-capi-local
+            refresh: true
+          - data-id: wegame-capi-local-diwata_mayari_config.json
+            group: wegame-capi-local
+            refresh: true
           - data-id: wegame-capi-local-ibong_adarna_config.json
             group: wegame-capi-local
             refresh: true
