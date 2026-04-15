@@ -26,8 +26,10 @@ public class ThreadPoolConfig {
     public static final String operationEventThreadPoolExecutor = "operationEventThreadPoolExecutor";
     public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
     public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
+    public static final String innerDosThreadPoolExecutor = "innerDosThreadPoolExecutor";
 
     public static final String scheduledThreadPoolExecutor = "scheduledThreadPoolExecutor";
+    public static final String inventoryThreadPoolExecutor = "inventoryThreadPoolExecutor";
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -141,10 +143,38 @@ public class ThreadPoolConfig {
         return executor;
     }
 
+    @Bean(innerDosThreadPoolExecutor)
+    public ThreadPoolExecutor innerDosThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                100,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(300000),
+                new CustomizableThreadFactory("inner-dos-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
     @Bean(scheduledThreadPoolExecutor)
     public ScheduledThreadPoolExecutor scheduledThreadPoolExecutor() {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1,
                 new CustomizableThreadFactory("scheduled-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        // executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(inventoryThreadPoolExecutor)
+    public ThreadPoolExecutor inventoryThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(1,
+                10,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue(1000000),
+                new CustomizableThreadFactory("inventory-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();

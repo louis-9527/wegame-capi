@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.vo.promotion;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -44,4 +45,7 @@ public class BagRewardDetailVo implements Serializable {
     private Long betValue;
     @ApiModelProperty(value = "图标URL", required = true)
     private String imgUrl;
+    @JsonProperty("isFreeBet")
+    @ApiModelProperty(value = "是否免费下注", required = true)
+    private Boolean isFreeBet;
 }

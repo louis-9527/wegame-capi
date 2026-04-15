@@ -1,9 +1,7 @@
 package com.wegame.capi.biz.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,31 +16,19 @@ import java.io.InputStream;
 @Configuration
 public class GameConfig {
 
-    @Bean
-    MariaMakilingConfig mariaMakilingConfig() throws IOException {
-        String path = "/maria_makiling_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read maria_makiling_config.json file err！！！");
-        } else {
-            MariaMakilingConfig config = new ObjectMapper().readValue(inputStream, MariaMakilingConfig.class);
-            config.validate();
-            return config;
-        }
-    }
-
-    @Bean
-    MalakasConfig malakasConfig() throws IOException {
-        String path = "/malakas_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read malakas_config.json file err！！！");
-        } else {
-            MalakasConfig config = new ObjectMapper().readValue(inputStream, MalakasConfig.class);
-            config.validate();
-            return config;
-        }
-    }
+    //@Bean 保留（example），勿删!!! 保留（example），勿删!!! 保留（example），勿删!!!
+    //MariaMakilingConfig mariaMakilingConfig() throws Exception {
+    //    String path = "/maria_makiling_config.json";
+    //    String content = FileUtil.readClasspathFile(path);
+    //    if (StringUtils.isEmpty(content)) {
+    //        throw new RuntimeException("read maria_makiling_config.json file err！！！");
+    //    } else {
+    //        String configInfo = FileUtil.getRealJsonInfo(MARIAMAKILING_JSON_ROOT_NAME, content);
+    //        MariaMakilingConfig config = FastJsonUtils.fromJSONString(configInfo, MariaMakilingConfig.class);
+    //        config.validate();
+    //        return config;
+    //    }
+    //}
 
     @Bean
     IbongAdarnaConfig ibongAdarnaConfig() throws IOException {

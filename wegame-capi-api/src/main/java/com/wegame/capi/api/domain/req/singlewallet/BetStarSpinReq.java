@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -15,12 +16,25 @@ import java.math.BigDecimal;
 public class BetStarSpinReq extends BaseReq {
     private static final long serialVersionUID = 2474046915423606033L;
     private static final BigDecimal zero = BigDecimal.ZERO;
+    /**
+     * common params
+     */
+    @JsonProperty("isFreeBet")
+    private boolean isFreeBet;
 
+    /**
+     * Not Free Bet params
+     */
     private BigDecimal betAmount;
-
     private BigDecimal payoutAmount;
-
     private BetDetails betDetails;
+
+    /**
+     * Free Bet params
+     */
+    private BigDecimal bonusAmount;
+    private String bonusId;
+    private String event;
 
     @Data
     @SuperBuilder

@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.res.promotion;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -82,5 +83,10 @@ public class GetRewardDetailRes implements Serializable {
          * Reward valid hour todo @TUTU
          */
         private Integer PeriodHour;
+        /**
+         * is Free Bet
+         */
+        @JsonProperty("isFreeBet")
+        private Boolean isFreeBet;
     }
 }

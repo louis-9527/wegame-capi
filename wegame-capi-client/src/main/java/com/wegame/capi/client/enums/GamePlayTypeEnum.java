@@ -20,21 +20,24 @@ public enum GamePlayTypeEnum {
     NORMAL_PLAY("NORMAL_PLAY", "NORMAL_PLAY"),
     EVENT_PLAY("EVENT_PLAY", "EVENT_PLAY"),
     TEMPLATE_PLAY("TEMPLATE_PLAY", "TEMPLATE_PLAY"),
+    START_CARD_TEMPLATE_PLAY("START_CARD_TEMPLATE_PLAY", "START_CARD_TEMPLATE_PLAY"),
+    FREE_SPIN_TEMPLATE_PLAY("FREE_SPIN_TEMPLATE_PLAY", "FREE_SPIN_TEMPLATE_PLAY"),
+    INVENTORY_TEMPLATE_PLAY("INVENTORY_TEMPLATE_PLAY", "INVENTORY_TEMPLATE_PLAY"),
 
     ;
 
     /**
      * 枚举码.
      */
-    private final String id;
+    private final String code;
     /**
      * 描述信息.
      */
     private final String desc;
 
-    public static GamePlayTypeEnum valueOfId(String id) {
+    public static GamePlayTypeEnum valueOfCode(String code) {
         for (GamePlayTypeEnum item : GamePlayTypeEnum.values()) {
-            if (StringUtils.equals(item.getId(), id)) {
+            if (StringUtils.equals(item.getCode(), code)) {
                 return item;
             }
         }

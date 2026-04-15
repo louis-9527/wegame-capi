@@ -1,20 +1,40 @@
 ## log
 logging:
   level:
-    #    org.apache.pulsar: DEBUG
-    #    org.springframework.web: trace
+    org.apache.pulsar: DEBUG
+    #    org.springframework.web: info
     #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    com.wegame: DEBUG
-    com.wegame.base.config: ERROR
-    org.apache.pulsar: ERROR
-    #    org.apache.ibatis: trace
-    org.mongodb: ERROR
-    #    org.springframework.data.redis: DEBUG
-    #    com.mongodb.internal.connection: DEBUG
-    #    org.apache.http: DEBUG
+    com.wegame: INFO
+    #    org.mongodb: error
+    #    org.apache.ibatis: info
+    # Nacos客户端核心模块：打印配置加载、更新、监听日志
+    com.alibaba.nacos.client.config: DEBUG
+    # Spring Cloud Nacos配置模块：打印配置绑定、刷新日志
+    com.alibaba.cloud.nacos: DEBUG
+    # Spring配置绑定模块：打印配置注入、更新日志（可选）
+    # org.springframework.boot.context.properties: DEBUG
+spring:
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+        server-addr: mse-98afa3410-p.nacos-ans.mse.aliyuncs.com:8848
+        group: wegame-capi-local
+        namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
+        refresh-enabled: true
+        access-key: LTAI5tMTvh5AJtTDvsFJ941L
+        secret-key: 57yeby8QIcmSE5uue5tQH1CvGj4kZu
+        extension-configs:
+          - data-id: wegame-capi-local-maria_makiling_config.json
+            group: wegame-capi-local
+            refresh: true
+          - data-id: wegame-capi-local-malakas_config.json
+            group: wegame-capi-local
+            refresh: true
 #game switch
 game:
   enable:
-    MariaMakiling: true
-    Malakas: false
+    MariaMakiling: false
+    Malakas: true
     IbongAdarna: false

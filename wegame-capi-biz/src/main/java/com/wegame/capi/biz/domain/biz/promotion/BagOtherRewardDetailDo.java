@@ -47,4 +47,8 @@ public class BagOtherRewardDetailDo implements Serializable {
      * 奖励总数
      */
     private Integer totalCount;
+    /**
+     * is Free Bet
+     */
+    private Boolean isFreeBet;
 }
