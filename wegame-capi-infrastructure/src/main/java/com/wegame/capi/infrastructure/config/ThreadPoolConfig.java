@@ -29,6 +29,7 @@ public class ThreadPoolConfig {
     public static final String innerDosThreadPoolExecutor = "innerDosThreadPoolExecutor";
 
     public static final String scheduledThreadPoolExecutor = "scheduledThreadPoolExecutor";
+    public static final String inventoryThreadPoolExecutor = "inventoryThreadPoolExecutor";
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -160,6 +161,20 @@ public class ThreadPoolConfig {
     public ScheduledThreadPoolExecutor scheduledThreadPoolExecutor() {
         ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1,
                 new CustomizableThreadFactory("scheduled-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        // executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(inventoryThreadPoolExecutor)
+    public ThreadPoolExecutor inventoryThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(1,
+                10,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue(1000000),
+                new CustomizableThreadFactory("inventory-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();

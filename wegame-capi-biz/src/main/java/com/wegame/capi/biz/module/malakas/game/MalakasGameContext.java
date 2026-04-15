@@ -22,6 +22,7 @@ public class MalakasGameContext<R> extends AbstractGameContext<R> {
             .put(GamePlayTypeEnum.NORMAL_PLAY, "malakasGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "malakasGameEventPlay")
             .put(GamePlayTypeEnum.TEMPLATE_PLAY, "malakasGameTemplatePlay")
+            .put(GamePlayTypeEnum.INVENTORY_TEMPLATE_PLAY, "malakasGameInventoryTemplatePlay")
             .build();
 
     @Autowired

@@ -25,5 +25,5 @@ spring:
 game:
   enable:
     MariaMakiling: false
-    Malakas: false
-    IbongAdarna: true
+    Malakas: true
+    IbongAdarna: false

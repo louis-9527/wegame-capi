@@ -25,8 +25,8 @@ spring:
 game:
   enable:
     MariaMakiling: false
-    Malakas: false
-    IbongAdarna: true
+    Malakas: true
+    IbongAdarna: false
     Bakunawa: false
     Lamang: false
-    DiwataMayari: true
+    DiwataMayari: false

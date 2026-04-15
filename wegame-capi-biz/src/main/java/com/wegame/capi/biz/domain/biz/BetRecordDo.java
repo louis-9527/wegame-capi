@@ -102,6 +102,10 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Jackpot jackpot;
     /**
+     * 库存信息
+     */
+    private Inventory inventory;
+    /**
      * 扩展信息
      */
     private ExtendInfo extendInfo;
@@ -177,6 +181,27 @@ public class BetRecordDo<T> implements Serializable {
          * mini奖池贡献金额
          */
         private Long miniContributionAmount;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class Inventory implements Serializable {
+        /**
+         * 库存类型
+         */
+        private Integer inventoryType;
+        /**
+         * 库存池名称
+         */
+        private String inventoryPoolName;
+        /**
+         * 库存贡献金额
+         */
+        private Long inventoryContributionAmount;
     }
 
 }
