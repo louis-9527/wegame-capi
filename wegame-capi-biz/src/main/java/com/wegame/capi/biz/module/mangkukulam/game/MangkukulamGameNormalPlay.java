@@ -270,7 +270,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
     private List<BigDecimal> generateMultiples(Map<String, Integer> weightMap) {
         String multipleString = randomKeyByWeight(weightMap);
         AssertUtil.assertNotNull(multipleString, ErrorCode.ERR_INTER, "multipleString is null ");
-        String[] multiples = multipleString.split(",");
+        String[] multiples = multipleString.split(Constants.MANGKUKULAM_JSON_CONFIG_SEPARATOR);
         return Arrays.stream(multiples).map(String::trim).map(BigDecimal::new).sorted().collect(Collectors.toList());
     }
 
@@ -367,7 +367,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
         Pair<Integer, Map<String, Integer>> pair = stage.getCurrentSymbolsWeights(currentIndex);
         AssertUtil.assertNotNull(pair, ErrorCode.ERR_INTER, "current fireNumWeights is null, index : " + currentIndex);
         String symbolListString = randomKeyByWeight(pair.getValue(), pair.getKey());
-        List<String> symbols = Arrays.stream(symbolListString.split(",")).map(String::trim).collect(Collectors.toList());
+        List<String> symbols = Arrays.stream(symbolListString.split(Constants.MANGKUKULAM_JSON_CONFIG_SEPARATOR)).map(String::trim).collect(Collectors.toList());
         fillSymbols.addAll(symbols);
     }
 

@@ -33,6 +33,24 @@ spring:
           - data-id: wegame-capi-qa-malakas_config.json
             group: wegame-capi-qa
             refresh: true
+          - data-id: wegame-capi-qa-bakunawa_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-diwata_mayari_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-ibong_adarna_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-kapre_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-lamang_config.json
+            group: wegame-capi-qa
+            refresh: true
+          - data-id: wegame-capi-qa-mangkukulam_config.json
+            group: wegame-capi-qa
+            refresh: true
 #game switch
 game:
   enable:
