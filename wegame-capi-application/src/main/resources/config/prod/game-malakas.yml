@@ -11,7 +11,7 @@ spring:
 pulsar:
   dynamic:
     malakas:
-      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      url: pulsar+ssl://pc-aa3bb700.alicloud-apse1-prod-1g8lo.ali.snio.cloud:6651
       tenant: ${spring.application.name}_Malakas
       namespace: ${spring.application.env}
       bet_topic: Malakas_topic
@@ -19,4 +19,4 @@ pulsar:
       auth:
         issuer_url: "https://auth.streamnative.cloud/"
         credentials_file_path: /game_pulsar_privateKey.json
-        audience: "urn:sn:pulsar:o-cv5fz:egame-qat"
+        audience: "urn:sn:pulsar:o-5d4ps:innovatech-prod"
