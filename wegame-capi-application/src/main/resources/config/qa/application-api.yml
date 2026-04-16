@@ -119,15 +119,15 @@ api:
       platformIdList:
         - 777
       invokeSingle: true
-      singleDomain: http://sw-external-platform-http-main.igo10.me
-      freeSpinDomain: http://sw-inhouse-http-freespin.igo10.me
-      promotionDomain: http://reward-http-ep.igo10.me
-      operationDomain: http://dos-egame-bp-aliyun.platform10.me
+      singleDomain: http://sw-http-main-apisix-internal-ali.igo8.me
+      freeSpinDomain: http://sw-http-freespin-internal-ali.igo8.me
+      promotionDomain: http://reward-http-internal-ali.igo8.me
+      operationDomain: https://dos-egame-bp-aliyun-qat.platform88.me
       bp:
         - platformId: 777
-          channelId: 9004
-          privateKey: 6b2f96e579ace6cdcd9eb174c7fba61b49aa7ca738e6d9de9b577363432cebce
-          privateIv: dcd76c24c18cb4b4f7fd9326734801da
+          channelId: 7004
+          privateKey: f6c6ff03121a62894cf2b1d3c525a54c76e37e316df2309cc7e03c9f1e035742
+          privateIv: d38590f31af1d7a568537c05235f3e9e
           dosSupport:  true
           dosPublicKey: |
             -----BEGIN PUBLIC KEY-----
