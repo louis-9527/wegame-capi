@@ -8,16 +8,10 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.LarkUtil;
 import com.wegame.capi.biz.config.domain.*;
-import com.wegame.capi.biz.config.domain.BakunawaConfig;
-import com.wegame.capi.biz.config.domain.ConfigValidate;
-import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
-import com.wegame.capi.biz.config.domain.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,33 +25,40 @@ public class NacosConfigRefresherUtil {
 
     public static final String MARIAMAKILING_JSON_ROOT_NAME = "mariamakiling";
     public static final String MALAKAS_JSON_ROOT_NAME = "malakas";
+    public static final String IBONGADARNA_JSON_ROOT_NAME = "ibongadarna";
+    public static final String LAMANG_JSON_ROOT_NAME = "lamang";
     public static final String BAKUNAWA_JSON_ROOT_NAME = "bakunawa";
     public static final String DIWATA_JSON_ROOT_NAME = "diwatamayari";
-    public static final String IBONGADARNA_JSON_ROOT_NAME = "ibongadarna";
     public static final String KAPRE_JSON_ROOT_NAME = "kapre";
-    public static final String LAMANG_JSON_ROOT_NAME = "lamang";
     public static final String MANGKUKULAM_JSON_ROOT_NAME = "mangkukulam";
 
-    private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new ImmutableMap.Builder<String, Class<? extends ConfigValidate>>()
-            .put("maria_makiling_config.json", MariaMakilingConfig.class)
-            .put("malakas_config.json", MalakasConfig.class)
-            .put("bakunawa_config.json", BakunawaConfig.class)
-            .put("diwata_mayari_config.json", DiwataMayariConfig.class)
-            .put("ibong_adarna_config.json", IbongAdarnaConfig.class)
-            .put("lamang_config.json", LamangConfig.class)
-            .put("kapre_config.json", KapreConfig.class)
-            .put("mangkukulam_config.json", MangkukulamConfig.class)
-            .build();
-    private static final Map<String, String> TO_JSON_ROOT_MAP = new ImmutableMap.Builder<String, String>()
-            .put("maria_makiling_config.json", MARIAMAKILING_JSON_ROOT_NAME)
-            .put("malakas_config.json", MALAKAS_JSON_ROOT_NAME)
-            .put("ibong_adarna_config.json", IBONGADARNA_JSON_ROOT_NAME)
-            .put("bakunawa_config.json", BAKUNAWA_JSON_ROOT_NAME)
-            .put("diwata_mayari_config.json", DIWATA_JSON_ROOT_NAME)
-            .put("lamang_config.json", LAMANG_JSON_ROOT_NAME)
-            .put("kapre_config.json", KAPRE_JSON_ROOT_NAME)
-            .put("mangkukulam_config.json", MANGKUKULAM_JSON_ROOT_NAME)
-            .build();
+    private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new HashMap<>();
+    private static final Map<String, String> TO_JSON_ROOT_MAP = new HashMap<>();
+
+    static {
+        // TO_CLASSTYPE_MAP init
+        TO_CLASSTYPE_MAP.put("maria_makiling_config.json", MariaMakilingConfig.class);
+        TO_CLASSTYPE_MAP.put("malakas_config.json", MalakasConfig.class);
+        TO_CLASSTYPE_MAP.put("ibong_adarna_config.json", IbongAdarnaConfig.class);
+        TO_CLASSTYPE_MAP.put("bakunawa_config.json", BakunawaConfig.class);
+        TO_CLASSTYPE_MAP.put("lamang_config.json", LamangConfig.class);
+        TO_CLASSTYPE_MAP.put("diwata_mayari_config.json", DiwataMayariConfig.class);
+        TO_CLASSTYPE_MAP.put("kapre_config.json", KapreConfig.class);
+        TO_CLASSTYPE_MAP.put("mangkukulam_config.json", MangkukulamConfig.class);
+
+        ////// 分割线 //////
+
+        // TO_CLASSTYPE_MAP init
+        TO_JSON_ROOT_MAP.put("maria_makiling_config.json", MARIAMAKILING_JSON_ROOT_NAME);
+        TO_JSON_ROOT_MAP.put("malakas_config.json", MALAKAS_JSON_ROOT_NAME);
+        TO_JSON_ROOT_MAP.put("ibong_adarna_config.json", IBONGADARNA_JSON_ROOT_NAME);
+        TO_JSON_ROOT_MAP.put("bakunawa_config.json", BAKUNAWA_JSON_ROOT_NAME);
+        TO_JSON_ROOT_MAP.put("diwata_mayari_config.json", DIWATA_JSON_ROOT_NAME);
+        TO_JSON_ROOT_MAP.put("lamang_config.json", LAMANG_JSON_ROOT_NAME);
+        TO_JSON_ROOT_MAP.put("kapre_config.json", KAPRE_JSON_ROOT_NAME);
+        TO_JSON_ROOT_MAP.put("mangkukulam_config.json", MANGKUKULAM_JSON_ROOT_NAME);
+
+    }
 
     public static boolean validate(String dataId, String groupId, String configInfo) {
         if (needValidate(dataId)) {
