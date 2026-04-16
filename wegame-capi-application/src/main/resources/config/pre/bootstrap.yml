@@ -15,11 +15,11 @@ spring:
         namespace: 66c114bd-3f77-4bad-b935-d108c1c658f5
         refresh-enabled: true
         extension-configs:
-          - data-id: wegame-capi-qa-maria_makiling_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-pre-maria_makiling_config.json
+            group: wegame-capi-pre
             refresh: true
-          - data-id: wegame-capi-qa-malakas_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-pre-malakas_config.json
+            group: wegame-capi-pre
             refresh: true
           - data-id: wegame-capi-pre-ibong_adarna_config.json
             group: wegame-capi-pre
@@ -27,8 +27,8 @@ spring:
           - data-id: wegame-capi-pre-lamang_config.json
             group: wegame-capi-pre
             refresh: true
-          - data-id: wegame-capi-qa-bakunawa_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-pre-bakunawa_config.json
+            group: wegame-capi-pre
             refresh: true
           - data-id: wegame-capi-pre-diwata_mayari_config.json
             group: wegame-capi-pre
