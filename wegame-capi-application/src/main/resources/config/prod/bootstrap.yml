@@ -52,4 +52,5 @@ game:
     Bakunawa: false
     DiwataMayari: false
     Kapre: false
-    Mangkukulam: true
+    Mangkukulam: false
+    Sirena: true
