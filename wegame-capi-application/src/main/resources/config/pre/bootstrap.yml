@@ -15,22 +15,31 @@ spring:
         namespace: 66c114bd-3f77-4bad-b935-d108c1c658f5
         refresh-enabled: true
         extension-configs:
-          - data-id: wegame-capi-qa-maria_makiling_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-pre-maria_makiling_config.json
+            group: wegame-capi-pre
             refresh: true
-          - data-id: wegame-capi-qa-malakas_config.json
-            group: wegame-capi-qa
-            refresh: true
-          - data-id: wegame-capi-qa-bakunawa_config.json
-            group: wegame-capi-qa
-            refresh: true
-          - data-id: wegame-capi-pre-diwata_mayari_config.json
+          - data-id: wegame-capi-pre-malakas_config.json
             group: wegame-capi-pre
             refresh: true
           - data-id: wegame-capi-pre-ibong_adarna_config.json
             group: wegame-capi-pre
             refresh: true
+          - data-id: wegame-capi-pre-lamang_config.json
+            group: wegame-capi-pre
+            refresh: true
+          - data-id: wegame-capi-pre-bakunawa_config.json
+            group: wegame-capi-pre
+            refresh: true
+          - data-id: wegame-capi-pre-diwata_mayari_config.json
+            group: wegame-capi-pre
+            refresh: true
           - data-id: wegame-capi-pre-kapre_config.json
+            group: wegame-capi-pre
+            refresh: true
+          - data-id: wegame-capi-pre-mangkukulam_config.json
+            group: wegame-capi-pre
+            refresh: true
+          - data-id: wegame-capi-pre-sirena_config.json
             group: wegame-capi-pre
             refresh: true
           - data-id: wegame-capi-pre-atlantis_config.json
@@ -39,12 +48,13 @@ spring:
 ## game switch
 game:
   enable:
-    MariaMakiling: false
-    Malakas: false
-    IbongAdarna: false
-    Lamang: false
-    Bakunawa: false
-    DiwataMayari: false
-    Kapre: false
-    Mangkukulam: false
-    Atlantis: false
+    MariaMakiling: true
+    Malakas: true
+    IbongAdarna: true
+    Lamang: true
+    Bakunawa: true
+    DiwataMayari: true
+    Kapre: true
+    Mangkukulam: true
+    Sirena: true
+    Atlantis: true
