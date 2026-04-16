@@ -21,19 +21,19 @@ spring:
           - data-id: wegame-capi-prod-malakas_config.json
             group: wegame-capi-prod
             refresh: true
+          - data-id: wegame-capi-prod-ibong_adarna_config.json
+            group: wegame-capi-prod
+            refresh: true
+          - data-id: wegame-capi-prod-lamang_config.json
+            group: wegame-capi-prod
+            refresh: true
           - data-id: wegame-capi-prod-bakunawa_config.json
             group: wegame-capi-prod
             refresh: true
           - data-id: wegame-capi-prod-diwata_mayari_config.json
             group: wegame-capi-prod
             refresh: true
-          - data-id: wegame-capi-prod-ibong_adarna_config.json
-            group: wegame-capi-prod
-            refresh: true
           - data-id: wegame-capi-prod-kapre_config.json
-            group: wegame-capi-prod
-            refresh: true
-          - data-id: wegame-capi-prod-lamang_config.json
             group: wegame-capi-prod
             refresh: true
           - data-id: wegame-capi-prod-mangkukulam_config.json
@@ -42,10 +42,10 @@ spring:
           - data-id: wegame-capi-prod-sirena_config.json
             group: wegame-capi-prod
             refresh: true
-          - data-id: wegame-capi-prod-bayanihan_config.json
+          - data-id: wegame-capi-prod-atlantis_config.json
             group: wegame-capi-prod
             refresh: true
-          - data-id: wegame-capi-prod-atlantis_config.json
+          - data-id: wegame-capi-prod-bayanihan_config.json
             group: wegame-capi-prod
             refresh: true
 ## game switch
@@ -59,5 +59,6 @@ game:
     DiwataMayari: false
     Kapre: false
     Mangkukulam: false
+    Sirena: false
     Atlantis: false
     Bayanihan: true

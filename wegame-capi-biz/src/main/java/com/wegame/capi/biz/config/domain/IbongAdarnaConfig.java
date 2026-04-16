@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
 import com.wegame.capi.common.utils.NacosKeyUtil;
 import lombok.*;
@@ -30,6 +32,11 @@ import static com.wegame.capi.common.Constants.*;
 @RefreshScope
 @ConfigurationProperties(prefix = NacosConfigRefresherUtil.IBONGADARNA_JSON_ROOT_NAME)
 public class IbongAdarnaConfig extends GameBizConfig {
+
+    private static final List<BetSubTypeEnum> SUPPORT_BET_SUB_TYPE_LIST = Lists.newArrayList(
+            BetSubTypeEnum.NORMAL_BET,
+            BetSubTypeEnum.EX_BET
+    );
 
     /**
      * 赔率配置
@@ -132,6 +139,19 @@ public class IbongAdarnaConfig extends GameBizConfig {
     private void templateRangeConfigValidate() {
         AssertUtil.assertNotNull(this.templateRangeConfig, ErrorCode.ERR_PARAM, "templateRangeConfig is null");
         AssertUtil.assertNotNull(this.templateRangeConfig.templateRangeConfigMap, ErrorCode.ERR_PARAM, "templateRangeConfig.templateRangeConfigMap is null");
+
+        LinkedHashMap<String, LinkedHashMap<String, Integer>> templateRangeConfigMap = this.templateRangeConfig.templateRangeConfigMap;
+
+        templateRangeConfigMap.forEach((betSubTypeCode, templateRangeMap) -> {
+            AssertUtil.assertTrue(SUPPORT_BET_SUB_TYPE_LIST.contains(BetSubTypeEnum.valueOfCode(betSubTypeCode)), ErrorCode.ERR_PARAM, "templateRangeConfig.templateRangeConfigMap.key is not support");
+            templateRangeMap.forEach((rangeStr, weight) -> {
+                TemplateMultipleRange multipleRange = TemplateMultipleRange.build(rangeStr);
+                AssertUtil.assertTrue(multipleRange.getStart().compareTo(BigDecimal.ZERO) >= 0, ErrorCode.ERR_INTER, "range error,start must more than or equals zero");
+                AssertUtil.assertTrue(multipleRange.getEnd().compareTo(BigDecimal.ZERO) >= 0, ErrorCode.ERR_INTER, "range error,end must more than or equals zero");
+                AssertUtil.assertTrue(multipleRange.getStart().compareTo(multipleRange.getEnd()) <= 0, ErrorCode.ERR_INTER, "range error,start must more than or equals end");
+                AssertUtil.assertTrue(weight >= 0, ErrorCode.ERR_INTER, "range error,weight must more than or equals zero");
+            });
+        });
     }
 
     private void oddsConfigValidate() {
