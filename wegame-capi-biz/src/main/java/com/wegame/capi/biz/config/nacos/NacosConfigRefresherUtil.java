@@ -34,9 +34,10 @@ public class NacosConfigRefresherUtil {
     public static final String BAKUNAWA_JSON_ROOT_NAME = "bakunawa";
     public static final String DIWATA_JSON_ROOT_NAME = "diwatamayari";
     public static final String IBONGADARNA_JSON_ROOT_NAME = "ibongadarna";
-    public static final String KAPRE_JSON_ROOT_NAME = "kapre";
     public static final String LAMANG_JSON_ROOT_NAME = "lamang";
     public static final String MANGKUKULAM_JSON_ROOT_NAME = "mangkukulam";
+    public static final String KAPRE_JSON_ROOT_NAME = "kapre";
+    public static final String SIRENA_JSON_ROOT_NAME = "sirena";
 
     private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new ImmutableMap.Builder<String, Class<? extends ConfigValidate>>()
             .put("maria_makiling_config.json", MariaMakilingConfig.class)
@@ -47,16 +48,18 @@ public class NacosConfigRefresherUtil {
             .put("lamang_config.json", LamangConfig.class)
             .put("kapre_config.json", KapreConfig.class)
             .put("mangkukulam_config.json", MangkukulamConfig.class)
+            .put("sirena_config.json", SirenaConfig.class)
             .build();
     private static final Map<String, String> TO_JSON_ROOT_MAP = new ImmutableMap.Builder<String, String>()
             .put("maria_makiling_config.json", MARIAMAKILING_JSON_ROOT_NAME)
             .put("malakas_config.json", MALAKAS_JSON_ROOT_NAME)
             .put("ibong_adarna_config.json", IBONGADARNA_JSON_ROOT_NAME)
+            .put("lamang_config.json", LAMANG_JSON_ROOT_NAME)
             .put("bakunawa_config.json", BAKUNAWA_JSON_ROOT_NAME)
             .put("diwata_mayari_config.json", DIWATA_JSON_ROOT_NAME)
-            .put("lamang_config.json", LAMANG_JSON_ROOT_NAME)
             .put("kapre_config.json", KAPRE_JSON_ROOT_NAME)
             .put("mangkukulam_config.json", MANGKUKULAM_JSON_ROOT_NAME)
+            .put("sirena_config.json", SIRENA_JSON_ROOT_NAME)
             .build();
 
     public static boolean validate(String dataId, String groupId, String configInfo) {

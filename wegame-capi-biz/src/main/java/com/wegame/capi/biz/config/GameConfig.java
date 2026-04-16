@@ -1,13 +1,7 @@
 package com.wegame.capi.biz.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wegame.capi.biz.config.domain.SirenaConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author apple
@@ -29,18 +23,4 @@ public class GameConfig {
     //        return config;
     //    }
     //}
-
-    @Bean
-    SirenaConfig sirenaConfig() throws IOException {
-        String path = "/sirena_config.json";
-        InputStream inputStream = getClass().getResourceAsStream(path);
-        if (inputStream == null) {
-            throw new RuntimeException("read sirena_config.json file err！！！");
-        } else {
-            SirenaConfig config = new ObjectMapper().readValue(inputStream, SirenaConfig.class);
-            config.validate();
-            return config;
-        }
-    }
-
 }
