@@ -14,6 +14,8 @@ spring:
         group: wegame-capi-pre
         namespace: 66c114bd-3f77-4bad-b935-d108c1c658f5
         refresh-enabled: true
+        access-key: LTAI5tMTvh5AJtTDvsFJ941L
+        secret-key: 57yeby8QIcmSE5uue5tQH1CvGj4kZu
         extension-configs:
           - data-id: wegame-capi-pre-maria_makiling_config.json
             group: wegame-capi-pre
