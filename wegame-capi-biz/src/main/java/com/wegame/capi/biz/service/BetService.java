@@ -46,14 +46,17 @@ public class BetService {
             GameTypeEnum.MARIA_MAKILING,
             GameTypeEnum.MALAKAS,
             GameTypeEnum.IBONG_ADARNA,
-            GameTypeEnum.LAM_ANG,
             GameTypeEnum.BAKUNAWA,
-            GameTypeEnum.DIWATA_MAYARI,
-            GameTypeEnum.MANGKUKULAM,
             GameTypeEnum.SIRENA,
             GameTypeEnum.ATLANTIS,
             GameTypeEnum.BAYANIHAN
 
+    );
+
+    private static final List<GameTypeEnum> FORCE_TEMPLATE_BET_CONTROL_GAME_LIST = Arrays.asList(
+            GameTypeEnum.LAM_ANG,
+            GameTypeEnum.DIWATA_MAYARI,
+            GameTypeEnum.MANGKUKULAM
     );
 
     @Autowired
@@ -80,6 +83,8 @@ public class BetService {
                 log.info("userInfo.ut: {}, template bet", userInfo.getUt());
                 betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
             }
+        } else if (FORCE_TEMPLATE_BET_CONTROL_GAME_LIST.contains(betDo.getGameType())) {
+            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
         } else {
             // Kapre 强制不走模版
             betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
