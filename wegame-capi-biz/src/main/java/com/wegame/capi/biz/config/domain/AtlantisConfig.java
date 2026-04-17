@@ -124,10 +124,17 @@ public class AtlantisConfig extends GameBizConfig implements Serializable {
          */
         private TreeMap<SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig;
         /**
-         * 业务概率配置
+         * 主游戏业务概率配置
          * TreeMap<格子,TreeMap<事件类型，概率>>
          */
-        private TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig;
+        private TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> mainGameBizEventProbabilisticConfig;
+        /**
+         * 免费游戏业务概率配置
+         * TreeMap<格子,TreeMap<事件类型，概率>>
+         */
+        private TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> freeGameBizEventProbabilisticConfig;
+
+
         /**
          * 单个事件特殊概率配置
          * TreeMap<事件类型,TreeMap<出现次数，概率>>
@@ -209,7 +216,8 @@ public class AtlantisConfig extends GameBizConfig implements Serializable {
         // probabilisticConfig校验
         Assert.notNull(this.probabilisticConfig, "probabilisticConfig is null");
         this.wheelProbabilisticConfigValidate(this.probabilisticConfig.getWheelProbabilisticConfig());
-        this.bizEventProbabilisticConfigValidate(this.probabilisticConfig.getBizEventProbabilisticConfig());
+        this.bizEventProbabilisticConfigValidate(this.probabilisticConfig.getMainGameBizEventProbabilisticConfig());
+        this.bizEventProbabilisticConfigValidate(this.probabilisticConfig.getFreeGameBizEventProbabilisticConfig());
         this.singleBizSpecialEventProbabilisticConfig(this.probabilisticConfig.getSingleBizSpecialEventProbabilisticConfig());
     }
 
