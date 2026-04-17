@@ -146,7 +146,8 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         AtomicInteger totalRewardCount = new AtomicInteger(0);
         while (!queue.isEmpty()) {
             // 一个一个处理
-            List<Long> configGameRecordIdList = firstWheelPlayResult.getConfigGameRecordIdList();
+            OneWheelPlayResult wheelPlayResult = queue.pollFirst();
+            List<Long> configGameRecordIdList = wheelPlayResult.getConfigGameRecordIdList();
             Long parentId = firstWheelPlayResult.getLastRoundGameRecordId();
             for (Long configGameRecordId : configGameRecordIdList) {
                 // 一轮记录信息
