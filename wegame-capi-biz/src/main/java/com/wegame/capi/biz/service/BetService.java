@@ -49,7 +49,8 @@ public class BetService {
             GameTypeEnum.BAKUNAWA,
             GameTypeEnum.DIWATA_MAYARI,
             GameTypeEnum.MANGKUKULAM,
-            GameTypeEnum.SIRENA
+            GameTypeEnum.SIRENA,
+            GameTypeEnum.ATLANTIS
 
     );
 
