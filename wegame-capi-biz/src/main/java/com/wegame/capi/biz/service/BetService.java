@@ -6,12 +6,17 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.AbstractBetContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,6 +39,16 @@ public class BetService {
             .put(GameTypeEnum.KAPRE, "kapreBetContext")
             .put(GameTypeEnum.MANGKUKULAM, "mangkukulamBetContext")
             .build();
+    private static final List<GameTypeEnum> AB_CONTROL_GAME_LIST = Arrays.asList(
+            GameTypeEnum.MARIA_MAKILING,
+            GameTypeEnum.MALAKAS,
+            GameTypeEnum.IBONG_ADARNA,
+            GameTypeEnum.LAM_ANG,
+            GameTypeEnum.BAKUNAWA,
+            GameTypeEnum.DIWATA_MAYARI,
+            GameTypeEnum.MANGKUKULAM
+
+    );
 
     @Autowired
     Map<String, AbstractBetContext> contextMap;
@@ -51,8 +66,16 @@ public class BetService {
     }
 
     public void buildGamePlayType(BetDo betDo) {
-        betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-        if (Objects.equals(betDo.getGameType(), GameTypeEnum.KAPRE)) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        if (AB_CONTROL_GAME_LIST.contains(betDo.getGameType())) {
+            if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
+                betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
+            } else {
+                log.info("userInfo.ut: {}, template bet", userInfo.getUt());
+                betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
+            }
+        } else {
+            // Kapre 强制不走模版
             betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
         }
     }
