@@ -1,794 +1,796 @@
 {
-	"oddsConfig": {
-		"commonOddsConfig": {
-			"1001": {
-				"EIGHT": "0.1",
-				"NINE": "0.1",
-				"TEN": "0.1",
-				"ELEVEN": "0.2",
-				"TWELVE": "0.2",
-				"THIRTEEN": "0.2",
-				"FOURTEEN": "0.3",
-				"FIFTEEN": "0.3",
-				"SIXTEEN": "0.3",
-				"SEVENTEEN": "0.4",
-				"EIGHTEEN": "0.4",
-				"NINETEEN": "0.4",
-				"TWENTY": "0.4",
-				"TWENTY_ONE": "0.4",
-				"TWENTY_TWO": "0.4",
-				"TWENTY_THREE": "0.4",
-				"TWENTY_FOUR": "0.4",
-				"TWENTY_FIVE": "0.4",
-				"TWENTY_SIX": "0.4",
-				"TWENTY_SEVEN": "0.4",
-				"TWENTY_EIGHT": "0.4",
-				"TWENTY_NINE": "0.4",
-				"THIRTY": "0.4"
-			},
-			"1002": {
-				"EIGHT": "0.1",
-				"NINE": "0.1",
-				"TEN": "0.1",
-				"ELEVEN": "0.2",
-				"TWELVE": "0.2",
-				"THIRTEEN": "0.2",
-				"FOURTEEN": "0.3",
-				"FIFTEEN": "0.3",
-				"SIXTEEN": "0.3",
-				"SEVENTEEN": "0.4",
-				"EIGHTEEN": "0.4",
-				"NINETEEN": "0.4",
-				"TWENTY": "0.4",
-				"TWENTY_ONE": "0.4",
-				"TWENTY_TWO": "0.4",
-				"TWENTY_THREE": "0.4",
-				"TWENTY_FOUR": "0.4",
-				"TWENTY_FIVE": "0.4",
-				"TWENTY_SIX": "0.4",
-				"TWENTY_SEVEN": "0.4",
-				"TWENTY_EIGHT": "0.4",
-				"TWENTY_NINE": "0.4",
-				"THIRTY": "0.4"
-			},
-			"1003": {
-				"EIGHT": "0.2",
-				"NINE": "0.2",
-				"TEN": "0.2",
-				"ELEVEN": "0.3",
-				"TWELVE": "0.3",
-				"THIRTEEN": "0.3",
-				"FOURTEEN": "0.4",
-				"FIFTEEN": "0.4",
-				"SIXTEEN": "0.4",
-				"SEVENTEEN": "0.5",
-				"EIGHTEEN": "0.5",
-				"NINETEEN": "0.5",
-				"TWENTY": "0.5",
-				"TWENTY_ONE": "0.5",
-				"TWENTY_TWO": "0.5",
-				"TWENTY_THREE": "0.5",
-				"TWENTY_FOUR": "0.5",
-				"TWENTY_FIVE": "0.5",
-				"TWENTY_SIX": "0.5",
-				"TWENTY_SEVEN": "0.5",
-				"TWENTY_EIGHT": "0.5",
-				"TWENTY_NINE": "0.5",
-				"THIRTY": "0.5"
-			},
-			"1004": {
-				"EIGHT": "0.2",
-				"NINE": "0.2",
-				"TEN": "0.2",
-				"ELEVEN": "0.3",
-				"TWELVE": "0.3",
-				"THIRTEEN": "0.3",
-				"FOURTEEN": "0.4",
-				"FIFTEEN": "0.4",
-				"SIXTEEN": "0.4",
-				"SEVENTEEN": "0.5",
-				"EIGHTEEN": "0.5",
-				"NINETEEN": "0.5",
-				"TWENTY": "0.5",
-				"TWENTY_ONE": "0.5",
-				"TWENTY_TWO": "0.5",
-				"TWENTY_THREE": "0.5",
-				"TWENTY_FOUR": "0.5",
-				"TWENTY_FIVE": "0.5",
-				"TWENTY_SIX": "0.5",
-				"TWENTY_SEVEN": "0.5",
-				"TWENTY_EIGHT": "0.5",
-				"TWENTY_NINE": "0.5",
-				"THIRTY": "0.5"
-			},
-			"1005": {
-				"EIGHT": "0.3",
-				"NINE": "0.3",
-				"TEN": "0.3",
-				"ELEVEN": "0.4",
-				"TWELVE": "0.4",
-				"THIRTEEN": "0.4",
-				"FOURTEEN": "0.5",
-				"FIFTEEN": "0.5",
-				"SIXTEEN": "0.5",
-				"SEVENTEEN": "0.6",
-				"EIGHTEEN": "0.6",
-				"NINETEEN": "0.6",
-				"TWENTY": "0.6",
-				"TWENTY_ONE": "0.6",
-				"TWENTY_TWO": "0.6",
-				"TWENTY_THREE": "0.6",
-				"TWENTY_FOUR": "0.6",
-				"TWENTY_FIVE": "0.6",
-				"TWENTY_SIX": "0.6",
-				"TWENTY_SEVEN": "0.6",
-				"TWENTY_EIGHT": "0.6",
-				"TWENTY_NINE": "0.6",
-				"THIRTY": "0.6"
-			},
-			"1006": {
-				"EIGHT": "0.4",
-				"NINE": "0.4",
-				"TEN": "0.4",
-				"ELEVEN": "0.6",
-				"TWELVE": "0.6",
-				"THIRTEEN": "0.6",
-				"FOURTEEN": "0.8",
-				"FIFTEEN": "0.8",
-				"SIXTEEN": "0.8",
-				"SEVENTEEN": "1",
-				"EIGHTEEN": "1",
-				"NINETEEN": "1",
-				"TWENTY": "1",
-				"TWENTY_ONE": "1",
-				"TWENTY_TWO": "1",
-				"TWENTY_THREE": "1",
-				"TWENTY_FOUR": "1",
-				"TWENTY_FIVE": "1",
-				"TWENTY_SIX": "1",
-				"TWENTY_SEVEN": "1",
-				"TWENTY_EIGHT": "1",
-				"TWENTY_NINE": "1",
-				"THIRTY": "1"
-			},
-			"1007": {
-				"EIGHT": "0.5",
-				"NINE": "0.5",
-				"TEN": "0.5",
-				"ELEVEN": "0.7",
-				"TWELVE": "0.7",
-				"THIRTEEN": "0.7",
-				"FOURTEEN": "0.9",
-				"FIFTEEN": "0.9",
-				"SIXTEEN": "0.9",
-				"SEVENTEEN": "1.1",
-				"EIGHTEEN": "1.1",
-				"NINETEEN": "1.1",
-				"TWENTY": "1.1",
-				"TWENTY_ONE": "1.1",
-				"TWENTY_TWO": "1.1",
-				"TWENTY_THREE": "1.1",
-				"TWENTY_FOUR": "1.1",
-				"TWENTY_FIVE": "1.1",
-				"TWENTY_SIX": "1.1",
-				"TWENTY_SEVEN": "1.1",
-				"TWENTY_EIGHT": "1.1",
-				"TWENTY_NINE": "1.1",
-				"THIRTY": "1.1"
-			},
-			"1008": {
-				"EIGHT": "0.4",
-				"NINE": "0.4",
-				"TEN": "0.4",
-				"ELEVEN": "0.7",
-				"TWELVE": "0.7",
-				"THIRTEEN": "0.7",
-				"FOURTEEN": "1",
-				"FIFTEEN": "1",
-				"SIXTEEN": "1",
-				"SEVENTEEN": "1.3",
-				"EIGHTEEN": "1.3",
-				"NINETEEN": "1.3",
-				"TWENTY": "1.3",
-				"TWENTY_ONE": "1.3",
-				"TWENTY_TWO": "1.3",
-				"TWENTY_THREE": "1.3",
-				"TWENTY_FOUR": "1.3",
-				"TWENTY_FIVE": "1.3",
-				"TWENTY_SIX": "1.3",
-				"TWENTY_SEVEN": "1.3",
-				"TWENTY_EIGHT": "1.3",
-				"TWENTY_NINE": "1.3",
-				"THIRTY": "1.3"
-			},
-			"1009": {
-				"EIGHT": "0.5",
-				"NINE": "0.5",
-				"TEN": "0.5",
-				"ELEVEN": "0.9",
-				"TWELVE": "0.9",
-				"THIRTEEN": "0.9",
-				"FOURTEEN": "1.3",
-				"FIFTEEN": "1.3",
-				"SIXTEEN": "1.3",
-				"SEVENTEEN": "1.7",
-				"EIGHTEEN": "1.7",
-				"NINETEEN": "1.7",
-				"TWENTY": "1.7",
-				"TWENTY_ONE": "1.7",
-				"TWENTY_TWO": "1.7",
-				"TWENTY_THREE": "1.7",
-				"TWENTY_FOUR": "1.7",
-				"TWENTY_FIVE": "1.7",
-				"TWENTY_SIX": "1.7",
-				"TWENTY_SEVEN": "1.7",
-				"TWENTY_EIGHT": "1.7",
-				"TWENTY_NINE": "1.7",
-				"THIRTY": "1.7"
-			},
-			"1010": {
-				"EIGHT": "0.5",
-				"NINE": "0.5",
-				"TEN": "0.5",
-				"ELEVEN": "1",
-				"TWELVE": "1",
-				"THIRTEEN": "1",
-				"FOURTEEN": "1.5",
-				"FIFTEEN": "1.5",
-				"SIXTEEN": "1.5",
-				"SEVENTEEN": "2",
-				"EIGHTEEN": "2",
-				"NINETEEN": "2",
-				"TWENTY": "2",
-				"TWENTY_ONE": "2",
-				"TWENTY_TWO": "2",
-				"TWENTY_THREE": "2",
-				"TWENTY_FOUR": "2",
-				"TWENTY_FIVE": "2",
-				"TWENTY_SIX": "2",
-				"TWENTY_SEVEN": "2",
-				"TWENTY_EIGHT": "2",
-				"TWENTY_NINE": "2",
-				"THIRTY": "2"
-			}
-		}
-	},
-	"probabilisticConfig": {
-		"wheelProbabilisticConfig": {
-			"1001_1": ["3.000","3.000","3.000","3.000","3.000"],
-			"1001_2": ["4.000","4.000","4.000","4.000","4.000"],
-			"1001_3": ["8.000","8.000","8.000","8.000","8.000"],
-
-			"1002_1": ["2.000","2.000","2.000","2.000","2.000"],
-			"1002_2": ["4.000","4.000","4.000","4.000","4.000"],
-			"1002_3": ["7.000","7.000","7.000","7.000","7.000"],
-
-			"1003_1": ["2.000","2.000","2.000","2.000","2.000"],
-			"1003_2": ["4.000","4.000","4.000","4.000","4.000"],
-			"1003_3": ["7.000","7.000","7.000","7.000","7.000"],
-
-			"1004_1": ["2.000","2.000","2.000","2.000","2.000"],
-			"1004_2": ["4.000","4.000","4.000","4.000","4.000"],
-			"1004_3": ["6.000","6.000","6.000","6.000","6.000"],
-
-			"1005_1": ["2.000","2.000","2.000","2.000","2.000"],
-			"1005_2": ["3.000","3.000","3.000","3.000","3.000"],
-			"1005_3": ["6.000","6.000","6.000","6.000","6.000"],
-
-			"1006_1": ["1.000","1.000","1.000","1.000","1.000"],
-			"1006_2": ["2.000","2.000","2.000","2.000","2.000"],
-			"1006_3": ["5.000","5.000","5.000","5.000","5.000"],
-
-			"1007_1": ["1.000","1.000","1.000","1.000","1.000"],
-			"1007_2": ["2.000","2.000","2.000","2.000","2.000"],
-			"1007_3": ["5.000","5.000","5.000","5.000","5.000"],
-
-			"1008_1": ["1.000","1.000","1.000","1.000","1.000"],
-			"1008_2": ["2.000","2.000","2.000","2.000","2.000"],
-			"1008_3": ["4.000","4.000","4.000","4.000","4.000"],
-
-			"1009_1": ["1.000","1.000","1.000","1.000","1.000"],
-			"1009_2": ["2.000","2.000","2.000","2.000","2.000"],
-			"1009_3": ["4.000","4.000","4.000","4.000","4.000"],
-
-			"1010_1": ["1.000","1.000","1.000","1.000","1.000"],
-			"1010_2": ["2.000","2.000","2.000","2.000","2.000"],
-			"1010_3": ["3.000","3.000","3.000","3.000","3.000"]
-		},
-		"mainGameBizEventProbabilisticConfig": {
-			"0": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"1": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"2": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"3": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"4": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"5": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"6": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"7": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"8": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"9": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"10": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"11": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"12": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"13": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"14": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"15": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"16": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"17": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"18": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"19": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"20": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"21": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"22": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 100.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"23": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
+	"atlantis": {
+		"oddsConfig": {
+			"commonOddsConfig": {
+				"1001": {
+					"EIGHT": "0.1",
+					"NINE": "0.1",
+					"TEN": "0.1",
+					"ELEVEN": "0.2",
+					"TWELVE": "0.2",
+					"THIRTEEN": "0.2",
+					"FOURTEEN": "0.3",
+					"FIFTEEN": "0.3",
+					"SIXTEEN": "0.3",
+					"SEVENTEEN": "0.4",
+					"EIGHTEEN": "0.4",
+					"NINETEEN": "0.4",
+					"TWENTY": "0.4",
+					"TWENTY_ONE": "0.4",
+					"TWENTY_TWO": "0.4",
+					"TWENTY_THREE": "0.4",
+					"TWENTY_FOUR": "0.4",
+					"TWENTY_FIVE": "0.4",
+					"TWENTY_SIX": "0.4",
+					"TWENTY_SEVEN": "0.4",
+					"TWENTY_EIGHT": "0.4",
+					"TWENTY_NINE": "0.4",
+					"THIRTY": "0.4"
+				},
+				"1002": {
+					"EIGHT": "0.1",
+					"NINE": "0.1",
+					"TEN": "0.1",
+					"ELEVEN": "0.2",
+					"TWELVE": "0.2",
+					"THIRTEEN": "0.2",
+					"FOURTEEN": "0.3",
+					"FIFTEEN": "0.3",
+					"SIXTEEN": "0.3",
+					"SEVENTEEN": "0.4",
+					"EIGHTEEN": "0.4",
+					"NINETEEN": "0.4",
+					"TWENTY": "0.4",
+					"TWENTY_ONE": "0.4",
+					"TWENTY_TWO": "0.4",
+					"TWENTY_THREE": "0.4",
+					"TWENTY_FOUR": "0.4",
+					"TWENTY_FIVE": "0.4",
+					"TWENTY_SIX": "0.4",
+					"TWENTY_SEVEN": "0.4",
+					"TWENTY_EIGHT": "0.4",
+					"TWENTY_NINE": "0.4",
+					"THIRTY": "0.4"
+				},
+				"1003": {
+					"EIGHT": "0.2",
+					"NINE": "0.2",
+					"TEN": "0.2",
+					"ELEVEN": "0.3",
+					"TWELVE": "0.3",
+					"THIRTEEN": "0.3",
+					"FOURTEEN": "0.4",
+					"FIFTEEN": "0.4",
+					"SIXTEEN": "0.4",
+					"SEVENTEEN": "0.5",
+					"EIGHTEEN": "0.5",
+					"NINETEEN": "0.5",
+					"TWENTY": "0.5",
+					"TWENTY_ONE": "0.5",
+					"TWENTY_TWO": "0.5",
+					"TWENTY_THREE": "0.5",
+					"TWENTY_FOUR": "0.5",
+					"TWENTY_FIVE": "0.5",
+					"TWENTY_SIX": "0.5",
+					"TWENTY_SEVEN": "0.5",
+					"TWENTY_EIGHT": "0.5",
+					"TWENTY_NINE": "0.5",
+					"THIRTY": "0.5"
+				},
+				"1004": {
+					"EIGHT": "0.2",
+					"NINE": "0.2",
+					"TEN": "0.2",
+					"ELEVEN": "0.3",
+					"TWELVE": "0.3",
+					"THIRTEEN": "0.3",
+					"FOURTEEN": "0.4",
+					"FIFTEEN": "0.4",
+					"SIXTEEN": "0.4",
+					"SEVENTEEN": "0.5",
+					"EIGHTEEN": "0.5",
+					"NINETEEN": "0.5",
+					"TWENTY": "0.5",
+					"TWENTY_ONE": "0.5",
+					"TWENTY_TWO": "0.5",
+					"TWENTY_THREE": "0.5",
+					"TWENTY_FOUR": "0.5",
+					"TWENTY_FIVE": "0.5",
+					"TWENTY_SIX": "0.5",
+					"TWENTY_SEVEN": "0.5",
+					"TWENTY_EIGHT": "0.5",
+					"TWENTY_NINE": "0.5",
+					"THIRTY": "0.5"
+				},
+				"1005": {
+					"EIGHT": "0.3",
+					"NINE": "0.3",
+					"TEN": "0.3",
+					"ELEVEN": "0.4",
+					"TWELVE": "0.4",
+					"THIRTEEN": "0.4",
+					"FOURTEEN": "0.5",
+					"FIFTEEN": "0.5",
+					"SIXTEEN": "0.5",
+					"SEVENTEEN": "0.6",
+					"EIGHTEEN": "0.6",
+					"NINETEEN": "0.6",
+					"TWENTY": "0.6",
+					"TWENTY_ONE": "0.6",
+					"TWENTY_TWO": "0.6",
+					"TWENTY_THREE": "0.6",
+					"TWENTY_FOUR": "0.6",
+					"TWENTY_FIVE": "0.6",
+					"TWENTY_SIX": "0.6",
+					"TWENTY_SEVEN": "0.6",
+					"TWENTY_EIGHT": "0.6",
+					"TWENTY_NINE": "0.6",
+					"THIRTY": "0.6"
+				},
+				"1006": {
+					"EIGHT": "0.4",
+					"NINE": "0.4",
+					"TEN": "0.4",
+					"ELEVEN": "0.6",
+					"TWELVE": "0.6",
+					"THIRTEEN": "0.6",
+					"FOURTEEN": "0.8",
+					"FIFTEEN": "0.8",
+					"SIXTEEN": "0.8",
+					"SEVENTEEN": "1",
+					"EIGHTEEN": "1",
+					"NINETEEN": "1",
+					"TWENTY": "1",
+					"TWENTY_ONE": "1",
+					"TWENTY_TWO": "1",
+					"TWENTY_THREE": "1",
+					"TWENTY_FOUR": "1",
+					"TWENTY_FIVE": "1",
+					"TWENTY_SIX": "1",
+					"TWENTY_SEVEN": "1",
+					"TWENTY_EIGHT": "1",
+					"TWENTY_NINE": "1",
+					"THIRTY": "1"
+				},
+				"1007": {
+					"EIGHT": "0.5",
+					"NINE": "0.5",
+					"TEN": "0.5",
+					"ELEVEN": "0.7",
+					"TWELVE": "0.7",
+					"THIRTEEN": "0.7",
+					"FOURTEEN": "0.9",
+					"FIFTEEN": "0.9",
+					"SIXTEEN": "0.9",
+					"SEVENTEEN": "1.1",
+					"EIGHTEEN": "1.1",
+					"NINETEEN": "1.1",
+					"TWENTY": "1.1",
+					"TWENTY_ONE": "1.1",
+					"TWENTY_TWO": "1.1",
+					"TWENTY_THREE": "1.1",
+					"TWENTY_FOUR": "1.1",
+					"TWENTY_FIVE": "1.1",
+					"TWENTY_SIX": "1.1",
+					"TWENTY_SEVEN": "1.1",
+					"TWENTY_EIGHT": "1.1",
+					"TWENTY_NINE": "1.1",
+					"THIRTY": "1.1"
+				},
+				"1008": {
+					"EIGHT": "0.4",
+					"NINE": "0.4",
+					"TEN": "0.4",
+					"ELEVEN": "0.7",
+					"TWELVE": "0.7",
+					"THIRTEEN": "0.7",
+					"FOURTEEN": "1",
+					"FIFTEEN": "1",
+					"SIXTEEN": "1",
+					"SEVENTEEN": "1.3",
+					"EIGHTEEN": "1.3",
+					"NINETEEN": "1.3",
+					"TWENTY": "1.3",
+					"TWENTY_ONE": "1.3",
+					"TWENTY_TWO": "1.3",
+					"TWENTY_THREE": "1.3",
+					"TWENTY_FOUR": "1.3",
+					"TWENTY_FIVE": "1.3",
+					"TWENTY_SIX": "1.3",
+					"TWENTY_SEVEN": "1.3",
+					"TWENTY_EIGHT": "1.3",
+					"TWENTY_NINE": "1.3",
+					"THIRTY": "1.3"
+				},
+				"1009": {
+					"EIGHT": "0.5",
+					"NINE": "0.5",
+					"TEN": "0.5",
+					"ELEVEN": "0.9",
+					"TWELVE": "0.9",
+					"THIRTEEN": "0.9",
+					"FOURTEEN": "1.3",
+					"FIFTEEN": "1.3",
+					"SIXTEEN": "1.3",
+					"SEVENTEEN": "1.7",
+					"EIGHTEEN": "1.7",
+					"NINETEEN": "1.7",
+					"TWENTY": "1.7",
+					"TWENTY_ONE": "1.7",
+					"TWENTY_TWO": "1.7",
+					"TWENTY_THREE": "1.7",
+					"TWENTY_FOUR": "1.7",
+					"TWENTY_FIVE": "1.7",
+					"TWENTY_SIX": "1.7",
+					"TWENTY_SEVEN": "1.7",
+					"TWENTY_EIGHT": "1.7",
+					"TWENTY_NINE": "1.7",
+					"THIRTY": "1.7"
+				},
+				"1010": {
+					"EIGHT": "0.5",
+					"NINE": "0.5",
+					"TEN": "0.5",
+					"ELEVEN": "1",
+					"TWELVE": "1",
+					"THIRTEEN": "1",
+					"FOURTEEN": "1.5",
+					"FIFTEEN": "1.5",
+					"SIXTEEN": "1.5",
+					"SEVENTEEN": "2",
+					"EIGHTEEN": "2",
+					"NINETEEN": "2",
+					"TWENTY": "2",
+					"TWENTY_ONE": "2",
+					"TWENTY_TWO": "2",
+					"TWENTY_THREE": "2",
+					"TWENTY_FOUR": "2",
+					"TWENTY_FIVE": "2",
+					"TWENTY_SIX": "2",
+					"TWENTY_SEVEN": "2",
+					"TWENTY_EIGHT": "2",
+					"TWENTY_NINE": "2",
+					"THIRTY": "2"
+				}
 			}
 		},
-		"freeGameBizEventProbabilisticConfig": {
-			"0": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
+		"probabilisticConfig": {
+			"wheelProbabilisticConfig": {
+				"1001_1": ["3.000","3.000","3.000","3.000","3.000"],
+				"1001_2": ["4.000","4.000","4.000","4.000","4.000"],
+				"1001_3": ["8.000","8.000","8.000","8.000","8.000"],
+
+				"1002_1": ["2.000","2.000","2.000","2.000","2.000"],
+				"1002_2": ["4.000","4.000","4.000","4.000","4.000"],
+				"1002_3": ["7.000","7.000","7.000","7.000","7.000"],
+
+				"1003_1": ["2.000","2.000","2.000","2.000","2.000"],
+				"1003_2": ["4.000","4.000","4.000","4.000","4.000"],
+				"1003_3": ["7.000","7.000","7.000","7.000","7.000"],
+
+				"1004_1": ["2.000","2.000","2.000","2.000","2.000"],
+				"1004_2": ["4.000","4.000","4.000","4.000","4.000"],
+				"1004_3": ["6.000","6.000","6.000","6.000","6.000"],
+
+				"1005_1": ["2.000","2.000","2.000","2.000","2.000"],
+				"1005_2": ["3.000","3.000","3.000","3.000","3.000"],
+				"1005_3": ["6.000","6.000","6.000","6.000","6.000"],
+
+				"1006_1": ["1.000","1.000","1.000","1.000","1.000"],
+				"1006_2": ["2.000","2.000","2.000","2.000","2.000"],
+				"1006_3": ["5.000","5.000","5.000","5.000","5.000"],
+
+				"1007_1": ["1.000","1.000","1.000","1.000","1.000"],
+				"1007_2": ["2.000","2.000","2.000","2.000","2.000"],
+				"1007_3": ["5.000","5.000","5.000","5.000","5.000"],
+
+				"1008_1": ["1.000","1.000","1.000","1.000","1.000"],
+				"1008_2": ["2.000","2.000","2.000","2.000","2.000"],
+				"1008_3": ["4.000","4.000","4.000","4.000","4.000"],
+
+				"1009_1": ["1.000","1.000","1.000","1.000","1.000"],
+				"1009_2": ["2.000","2.000","2.000","2.000","2.000"],
+				"1009_3": ["4.000","4.000","4.000","4.000","4.000"],
+
+				"1010_1": ["1.000","1.000","1.000","1.000","1.000"],
+				"1010_2": ["2.000","2.000","2.000","2.000","2.000"],
+				"1010_3": ["3.000","3.000","3.000","3.000","3.000"]
 			},
-			"1": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
+			"mainGameBizEventProbabilisticConfig": {
+				"0": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"1": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"2": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"3": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"4": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"5": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"6": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"7": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"8": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"9": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"10": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"11": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"12": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"13": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"14": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"15": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"16": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"17": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"18": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"19": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"20": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"21": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"22": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 100.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"23": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				}
 			},
-			"2": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
+			"freeGameBizEventProbabilisticConfig": {
+				"0": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"1": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"2": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"3": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"4": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"5": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"6": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"7": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"8": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"9": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"10": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"11": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"12": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"13": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"14": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"15": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"16": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"17": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"18": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"19": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				},
+				"20": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"21": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"22": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 30.000,
+					"EVENT_WILD": 30.000,
+					"EVENT_BOM": 40.000,
+					"EVENT_TRIDENT": 0.000,
+					"EVENT_GOLDEN_TANK": 0.000,
+					"EVENT_GOLDEN_COW": 0.000
+				},
+				"23": {
+					"EVENT_NONE": 0.000,
+					"EVENT_SCATTER": 0.000,
+					"EVENT_WILD": 0.000,
+					"EVENT_BOM": 0.000,
+					"EVENT_TRIDENT": 30.000,
+					"EVENT_GOLDEN_TANK": 30.000,
+					"EVENT_GOLDEN_COW": 40.000
+				}
 			},
-			"3": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"4": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"5": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"6": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"7": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"8": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"9": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"10": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"11": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"12": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"13": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"14": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"15": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"16": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"17": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"18": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"19": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
-			},
-			"20": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"21": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"22": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
-			},
-			"23": {
-				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 0.000,
-				"EVENT_WILD": 0.000,
-				"EVENT_BOM": 0.000,
-				"EVENT_TRIDENT": 30.000,
-				"EVENT_GOLDEN_TANK": 30.000,
-				"EVENT_GOLDEN_COW": 40.000
+			"singleBizSpecialEventProbabilisticConfig": {
+				"EVENT_TRIDENT": {
+					"1": 70.000,
+					"2": 20.000,
+					"3": 10.000
+				},
+				"EVENT_GOLDEN_TANK": {
+					"1": 70.000,
+					"2": 20.000,
+					"3": 10.000
+				},
+				"EVENT_GOLDEN_COW": {
+					"2": 70.000,
+					"3": 20.000,
+					"4": 7.000,
+					"5": 3.000
+				}
 			}
 		},
-		"singleBizSpecialEventProbabilisticConfig": {
-			"EVENT_TRIDENT": {
-				"1": 70.000,
-				"2": 20.000,
-				"3": 10.000
-			},
-			"EVENT_GOLDEN_TANK": {
-				"1": 70.000,
-				"2": 20.000,
-				"3": 10.000
-			},
-			"EVENT_GOLDEN_COW": {
-				"2": 70.000,
-				"3": 20.000,
-				"4": 7.000,
-				"5": 3.000
-			}
-		}
-	},
 
-	"freeWheelTimesConfig": {
-		"baseFreeWheelTimes": 8,
-		"step": 1
+		"freeWheelTimesConfig": {
+			"baseFreeWheelTimes": 8,
+			"step": 1
 
-	},
-	"rewardMaxMultiple": "10250",
-	"templateRangeConfig": {
-		"templateRangeMap": {
-			"NORMAL_BET": {
-				"0_1": 123242,
-				"1_3": 20999,
-				"3_5": 20999
-			},
-			"EX_BET": {
-				"0_1": 123242,
-				"1_3": 20999,
-				"3_5": 20999
-			},
-			"EX_BET_ENHANCE": {
-				"0_1": 123242,
-				"1_3": 20999,
-				"3_5": 20999
-			},
-			"BUY_BET": {
-				"0_1": 123242,
-				"1_3": 20999,
-				"3_5": 20999
-			},
-			"BUY_BET_ENHANCE": {
-				"0_1": 123242,
-				"1_3": 20999,
-				"3_5": 20999
+		},
+		"rewardMaxMultiple": "10250",
+		"templateRangeConfig": {
+			"templateRangeMap": {
+				"NORMAL_BET": {
+					"0_1": 123242,
+					"1_3": 20999,
+					"3_5": 20999
+				},
+				"EX_BET": {
+					"0_1": 123242,
+					"1_3": 20999,
+					"3_5": 20999
+				},
+				"EX_BET_ENHANCE": {
+					"0_1": 123242,
+					"1_3": 20999,
+					"3_5": 20999
+				},
+				"BUY_BET": {
+					"0_1": 123242,
+					"1_3": 20999,
+					"3_5": 20999
+				},
+				"BUY_BET_ENHANCE": {
+					"0_1": 123242,
+					"1_3": 20999,
+					"3_5": 20999
+				}
 			}
+		},
+		"buyBetExceptedScatterCount": 5,
+		"payoutAmountLimitConfig": {
+			"retryCount": 1,
+			"limitAmount": 1000000000
 		}
-	},
-	"buyBetExceptedScatterCount": 5,
-	"payoutAmountLimitConfig": {
-		"retryCount": 1,
-		"limitAmount": 1000000000
 	}
 }
