@@ -1,7 +1,7 @@
 ## log
 logging:
   level:
-    org.apache.pulsar: DEBUG
+    org.apache.pulsar: INFO
     #    org.springframework.web: info
     #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: INFO

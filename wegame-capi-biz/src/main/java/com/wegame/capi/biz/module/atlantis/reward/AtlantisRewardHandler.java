@@ -239,7 +239,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
             AssertUtil.assertNotNull(biEventBaseNumber, ErrorCode.ERR_INTER, "biEventBaseNumber is null");
 
             for (int i = 0; i < rewardLineList.size(); i++) {
-                TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig = atlantisConfig.getProbabilisticConfig().getBizEventProbabilisticConfig();
+                TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig = this.getBizEventProbabilisticConfig(rewardHandle);
                 TreeMap<BizEventEnum, BigDecimal> bizEventEnumBigDecimalTreeMap = bizEventProbabilisticConfig.get(this.getBizEventStepIndex(biEventBaseNumber));
                 int randomInt = randomService.randomInt(Constants.CONST_1, Constants.CONST_1000000);
                 BizEventEnum bizEventEnum = GameUtil.randomKey(bizEventEnumBigDecimalTreeMap, Constants.CONST_10000, randomInt);
@@ -249,6 +249,15 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 biEventBaseNumber++;
             }
             return bizEventList;
+        }
+    }
+
+    private TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> getBizEventProbabilisticConfig(RewardHandleDo<SymbolDo> rewardHandle) {
+        WheelDo<SymbolDo> wheel = rewardHandle.getWheel();
+        if (wheel.isFreeFlag()) {
+            return atlantisConfig.getProbabilisticConfig().getFreeGameBizEventProbabilisticConfig();
+        } else {
+            return atlantisConfig.getProbabilisticConfig().getMainGameBizEventProbabilisticConfig();
         }
     }
 

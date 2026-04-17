@@ -295,8 +295,35 @@
 			"1010_2": ["2.000","2.000","2.000","2.000","2.000"],
 			"1010_3": ["3.000","3.000","3.000","3.000","3.000"]
 		},
-		"bizEventProbabilisticConfig": {
+		"mainGameBizEventProbabilisticConfig": {
 			"0": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"1": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"2": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"3": {
 				"EVENT_NONE": 0.000,
 				"EVENT_SCATTER": 0.000,
 				"EVENT_WILD": 0.000,
@@ -304,6 +331,197 @@
 				"EVENT_TRIDENT": 30.000,
 				"EVENT_GOLDEN_TANK": 30.000,
 				"EVENT_GOLDEN_COW": 40.000
+			},
+			"4": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"5": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"6": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"7": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
+			},
+			"8": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"9": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"10": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"11": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
+			},
+			"12": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"13": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"14": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"15": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
+			},
+			"16": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"17": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"18": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"19": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
+			},
+			"20": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"21": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"22": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 100.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
+			},
+			"23": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
+			}
+		},
+		"freeGameBizEventProbabilisticConfig": {
+			"0": {
+				"EVENT_NONE": 0.000,
+				"EVENT_SCATTER": 30.000,
+				"EVENT_WILD": 30.000,
+				"EVENT_BOM": 40.000,
+				"EVENT_TRIDENT": 0.000,
+				"EVENT_GOLDEN_TANK": 0.000,
+				"EVENT_GOLDEN_COW": 0.000
 			},
 			"1": {
 				"EVENT_NONE": 0.000,
@@ -361,12 +579,12 @@
 			},
 			"7": {
 				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
 			},
 			"8": {
 				"EVENT_NONE": 0.000,
@@ -397,12 +615,12 @@
 			},
 			"11": {
 				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
 			},
 			"12": {
 				"EVENT_NONE": 0.000,
@@ -433,12 +651,12 @@
 			},
 			"15": {
 				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
 			},
 			"16": {
 				"EVENT_NONE": 0.000,
@@ -469,12 +687,12 @@
 			},
 			"19": {
 				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
 			},
 			"20": {
 				"EVENT_NONE": 0.000,
@@ -505,12 +723,12 @@
 			},
 			"23": {
 				"EVENT_NONE": 0.000,
-				"EVENT_SCATTER": 30.000,
-				"EVENT_WILD": 30.000,
-				"EVENT_BOM": 40.000,
-				"EVENT_TRIDENT": 0.000,
-				"EVENT_GOLDEN_TANK": 0.000,
-				"EVENT_GOLDEN_COW": 0.000
+				"EVENT_SCATTER": 0.000,
+				"EVENT_WILD": 0.000,
+				"EVENT_BOM": 0.000,
+				"EVENT_TRIDENT": 30.000,
+				"EVENT_GOLDEN_TANK": 30.000,
+				"EVENT_GOLDEN_COW": 40.000
 			}
 		},
 		"singleBizSpecialEventProbabilisticConfig": {
