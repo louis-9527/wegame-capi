@@ -56,26 +56,8 @@ public class BetService {
     }
 
     public void buildGamePlayType(BetDo betDo) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING) ||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.MALAKAS) ||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.IBONG_ADARNA) ||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.SIRENA) ||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.BAKUNAWA)
-                || Objects.equals(betDo.getGameType(), GameTypeEnum.ATLANTIS)) {
-            if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
-                betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
-            } else {
-                log.info("userInfo.ut: {}, template bet", userInfo.getUt());
-                betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-            }
-        } else if (Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG)) {
-            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-        } else if (Objects.equals(betDo.getGameType(), GameTypeEnum.DIWATA_MAYARI)) {
-            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-        } else if (Objects.equals(betDo.getGameType(), GameTypeEnum.MANGKUKULAM)) {
-            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-        }else {
+        betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
+        if (Objects.equals(betDo.getGameType(), GameTypeEnum.KAPRE)) {
             betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
         }
     }
