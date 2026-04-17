@@ -11,7 +11,7 @@ spring:
 pulsar:
   dynamic:
     maria_makiling:
-      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      url: pulsar+ssl://pc-74b7ea33.alicloud-apse1-qat-w7nwc.ali.snio.cloud:6651
       tenant: ${spring.application.name}_MariaMakiling
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
