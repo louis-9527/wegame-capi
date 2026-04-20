@@ -115,6 +115,8 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
 
                 // 处理一轮
                 OneWheelPlayResult oneWheelPlayResult = this.oneWheelPlay(gamePlay, recordBatchList, parentId, ret, BigDecimal.ZERO, totalRewardAmount, totalRewardCount);
+                // parentGameRecord 添加子gameRecordId-同一轮中的batchId
+                wheelPlayResult.getLastRoundGameRecord().addGameRecordId(oneWheelPlayResult.getLastRoundGameRecordId());
                 // 有免费轮则继续处理
                 if (Objects.nonNull(oneWheelPlayResult) && oneWheelPlayResult.hasFreeWheel()) {
                     queue.addLast(oneWheelPlayResult);
