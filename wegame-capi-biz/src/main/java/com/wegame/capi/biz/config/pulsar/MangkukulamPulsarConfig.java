@@ -42,7 +42,6 @@ public class MangkukulamPulsarConfig {
     String mangkukulamBetTopic;
     @Value("${pulsar.dynamic.mangkukulam.bet_deadLetter_topic}")
     String mangkukulamBetDeadLetterTopic;
-
     @Value("${pulsar.dynamic.mangkukulam.auth.issuer_url}")
     String mangkukulamAuthIssuerUrl;
     @Value("${pulsar.dynamic.mangkukulam.auth.credentials_file_path}")
@@ -53,19 +52,6 @@ public class MangkukulamPulsarConfig {
     @Bean(name = mangkukulamPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient mangkukulamPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, mangkukulamPulsarClient);
-//        PulsarClient pulsarClient = PulsarClient.builder()
-//                .serviceUrl(mangkukulamUrl)
-//                .keepAliveInterval(30, TimeUnit.SECONDS)
-//                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
-//                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
-//                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
-//                .listenerThreads(Runtime.getRuntime().availableProcessors())
-//                .connectionsPerBroker(60)
-//                .connectionMaxIdleSeconds(3000)
-//                .enableTcpNoDelay(true)
-//                // 10分钟打印一次统计信息
-//                .statsInterval(600, TimeUnit.SECONDS)
-//                .build();
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(mangkukulamAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(mangkukulamAuthCredentialsFilePath)),

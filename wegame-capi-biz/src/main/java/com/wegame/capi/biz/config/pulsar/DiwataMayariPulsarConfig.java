@@ -41,7 +41,6 @@ public class DiwataMayariPulsarConfig {
     String betTopic;
     @Value("${pulsar.dynamic.diwataMayari.bet_deadLetter_topic}")
     String betDeadLetterTopic;
-
     @Value("${pulsar.dynamic.diwataMayari.auth.issuer_url}")
     String authIssuerUrl;
     @Value("${pulsar.dynamic.diwataMayari.auth.credentials_file_path}")
@@ -51,8 +50,7 @@ public class DiwataMayariPulsarConfig {
 
     @Bean(name = diwatamayariPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient diwataMayariPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
-
+        log.info(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(authIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(authCredentialsFilePath)),

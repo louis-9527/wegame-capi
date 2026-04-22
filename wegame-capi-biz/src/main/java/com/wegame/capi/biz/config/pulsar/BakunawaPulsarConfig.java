@@ -41,7 +41,6 @@ public class BakunawaPulsarConfig {
     String bakunawaBetTopic;
     @Value("${pulsar.dynamic.bakunawa.bet_deadLetter_topic}")
     String bakunawaBetDeadLetterTopic;
-
     @Value("${pulsar.dynamic.bakunawa.auth.issuer_url}")
     String bakunawaAuthIssuerUrl;
     @Value("${pulsar.dynamic.bakunawa.auth.credentials_file_path}")
@@ -52,20 +51,6 @@ public class BakunawaPulsarConfig {
     @Bean(name = bakunawaPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient bakunawaPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, bakunawaPulsarClient);
-//        PulsarClient pulsarClient = PulsarClient.builder()
-//                .serviceUrl(bakunawaUrl)
-//                .keepAliveInterval(30, TimeUnit.SECONDS)
-//                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
-//                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
-//                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
-//                .listenerThreads(Runtime.getRuntime().availableProcessors())
-//                .connectionsPerBroker(60)
-//                .connectionMaxIdleSeconds(3000)
-//                .enableTcpNoDelay(true)
-//                // 10分钟打印一次统计信息
-//                .statsInterval(600, TimeUnit.SECONDS)
-//                .build();
-//        return pulsarClient;
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(bakunawaAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(bakunawaAuthCredentialsFilePath)),

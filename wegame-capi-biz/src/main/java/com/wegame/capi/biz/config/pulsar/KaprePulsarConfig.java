@@ -41,8 +41,6 @@ public class KaprePulsarConfig {
     String betTopic;
     @Value("${pulsar.dynamic.kapre.bet_deadLetter_topic}")
     String betDeadLetterTopic;
-
-
     @Value("${pulsar.dynamic.kapre.auth.issuer_url}")
     String authIssuerUrl;
     @Value("${pulsar.dynamic.kapre.auth.credentials_file_path}")
@@ -50,11 +48,9 @@ public class KaprePulsarConfig {
     @Value("${pulsar.dynamic.kapre.auth.audience}")
     String authAudience;
 
-
     @Bean(name = kaprePulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient kaprePulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, kaprePulsarClient);
-
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(authIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(authCredentialsFilePath)),
@@ -74,8 +70,6 @@ public class KaprePulsarConfig {
                 .statsInterval(600, TimeUnit.SECONDS)
                 .authentication(authentication)
                 .build();
-
-
     }
 
     @Bean(name = kapreProducer, destroyMethod = COMMON_CLOSE_METHOD)

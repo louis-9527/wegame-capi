@@ -43,6 +43,12 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationTopicUrl;
     @Value("${dynamic.external.operation.pulsar_topic}")
     String dynamicOperationTopic;
+    @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
+    String dynamicOperationAuthIssuerUrl;
+    @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
+    String dynamicOperationAuthCredentialsFilePath;
+    @Value("${dynamic.external.operation.pulsar.auth.audience}")
+    String dynamicOperationAuthAudience;
     // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
     @Value("${dynamic.external.operation.pulsar_group.maria_makiling:cd_External_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
@@ -64,12 +70,7 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupSirena;
     @Value("${dynamic.external.operation.pulsar_group.atlantis:cd_Atlantis}")
     String dynamicOperationGroupAtlantis;
-    @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
-    String dynamicOperationAuthIssuerUrl;
-    @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
-    String dynamicOperationAuthCredentialsFilePath;
-    @Value("${dynamic.external.operation.pulsar.auth.audience}")
-    String dynamicOperationAuthAudience;
+
 
     @Bean(name = operationEventExternalPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventExternalPulsarClient() throws Exception {
@@ -171,7 +172,7 @@ public class OperationEventExternalPulsarConfig {
     @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
     public Consumer<byte[]> diwataMayariOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                                @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariOperationEventExternalConsumer);
+        log.info(BUILD_BEAN_FORMAT, diwataMayariOperationEventExternalConsumer);
         return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
@@ -186,7 +187,7 @@ public class OperationEventExternalPulsarConfig {
     @ConditionalOnBean(KapreOperationEventPulsarListener.class)
     public Consumer<byte[]> kapreOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                         @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreOperationEventExternalConsumer);
+        log.info(BUILD_BEAN_FORMAT, kapreOperationEventExternalConsumer);
         return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupKapre)
@@ -201,7 +202,7 @@ public class OperationEventExternalPulsarConfig {
     @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
     public Consumer<byte[]> mangkukulamOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                               @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventExternalConsumer);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamOperationEventExternalConsumer);
         return operationEventExternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMangkukulam)

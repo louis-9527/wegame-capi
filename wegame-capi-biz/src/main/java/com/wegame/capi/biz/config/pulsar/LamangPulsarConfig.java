@@ -42,7 +42,6 @@ public class LamangPulsarConfig {
     String lamangBetTopic;
     @Value("${pulsar.dynamic.lamang.bet_deadLetter_topic}")
     String lamangBetDeadLetterTopic;
-
     @Value("${pulsar.dynamic.lamang.auth.issuer_url}")
     String lamangAuthIssuerUrl;
     @Value("${pulsar.dynamic.lamang.auth.credentials_file_path}")
@@ -53,19 +52,6 @@ public class LamangPulsarConfig {
     @Bean(name = lamangPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient lamangPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, lamangPulsarClient);
-//        PulsarClient pulsarClient = PulsarClient.builder()
-//                .serviceUrl(lamangUrl)
-//                .keepAliveInterval(30, TimeUnit.SECONDS)
-//                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
-//                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
-//                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
-//                .listenerThreads(Runtime.getRuntime().availableProcessors())
-//                .connectionsPerBroker(60)
-//                .connectionMaxIdleSeconds(3000)
-//                .enableTcpNoDelay(true)
-//                // 10分钟打印一次统计信息
-//                .statsInterval(600, TimeUnit.SECONDS)
-//                .build();
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(lamangAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(lamangAuthCredentialsFilePath)),
