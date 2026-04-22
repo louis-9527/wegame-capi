@@ -41,7 +41,6 @@ public class BakunawaPulsarConfig {
     String bakunawaBetTopic;
     @Value("${pulsar.dynamic.bakunawa.bet_deadLetter_topic}")
     String bakunawaBetDeadLetterTopic;
-
     @Value("${pulsar.dynamic.bakunawa.auth.issuer_url}")
     String bakunawaAuthIssuerUrl;
     @Value("${pulsar.dynamic.bakunawa.auth.credentials_file_path}")
@@ -51,21 +50,7 @@ public class BakunawaPulsarConfig {
 
     @Bean(name = bakunawaPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient bakunawaPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, bakunawaPulsarClient);
-//        PulsarClient pulsarClient = PulsarClient.builder()
-//                .serviceUrl(bakunawaUrl)
-//                .keepAliveInterval(30, TimeUnit.SECONDS)
-//                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
-//                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
-//                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
-//                .listenerThreads(Runtime.getRuntime().availableProcessors())
-//                .connectionsPerBroker(60)
-//                .connectionMaxIdleSeconds(3000)
-//                .enableTcpNoDelay(true)
-//                // 10分钟打印一次统计信息
-//                .statsInterval(600, TimeUnit.SECONDS)
-//                .build();
-//        return pulsarClient;
+        log.info(BUILD_BEAN_FORMAT, bakunawaPulsarClient);
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(bakunawaAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(bakunawaAuthCredentialsFilePath)),
@@ -89,7 +74,7 @@ public class BakunawaPulsarConfig {
 
     @Bean(name = bakunawaProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> bakunawaProducer(@Autowired PulsarClient bakunawaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, bakunawaProducer);
+        log.info(BUILD_BEAN_FORMAT, bakunawaProducer);
         return bakunawaPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, bakunawaTenant, bakunawaNamespace, bakunawaBetTopic))
                 .producerName(bakunawaTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -111,7 +96,7 @@ public class BakunawaPulsarConfig {
 
     @Bean(name = bakunawaConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> bakunawaConsumer(@Autowired PulsarClient bakunawaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, bakunawaConsumer);
+        log.info(BUILD_BEAN_FORMAT, bakunawaConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, bakunawaTenant, bakunawaNamespace, bakunawaBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, bakunawaTenant, bakunawaNamespace, bakunawaBetDeadLetterTopic);
         return bakunawaPulsarClient.newConsumer()
@@ -141,7 +126,7 @@ public class BakunawaPulsarConfig {
 
     @Bean(name = bakunawaDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> bakunawaDeadLetterConsumer(@Autowired PulsarClient bakunawaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, bakunawaDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, bakunawaDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, bakunawaTenant, bakunawaNamespace, bakunawaBetDeadLetterTopic);
         return bakunawaPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

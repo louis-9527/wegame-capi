@@ -42,7 +42,6 @@ public class MangkukulamPulsarConfig {
     String mangkukulamBetTopic;
     @Value("${pulsar.dynamic.mangkukulam.bet_deadLetter_topic}")
     String mangkukulamBetDeadLetterTopic;
-
     @Value("${pulsar.dynamic.mangkukulam.auth.issuer_url}")
     String mangkukulamAuthIssuerUrl;
     @Value("${pulsar.dynamic.mangkukulam.auth.credentials_file_path}")
@@ -52,20 +51,7 @@ public class MangkukulamPulsarConfig {
 
     @Bean(name = mangkukulamPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient mangkukulamPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamPulsarClient);
-//        PulsarClient pulsarClient = PulsarClient.builder()
-//                .serviceUrl(mangkukulamUrl)
-//                .keepAliveInterval(30, TimeUnit.SECONDS)
-//                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
-//                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
-//                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
-//                .listenerThreads(Runtime.getRuntime().availableProcessors())
-//                .connectionsPerBroker(60)
-//                .connectionMaxIdleSeconds(3000)
-//                .enableTcpNoDelay(true)
-//                // 10分钟打印一次统计信息
-//                .statsInterval(600, TimeUnit.SECONDS)
-//                .build();
+        log.info(BUILD_BEAN_FORMAT, mangkukulamPulsarClient);
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(mangkukulamAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(mangkukulamAuthCredentialsFilePath)),
@@ -89,7 +75,7 @@ public class MangkukulamPulsarConfig {
 
     @Bean(name = mangkukulamProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> mangkukulamProducer(@Autowired @Qualifier("mangkukulamPulsarClient") PulsarClient mangkukulamPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamProducer);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamProducer);
         return mangkukulamPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, mangkukulamTenant, mangkukulamNamespace, mangkukulamBetTopic))
                 .producerName(mangkukulamTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -112,7 +98,7 @@ public class MangkukulamPulsarConfig {
 
     @Bean(name = mangkukulamConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> mangkukulamConsumer(@Autowired @Qualifier("mangkukulamPulsarClient") PulsarClient mangkukulamPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamConsumer);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, mangkukulamTenant, mangkukulamNamespace, mangkukulamBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, mangkukulamTenant, mangkukulamNamespace, mangkukulamBetDeadLetterTopic);
         return mangkukulamPulsarClient.newConsumer()
@@ -142,7 +128,7 @@ public class MangkukulamPulsarConfig {
 
     @Bean(name = mangkukulamDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> mangkukulamDeadLetterConsumer(@Autowired @Qualifier("mangkukulamPulsarClient") PulsarClient mangkukulamPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, mangkukulamTenant, mangkukulamNamespace, mangkukulamBetDeadLetterTopic);
         return mangkukulamPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

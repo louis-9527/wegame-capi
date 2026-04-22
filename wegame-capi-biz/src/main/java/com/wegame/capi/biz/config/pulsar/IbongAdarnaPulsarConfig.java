@@ -41,8 +41,6 @@ public class IbongAdarnaPulsarConfig {
     String ibongAdarnaBetTopic;
     @Value("${pulsar.dynamic.ibong_adarna.bet_deadLetter_topic}")
     String ibongAdarnaBetDeadLetterTopic;
-
-
     @Value("${pulsar.dynamic.ibong_adarna.auth.issuer_url}")
     String ibongAdarnaAuthIssuerUrl;
     @Value("${pulsar.dynamic.ibong_adarna.auth.credentials_file_path}")

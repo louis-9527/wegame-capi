@@ -34,7 +34,6 @@ public class LamangJackpotPulsarConfig {
     String lamangNamespace;
     @Value("${pulsar.dynamic.lamang.bet_topic}")
     String lamangBetTopic;
-
     @Value("${pulsar.dynamic.lamang.auth.issuer_url}")
     String lamangAuthIssuerUrl;
     @Value("${pulsar.dynamic.lamang.auth.credentials_file_path}")
@@ -44,7 +43,7 @@ public class LamangJackpotPulsarConfig {
 
     @Bean(name = lamangJackpotPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient lamangJackpotPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, lamangJackpotPulsarClient);
+        log.info(BUILD_BEAN_FORMAT, lamangJackpotPulsarClient);
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(lamangAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(lamangAuthCredentialsFilePath)),
@@ -68,7 +67,7 @@ public class LamangJackpotPulsarConfig {
 
     @Bean(name = lamangJackpotPulsarConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> lamangJackpotPulsarConsumer(@Autowired @Qualifier("lamangJackpotPulsarClient") PulsarClient lamangJackpotPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, lamangJackpotPulsarConsumer);
+        log.info(BUILD_BEAN_FORMAT, lamangJackpotPulsarConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic);
         return lamangJackpotPulsarClient.newConsumer()
                 .topic(fullTopic)

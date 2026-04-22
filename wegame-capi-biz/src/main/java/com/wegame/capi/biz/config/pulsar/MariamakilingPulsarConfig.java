@@ -41,8 +41,6 @@ public class MariamakilingPulsarConfig {
     String mariaMakilingBetTopic;
     @Value("${pulsar.dynamic.maria_makiling.bet_deadLetter_topic}")
     String mariaMakilingBetDeadLetterTopic;
-
-
     @Value("${pulsar.dynamic.maria_makiling.auth.issuer_url}")
     String mariaMakilingAuthIssuerUrl;
     @Value("${pulsar.dynamic.maria_makiling.auth.credentials_file_path}")
@@ -53,19 +51,6 @@ public class MariamakilingPulsarConfig {
     @Bean(name = mariaMakilingPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient mariaMakilingPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, mariaMakilingPulsarClient);
-        //        PulsarClient pulsarClient = PulsarClient.builder()
-        //                .serviceUrl(mariaMakilingUrl)
-        //                .keepAliveInterval(30, TimeUnit.SECONDS)
-        //                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
-        //                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
-        //                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
-        //                .listenerThreads(Runtime.getRuntime().availableProcessors())
-        //                .connectionsPerBroker(60)
-        //                .connectionMaxIdleSeconds(3000)
-        //                .enableTcpNoDelay(true)
-        //                // 10分钟打印一次统计信息
-        //                .statsInterval(600, TimeUnit.SECONDS)
-        //                .build();
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(mariaMakilingAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(mariaMakilingAuthCredentialsFilePath)),

@@ -37,11 +37,16 @@ public class OperationEventPulsarConfig {
 
     private static final String mangkukulamOperationEventConsumer = "mangkukulamOperationEventConsumer";
 
-    // todo fix
     @Value("${dynamic.internal.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.internal.operation.pulsar_topic}")
     String dynamicOperationTopic;
+    @Value("${dynamic.internal.operation.pulsar.auth.issuer_url}")
+    String dynamicOperationAuthIssuerUrl;
+    @Value("${dynamic.internal.operation.pulsar.auth.credentials_file_path}")
+    String dynamicOperationAuthCredentialsFilePath;
+    @Value("${dynamic.internal.operation.pulsar.auth.audience}")
+    String dynamicOperationAuthAudience;
     // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
     @Value("${dynamic.internal.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
@@ -59,16 +64,10 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupKapre;
     @Value("${dynamic.internal.operation.pulsar_group.mangkukulam:_Mangkukulam}")
     String dynamicOperationGroupMangkukulam;
-    @Value("${dynamic.internal.operation.pulsar.auth.issuer_url}")
-    String dynamicOperationAuthIssuerUrl;
-    @Value("${dynamic.internal.operation.pulsar.auth.credentials_file_path}")
-    String dynamicOperationAuthCredentialsFilePath;
-    @Value("${dynamic.internal.operation.pulsar.auth.audience}")
-    String dynamicOperationAuthAudience;
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
+        log.info(BUILD_BEAN_FORMAT, operationEventPulsarClient);
         if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
@@ -164,7 +163,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
     public Consumer<byte[]> diwataMayariOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, diwataMayariOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
@@ -178,7 +177,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(KapreOperationEventPulsarListener.class)
     public Consumer<byte[]> kapreOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, kapreOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupKapre)
@@ -192,7 +191,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
     public Consumer<byte[]> mangkukulamOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                               @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMangkukulam)

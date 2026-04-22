@@ -41,8 +41,6 @@ public class KaprePulsarConfig {
     String betTopic;
     @Value("${pulsar.dynamic.kapre.bet_deadLetter_topic}")
     String betDeadLetterTopic;
-
-
     @Value("${pulsar.dynamic.kapre.auth.issuer_url}")
     String authIssuerUrl;
     @Value("${pulsar.dynamic.kapre.auth.credentials_file_path}")
@@ -50,11 +48,9 @@ public class KaprePulsarConfig {
     @Value("${pulsar.dynamic.kapre.auth.audience}")
     String authAudience;
 
-
     @Bean(name = kaprePulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient kaprePulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, kaprePulsarClient);
-
+        log.info(BUILD_BEAN_FORMAT, kaprePulsarClient);
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(authIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(authCredentialsFilePath)),
@@ -74,13 +70,11 @@ public class KaprePulsarConfig {
                 .statsInterval(600, TimeUnit.SECONDS)
                 .authentication(authentication)
                 .build();
-
-
     }
 
     @Bean(name = kapreProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> kapreProducer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreProducer);
+        log.info(BUILD_BEAN_FORMAT, kapreProducer);
         return kaprePulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic))
                 .producerName(tenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -101,7 +95,7 @@ public class KaprePulsarConfig {
 
     @Bean(name = kapreConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> kapreConsumer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreConsumer);
+        log.info(BUILD_BEAN_FORMAT, kapreConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return kaprePulsarClient.newConsumer()
@@ -129,7 +123,7 @@ public class KaprePulsarConfig {
 
     @Bean(name = kapreDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> kapreDeadLetterConsumer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, kapreDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return kaprePulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

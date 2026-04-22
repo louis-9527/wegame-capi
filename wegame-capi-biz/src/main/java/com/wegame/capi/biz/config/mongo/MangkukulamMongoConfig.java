@@ -37,7 +37,7 @@ public class MangkukulamMongoConfig {
      */
     @Bean(mangkukulamMongoTemplate)
     public MongoTemplate mangkukulamMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamMongoTemplate);
         return new MongoTemplate(MongoClients.create(mangkukulamMdbUri), mangkukulamMdb);
     }
 
@@ -46,7 +46,7 @@ public class MangkukulamMongoConfig {
      */
     @Bean(mangkukulamPrimaryMongoTemplate)
     public MongoTemplate mangkukulamPrimaryMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamPrimaryMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(mangkukulamMdbPrimaryUri), mangkukulamMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -54,7 +54,7 @@ public class MangkukulamMongoConfig {
 
     @Bean(name = mangkukulamTransactionManager)
     public MongoTransactionManager mangkukulamTransactionManager(@Autowired MongoTemplate mangkukulamMongoTemplate) {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamTransactionManager);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(mangkukulamMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
