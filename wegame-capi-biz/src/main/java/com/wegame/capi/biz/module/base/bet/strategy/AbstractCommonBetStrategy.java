@@ -22,6 +22,7 @@ import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
+import com.wegame.capi.biz.service.operation.DosGapService;
 import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
@@ -68,6 +69,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     FreeSpinService freeSpinService;
     @Autowired
     private GameApiProperty gameApiProperty;
+    @Autowired
+    private DosGapService dosGapService;
     @Value("${dynamic.operation.switch}")
     public boolean operationSwitch;
 
@@ -94,6 +97,10 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             }
             // 仅正常投注时可干预
             if (Objects.equals(betDo.getBetType(), NORMAL_BET)) {
+                if (dosGapService.isInDosGap(userInfo)) {
+                    log.info("userId: {}, playerName: {}, channelId: {}, is in dos gap", userInfo.getId(), userInfo.getPlayerName(), userInfo.getChannelId());
+                    return false;
+                }
                 GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount(), userInfo.getChannelId());
                 canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
                 if (canOperationEventBet) {
@@ -130,6 +137,9 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            dosGapService.onDosSuccess(gameOperationEvent);
+        }
         // 异步更新干预事件&干预事件详情状态
         long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
         if (FINAL_BET_STATUS.contains(resultDo.getBetStatus())) {
