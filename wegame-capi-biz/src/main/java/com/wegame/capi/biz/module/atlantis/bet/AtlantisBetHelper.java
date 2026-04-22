@@ -39,10 +39,11 @@ public class AtlantisBetHelper implements BetHelper<AtlantisBetRecordDetailDo, A
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
+        long maxCalcAmount = Objects.nonNull(betDo.getPayAmount()) ? betDo.getPayAmount() : betDo.getBetAmount();
         return BetRecordBuilder.build(betRecordId,
                 betDo,
-                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), atlantisConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), atlantisConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, maxCalcAmount, atlantisConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, maxCalcAmount, atlantisConfig.getRewardMaxMultiple()),
                 null,
                 gameRecordList);
     }

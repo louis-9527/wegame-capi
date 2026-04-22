@@ -25,7 +25,7 @@ dynamic:
           audience: urn:sn:pulsar:o-0676f:platform-aliyun-uat
   external:
     operation:
-      pulsar_url: pulsar+ssl://pc-3f23fd60.alicloud-apse1-prod-scx3f.ali.snio.cloud:6651
+      pulsar_url: pulsar+ssl://pc-06daaa29.alicloud-apse1-uat-by8ki.ali.snio.cloud:6651
       pulsar_topic: dos_bp_game_slot_event
       pulsar_group:
         maria_makiling: ${spring.application.name}_${spring.application.env}_cd_External_MariaMakiling
@@ -43,4 +43,4 @@ dynamic:
         auth:
           issuer_url: https://auth.streamnative.cloud
           credentials_file_path: /operation_pulsar_external_privateKey.json
-          audience:  urn:sn:pulsar:o-iylfk:platform-pulsar-external-platform
+          audience:  urn:sn:pulsar:o-0676f:platform-aliyun-uat

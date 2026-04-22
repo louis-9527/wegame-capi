@@ -103,8 +103,9 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
         AtomicInteger totalRewardCount = new AtomicInteger(0);
         while (!queue.isEmpty()) {
             // 一个一个处理
-            List<Long> configGameRecordIdList = firstWheelPlayResult.getConfigGameRecordIdList();
-            Long parentId = firstWheelPlayResult.getLastRoundGameRecordId();
+            OneWheelPlayResult wheelPlayResult = queue.pollFirst();
+            List<Long> configGameRecordIdList = wheelPlayResult.getConfigGameRecordIdList();
+            Long parentId = wheelPlayResult.getLastRoundGameRecordId();
             for (Long configGameRecordId : configGameRecordIdList) {
                 // 一轮记录信息
                 List<OperationEventConfigRecordDo> recordBatchList = groupedByBatchId.getOrDefault(configGameRecordId, Collections.emptyList())
@@ -114,6 +115,8 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
 
                 // 处理一轮
                 OneWheelPlayResult oneWheelPlayResult = this.oneWheelPlay(gamePlay, recordBatchList, parentId, ret, BigDecimal.ZERO, totalRewardAmount, totalRewardCount);
+                // parentGameRecord 添加子gameRecordId-同一轮中的batchId
+                wheelPlayResult.getLastRoundGameRecord().addGameRecordId(oneWheelPlayResult.getLastRoundGameRecord().getBatchId());
                 // 有免费轮则继续处理
                 if (Objects.nonNull(oneWheelPlayResult) && oneWheelPlayResult.hasFreeWheel()) {
                     queue.addLast(oneWheelPlayResult);

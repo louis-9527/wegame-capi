@@ -42,6 +42,7 @@ public class RewardHandlerBuilder {
                 .betSubType(gamePlay.getBetSubType())
                 .gamePlayType(gamePlay.getGamePlayType())
                 .betAmount(gamePlay.getBetAmount())
+                .payAmount(gamePlay.getPayAmount())
                 .wheel(wheel)
                 .currentMultiple(currentMultiple)
                 .currentTotalRewardAmount(currentTotalRewardAmount)

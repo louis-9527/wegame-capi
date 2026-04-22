@@ -34,7 +34,6 @@ public class LamangJackpotPulsarConfig {
     String lamangNamespace;
     @Value("${pulsar.dynamic.lamang.bet_topic}")
     String lamangBetTopic;
-
     @Value("${pulsar.dynamic.lamang.auth.issuer_url}")
     String lamangAuthIssuerUrl;
     @Value("${pulsar.dynamic.lamang.auth.credentials_file_path}")

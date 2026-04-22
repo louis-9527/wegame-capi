@@ -49,6 +49,10 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      */
     private Long betAmount;
     /**
+     * 支付金额
+     */
+    private Long payAmount;
+    /**
      * 滚轮
      */
     private WheelDo<T> wheel;

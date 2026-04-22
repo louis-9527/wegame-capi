@@ -41,7 +41,6 @@ public class MalakasPulsarConfig {
     String betTopic;
     @Value("${pulsar.dynamic.malakas.bet_deadLetter_topic}")
     String betDeadLetterTopic;
-
     @Value("${pulsar.dynamic.malakas.auth.issuer_url}")
     String malakasAuthIssuerUrl;
     @Value("${pulsar.dynamic.malakas.auth.credentials_file_path}")
@@ -52,19 +51,6 @@ public class MalakasPulsarConfig {
     @Bean(name = malakasPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient malakasPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, malakasPulsarClient);
-//        return PulsarClient.builder()
-//                .serviceUrl(url)
-//                .keepAliveInterval(30, TimeUnit.SECONDS)
-//                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
-//                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
-//                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
-//                .listenerThreads(Runtime.getRuntime().availableProcessors())
-//                .connectionsPerBroker(60)
-//                .connectionMaxIdleSeconds(3000)
-//                .enableTcpNoDelay(true)
-//                // 10分钟打印一次统计信息
-//                .statsInterval(600, TimeUnit.SECONDS)
-//                .build();
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(malakasAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(malakasAuthCredentialsFilePath)),
