@@ -75,8 +75,11 @@ public class DosGapService {
     }
 
     /**
-     * 单钱包成功：非动态事件局计为一局，间隔剩余局数减 1（由 {@link com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy#saveBetRecordAndBetWithPayout} 在对局完成后触发）。
-     * 必须同步调用
+     * 单钱包成功后的 DOS 间隔处理（由 {@link com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy#saveBetRecordAndBetWithPayout} 在对局完成后触发，须同步调用）。
+     * <ul>
+     *   <li>动态事件局（{@link BetPromotionTypeEnum#OPERATION_EVENT}）：{@link #onDosSuccess}</li>
+     *   <li>其它营销类型：{@link #onBetSuccess}</li>
+     * </ul>
      */
     public void onBetComplete(BetDo betDo, BetRecordDo<?> betRecordDo, SingleWalletBetResultDo result) {
         if (Objects.isNull(result) || !Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)) {
@@ -96,8 +99,19 @@ public class DosGapService {
         }
         BetPromotionTypeEnum promo = betDo.getBetPromotionType();
         if (Objects.equals(promo, BetPromotionTypeEnum.OPERATION_EVENT)) {
-            return;
+            GameOperationEventDo gameOperationEvent = betDo.getGameOperationEvent();
+            if (Objects.isNull(gameOperationEvent)) {
+                log.warn("dos gap skip: OPERATION_EVENT bet but gameOperationEvent is null");
+                return;
+            }
+            onDosSuccess(gameOperationEvent, channelId, playerName);
+        } else {
+            onBetSuccess(channelId, playerName);
         }
+    }
+
+    /** 非动态事件局单钱包成功：间隔剩余局数减 1。 */
+    private void onBetSuccess(String channelId, String playerName) {
         String key = buildDosGapRemainingRoundsKey(channelId, playerName);
         try {
             Long after = redisTemplate.execute(DECR_SCRIPT, Collections.singletonList(key),
@@ -111,24 +125,15 @@ public class DosGapService {
     }
 
     /**
-     * 动态事件投注单钱包成功：按 {@link GameOperationEventDo#getConfigMultiple()} 随机写入下一档剩余间隔局数。
-     * 必须同步调用
+     * 动态事件单钱包成功：按 {@link GameOperationEventDo#getConfigMultiple()} 随机写入下一档剩余间隔局数；
+     * {@code channelId} / {@code playerName} 须与当前登录用户一致（由 {@link #onBetComplete} 传入）。
      */
-    public void onDosSuccess(GameOperationEventDo gameOperationEvent) {
+    private void onDosSuccess(GameOperationEventDo gameOperationEvent, String channelId, String playerName) {
         if (Objects.isNull(gameOperationEvent)) {
             return;
         }
         OperationEventDo operationEvent = gameOperationEvent.getOperationEvent();
         if (Objects.isNull(operationEvent)) {
-            return;
-        }
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.isNull(userInfo)) {
-            return;
-        }
-        String channelId = userInfo.getChannelId();
-        String playerName = userInfo.getPlayerName();
-        if (!gameApiProperty.supportDosChannelIdSet().contains(channelId)) {
             return;
         }
         Double configMultiple = gameOperationEvent.getConfigMultiple();
@@ -138,6 +143,7 @@ public class DosGapService {
         }
         DosGapRuleEnum rule = DosGapRuleEnum.forConfigMultiple(configMultiple);
         if (Objects.isNull(rule)) {
+            log.info("dos gap skip: configMultiple={}", configMultiple);
             return;
         }
         int remainingRounds = randomService.randomInt(

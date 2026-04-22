@@ -137,9 +137,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            dosGapService.onDosSuccess(gameOperationEvent);
-        }
+        // DOS 间隔：动态事件成功后的 reseed 在 saveBetRecordAndBetWithPayout -> dosGapService.onBetComplete 内按 promotionType 处理
         // 异步更新干预事件&干预事件详情状态
         long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
         if (FINAL_BET_STATUS.contains(resultDo.getBetStatus())) {
