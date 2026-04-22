@@ -11,7 +11,7 @@ spring:
 pulsar:
   dynamic:
     bayanihan:
-      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      url: pulsar+ssl://pc-30358f5d.alicloud-apse1-stress-akg4w.ali.snio.cloud:6651
       tenant: ${spring.application.name}_Bayanihan
       namespace: ${spring.application.env}
       bet_topic: Bayanihan_topic
@@ -19,4 +19,4 @@ pulsar:
       auth:
         issuer_url: "https://auth.streamnative.cloud/"
         credentials_file_path: /game_pulsar_privateKey.json
-        audience: "urn:sn:pulsar:o-cv5fz:egame-qat"
+        audience: "urn:sn:pulsar:o-cv5fz:innovatech-stress"
