@@ -114,7 +114,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
         boolean reachMaxMultipleBoolean = reachMaxMultiple(
                 rewardHandle.getGamePlayType(),
                 Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount.get() : totalRewardAmount.get() + rewardHandle.getCurrentTotalRewardAmount(),
-                rewardHandle.getBetAmount(),
+                Objects.nonNull(rewardHandle.getPayAmount()) ? rewardHandle.getPayAmount() : rewardHandle.getBetAmount(),
                 atlantisConfig.getRewardMaxMultiple());
         AtomicBoolean reachMaxMultiple = new AtomicBoolean(reachMaxMultipleBoolean);
 
@@ -179,7 +179,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 boolean reachMaxMultipleBoolean = reachMaxMultiple(
                         rewardHandle.getGamePlayType(),
                         allTotalRewardAmount.get(),
-                        rewardHandle.getBetAmount(),
+                        Objects.nonNull(rewardHandle.getPayAmount()) ? rewardHandle.getPayAmount() : rewardHandle.getBetAmount(),
                         atlantisConfig.getRewardMaxMultiple());
                 reachMaxMultiple.set(reachMaxMultipleBoolean);
             }
@@ -196,7 +196,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 boolean reachMaxMultipleBoolean = reachMaxMultiple(
                         rewardHandle.getGamePlayType(),
                         allTotalRewardAmount.get(),
-                        rewardHandle.getBetAmount(),
+                        Objects.nonNull(rewardHandle.getPayAmount()) ? rewardHandle.getPayAmount() : rewardHandle.getBetAmount(),
                         atlantisConfig.getRewardMaxMultiple());
                 reachMaxMultiple.set(reachMaxMultipleBoolean);
             }
