@@ -39,9 +39,12 @@ public class DosGapService {
             + "local n = tonumber(v)\n"
             + "if n == nil or n <= 0 then return 0 end\n"
             + "local next = n - 1\n"
-            + "redis.call('SET', KEYS[1], tostring(next), 'EX', tonumber(ARGV[1]))\n"
+            + "if next <= 0 then redis.call('DEL', KEYS[1]); return 0 end\n"
+            + "redis.call('SET', KEYS[1], tostring(next), 'EX', ARGV[1])\n"
             + "return next\n";
     private static final RedisScript<Long> DECR_SCRIPT = new DefaultRedisScript<>(DECREMENT_GAP_REMAINING_LUA, Long.class);
+
+    private static final Long DEFAULT_TTL_MS = TimeUnit.DAYS.toSeconds(GAP_STATE_TTL_DAYS);
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -114,8 +117,7 @@ public class DosGapService {
     private void onBetSuccess(String channelId, String playerName) {
         String key = buildDosGapRemainingRoundsKey(channelId, playerName);
         try {
-            Long after = redisTemplate.execute(DECR_SCRIPT, Collections.singletonList(key),
-                    String.valueOf(TimeUnit.DAYS.toSeconds(GAP_STATE_TTL_DAYS)));
+            Long after = redisTemplate.execute(DECR_SCRIPT, Collections.singletonList(key), DEFAULT_TTL_MS);
             if (Objects.nonNull(after) && after >= 0L) {
                 log.debug("dos gap decrement key={} remainingAfter={}", key, after);
             }
