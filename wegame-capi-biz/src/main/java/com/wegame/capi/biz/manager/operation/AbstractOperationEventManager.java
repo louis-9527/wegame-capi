@@ -34,6 +34,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -58,6 +59,8 @@ public abstract class AbstractOperationEventManager {
     OperationEventConfigService operationEventConfigService;
     @Autowired
     OperationEventApi operationEventApi;
+    @Autowired
+    RedisTemplate redisTemplate;
     @Autowired
     public ThreadPoolExecutor operationEventReportThreadPoolExecutor;
     @Autowired
@@ -500,9 +503,16 @@ public abstract class AbstractOperationEventManager {
             log.error("normalPayMultipleConfig result null,,multiple:{}", multiple);
             return null;
         }
-        // 倍率档位与 config 由 Mongo 保证非空；不连续干预由其它策略承担，此处在分组内随机选模板即可。
-        int randomIndexOut = ThreadLocalRandom.current().nextInt(configDetailGroup.size());
-        List<Long> configDetail = configDetailGroup.get(randomIndexOut);
+        // 获取分组下config配置,避免玩家相同倍数连续命中同样的滚轮
+        String incrementKey = String.format(Constants.OPERATION_EVENT_CONFIG_INCREMENT_CACHE_KEY,
+                operationEventType().getGameType().getId(),
+                UserInfoContext.getUserInfo().getId(), multiple);
+        Long increment = redisTemplate.opsForValue().increment(incrementKey);
+        if (increment == null || increment >= configDetailGroup.size()) {
+            increment = 1L;
+            redisTemplate.opsForValue().set(incrementKey, increment);
+        }
+        List<Long> configDetail = configDetailGroup.get((int) (increment - 1));
         int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
         return configDetail.get(randomIndex);
     }
