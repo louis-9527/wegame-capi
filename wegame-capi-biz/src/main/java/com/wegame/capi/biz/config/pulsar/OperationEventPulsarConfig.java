@@ -38,11 +38,16 @@ public class OperationEventPulsarConfig {
     private static final String mangkukulamOperationEventConsumer = "mangkukulamOperationEventConsumer";
     private static final String sirenaOperationEventConsumer = "sirenaOperationEventConsumer";
 
-    // todo fix
     @Value("${dynamic.internal.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.internal.operation.pulsar_topic}")
     String dynamicOperationTopic;
+    @Value("${dynamic.internal.operation.pulsar.auth.issuer_url}")
+    String dynamicOperationAuthIssuerUrl;
+    @Value("${dynamic.internal.operation.pulsar.auth.credentials_file_path}")
+    String dynamicOperationAuthCredentialsFilePath;
+    @Value("${dynamic.internal.operation.pulsar.auth.audience}")
+    String dynamicOperationAuthAudience;
     // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
     @Value("${dynamic.internal.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
@@ -62,16 +67,10 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupMangkukulam;
     @Value("${dynamic.internal.operation.pulsar_group.sirena:cd_Sirena}")
     String dynamicOperationGroupSirena;
-    @Value("${dynamic.internal.operation.pulsar.auth.issuer_url}")
-    String dynamicOperationAuthIssuerUrl;
-    @Value("${dynamic.internal.operation.pulsar.auth.credentials_file_path}")
-    String dynamicOperationAuthCredentialsFilePath;
-    @Value("${dynamic.internal.operation.pulsar.auth.audience}")
-    String dynamicOperationAuthAudience;
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
+        log.info(BUILD_BEAN_FORMAT, operationEventPulsarClient);
         if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
