@@ -98,7 +98,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             // 仅正常投注时可干预
             if (Objects.equals(betDo.getBetType(), NORMAL_BET)) {
                 if (dosGapService.isInDosGap(userInfo)) {
-                    log.info("userId: {}, playerName: {}, channelId: {}, is in dos gap", userInfo.getId(), userInfo.getPlayerName(), userInfo.getChannelId());
+                    log.info("userId: {}, playerName: {}, channelId: {}, is in dosGap", userInfo.getId(), userInfo.getPlayerName(), userInfo.getChannelId());
                     return false;
                 }
                 GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount(), userInfo.getChannelId());

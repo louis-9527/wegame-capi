@@ -63,7 +63,8 @@ public class DosGapService {
         if (!gameApiProperty.supportDosChannelIdSet().contains(channelId)) {
             return false;
         }
-        String key = buildDosGapRemainingRoundsKey(channelId, playerName);
+        String gameId = currentUser.getGameId();
+        String key = buildDosGapRemainingRoundsKey(gameId, channelId, playerName);
         Object currentValue = redisTemplate.opsForValue().get(key);
         if (Objects.isNull(currentValue)) {
             return false;
@@ -72,7 +73,7 @@ public class DosGapService {
             // 大于0 表示在间隔中
             return Long.parseLong(String.valueOf(currentValue)) > 0L;
         } catch (NumberFormatException e) {
-            log.warn("dos gap invalid redis value key={} v={}", key, currentValue);
+            log.warn("dosGap invalid redis value key={} v={}", key, currentValue);
             return false;
         }
     }
@@ -100,29 +101,32 @@ public class DosGapService {
         if (!gameApiProperty.supportDosChannelIdSet().contains(channelId)) {
             return;
         }
+        String gameId = betDo.getGameId();
+        log.info("dosGap gameId={} channelId={} playerName={}", gameId, channelId, playerName);
         BetPromotionTypeEnum promo = betDo.getBetPromotionType();
         if (Objects.equals(promo, BetPromotionTypeEnum.OPERATION_EVENT)) {
             GameOperationEventDo gameOperationEvent = betDo.getGameOperationEvent();
             if (Objects.isNull(gameOperationEvent)) {
-                log.warn("dos gap skip: OPERATION_EVENT bet but gameOperationEvent is null");
+                log.warn("dosGap skip: OPERATION_EVENT bet but gameOperationEvent is null");
                 return;
             }
-            onDosSuccess(gameOperationEvent, channelId, playerName);
+            onDosSuccess(gameOperationEvent, gameId, channelId, playerName);
         } else {
-            onBetSuccess(channelId, playerName);
+            onBetSuccess(gameId, channelId, playerName);
         }
     }
 
     /** 非动态事件局单钱包成功：间隔剩余局数减 1。 */
-    private void onBetSuccess(String channelId, String playerName) {
-        String key = buildDosGapRemainingRoundsKey(channelId, playerName);
+    private void onBetSuccess(String gameId, String channelId, String playerName) {
+        String key = buildDosGapRemainingRoundsKey(gameId, channelId, playerName);
+        log.info("dosGap: onBetSuccess, key = {}", key);
         try {
             Long after = redisTemplate.execute(DECR_SCRIPT, Collections.singletonList(key), DEFAULT_TTL_MS);
             if (Objects.nonNull(after) && after >= 0L) {
-                log.debug("dos gap decrement key={} remainingAfter={}", key, after);
+                log.debug("dosGap decrement key={} remainingAfter={}", key, after);
             }
         } catch (Exception e) {
-            log.error("dos gap decrement error key={}", key, e);
+            log.error("dosGap decrement error key={}", key, e);
         }
     }
 
@@ -130,7 +134,7 @@ public class DosGapService {
      * 动态事件单钱包成功：按 {@link GameOperationEventDo#getConfigMultiple()} 随机写入下一档剩余间隔局数；
      * {@code channelId} / {@code playerName} 须与当前登录用户一致（由 {@link #onBetComplete} 传入）。
      */
-    private void onDosSuccess(GameOperationEventDo gameOperationEvent, String channelId, String playerName) {
+    private void onDosSuccess(GameOperationEventDo gameOperationEvent, String gameId, String channelId, String playerName) {
         if (Objects.isNull(gameOperationEvent)) {
             return;
         }
@@ -140,23 +144,24 @@ public class DosGapService {
         }
         Double configMultiple = gameOperationEvent.getConfigMultiple();
         if (Objects.isNull(configMultiple)) {
-            log.warn("dos gap skip: configMultiple is null, eventId={}", operationEvent.getEventId());
+            log.warn("dosGap skip: configMultiple is null, eventId={}", operationEvent.getEventId());
             return;
         }
         DosGapRuleEnum rule = DosGapRuleEnum.forConfigMultiple(configMultiple);
         if (Objects.isNull(rule)) {
-            log.info("dos gap skip: configMultiple={}", configMultiple);
+            log.info("dosGap skip: configMultiple={}", configMultiple);
             return;
         }
         int remainingRounds = randomService.randomInt(
                 rule.getRandomGapRoundsMinInclusive(),
                 rule.getRandomGapRoundsMaxInclusive());
-        String key = buildDosGapRemainingRoundsKey(channelId, playerName);
-        redisTemplate.opsForValue().set(key, String.valueOf(remainingRounds), GAP_STATE_TTL_DAYS, TimeUnit.DAYS);
-        log.info("dos gap reseed remaining={} key={} configMultiple={} rule={}", remainingRounds, key, configMultiple, rule);
+        String key = buildDosGapRemainingRoundsKey(gameId, channelId, playerName);
+        log.info("dosGap: onDosSuccess, gameId={} channelId={} playerName={}", gameId, channelId, playerName);
+        redisTemplate.opsForValue().set(key, remainingRounds, GAP_STATE_TTL_DAYS, TimeUnit.DAYS);
+        log.info("dosGap reseed remaining={} key={} configMultiple={} rule={}", remainingRounds, key, configMultiple, rule);
     }
 
-    private static String buildDosGapRemainingRoundsKey(String channelId, String playerName) {
-        return String.format(Constants.DOS_GAP_REMAINING_ROUNDS_KEY, channelId, playerName);
+    private static String buildDosGapRemainingRoundsKey(String gameId, String channelId, String playerName) {
+        return String.format(Constants.DOS_GAP_REMAINING_ROUNDS_KEY, gameId, channelId, playerName);
     }
 }
