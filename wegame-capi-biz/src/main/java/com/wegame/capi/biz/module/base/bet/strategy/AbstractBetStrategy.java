@@ -16,7 +16,7 @@ import com.wegame.capi.biz.manager.InventoryManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.SingleWalletService;
-import com.wegame.capi.biz.service.operation.DosGapService;
+import com.wegame.capi.biz.service.operation.OperationEventControlService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -66,7 +66,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     @Autowired
     InventoryManager inventoryManager;
     @Autowired
-    private DosGapService dosGapService;
+    public OperationEventControlService operationEventControlService;
 
     public abstract AbstractGameContext<R> gameContext();
 
@@ -97,7 +97,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 result = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
-        dosGapService.onBetComplete(betDo, betRecordDo, result);
+        operationEventControlService.onBetComplete(betDo, betRecordDo, result);
         return result;
     }
 

@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
-public class DosGapService {
+public class OperationEventControlService {
 
     private static final long GAP_STATE_TTL_DAYS = 5L;
 
