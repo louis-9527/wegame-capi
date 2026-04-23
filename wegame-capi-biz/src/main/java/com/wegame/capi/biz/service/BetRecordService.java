@@ -8,19 +8,15 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -180,7 +176,7 @@ public class BetRecordService extends AbstractService {
 
         Query recordQuery = BetRecordQueryBuilder.buildMongodbQuery(query);
 
-        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(
+        BetRecordPo betRecordPo = getPrimaryMongoTemplate(gameType).findOne(
                 recordQuery,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
