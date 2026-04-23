@@ -153,6 +153,7 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
                     .orderByClause("createTime")
                     .limit(1).build();
             BetRecordDo oneBetRecordByTimeLast = sirenaBetRecordManager.findLastOneGameRecord(betRecordQuery, GameTypeEnum.SIRENA);
+            log.info("oneBetRecordByTimeLast={}", oneBetRecordByTimeLast);
             if (oneBetRecordByTimeLast == null
                     || parentBetRecordId.longValue() != oneBetRecordByTimeLast.getId().longValue()
                     || !BetSubTypeEnum.NORMAL_BET.getCode().equals(oneBetRecordByTimeLast.getBetSubType())
