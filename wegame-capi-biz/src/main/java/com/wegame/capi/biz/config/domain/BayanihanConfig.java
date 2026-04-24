@@ -209,7 +209,7 @@ public class BayanihanConfig extends GameBizConfig{
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freeGameProbabilisticConfig ERR, columNo:" + columNo);
         }
 
         // mainGame
@@ -225,7 +225,7 @@ public class BayanihanConfig extends GameBizConfig{
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.mainGameProbabilisticConfig ERR, columNo:" + columNo);
         }
     }
 
