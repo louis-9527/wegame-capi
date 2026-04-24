@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.contract.GetPlayerContractRes;
-import com.wegame.capi.biz.domain.biz.contract.GetPlayerContractDo;
+import com.wegame.capi.biz.domain.biz.promotion.contract.GetPlayerContractDo;
 import com.wegame.capi.client.domain.vo.contract.GetPlayerContractVo;
 
 import java.util.Objects;

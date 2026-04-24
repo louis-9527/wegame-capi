@@ -78,8 +78,6 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
             } else {
                 totalMultiple = gameRecordDo.getRewardResult().getTotalMultiple();
             }
-            // todo delete log
-            log.info("betRecordId: {}, gameRecordId: {}, malakas totalMultiple: {}", gamePlayDo.getBetRecordId(), gameRecordDo.getId(), totalMultiple);
             ret.add(gameRecordDo);
         }
         // 占位元素-将占位元素设置为空:
