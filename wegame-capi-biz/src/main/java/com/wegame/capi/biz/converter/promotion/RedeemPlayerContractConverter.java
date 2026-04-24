@@ -1,11 +1,8 @@
 package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.contract.RedeemPlayerContractRes;
-import com.wegame.capi.api.domain.res.promotion.RedeemTreasureRes;
-import com.wegame.capi.biz.domain.biz.contract.RedeemPlayerContractDo;
-import com.wegame.capi.biz.domain.biz.promotion.RedeemTreasureDo;
+import com.wegame.capi.biz.domain.biz.promotion.contract.RedeemPlayerContractDo;
 import com.wegame.capi.client.domain.vo.contract.RedeemPlayerContractVo;
-import com.wegame.capi.client.domain.vo.promotion.RedeemTreasureVo;
 
 import java.util.Objects;
 
