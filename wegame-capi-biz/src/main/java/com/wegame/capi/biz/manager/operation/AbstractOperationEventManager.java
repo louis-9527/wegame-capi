@@ -31,6 +31,7 @@ import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailQuery
 import com.wegame.capi.dao.repository.domain.operation.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -243,14 +244,16 @@ public abstract class AbstractOperationEventManager {
         if (interventionAmount == null) {
             return GameOperationEventDo.builder().eventResult(false).build();
         }
-        // 获取干预模版id
-        Long wheelId = getWheelId(interventionAmount, payAmount);
+        Pair<Long, Double> wheelIdAndConfigMultiple = getWheelId(interventionAmount, payAmount);
+        Long wheelId = wheelIdAndConfigMultiple.getLeft();
+        Double configMultiple = wheelIdAndConfigMultiple.getRight();
         if (Objects.isNull(wheelId)) {
             return GameOperationEventDo.builder().eventResult(false).build();
         }
         GameOperationEventDo gameEventDo = new GameOperationEventDo();
         gameEventDo.setEventResult(true);
         gameEventDo.setConfigId(wheelId);
+        gameEventDo.setConfigMultiple(configMultiple);
         gameEventDo.setOperationEvent(eventDo);
         return gameEventDo;
     }
@@ -287,9 +290,9 @@ public abstract class AbstractOperationEventManager {
     }
 
     /**
-     * 获取模版id
+     * 解析干预滚轮模版：左为 configId，右为与配置表匹配的 {@code configMultiple}（最近档位）；任一步失败则左为 null（无法匹配档位时右亦为 null）。
      */
-    public Long getWheelId(Long interventionAmount, Long payAmount) {
+    public Pair<Long, Double> getWheelId(Long interventionAmount, Long payAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是 支付金额+干预金额,
         long interveneBalance = interventionAmount + payAmount;
         //计算最大倍数
@@ -297,9 +300,10 @@ public abstract class AbstractOperationEventManager {
         // 根据倍数找最接近的
         Double closestMultiple = MultipleUtil.findClosestMultiple(multiple, getConfigMultipleArray());
         if (closestMultiple == null) {
-            return null;
+            return Pair.of(null, null);
         }
-        return getPayMultipleConfigId(closestMultiple);
+        Long wheelId = getPayMultipleConfigId(closestMultiple);
+        return Pair.of(wheelId, closestMultiple);
     }
 
     public void asyncUpdateEventDetail(OperationEventDo eventDo, String playerName, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {

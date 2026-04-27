@@ -22,6 +22,7 @@ import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
+import com.wegame.capi.biz.service.operation.OperationEventControlService;
 import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
@@ -61,11 +62,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     @Autowired
     StarCardUseRecordService startCardUseRecordService;
     @Autowired
-    OperationEventService operationEventService;
-    @Autowired
     BagService bagService;
-    @Autowired
-    FreeSpinService freeSpinService;
     @Autowired
     private GameApiProperty gameApiProperty;
     @Value("${dynamic.operation.switch}")
@@ -97,6 +94,10 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             }
             // 仅正常投注时可干预
             if (Objects.equals(betDo.getBetType(), NORMAL_BET)) {
+                if (operationEventControlService.isInDosGap(userInfo)) {
+                    log.info("userId: {}, playerName: {}, channelId: {}, is in dosGap", userInfo.getId(), userInfo.getPlayerName(), userInfo.getChannelId());
+                    return false;
+                }
                 GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount(), userInfo.getChannelId());
                 canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
                 if (canOperationEventBet) {
@@ -133,6 +134,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        // DOS 间隔：动态事件成功后的 reseed 在 saveBetRecordAndBetWithPayout -> dosGapService.onBetComplete 内按 promotionType 处理
         // 异步更新干预事件&干预事件详情状态
         long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
         if (FINAL_BET_STATUS.contains(resultDo.getBetStatus())) {
