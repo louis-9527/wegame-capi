@@ -169,6 +169,10 @@ public class BetRecordDo<T> implements Serializable {
      * 游戏记录列表
      */
     private List<T> gameRecordList;
+    /**
+     * 投注后用户余额（厘）
+     */
+    private Long credit;
 
     /**
      * 扩展信息
