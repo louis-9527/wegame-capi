@@ -20,6 +20,7 @@ CREATE TEMPORARY TABLE mongo_bet_record_source (
   reachMaxMultiple BOOLEAN,
   createTime BIGINT,
   betTime BIGINT,
+  credit BIGINT,
   updateTime BIGINT,
   creator STRING,
   updater STRING,

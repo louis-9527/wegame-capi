@@ -25,6 +25,7 @@ CREATE TABLE `mariamakiling_bet_record` (
   `payOutAmount` bigint NULL COMMENT "派彩金额 单位：分",
   `status` int NULL COMMENT "状态 0进行中 1已完结 2无效",
   `betTime` bigint NULL COMMENT "投注时间",
+  `credit` bigint NULL COMMENT "用户余额（厘）",
   `creator` varchar(255) NULL COMMENT "创建人",
   `createTime` bigint NULL COMMENT "创建时间",
   `updater` varchar(255) NULL COMMENT "更新人",
