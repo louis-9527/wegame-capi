@@ -4,18 +4,14 @@ import com.google.common.collect.Lists;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.config.mongo.KapreMongoConfig;
 import com.wegame.capi.biz.config.mongo.SirenaMongoConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
 import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
 import com.wegame.capi.biz.service.GameRecordService;
-import com.wegame.capi.client.domain.vo.kapre.KapreGameRecordVo;
 import com.wegame.capi.client.domain.vo.sirena.SirenaGameRecordVo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -119,7 +115,7 @@ public class SirenaBetRecordManager extends AbstractBetRecordManager<SirenaGameR
         }
         // 查询对应的游戏记录
         Sort sort = Sort.by(Sort.Direction.ASC, "index");
-        GameRecordQuery recordQuery = GameRecordQuery.builder().betRecordId(oneLastByTime.getId()).sort(sort).build();
+        GameRecordQuery recordQuery = GameRecordQuery.builder().fromPrimary(true).betRecordId(oneLastByTime.getId()).sort(sort).build();
         SirenaGameRecordDo gameRecordDo = gameRecordService.findOne(recordQuery, gameType, SirenaGameRecordDo.class);
         if (gameRecordDo == null) {
             return null;
