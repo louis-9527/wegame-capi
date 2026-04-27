@@ -1,13 +1,12 @@
 -- =======================================
 -- DATABASE: bayanihan
--- Doris 列与 Mongo 文档 / Java DO 对齐（另含 syncCreateTime 同步元数据）
--- BetRecordDo, BayanihanGameRecordDo, OperationEventPo, OperationEventConfigPo,
--- OperationEventConfigRecordPo, OperationEventDetailPo, StarCardUseRecordDo
--- 说明：未包含 BetRecordDo.gameRecordList（嵌套列表由 game_record 表承载）；
--- marketFlag 不在 BetRecordDo 中，故不同步 sirena 脚本中的该列。
+-- Mongo 投注集合存 BetRecordPo（BetRecordService 经 BetRecordConverter.doToPo 写入）；
+-- 游戏记录集合存 BayanihanGameRecordDo；星卡集合存 StarCardUseRecordPo。
+-- 干预相关集合与 OperationEvent*Po 对齐。另含 syncCreateTime 同步元数据。
+-- 说明：BetRecordDo.gameRecordList 不落库到 bet_record 文档，由 bayanihan_game_record 承载。
 -- =======================================
 
--- Table: bayanihan_bet_record（BetRecordDo + syncCreateTime）
+-- Table: bayanihan_bet_record（BetRecordPo + syncCreateTime）
 CREATE TABLE `bayanihan_bet_record` (
   `_id` varchar(255) NOT NULL COMMENT "主键ID",
   `parentId` bigint NULL COMMENT "parentID",
@@ -28,6 +27,7 @@ CREATE TABLE `bayanihan_bet_record` (
   `payAmount` bigint NULL COMMENT "支付金额 单位：分",
   `reachMaxMultiple` boolean NULL COMMENT "是否达到最大倍数",
   `payOutAmount` bigint NULL COMMENT "派彩金额 单位：分",
+  `marketFlag` int NULL COMMENT "营销标识 0否 1是（BetRecordPo，当前转换器未赋值时多为空）",
   `status` int NULL COMMENT "状态 0进行中 1已完结 2无效",
   `betTime` bigint NULL COMMENT "投注时间",
   `jackpot` text NULL COMMENT "jackpot（嵌套对象 JSON）",
@@ -250,7 +250,7 @@ PROPERTIES (
 
 ;
 
--- Table: bayanihan_star_card_record（StarCardUseRecordDo + syncCreateTime）
+-- Table: bayanihan_star_card_record（StarCardUseRecordPo + syncCreateTime）
 CREATE TABLE `bayanihan_star_card_record` (
   `_id` varchar(255) NOT NULL COMMENT "主键ID",
   `rewardId` varchar(255) NULL COMMENT "奖励ID",
