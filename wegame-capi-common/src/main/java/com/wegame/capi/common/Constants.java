@@ -67,6 +67,11 @@ public class Constants {
 
     public static final String OPERATION_EVENT_CONFIG_INCREMENT_CACHE_KEY = "wegame:cuser:operation_config_increment:%s_%s_%s";
 
+    /**
+     * DOS 渠道距下次动态事件命中尚需完成的剩余局数；%s=gameId,%s=channelId，%s=playerName
+     */
+    public static final String DOS_GAP_REMAINING_ROUNDS_KEY = "wegame:dos:gap:remaining:%s:%s:%s";
+
     public static final String OPT_BUSY = "Too many requests. Please try again later.";
 
 

@@ -16,6 +16,7 @@ import com.wegame.capi.biz.manager.InventoryManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.biz.service.operation.OperationEventControlService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -64,6 +65,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     RewardService rewardService;
     @Autowired
     InventoryManager inventoryManager;
+    @Autowired
+    public OperationEventControlService operationEventControlService;
 
     public abstract AbstractGameContext<R> gameContext();
 
@@ -81,18 +84,21 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      * 保存投注记录并投注派彩
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
+        SingleWalletBetResultDo result;
         if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
                 Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS) ||
                 Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)
         ) {
-            return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+            result = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
-                return syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
+                result = syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
             } else {
-                return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+                result = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
+        operationEventControlService.onBetComplete(betDo, betRecordDo, result);
+        return result;
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo) {
