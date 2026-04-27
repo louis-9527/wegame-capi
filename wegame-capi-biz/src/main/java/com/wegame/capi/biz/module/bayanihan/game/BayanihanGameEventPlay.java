@@ -113,7 +113,7 @@ public class BayanihanGameEventPlay extends AbstractGame<BayanihanGameRecordDo> 
             Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId,
             AtomicLong totalRewardAmount) {
 
-        Map<OperationEventConfigRecordDo, BayanihanGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
+        Map<OperationEventConfigRecordDo, BayanihanGameRecordDo> nextLevelGameRecordMap = new LinkedHashMap<>();
 
         List<Long> gameRecordIds = new ArrayList<>();
         for (Long batchId : recordDo.getGameRecordIds()) {
