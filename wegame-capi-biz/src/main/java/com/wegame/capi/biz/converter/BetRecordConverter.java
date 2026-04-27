@@ -88,6 +88,7 @@ public class BetRecordConverter {
         betRecordDo.setFreeWheelHandleStatus(po.getFreeWheelHandleStatus());
         betRecordDo.setNextTemplateId(po.getNextTemplateId());
         betRecordDo.setTemplateType(po.getTemplateType());
+        betRecordDo.setCredit(po.getCredit());
         if (Objects.nonNull(po.getFreeGameInfo())) {
             betRecordDo.setFreeGameInfo(BetRecordDo.FreeGameInfo.builder()
                     .finalMultiple(po.getFreeGameInfo().getFinalMultiple())
@@ -171,6 +172,7 @@ public class BetRecordConverter {
         po.setFreeWheelHandleStatus(betRecordDo.getFreeWheelHandleStatus());
         po.setNextTemplateId(betRecordDo.getNextTemplateId());
         po.setTemplateType(betRecordDo.getTemplateType());
+        po.setCredit(betRecordDo.getCredit());
         return po;
     }
 
@@ -208,6 +210,7 @@ public class BetRecordConverter {
         }
         vo.setCreateTime(betRecordDo.getCreateTime());
         vo.setFreeWheelHandleStatus(betRecordDo.getFreeWheelHandleStatus());
+        vo.setCredit(betRecordDo.getCredit());
         return vo;
     }
 
