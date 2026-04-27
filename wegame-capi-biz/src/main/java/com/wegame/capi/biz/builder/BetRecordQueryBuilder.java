@@ -132,6 +132,9 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordDo.getUpdater())) {
             update.set("updater", recordDo.getUpdater());
         }
+        if (Objects.nonNull(recordDo.getCredit())) {
+            update.set("credit", recordDo.getCredit());
+        }
         update.set("updateTime", System.currentTimeMillis());
         return update;
     }

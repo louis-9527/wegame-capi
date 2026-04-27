@@ -153,6 +153,7 @@ public class BetRecordConverter {
             po.setId(betRecordDo.getId());
         }
         po.setFreeWheelHandleStatus(betRecordDo.getFreeWheelHandleStatus());
+        po.setCredit(betRecordDo.getCredit());
         return po;
     }
 
