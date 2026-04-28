@@ -30,6 +30,7 @@ CREATE TABLE `atlantis_bet_record` (
   `updater` varchar(255) NULL COMMENT "更新人",
   `updateTime` bigint NULL COMMENT "更新时间",
   `expireAt` bigint NULL COMMENT "过期时间",
+  `credit` bigint NULL COMMENT "余额",
   `syncCreateTime` bigint NULL COMMENT "数据同步写入时间"
 ) ENGINE=OLAP
 UNIQUE KEY(`_id`)
