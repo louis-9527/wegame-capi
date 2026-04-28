@@ -129,7 +129,8 @@ public abstract class AbstractSirenaBetStrategy
         BetRecordDo<SirenaGameRecordDo> betRecord = sirenaBetHelper.buildBetRecord(betRecordId, betDo, list);
         betRecord.setNextTemplateId(betDo.getNextTemplateId());
         betRecord.setTemplateType(betDo.getTemplateType());
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, sirenaBetHelper.hasRewardFreeWheel(firstBatchList));
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord,
+                Objects.nonNull(betDo.getNextTemplateId()) || sirenaBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 投注成功后发送延迟派奖通知
         sendDelayRewardNotifyAfterBet(resultDo, betRecord);
