@@ -41,8 +41,8 @@ spring:
           - data-id: wegame-capi-qa-mangkukulam_config.json
             group: wegame-capi-qa
             refresh: true
-          - data-id: wegame-capi-sts-sirena_config.json
-            group: wegame-capi-sts
+          - data-id: wegame-capi-qa-sirena_config.json
+            group: wegame-capi-qa
             refresh: true
 ## game switch
 game:
