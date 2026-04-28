@@ -65,15 +65,15 @@ public class Application implements CommandLineRunner {
     GameProperty gameProperty;
 
     public static void main(String[] args) {
-        log.info("Begin Start Application 😄😄😄😄😄😄");
+        log.info("begin launch application ... ...");
         SpringApplication.run(Application.class, args);
-        log.info("Started Application 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉");
+        log.info("success launch application 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉");
         log.info("see doc: http://localhost:9500/capi/game/doc.html#/home");
     }
 
     @Override
     public void run(String... args) {
-        log.info("start Application after env: {}, version: {}", env, version);
+        log.info("after launch application, env: {}, version: {}", env, version);
         sendPublishMessage();
         appLaunchPostProcessor.postProcess();
     }
