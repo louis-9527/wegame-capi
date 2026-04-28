@@ -1,7 +1,9 @@
 package com.wegame.capi.biz.listener.operation;
 
+import cn.hutool.core.lang.UUID;
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.id.SnowflakeIdGenerator;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.service.operation.OperationEventService;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageListener;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +26,7 @@ import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 
 /**
  * 干预事件消息监听
- *
+ * <p>
  * 核销逻辑：监听干预消息，然后落干预事件到mongodb
  * db中 eventId 为消息id，防止重复消费
  */
@@ -45,16 +48,21 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
 
     @Override
     public void received(Consumer<byte[]> consumer, Message<byte[]> msg) {
-        String msgStr = new String(msg.getData());
-        log.info("received operation event msg: {}", msgStr);
-        OperationEventMessageDo messageDo = JSON.parseObject(msgStr, OperationEventMessageDo.class);
-        boolean result = handleMessage(messageDo);
-        if (result) {
-            try {
-                consumer.acknowledge(msg);
-            } catch (Exception e) {
-                log.error("operation event msg ack error, errMsg: {}", e.getMessage(), e);
+        try {
+            MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
+            String msgStr = new String(msg.getData());
+            log.info("received operation event msg: {}, this.gameType: {}", msgStr, this.gameType());
+            OperationEventMessageDo messageDo = JSON.parseObject(msgStr, OperationEventMessageDo.class);
+            boolean result = handleMessage(messageDo);
+            if (result) {
+                try {
+                    consumer.acknowledge(msg);
+                } catch (Exception e) {
+                    log.error("operation event msg ack error, errMsg: {}", e.getMessage(), e);
+                }
             }
+        } finally {
+            MDC.clear();
         }
     }
 
@@ -66,7 +74,7 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
             }
             GameTypeEnum gameType = GameTypeEnum.valueOfId(messageDo.getGameId());
             if (Objects.isNull(gameType) || gameType != this.gameType()) {
-                log.warn("handleMessage err, un support gameType: {}", messageDo);
+                log.warn("handleMessage err, un support gameType: {}, this.gameType: {}", messageDo, this.gameType());
                 return true;
             }
             OperationEventDo eventDo = messageToDo(snowflakeIdGenerator.nextId(), messageDo);
