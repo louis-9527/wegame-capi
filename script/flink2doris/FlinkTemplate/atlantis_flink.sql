@@ -24,6 +24,7 @@ CREATE TEMPORARY TABLE mongo_bet_record_source (
   creator STRING,
   updater STRING,
   expireAt BIGINT,
+  credit BIGINT,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
