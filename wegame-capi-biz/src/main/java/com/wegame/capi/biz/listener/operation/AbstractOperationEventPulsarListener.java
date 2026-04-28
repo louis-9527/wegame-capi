@@ -51,7 +51,7 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
         try {
             MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
             String msgStr = new String(msg.getData());
-            log.info("received operation event msg: {}", msgStr);
+            log.info("received operation event msg: {}, this.gameType: {}", msgStr, this.gameType());
             OperationEventMessageDo messageDo = JSON.parseObject(msgStr, OperationEventMessageDo.class);
             boolean result = handleMessage(messageDo);
             if (result) {
