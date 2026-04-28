@@ -1,7 +1,7 @@
 # operation pulsar
 dynamic:
   operation:
-    switch: true
+    switch: false
   internal:
     operation:
       pulsar_url: pulsar+ssl://pc-d33b581f.alicloud-apse1-test-gqwl5.ali.snio.cloud:6651
