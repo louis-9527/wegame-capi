@@ -12,7 +12,8 @@ spring:
           enabled: false
         server-addr: mse-98afa3410-p.nacos-ans.mse.aliyuncs.com:8848
         group: wegame-capi-qa
-        namespace: 081e693f-6bfc-47f9-abc6-79194f174caa
+        #namespace: 081e693f-6bfc-47f9-abc6-79194f174caa
+        namespace: fa26b1e9-a8c1-4d6b-b56c-4985e459094b
         access-key: LTAI5tMTvh5AJtTDvsFJ941L
         secret-key: 57yeby8QIcmSE5uue5tQH1CvGj4kZu
         refresh-enabled: true
