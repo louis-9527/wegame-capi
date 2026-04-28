@@ -74,7 +74,7 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
             }
             GameTypeEnum gameType = GameTypeEnum.valueOfId(messageDo.getGameId());
             if (Objects.isNull(gameType) || gameType != this.gameType()) {
-                log.warn("handleMessage err, un support gameType: {}", messageDo);
+                log.warn("handleMessage err, un support gameType: {}, this.gameType: {}", messageDo, this.gameType());
                 return true;
             }
             OperationEventDo eventDo = messageToDo(snowflakeIdGenerator.nextId(), messageDo);
