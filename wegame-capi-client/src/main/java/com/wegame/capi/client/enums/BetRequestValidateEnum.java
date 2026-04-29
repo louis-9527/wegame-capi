@@ -56,7 +56,7 @@ public enum BetRequestValidateEnum {
     }),
     SIRENA(GameTypeEnum.SIRENA, (betType, betSubType, betDetail) -> {
         SirenaValidator.validateParam(betType, betSubType, betDetail);
-        CommonGameValidator.validateStarCardBet(betType, betSubType, betDetail);
+        SirenaValidator.validateStarCardBet(betType, betSubType, betDetail);
         CommonGameValidator.validateFreeSpinBet(betType, betSubType, betDetail);
     }),
 

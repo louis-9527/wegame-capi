@@ -66,4 +66,17 @@ public class SirenaValidator {
             }
         }
     }
+
+    public static void validateStarCardBet(BetTypeEnum betType, BetSubTypeEnum betSubType, BetRequest.BetDetail betDetail) {
+        // 判断是否使用星卡
+        if (betDetail.isUseStarCard()) {
+            AssertUtil.assertNull(betDetail.getParentBetRecordId(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType || BetSubTypeEnum.FREE_SPINS_BUY_BET == betSubType, ErrorCode.ERR_PARAM);
+            if (BetSubTypeEnum.BUY_BET == betSubType) {
+                AssertUtil.assertNotNull(betDetail.getRewardConfigId(), ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(betDetail.getRewardId(), ErrorCode.ERR_PARAM);
+            }
+        }
+    }
 }
