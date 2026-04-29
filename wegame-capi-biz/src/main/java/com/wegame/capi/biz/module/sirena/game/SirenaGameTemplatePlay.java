@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.sirena.game;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
@@ -22,6 +23,7 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.SirenaBetRecordManager;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
+import com.wegame.capi.biz.module.sirena.SirenaSymbolUtil;
 import com.wegame.capi.biz.module.sirena.reward.SirenaRewardHandler;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
@@ -36,6 +38,8 @@ import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TtlUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
+import lombok.Data;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -86,48 +90,29 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         } else {
             configRecordList = getTemplateConfigList(betDo, gamePlay);
         }
-        AssertUtil.assertNotNull(configRecordList, ErrorCode.ERR_INTER);
-
+        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER, "gameMultipleRecordDos is empty");
         List<SirenaGameRecordDo> ret = new ArrayList<>();
-        // 获取首轮(batchId == 0 and index == 0)
+        // 获取首轮(parentId == 0 and index == 0（sirena 所有index都是0）)
         GameRecordTemplateDo firstRecord = configRecordList.stream()
-                .filter(record -> Objects.equals(RECORD_DEFAULT_PARENT_ID, record.getParentId()) && Objects.equals(RECORD_FIRST_INDEX, record.getIndex()))
+                .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
 
+        // 按 batchId 分组,batchId和gameRecordId是同一个值。sirena没有消除轮，一个batchId只对应一条记录
+        Map<Long, GameRecordTemplateDo> batchIdMap = configRecordList.stream()
+                .collect(Collectors.toMap(GameRecordTemplateDo::getBatchId, recordDo -> recordDo, (recordDo1, recordDo2) -> recordDo1));
+
         // 处理首轮
-        long firstGameRecordId = super.generateGameRecordId();
-        SirenaGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstRecord);
+        SirenaGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, super.generateGameRecordId(), RECORD_DEFAULT_PARENT_ID, firstRecord);
         ret.add(firstGameRecord);
-        // 按 batchId 分组 & 记录 ID 映射
-        Map<Long, List<GameRecordTemplateDo>> groupedByBatchId = configRecordList.stream()
-                .collect(Collectors.groupingBy(GameRecordTemplateDo::getBatchId));
-
-        // 获取首批次并排序
-        List<GameRecordTemplateDo> firstBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
-                .stream()
-                .sorted(Comparator.comparing(GameRecordTemplateDo::getIndex))
-                .collect(Collectors.toList());
-        // 处理每个批次
-        SirenaGameRecordDo lastGameRecord = firstGameRecord;
-
-        for (GameRecordTemplateDo recordDo : firstBatchList) {
-            // 非首回合
-            if (!Objects.equals(RECORD_DEFAULT_PARENT_ID, recordDo.getParentId())) {
-                // 处理首轮普通轮
-                long gameRecordId = generateGameRecordId();
-                // 用上一回合的倍率
-                SirenaGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), recordDo);
-                ret.add(gameRecord);
-                lastGameRecord = gameRecord;
-            }
-
-            if (CollectionUtils.isEmpty(recordDo.getGameRecordIds())) {
-                continue;
-            }
-            // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
+        if (CollectionUtil.isNotEmpty(firstRecord.getGameRecordIds())) {
+            // 首轮有免费轮
+            LinkedList<SirenaEventFreeWheelHandleDo> taskLinkedList = new LinkedList<>();
+            taskLinkedList.addLast(new SirenaEventFreeWheelHandleDo(firstGameRecord, firstRecord.getGameRecordIds()));
+            // 迭代替代递归处理
+            this.loopHandle(taskLinkedList, ret, gamePlay, batchIdMap);
         }
+
         // 设置结束
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
@@ -140,6 +125,27 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
                 .sum();
         gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
+    }
+
+    private void loopHandle(LinkedList<SirenaEventFreeWheelHandleDo> taskLinkedList, List<SirenaGameRecordDo> ret, GamePlayDo gamePlay, Map<Long, GameRecordTemplateDo> batchIdMap) {
+        // 迭代替代递归
+        while (!taskLinkedList.isEmpty()) {
+            // 逐个处理
+            SirenaEventFreeWheelHandleDo task = taskLinkedList.pollFirst();
+            SirenaGameRecordDo parentGameRecord = task.getParentGameRecord();
+            for (Long oldSubGameRecordId : task.getOldSubGameRecordIds()) {
+                GameRecordTemplateDo configRecordDo = batchIdMap.get(oldSubGameRecordId);
+                AssertUtil.assertNotNull(configRecordDo, ErrorCode.ERR_INTER, "configRecordDo is null of batchId " + oldSubGameRecordId);
+                SirenaGameRecordDo gameRecordDo = this.processGameRecord(gamePlay, super.generateGameRecordId(), parentGameRecord.getId(), configRecordDo);
+                // 添加新的gameRecordId
+                parentGameRecord.addGameRecordId(gameRecordDo.getId());
+                ret.add(gameRecordDo);
+                // 如果还有免费轮，则加入任务
+                if (CollectionUtil.isNotEmpty(configRecordDo.getGameRecordIds())) {
+                    taskLinkedList.addLast(new SirenaEventFreeWheelHandleDo(gameRecordDo, configRecordDo.getGameRecordIds()));
+                }
+            }
+        }
     }
 
     private Pair<TemplateTypeEnum, Long> loadTemplateFromContext(GamePlayDo gamePlay) {
@@ -251,52 +257,6 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         return null;
     }
 
-
-    /**
-     * 递归处理免费轮，确保同层级先处理完，再进入下一层
-     */
-    private void processFreeRounds(
-            List<SirenaGameRecordDo> ret,
-            GamePlayDo gamePlay,
-            GameRecordTemplateDo recordDo,
-            SirenaGameRecordDo parent,
-            Map<Long, List<GameRecordTemplateDo>> groupedByBatchId) {
-        Map<GameRecordTemplateDo, SirenaGameRecordDo> nextLevelGameRecordMap = new LinkedHashMap<>();
-
-        List<Long> gameRecordIds = new ArrayList<>();
-        for (Long batchId : recordDo.getGameRecordIds()) {
-            List<GameRecordTemplateDo> currentLevelRecords = groupedByBatchId.get(batchId);
-            currentLevelRecords.sort(Comparator.comparing(GameRecordTemplateDo::getIndex));
-            // 处理当前层级的每个记录
-            SirenaGameRecordDo preGameRecord = null;
-            for (GameRecordTemplateDo record : currentLevelRecords) {
-                long gameRecordId = generateGameRecordId();
-                SirenaGameRecordDo gameRecord = null;
-                if (record.getIndex() == 0) {
-                    gameRecordIds.add(gameRecordId);
-                    // 首回合倍率为空
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), record);
-                    ret.add(gameRecord);
-                } else {
-                    // 后续回合倍率传入前一回合的倍率
-                    BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), record);
-                    ret.add(gameRecord);
-                }
-                preGameRecord = gameRecord;
-                if (CollectionUtils.isNotEmpty(record.getGameRecordIds())) {
-                    nextLevelGameRecordMap.put(record, gameRecord);
-                }
-            }
-        }
-        parent.setGameRecordIds(gameRecordIds);
-        for (Map.Entry<GameRecordTemplateDo, SirenaGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
-            GameRecordTemplateDo key = entry.getKey();
-            SirenaGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId);
-        }
-    }
-
     /**
      * 构建并处理投注记录
      */
@@ -341,8 +301,9 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
     }
 
     private WheelDo<SirenaSymbolDo> convertWheel(Object obj) {
-        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<SirenaSymbolDo>>() {
-        });
+        WheelDo<SirenaSymbolDo> wheelDo =  JSON.parseObject(com.alibaba.fastjson.JSON.toJSONString(obj), new TypeReference<WheelDo<SirenaSymbolDo>>() {});
+        SirenaSymbolUtil.handleBigWild(wheelDo.getSymbolArr());
+        return wheelDo;
     }
 
     private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betTypeEnum) {
@@ -364,5 +325,22 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         Random random = new Random();
         int randomIndex = random.nextInt(list.size());
         return list.get(randomIndex);
+    }
+
+    @Data
+    @SuperBuilder
+    private static class SirenaEventFreeWheelHandleDo {
+
+        public SirenaEventFreeWheelHandleDo(SirenaGameRecordDo parentGameRecord, List<Long> oldSubGameRecordIds) {
+            AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER, "parentGameRecord is null");
+            AssertUtil.assertTrue(CollectionUtil.isNotEmpty(oldSubGameRecordIds), ErrorCode.ERR_INTER, "oldSubGameRecordIds is empty");
+            this.parentGameRecord = parentGameRecord;
+            this.oldSubGameRecordIds = oldSubGameRecordIds;
+        }
+
+        // parentRecord
+        private SirenaGameRecordDo parentGameRecord;
+        // 时间配置中的子gameRecordId列表
+        private List<Long> oldSubGameRecordIds;
     }
 }
