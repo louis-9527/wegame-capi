@@ -90,8 +90,9 @@ public abstract class AbstractSirenaBetStrategy
                 return betForFreeSpin(betDo);
             }  else {
                 // 1.2 否，则走其他投注流程
+                // parentBetRecordId不为空时候不允许走dos
                 // 1.2.1、判断能否走干预事件投注
-                if (isCanOperationEventBet(betDo)) {
+                if (Objects.isNull(betDo.getParentBetRecordId()) && isCanOperationEventBet(betDo)) {
                     // 1.2.11 命中干预事件：走干预事件投注
                     return betForOperationEvent(betDo);
                 } else {
@@ -127,10 +128,7 @@ public abstract class AbstractSirenaBetStrategy
         List<SirenaGameRecordDo> firstBatchList = sirenaBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
         BetRecordDo<SirenaGameRecordDo> betRecord = sirenaBetHelper.buildBetRecord(betRecordId, betDo, list);
-        betRecord.setNextTemplateId(betDo.getNextTemplateId());
-        betRecord.setTemplateType(betDo.getTemplateType());
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord,
-                Objects.nonNull(betDo.getNextTemplateId()) || sirenaBetHelper.hasRewardFreeWheel(firstBatchList));
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord,sirenaBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 投注成功后发送延迟派奖通知
         sendDelayRewardNotifyAfterBet(resultDo, betRecord);

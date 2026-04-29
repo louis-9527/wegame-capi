@@ -90,7 +90,10 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.DIWATA_MAYARI)
         ) {
             result = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
-        } else {
+        } else if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.SIRENA) && Objects.nonNull(betRecordDo.getNextTemplateId())) {
+            // sirena && 有下一轮使用同步保存
+            result = syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
+        }else {
             if (syncOpt) {
                 result = syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
             } else {
