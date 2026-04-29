@@ -207,6 +207,7 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         // 4 加载模板 & 解压
         log.info("templatePlay: templateIndex: {}, tag: {}, templateId: {}, range: {}-{}", templateType.getBetRecordTemplateName(),tag.getCode(), betRecordId,  templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         SirenaBetRecordTemplateEsDo template = loadTemplate(tag, templateType, betRecordId, templateMultipleRange);
+        log.info("templatePlay: tag: {}, avgMultiple:{}, multiple:{},", template.getTag(), template.getAvgMultiple(), template.getMultiple());
         List<GameRecordTemplateDo> configRecordList = decompressGameRecordList(template);
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         gamePlay.setTemplateId(betRecordId);
