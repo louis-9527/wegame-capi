@@ -80,6 +80,8 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         List<GameRecordTemplateDo> configRecordList = null;
         if (Objects.nonNull(gamePlay.getContinuePlayContext()) && Objects.nonNull(gamePlay.getContinuePlayContext().getParentBetRecordId())) {
             Pair<TemplateTypeEnum, Long> pair = loadTemplateFromContext(gamePlay);
+            AssertUtil.assertNotNull(pair, ErrorCode.ERR_PARENT_BET_RECORD_ID);
+            log.info("loadTemplateByParent: templateIndex : {}, templateId : {}", pair.getLeft(), pair.getRight());
             configRecordList = loadTemplateFromId(pair.getKey(), pair.getValue());
         } else {
             configRecordList = getTemplateConfigList(betDo, gamePlay);
