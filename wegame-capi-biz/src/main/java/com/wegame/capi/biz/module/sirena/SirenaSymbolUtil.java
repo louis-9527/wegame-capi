@@ -55,13 +55,10 @@ public class SirenaSymbolUtil {
         });
     }
 
-    public static void handleBigWild(SirenaSymbolDo[][] symbolArr) {
+    public static void handleWild(SirenaSymbolDo[][] symbolArr) {
         for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
             for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
-                    if (symbolArr[row][column].isPlaceholderSymbol()) {
-                        symbolArr[row][column] = symbolArr[row][column].getNestSymbol();
-                    }
                     SirenaSymbolDo current = symbolArr[row][column];
                     if (Objects.nonNull(current.getNestSymbol()) && SirenaGameHelper.SIRENA_Big_Pearl_Wild.getId().equals(current.getNestSymbol().getId())) {
                         SirenaSymbolDo outer = current.getNestSymbol().copy();
@@ -69,9 +66,19 @@ public class SirenaSymbolUtil {
                         inner.setNestSymbol(null);
                         outer.setNestSymbol(inner);
                         symbolArr[row][column] = outer;
+                        setSymbolPlaceholder(row, column + 1, symbolArr);
+                        setSymbolPlaceholder(row+1, column, symbolArr);
+                        setSymbolPlaceholder(row+1, column+1, symbolArr);
                     }
                 }
             }
         }
+    }
+
+    private static void setSymbolPlaceholder(int row,int col,SirenaSymbolDo[][] symbolArr){
+        SirenaSymbolDo temp = symbolArr[row][col];
+        SirenaSymbolDo symbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER;
+        symbolPlaceholder.setNestSymbol(temp);
+        symbolArr[row][col] = symbolPlaceholder;
     }
 }

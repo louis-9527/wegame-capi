@@ -302,7 +302,7 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
 
     private WheelDo<SirenaSymbolDo> convertWheel(Object obj) {
         WheelDo<SirenaSymbolDo> wheelDo =  JSON.parseObject(com.alibaba.fastjson.JSON.toJSONString(obj), new TypeReference<WheelDo<SirenaSymbolDo>>() {});
-        SirenaSymbolUtil.handleBigWild(wheelDo.getSymbolArr());
+        SirenaSymbolUtil.handleWild(wheelDo.getSymbolArr());
         return wheelDo;
     }
 
