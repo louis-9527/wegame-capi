@@ -116,8 +116,12 @@ public class SirenaGameEventPlay extends AbstractGame<SirenaGameRecordDo> {
 
         // 确定 `TotalMultiple` 参数
         WheelDo<SirenaSymbolDo> sirenaSymbolWheel = this.convertWheel(recordDo.getWheel());
+        SirenaSymbolDo[][] symbolArr = sirenaSymbolWheel.getSymbolArr();
+        sirenaSymbolWheel.setSymbolArr(SirenaSymbolUtil.copy(symbolArr));
+        SirenaSymbolUtil.handleWild(sirenaSymbolWheel.getSymbolArr());
         RewardResultDo<SirenaSymbolDo> rewardResult = sirenaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, sirenaSymbolWheel, BigDecimal.ZERO));
-
+        // 中奖处理后恢复
+        sirenaSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), sirenaSymbolWheel, rewardResult);
     }
 

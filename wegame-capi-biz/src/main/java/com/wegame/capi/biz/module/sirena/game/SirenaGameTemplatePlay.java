@@ -267,8 +267,12 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
             GameRecordTemplateDo recordDo) {
 
         WheelDo<SirenaSymbolDo> sirenaSymbolWheel = this.convertWheel(recordDo.getWheel());
+        SirenaSymbolDo[][] symbolArr = sirenaSymbolWheel.getSymbolArr();
+        sirenaSymbolWheel.setSymbolArr(SirenaSymbolUtil.copy(symbolArr));
+        SirenaSymbolUtil.handleWild(sirenaSymbolWheel.getSymbolArr());
         RewardResultDo<SirenaSymbolDo> rewardResult = sirenaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, sirenaSymbolWheel, BigDecimal.ZERO));
-
+        // 中奖处理后恢复
+        sirenaSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), sirenaSymbolWheel, rewardResult);
     }
 
@@ -302,7 +306,6 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
 
     private WheelDo<SirenaSymbolDo> convertWheel(Object obj) {
         WheelDo<SirenaSymbolDo> wheelDo =  JSON.parseObject(com.alibaba.fastjson.JSON.toJSONString(obj), new TypeReference<WheelDo<SirenaSymbolDo>>() {});
-        SirenaSymbolUtil.handleWild(wheelDo.getSymbolArr());
         return wheelDo;
     }
 
