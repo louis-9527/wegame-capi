@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.sirena;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -10,7 +9,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
@@ -96,7 +94,7 @@ public class SirenaSymbolUtil {
 
     private static void setSymbolPlaceholder(int row, int col, SirenaSymbolDo[][] symbolArr) {
         SirenaSymbolDo temp = symbolArr[row][col];
-        SirenaSymbolDo symbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER;
+        SirenaSymbolDo symbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER.copy();
         symbolPlaceholder.setNestSymbol(temp);
         symbolArr[row][col] = symbolPlaceholder;
     }

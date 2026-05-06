@@ -369,7 +369,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     }
     private void setSymbolPlaceholder(int row,int col,SirenaSymbolDo[][] symbolArr){
         SirenaSymbolDo temp = symbolArr[row][col];
-        SirenaSymbolDo symbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER;
+        SirenaSymbolDo symbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER.copy();
         symbolPlaceholder.setNestSymbol(temp);
         symbolArr[row][col] = symbolPlaceholder;
     }
