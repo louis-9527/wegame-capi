@@ -36,8 +36,21 @@ public class CommonBaseApi extends BaseApi {
         req.setHash(hash);
     }
 
+    public void assembleSignature(BaseReq req, String preSignature) {
+        GameApiProperty.PrivateInfo privateInfo = gameApiProperty.getPrivateInfo(req.getPId(), req.getChannelId());
+        AssertUtil.assertNotNull(privateInfo, ErrorCode.ERR_INTER);
+        String hash = hash(preSignature, privateInfo.getPrivateKey(), privateInfo.getPrivateIv());
+        req.setHash(hash);
+    }
+
     public String hash(String channelId, String playerName, String createTime, String refId, String key, String iv) {
         String preSignature = String.format("%s%s%s%s", channelId, playerName, createTime, refId);
+        String hash = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
+        AssertUtil.assertNotNull(hash, ErrorCode.ERR_PARAM);
+        return hash;
+    }
+
+    private String hash(String preSignature, String key, String iv) {
         String hash = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
         AssertUtil.assertNotNull(hash, ErrorCode.ERR_PARAM);
         return hash;
