@@ -253,6 +253,7 @@ PROPERTIES (
 -- Table: bayanihan_star_card_record（StarCardUseRecordPo + syncCreateTime）
 CREATE TABLE `bayanihan_star_card_record` (
   `_id` varchar(255) NOT NULL COMMENT "主键ID",
+  `pId` varchar(255) NULL COMMENT "平台ID",
   `rewardId` varchar(255) NULL COMMENT "奖励ID",
   `rewardConfigId` varchar(255) NULL COMMENT "奖励配置id",
   `pId` varchar(255) NULL COMMENT "平台ID",
