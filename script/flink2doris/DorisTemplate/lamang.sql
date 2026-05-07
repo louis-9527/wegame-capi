@@ -336,7 +336,7 @@ PROPERTIES (
 -- Table: lamang_star_card_record
 CREATE TABLE `lamang_star_card_record` (
   `_id` varchar(255) NOT NULL COMMENT "主键ID",
-  `pId` varchar(255) NULL COMMENT "id",
+  `pId` varchar(255) NOT NULL COMMENT "平台ID",
   `rewardId` varchar(255) NULL COMMENT "奖励ID",
   `rewardConfigId` varchar(255) NULL COMMENT "奖励配置id",
   `gameId` varchar(255) NULL COMMENT "游戏ID",
