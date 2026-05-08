@@ -65,7 +65,7 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
     private static final int RECORD_FIRST_INDEX = 0;
     private static final GameInfoDo gameInfo = SirenaGameHelper.SIRENA_GAME_INFO;
     private static final Long NON_NEXT_TEMPLATE_ID = 0L;
-    private static final TemplateTypeEnum DEFAULT_TEMPLATE = TemplateTypeEnum.SIRENA;
+    private static final TemplateTypeEnum DEFAULT_TEMPLATE = TemplateTypeEnum.SIRENA_V2;
 
     @Autowired
     SirenaRewardHandler sirenaRewardHandler;
