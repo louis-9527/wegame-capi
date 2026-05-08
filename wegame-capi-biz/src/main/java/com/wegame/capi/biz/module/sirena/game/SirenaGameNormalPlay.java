@@ -344,7 +344,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                         SirenaSymbolDo temp = symbolArr[row][col];
                         BigDecimal symbolMultiple = totalSymbolOdd.multiply(pearlMultiple);
                         // 如果bigPearl元素倍率小于2，修改为2倍
-                        if (sirenaConfig.getMinBigPearlMultiple().compareTo(pearlMultiple) > 0) {
+                        if (sirenaConfig.getMinBigPearlMultiple().compareTo(symbolMultiple) > 0) {
                             symbolMultiple = sirenaConfig.getMinBigPearlMultiple();
                         }
                         SirenaSymbolDo sirenaSymbolDo = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, symbolMultiple);
