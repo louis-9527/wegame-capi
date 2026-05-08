@@ -39,6 +39,7 @@ CREATE TABLE `bayanihan_bet_record` (
   `updateTime` bigint NULL COMMENT "更新时间",
   `expireAt` bigint NULL COMMENT "过期时间",
   `freeWheelHandleStatus` varchar(255) NULL COMMENT "免费轮处理状态",
+  `credit` bigint NULL COMMENT "投注后用户余额（厘）",
   `templateType` varchar(255) NULL COMMENT "模板类型",
   `nextTemplateId` bigint NULL COMMENT "下一局模板id",
   `freeGameInfo` text NULL COMMENT "免费轮汇总信息（BetRecordDo.FreeGameInfo JSON）",
