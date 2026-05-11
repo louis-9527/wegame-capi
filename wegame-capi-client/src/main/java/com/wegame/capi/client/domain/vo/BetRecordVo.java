@@ -53,9 +53,10 @@ public class BetRecordVo implements Validate, Serializable {
     private ExtendInfo extendInfo;
     @ApiModelProperty("创建时间")
     private Long createTime;
-
     @ApiModelProperty("免费轮处理状态")
     private String freeWheelHandleStatus;
+    @ApiModelProperty("投注后用户余额（厘）")
+    private Long credit;
 
     @ApiModelProperty("游戏记录列表")
     private List<Object> gameRecordList;

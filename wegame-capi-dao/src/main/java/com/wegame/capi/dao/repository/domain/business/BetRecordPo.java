@@ -149,6 +149,10 @@ public class BetRecordPo implements Serializable {
      * 是否可以继续玩
      */
     private String freeWheelHandleStatus;
+    /**
+     * 投注后用户余额（厘）
+     */
+    private Long credit;
 
     /**
      * 模板类型
