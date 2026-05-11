@@ -25,6 +25,7 @@ CREATE TABLE `malakas_bet_record` (
   `payOutAmount` bigint NULL COMMENT "派彩金额 单位：分",
   `status` int NULL COMMENT "状态 0进行中 1已完结 2无效",
   `betTime` datetime NULL COMMENT "投注时间",
+  `credit` bigint NULL COMMENT "用户余额（厘）",
   `jackpot` text NULL COMMENT " jackpot（JSON格式）",
   `inventory` text NULL COMMENT " 库存信息（JSON格式）",
   `extendInfo` text NULL COMMENT " 扩展信息（JSON格式）",

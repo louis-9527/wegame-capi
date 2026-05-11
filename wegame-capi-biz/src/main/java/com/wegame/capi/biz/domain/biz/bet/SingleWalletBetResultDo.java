@@ -23,7 +23,7 @@ public class SingleWalletBetResultDo implements Serializable {
      */
     private String refId;
     /**
-     * 投注后用户余额（分）
+     * 投注后用户余额（厘）
      */
     private Long credit;
     /**
