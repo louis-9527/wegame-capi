@@ -8,9 +8,7 @@ import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,7 +23,7 @@ import static com.wegame.capi.common.Constants.*;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = {DYNAMIC_OPERATION_SWITCH, DYNAMIC_AP_SWITCH}, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = {DYNAMIC_OPERATION_SWITCH, DYNAMIC_AP_OPERATION_SWITCH}, havingValue = TRUE_VAL)
 public class OperationEventApPulsarConfig {
 
     private static final String operationEventApPulsarClient = "operationEventApPulsarClient";

@@ -168,3 +168,58 @@ api:
                 Dm1NzEVe1Uh2xBx4TppUD2iMk1vGir71OMqnRfUKIga/
                 -----END ENCRYPTED PRIVATE KEY-----
               dosPassword: egame-secure-passphrase
+      - platformIdList: [1000]
+        invokeSingle: true
+        singleDomain: http://sw-wallet-http-ali.casinoplus.ai
+        freeSpinDomain: http://sw-http-freespin.casinoplus.ai
+        promotionDomain: http://reward-http.casinoplus.ai
+        operationDomain: http://dos-egame-aliyun.casinoplus.ai
+        platformMap:
+          ap:
+            - platformId: 1000
+              channelId: 3187
+              privateKey: 3a443316c6bd5e00544e4e23cd097f0897de5c176f27f378da8d010d9dc78072
+              privateIv: b506b0c3fd56cb51cce5ddbf21017dfb
+              dosSupport: true
+              dosPublicKey: |
+                -----BEGIN PUBLIC KEY-----
+                MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA03WqnFvSJBqNReY8CUkb
+                qoaNC8JF/lz3Bx3jnIEtOr8Sdg2O5TNooKfxj150aorXm3oZpKL8oONxhCnVAE2z
+                r7EFdW1l7w4W7BpWsGNw5dxYcgpvvXsiAA6Wh65yn7HXJNbn4aQQr9ilaKpWlD4y
+                b4ZKKIU7AKOgvWClE1UKX5syIZaStyTIRjfdXBSBRekUxCdzwxCpPSrm1BhUyLjK
+                r8Ek8rgYOqukFEYRBS6VsguoefDowRtWUzb3POsv9Pg40zGDgf90Q7pnnR1Ir6yY
+                sdg85MrByB9ADZsaws1XyYLHbtPjOH3KnfyC5J9E16yYdVw/YX2TyLU2DDnHHfOS
+                /wIDAQAB
+                -----END PUBLIC KEY-----
+              dosPrivateKey: |
+                -----BEGIN ENCRYPTED PRIVATE KEY-----
+                MIIFLTBXBgkqhkiG9w0BBQ0wSjApBgkqhkiG9w0BBQwwHAQIA7OIjqi7zqsCAggA
+                MAwGCCqGSIb3DQIJBQAwHQYJYIZIAWUDBAEqBBAGEUgMl2t4CymuU6hQua96BIIE
+                0LZ/qQFFKpgxGqxnJqkct5GGtxG7Yc2nvCHA7VGfsoeeNAaCEkj43UDbNMh2iXr8
+                +wAImoumACcKKLVHx7kr3SHg0i9oDSGPPMQ+/oNQfJCAWPnehz34Xn9+eBD33JtV
+                srFr8NCXEKsUBOjN2hV7UOpkYo5Tj8Am70FC7uFAlRDjvcHDV+AVjsMznwx7y0nz
+                HEF2pQjpDg3encXkBmwDnZPApXhCwgmNpoD2v9Ukt+O3FR1YBQiCgbYPgrrwGbGb
+                wIjE2WrdE1HD7gxXCzR/AaNEH5kXRYQjGOJq32LAvQancuAOJB7YeaV0DqHkVf3Q
+                CFc8xELMSdGTFa40vBfl6RItZj+3kNGm/uhFtzvn1MyeANjHKX2C7Zw7cnsdBrEL
+                fyuhgJkED3OWR7p9waazsNJ9QX6YW/QfqjZ+DJ5cZQl5p/vEosFerinYW50MCdeW
+                UevyhRdHSL8SsHPRUa9Geapx4qLFFLCrvhdLIZwJ+hM+kgYd4mMFwk7+Gdcx8Ezb
+                bTgzHOd6COD4C7EVysI34f0+bsXAjfbT6Xw71HXhopVi1M/Tna2gNnN4WE+BgVAM
+                wHjfI41mEDhV5Y3dbj3+HJFKJ4IrJkmUUM1daEi9V+9yIdHk2IDj9JQ6x2R/MdV7
+                J1knLiiz8k68YkTTLppDhmJ2nE/WrQ5yxC0vVK94h3NwcLBuigbfLxPVf52nqwlS
+                POMv6eUfA8n7wF9+P95dnAlXSHLqVDJJ2Wghu0Q73NXe/p33l5OoXYamiHhG/P3W
+                xj/GvRdvsPhoXd257DxwnEQ+41i2d+nKdGrWMTGXJfWP7wTkDCPWzxxscb3TWWr9
+                07f/6EryizLDGeJKroFwhxqzv4ALRe0/tjFmIFVhvusb6A13vXWCT0CPaRWFJlZZ
+                KjkpmVHh1PEjd5U8q2YiX6/CADe6LDhDVWmOniYTbxU0qW+sb+kvmu8E7mkr7hpj
+                zpbGD1HogUtC/vaXOn1gOSz0cGaG/oPRLh5/2hgtt9Gh/bYGjxO+zxVCT9qICOKq
+                Nh+CIkx3RmR0BcHs0BnllFfNGuWfmWZYlAiHgTQbHIIXmZjn09/+FTpzxQoVwa1i
+                iW67VisNla8CspFE1gSGth0THwPleh+woAG/u3hmZNbiNLp5R59cjTL40lg3iOr8
+                rnv0oAKpY8LOCG/465dx4NGkWzBiGYKZoecW2qGhWXbpFkQ3oVc5+unUwCJP8ZA3
+                PTo22SVvgzpiezQMMxSGGOK/vjFS2MGkSDFV2YevU70rqLRhA38HguxnZi+uhyJ/
+                /6/n4Icc4DghuLKl3yJ489bN1+kBmmRFY+qg6qetzymBa+23Ti5m0ccg+4mLz/H2
+                LKMiK/hgYtqcNjmskQFMz35XowXIIpitvmMXW8CBf9nigitUrcA3Z/sgL7QUefM4
+                0JbHgG4L9mU8XSi2g1nD6ZvBhtiYeD3eAdSXzWpsfdILYRiIoKSe2GQamSE13Riq
+                3fPwPiRheRnO+Cv8KotH2xWTPCC9owDtkMFsQmNIuHNTQAY0uKTjdiItTVYkKjFG
+                y97BRPxe/01OLSB8Lg9+erJZ1lBmoy5anjFJhjFjCPqdNYYGkpmGSENqWR+KUjOU
+                ZllBfGrIvoRHC0nR829kB4KsKzwpbH9JN5+QB48mg4qT
+                -----END ENCRYPTED PRIVATE KEY-----
+              dosPassword: egame-secure-passphrase
