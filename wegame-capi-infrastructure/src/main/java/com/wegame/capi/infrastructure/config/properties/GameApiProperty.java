@@ -24,16 +24,8 @@ import java.util.stream.Collectors;
 public class GameApiProperty implements InitializingBean, Serializable {
 
     private static final String unique_key_format = "%s_%s";
-    ///**
-    // * 内部平台
-    // */
-    //private Internal internal;
-    /// **
-    // * 外部平台
-    // */
-    //private External external;
 
-    List<Config> multiPlatformList;
+    private List<Config> multiPlatformList;
 
     /// 分割线 /////////////////////////////
 
@@ -62,20 +54,22 @@ public class GameApiProperty implements InitializingBean, Serializable {
         fillPrivateInfoMap();
         fillDosInfo();
         fillDomainInfoMap();
+        log.info("api game privateInfoMap: support pid_channelId {}", privateInfoMap.keySet());
+        log.info("api game domainInfoMap:  {}", domainInfoMap);
+        log.info("api game dosPrivateInfoMap: support channelId {}", dosPrivateInfoMap);
+        log.info("api game dosPrivateInfoMap: support channelId {}", dosDomainInfoMap);
     }
 
     public boolean isInvokeSingle(String platformId) {
         AssertUtil.assertStrNotEmpty(platformId, ErrorCode.ERR_PARAM);
         Config config = multiPlatformList.stream().filter(item -> Objects.nonNull(item) && item.getPlatformIdList().contains(platformId)).findAny().orElse(null);
-        AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER);
-        return config.isInvokeSingle();
-        //if (Objects.nonNull(internal) && internal.getPlatformIdList().contains(platformId)) {
-        //    return internal.isInvokeSingle();
-        //} else if (Objects.nonNull(external) && external.getPlatformIdList().contains(platformId)) {
-        //    return external.isInvokeSingle();
-        //} else {
-        //    throw new BusinessException(ErrorCode.ERR_INTER);
-        //}
+        if (Objects.isNull(config)) {
+            // 默认调用，日志告警
+            log.error("not support platformId: {} to judge orNot Invoke Single", platformId);
+            return true;
+        } else {
+            return config.isInvokeSingle();
+        }
     }
 
     public String getDomain(String platformId, DomainTypeEnum domainType) {
@@ -119,66 +113,27 @@ public class GameApiProperty implements InitializingBean, Serializable {
                 privateInfoMap.putAll(v.stream().collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
             });
         });
-        //if (Objects.nonNull(internal)) {
-        //    if (CollectionUtils.isNotEmpty(internal.getCp())) {
-        //        privateInfoMap.putAll(internal.getCp()
-        //                .stream()
-        //                .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
-        //    }
-        //    if (CollectionUtils.isNotEmpty(internal.getIgo())) {
-        //        privateInfoMap.putAll(internal.getIgo()
-        //                .stream()
-        //                .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
-        //    }
-        //}
-        //if (Objects.nonNull(external)) {
-        //    if (CollectionUtils.isNotEmpty(external.getBp())) {
-        //        privateInfoMap.putAll(external.getBp()
-        //                .stream()
-        //                .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
-        //    }
-        //}
     }
 
     private void fillDomainInfoMap() {
         domainInfoMap = new HashMap<>();
         multiPlatformList.forEach(item -> {
-            Map<DomainTypeEnum, String> internalMap = new HashMap<>();
-            internalMap.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, item.getSingleDomain());
-            internalMap.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, item.getFreeSpinDomain());
-            internalMap.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, item.getPromotionDomain());
-            internalMap.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, item.getOperationDomain());
+            Map<DomainTypeEnum, String> map = new HashMap<>();
+            map.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, item.getSingleDomain());
+            map.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, item.getFreeSpinDomain());
+            map.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, item.getPromotionDomain());
+            map.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, item.getOperationDomain());
             item.getPlatformIdList().forEach(pid -> {
-                domainInfoMap.putIfAbsent(pid, internalMap);
+                domainInfoMap.putIfAbsent(pid, map);
             });
         });
-        //if (Objects.nonNull(internal)) {
-        //    Map<DomainTypeEnum, String> internalMap = new HashMap<>();
-        //    internalMap.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, internal.getSingleDomain());
-        //    internalMap.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, internal.getFreeSpinDomain());
-        //    internalMap.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, internal.getPromotionDomain());
-        //    internalMap.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, internal.getOperationDomain());
-        //    internal.getPlatformIdList().forEach(item -> {
-        //        domainInfoMap.putIfAbsent(item, internalMap);
-        //    });
-        //}
-        //if (Objects.nonNull(external)) {
-        //    Map<DomainTypeEnum, String> externalMap = new HashMap<>();
-        //    externalMap.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, external.getSingleDomain());
-        //    externalMap.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, external.getFreeSpinDomain());
-        //    externalMap.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, external.getPromotionDomain());
-        //    externalMap.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, external.getOperationDomain());
-        //    external.getPlatformIdList().forEach(item -> {
-        //        domainInfoMap.putIfAbsent(item, externalMap);
-        //    });
-        //}
     }
 
     private void fillDosInfo() {
         dosPrivateInfoMap = new HashMap<>();
         multiPlatformList.forEach(item -> {
-            item.getPlatformMap().forEach((key, v) -> {
-                dosPrivateInfoMap.putAll(v.stream()
+            item.getPlatformMap().forEach((platformName, privateInfoList) -> {
+                dosPrivateInfoMap.putAll(privateInfoList.stream()
                         .filter(PrivateInfo::isDosSupport)
                         .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
             });
@@ -186,47 +141,12 @@ public class GameApiProperty implements InitializingBean, Serializable {
 
         dosDomainInfoMap = new HashMap<>();
         multiPlatformList.forEach(item -> {
-            item.getPlatformMap().forEach((key, v) -> {
-                dosDomainInfoMap.putAll(v.stream()
+            item.getPlatformMap().forEach((platformName, privateInfoList) -> {
+                dosDomainInfoMap.putAll(privateInfoList.stream()
                         .filter(PrivateInfo::isDosSupport)
                         .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> item.getOperationDomain())));
             });
         });
-
-        //if (Objects.nonNull(internal)) {
-        //    if (CollectionUtils.isNotEmpty(internal.getCp())) {
-        //        dosPrivateInfoMap.putAll(internal.getCp()
-        //                .stream()
-        //                .filter(PrivateInfo::isDosSupport)
-        //                .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
-        //        dosDomainInfoMap.putAll(internal.getCp()
-        //                .stream()
-        //                .filter(PrivateInfo::isDosSupport)
-        //                .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> internal.getOperationDomain())));
-        //    }
-        //    if (CollectionUtils.isNotEmpty(internal.getIgo())) {
-        //        dosPrivateInfoMap.putAll(internal.getIgo()
-        //                .stream()
-        //                .filter(PrivateInfo::isDosSupport)
-        //                .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
-        //        dosDomainInfoMap.putAll(internal.getIgo()
-        //                .stream()
-        //                .filter(PrivateInfo::isDosSupport)
-        //                .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> internal.getOperationDomain())));
-        //    }
-        //}
-        //if (Objects.nonNull(external)) {
-        //    if (CollectionUtils.isNotEmpty(external.getBp())) {
-        //        dosPrivateInfoMap.putAll(external.getBp()
-        //                .stream()
-        //                .filter(PrivateInfo::isDosSupport)
-        //                .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
-        //        dosDomainInfoMap.putAll(external.getBp()
-        //                .stream()
-        //                .filter(PrivateInfo::isDosSupport)
-        //                .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> external.getOperationDomain())));
-        //    }
-        //}
     }
 
     @Data
@@ -241,23 +161,6 @@ public class GameApiProperty implements InitializingBean, Serializable {
         private String operationDomain;
         private Map<String, List<PrivateInfo>> platformMap;
     }
-
-    //@Data
-    //@NoArgsConstructor
-    //@AllArgsConstructor
-    //public static class Internal extends Common implements Serializable {
-    //    private static final long serialVersionUID = 372342439L;
-    //    private List<PrivateInfo> cp;
-    //    private List<PrivateInfo> igo;
-    //}
-    //
-    //@Data
-    //@NoArgsConstructor
-    //@AllArgsConstructor
-    //public static class External extends Common implements Serializable {
-    //    private static final long serialVersionUID = 37234243943254352L;
-    //    private List<PrivateInfo> bp;
-    //}
 
     @Data
     @NoArgsConstructor
