@@ -35,6 +35,7 @@ public class OperationEventApPulsarConfig {
     private static final String diwataMayariOperationEventApConsumer = "diwataMayariOperationEventApConsumer";
     private static final String kapreOperationEventApConsumer = "kapreOperationEventApConsumer";
     private static final String mangkukulamOperationEventApConsumer = "mangkukulamOperationEventApConsumer";
+    private static final String sirenaOperationEventApConsumer = "sirenaOperationEventApConsumer";
 
 
     @Value("${dynamic.ap.operation.pulsar_url}")
@@ -64,6 +65,8 @@ public class OperationEventApPulsarConfig {
     String dynamicOperationGroupKapre;
     @Value("${dynamic.ap.operation.pulsar_group.mangkukulam:cd_Ap_Mangkukulam}")
     String dynamicOperationGroupMangkukulam;
+    @Value("${dynamic.ap.operation.pulsar_group.sirena:cd_Ap_Sirena}")
+    String dynamicOperationGroupSirena;
 
     @Bean(name = operationEventApPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventApPulsarClient() throws Exception {
@@ -198,6 +201,20 @@ public class OperationEventApPulsarConfig {
                 .subscriptionName(dynamicOperationGroupMangkukulam)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(mangkukulamOperationEventPulsarListener)
+                .subscribe();
+    }
+
+    @Bean(name = sirenaOperationEventApConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = SIRENA_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(SirenaOperationEventPulsarListener.class)
+    public Consumer<byte[]> sirenaOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
+                                                           @Autowired SirenaOperationEventPulsarListener  sirenaOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, sirenaOperationEventApConsumer);
+        return operationEventApPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupSirena)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(sirenaOperationEventPulsarListener)
                 .subscribe();
     }
 }
