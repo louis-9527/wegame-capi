@@ -2,7 +2,6 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
-import com.wegame.base.enums.EnvEnum;
 import com.wegame.capi.biz.config.domain.BayanihanConfig;
 import com.wegame.capi.biz.domain.biz.template.bayanihan.BayanihanBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
@@ -12,7 +11,6 @@ import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -37,16 +35,9 @@ public class BayanihanTemplateLoadPostHandler extends AbstractTemplateLoadPostHa
     @Autowired
     BetRecordTemplateEsService<BayanihanBetRecordTemplateEsDo> betRecordTemplateEsService;
 
-    protected TemplateTypeEnum getTemplateType() {
-        return TemplateTypeEnum.ATLANTIS;
-    }
-
     @Override
     public void handle() {
-        if (!supportGame(GameTypeEnum.ATLANTIS)) {
-            return;
-        }
-        if (StringUtils.equals(env, EnvEnum.LOCAL.getValue()) || StringUtils.equals(env, EnvEnum.DEV.getValue())) {
+        if (!supportGame(GameTypeEnum.BAYANIHAN)) {
             return;
         }
         Map<TemplateTypeEnum, BayanihanConfig.TemplateRangeConfig> map = bayanihanConfig.getTemplateConfig().getTemplateRangeConfig();
