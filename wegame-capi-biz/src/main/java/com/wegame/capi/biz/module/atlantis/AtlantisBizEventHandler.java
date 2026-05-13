@@ -79,7 +79,7 @@ public class AtlantisBizEventHandler {
     }
 
     /**
-     * 黄金战车，冲撞棋盘，随机将1-3row（横排） 变为wild
+     * 黄金战车，冲撞棋盘，随机将1-6行的1-3行（横排） 变为wild
      *
      * @param nextSymbolArr nextSymbolArr
      * @param sort          排序
@@ -93,7 +93,7 @@ public class AtlantisBizEventHandler {
         TreeMap<Integer, BigDecimal> tankCountProbabilisticConfig = getSingleBizEventSpecialProbabilisticConfig(BizEventEnum.EVENT_GOLDEN_TANK);
         Integer rowCount = GameUtil.randomKey(tankCountProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
         AssertUtil.assertTrue(rowCount <= 3, ErrorCode.ERR_PARAM, "tankCountProbabilisticConfig is error");
-        Set<Integer> rowIndexSet = randomService.randomUniqueIntList(0, 2, rowCount);
+        Set<Integer> rowIndexSet = randomService.randomUniqueIntList(0, 5, rowCount);
         rowIndexSet.forEach(rowIndex -> {
             for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
                 toWildIndexList.add(IndexFactory.buildDo(rowIndex, colum));
@@ -110,7 +110,7 @@ public class AtlantisBizEventHandler {
     }
 
     /**
-     * 三叉戟，引发潮汐冲刷棋盘，随机将1-3reel（竖列）变为wild。
+     * 三叉戟，引发潮汐冲刷棋盘，随机将1-5列的1-3列（竖列）变为wild。
      *
      * @param nextSymbolArr nextSymbolArr
      * @param sort          排序
@@ -124,7 +124,7 @@ public class AtlantisBizEventHandler {
         TreeMap<Integer, BigDecimal> tridentCountProbabilisticConfig = getSingleBizEventSpecialProbabilisticConfig(BizEventEnum.EVENT_TRIDENT);
         Integer columCount = GameUtil.randomKey(tridentCountProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
         AssertUtil.assertTrue(columCount <= 3, ErrorCode.ERR_PARAM, "tridentCountProbabilisticConfig is error");
-        Set<Integer> columIndexSet = randomService.randomUniqueIntList(0, 2, columCount);
+        Set<Integer> columIndexSet = randomService.randomUniqueIntList(0, 4, columCount);
         columIndexSet.forEach(columIndex -> {
             for (int row = 0; row < gameInfo.getRow(); row++) {
                 toWildIndexList.add(IndexFactory.buildDo(row, columIndex));
