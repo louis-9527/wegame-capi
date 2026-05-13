@@ -245,7 +245,7 @@ public class OperationEventExternalPulsarConfig {
 
     @Bean(name = bayanihanOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = BAYANIHAN_PROP, havingValue = TRUE_VAL)
-    @ConditionalOnBean(AtlantisOperationEventPulsarListener.class)
+    @ConditionalOnBean(BayanihanOperationEventPulsarListener.class)
     public Consumer<byte[]> bayanihanOperationEventExternalConsumer(@Autowired PulsarClient operationEventExternalPulsarClient,
                                                            @Autowired BayanihanOperationEventPulsarListener  bayanihanOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, bayanihanOperationEventExternalConsumer);
