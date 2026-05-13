@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.SingleWalletConfigApi;
@@ -8,14 +9,18 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
+
 
 /**
- * 单钱包服务
+ * 单钱包配置服务
  *
  * @author genereate
  */
@@ -28,8 +33,7 @@ public class SingleWalletConfigService {
     @Autowired
     SingleWalletConfigApi singleWalletConfigApi;
 
-    // todo 缓存控制： 刷新 等
-    public List<GetPoolConfigRes.BloodPoolConfig> getConfig(String pid, String channelId, GameTypeEnum gameType) {
+    public List<GetPoolConfigRes.BloodPoolConfig> getBloodPoolConfigNoCache(String pid, String channelId, GameTypeEnum gameType) {
         AssertUtil.assertStrNotEmpty(pid, ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
@@ -39,5 +43,16 @@ public class SingleWalletConfigService {
         } else {
             return null;
         }
+    }
+
+    @Cacheable(value = CacheConstants.BLOOD_POOL_CONFIG, key = "#pid + '_' + #channelId + '_' + #gameType.name")
+    public List<GetPoolConfigRes.BloodPoolConfig> getBloodPoolConfigWithCache(String pid, String channelId, GameTypeEnum gameType) {
+        return getBloodPoolConfigNoCache(pid, channelId, gameType);
+    }
+
+    @Async(defaultThreadPoolExecutor)
+    @Cacheable(value = CacheConstants.BLOOD_POOL_CONFIG, key = "#pid + '_' + #channelId + '_' + #gameType.name")
+    public List<GetPoolConfigRes.BloodPoolConfig> asyncPutBloodPoolConfigCache(String pid, String channelId, GameTypeEnum gameType, List<GetPoolConfigRes.BloodPoolConfig> configList) {
+        return configList;
     }
 }
