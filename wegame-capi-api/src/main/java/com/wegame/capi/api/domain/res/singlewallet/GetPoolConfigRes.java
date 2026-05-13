@@ -46,7 +46,7 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
          */
         private String poolName;
         /**
-         * 奖池分类： 1：普通/ 2：星卡/ 100：全部
+         * 奖池分类： 1：普通/ 2：星卡/ 100：全部 todo @bruce
          */
         private String poolCategory;
         /**
@@ -54,17 +54,25 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
          */
         private Integer currentLevelNo;
         /**
+         * 平台id   todo @bruce
+         */
+        private String pid;
+        /**
+         * 渠道id   todo @bruce
+         */
+        private String channelId;
+        /**
          * 支持的游戏
          */
         private List<String> gameCodes;
         /**
          * 最小投注金额
          */
-        private Long betAmountMin;
+        private BigDecimal betAmountMin;
         /**
          * 最大投注金额
          */
-        private Long betAmountMax;
+        private BigDecimal betAmountMax;
         /**
          * 单笔派奖上限
          */
