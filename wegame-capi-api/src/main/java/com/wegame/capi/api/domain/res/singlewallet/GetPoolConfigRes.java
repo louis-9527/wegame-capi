@@ -46,7 +46,7 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
          */
         private String poolName;
         /**
-         * 奖池分类： normal / free_games/ all
+         * 奖池分类： 1：普通/ 2：星卡/ 100：全部
          */
         private String poolCategory;
         /**
