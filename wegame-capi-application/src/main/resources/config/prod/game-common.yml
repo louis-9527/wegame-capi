@@ -42,3 +42,24 @@ dynamic:
           issuer_url: https://auth.streamnative.cloud
           credentials_file_path: /operation_pulsar_external_privateKey.json
           audience:  urn:sn:pulsar:o-iylfk:platform-pulsar-external-platform
+  ap:
+    operation:
+      switch: true
+      pulsar_url: pulsar+ssl://pc-c5b771c5.alicloud-apse1-prod-bclz4.ali.snio.cloud:6651
+      pulsar_topic: dos_game_slot_event
+      pulsar_group:
+        maria_makiling: ${spring.application.name}_${spring.application.env}_cd_Ap_MariaMakiling
+        malakas: ${spring.application.name}_${spring.application.env}_cd_Ap_Malakas
+        ibong: ${spring.application.name}_${spring.application.env}_cd_Ap_Ibong
+        lamang: ${spring.application.name}_${spring.application.env}_cd_Ap_Lamang
+        bakunawa: ${spring.application.name}_${spring.application.env}_cd_Ap_Bakunawa
+        diwata_mayari: ${spring.application.name}_${spring.application.env}_cd_Ap_DiwataMayari
+        kapre: ${spring.application.name}_${spring.application.env}_cd_Ap_Kapre
+        mangkukulam: ${spring.application.name}_${spring.application.env}_cd_Ap_Mangkukulam
+        sirena: ${spring.application.name}_${spring.application.env}_cd_Ap_Sirena
+        atlantis: ${spring.application.name}_${spring.application.env}_cd_Ap_Atlantis
+      pulsar:
+        auth:
+          issuer_url: https://auth.streamnative.cloud
+          credentials_file_path: /operation_pulsar_ap_privateKey.json
+          audience: urn:sn:pulsar:o-iylfk:platform-pulsar-asystem
