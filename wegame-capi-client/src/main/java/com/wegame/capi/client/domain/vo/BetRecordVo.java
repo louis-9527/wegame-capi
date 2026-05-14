@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * bet_record：投注记录分页vo
@@ -46,7 +47,7 @@ public class BetRecordVo implements Validate, Serializable {
     @ApiModelProperty("状态 0进行中 1已完结 2无效")
     private Integer status;
     @ApiModelProperty("扩展信息")
-    private ExtendInfo extendInfo;
+    private Map<String, Object> extendInfo;
     @ApiModelProperty("创建时间")
     private Long createTime;
     @ApiModelProperty("免费轮处理状态")
@@ -57,21 +58,21 @@ public class BetRecordVo implements Validate, Serializable {
     @ApiModelProperty("游戏记录列表")
     private List<Object> gameRecordList;
 
-    /**
-     * 扩展信息
-     */
-    @Data
-    @ToString
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @EqualsAndHashCode(callSuper = false)
-    public static class ExtendInfo implements Serializable {
-        private static final long serialVersionUID = 1L;
-        @ApiModelProperty("（星卡）奖励图片url")
-        private String rewardUrl;
-        @ApiModelProperty("预定投注Id")
-        private String campaignId;
-    }
+    ///**
+    // * 扩展信息
+    // */
+    //@Data
+    //@ToString
+    //@SuperBuilder
+    //@NoArgsConstructor
+    //@AllArgsConstructor
+    //@EqualsAndHashCode(callSuper = false)
+    //public static class ExtendInfo implements Serializable {
+    //    private static final long serialVersionUID = 1L;
+    //    @ApiModelProperty("（星卡）奖励图片url")
+    //    private String rewardUrl;
+    //    @ApiModelProperty("预定投注Id")
+    //    private String campaignId;
+    //}
 }
 

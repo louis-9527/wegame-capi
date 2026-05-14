@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -116,8 +117,11 @@ public class BetRecordDo<T> implements Serializable {
     private Inventory inventory;
     /**
      * 扩展信息
+     *  ieId: 干预事件Id(当这笔订单属于干预订单时生成,对于 EventId 需要传给单钱包)
+     *  rewardUrl: （星卡）奖励图片url
+     *  campaignId: 预定投注Id
      */
-    private ExtendInfo extendInfo;
+    private Map<String, Object> extendInfo;
     /**
      * 创建人
      */

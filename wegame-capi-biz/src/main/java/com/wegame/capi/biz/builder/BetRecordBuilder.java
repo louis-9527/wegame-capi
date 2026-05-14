@@ -12,10 +12,18 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class BetRecordBuilder {
+    // 干预事件Id(当这笔订单属于干预订单时生成,对于 EventId 需要传给单钱包)
+    public static final String extend_field_ieId = "ieId";
+    // （星卡）奖励图片url
+    public static final String extend_field_rewardUrl = "rewardUrl";
+    // 预定投注Id
+    public static final String extend_field_campaignId = "campaignId";
 
     public static <T> BetRecordDo<T> build(Long betRecordId,
                                            BetDo betDo,
@@ -29,21 +37,18 @@ public class BetRecordBuilder {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         long currentMilli = DateUtil.getCurrentMilli();
-        BetRecordDo.ExtendInfo extendInfo = null;
+        Map<String, Object> extendInfo = null;
         BetPromotionTypeEnum betPromotionType = betDo.getBetPromotionType();
         AssertUtil.assertNotNull(betPromotionType, ErrorCode.ERR_INTER);
         if (Objects.equals(betPromotionType, BetPromotionTypeEnum.OPERATION_EVENT)) {
-            extendInfo = BetRecordDo.ExtendInfo.builder()
-                    .ieId(betDo.getGameOperationEvent().getOperationEvent().getEventId())
-                    .build();
+            extendInfo = new HashMap<>();
+            extendInfo.put(extend_field_ieId, betDo.getGameOperationEvent().getOperationEvent().getEventId());
         } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.STAR_CARD)) {
-            extendInfo = BetRecordDo.ExtendInfo.builder()
-                    .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
-                    .build();
+            extendInfo = new HashMap<>();
+            extendInfo.put(extend_field_rewardUrl, betDo.getRewardDetail().getDetails().getImgUrl());
         } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.FREE_SPIN)) {
-            extendInfo = BetRecordDo.ExtendInfo.builder()
-                    .campaignId(betDo.getCampaignId())
-                    .build();
+            extendInfo = new HashMap<>();
+            extendInfo.put(extend_field_campaignId, betDo.getCampaignId());
         }
         BetRecordDo.Inventory inventory = null;
         if (Objects.nonNull(betDo.getBetInventoryControl())) {
