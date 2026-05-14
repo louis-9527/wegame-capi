@@ -62,7 +62,7 @@ public class SingleWalletConfigApi extends SingleWalletBaseApi {
             // 构建header
             MultiValueMap<String, String> headers = buildHeaders(encryptKeyString, encryptIvString);
             RequestEntity<GetPoolConfigReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
-                    URI.create(String.format(GET_FOUND_BLOOD_CONFIG_URL_FORMAT, singleDomain(pid))));
+                    URI.create(String.format(GET_FOUND_BLOOD_CONFIG_URL_FORMAT, singlePoolConfigDomain(pid))));
             ResponseEntity<CommonConfigRes<GetPoolConfigRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonConfigRes<GetPoolConfigRes>>() {
                     });

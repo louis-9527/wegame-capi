@@ -120,6 +120,7 @@ public class GameApiProperty implements InitializingBean, Serializable {
         multiPlatformList.forEach(item -> {
             Map<DomainTypeEnum, String> map = new HashMap<>();
             map.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, item.getSingleDomain());
+            map.putIfAbsent(DomainTypeEnum.SINGLE_POOL_CONFIG_DOMAIN, item.getSinglePoolConfigDomain());
             map.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, item.getFreeSpinDomain());
             map.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, item.getPromotionDomain());
             map.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, item.getOperationDomain());
@@ -156,6 +157,7 @@ public class GameApiProperty implements InitializingBean, Serializable {
         private List<String> platformIdList;
         private boolean invokeSingle;
         private String singleDomain;
+        private String singlePoolConfigDomain;
         private String freeSpinDomain;
         private String promotionDomain;
         private String operationDomain;
