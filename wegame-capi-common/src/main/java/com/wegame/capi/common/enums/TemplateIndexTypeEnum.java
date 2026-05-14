@@ -7,18 +7,18 @@ import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Es模板类型枚举
+ * 模板索引类型枚举
  */
 @Getter
 @ToString
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum EsTemplateTypeEnum {
+public enum TemplateIndexTypeEnum {
 
-    star("star", "星卡"),
-    freeSpin("freeSpin", "freeSpin"),
-    defaultA("defaultA", "defaultA"),
-    defaultB("defaultB", "defaultA");
+    Star("Star", "星卡"),
+    FreeSpin("FreeSpin", "FreeSpin"),
+    Default("Default", "Default"),
+    ;
 
     /**
      * 枚举码.
@@ -29,8 +29,8 @@ public enum EsTemplateTypeEnum {
      */
     private final String desc;
 
-    public static EsTemplateTypeEnum valueOfCode(String code) {
-        for (EsTemplateTypeEnum item : EsTemplateTypeEnum.values()) {
+    public static TemplateIndexTypeEnum valueOfCode(String code) {
+        for (TemplateIndexTypeEnum item : TemplateIndexTypeEnum.values()) {
             if (StringUtils.equals(item.getCode(), code)) {
                 return item;
             }
