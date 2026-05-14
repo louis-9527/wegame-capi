@@ -7,17 +7,13 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bizinterfere.BizInterfereContextDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.BizInterfereSubTypeEnum;
-import com.wegame.capi.common.enums.BizInterfereTypeEnum;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class BetRecordBuilder {
 
@@ -72,8 +68,6 @@ public class BetRecordBuilder {
                 .betType(betDo.getBetType().getCode())
                 .betSubType(betDo.getBetSubType().getCode())
                 .betPromotionType(betPromotionType.getCode())
-                .bizInterfereType(Optional.ofNullable(betDo.getBizInterfereContext()).map(c->c.getOrDefaultInUseBizInterfereType().getCode()).orElse(BizInterfereTypeEnum.NONE.getCode()))
-                .bizInterfereSubType(Optional.ofNullable(betDo.getBizInterfereContext()).map(c->c.getOrDefaultInUseJackPotSnapshotType().getCode()).orElse(BizInterfereSubTypeEnum.NONE.getCode()))
                 .betAmount(betDo.getBetAmount())
                 .payAmount(betDo.getPayAmount())
                 .payOutAmount(payOutAmount)

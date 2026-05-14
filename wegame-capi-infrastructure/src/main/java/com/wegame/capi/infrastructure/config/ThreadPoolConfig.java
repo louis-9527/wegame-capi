@@ -30,7 +30,6 @@ public class ThreadPoolConfig {
 
     public static final String autoContinuePlayGameThreadPoolExecutor = "autoContinuePlayGameThreadPoolExecutor";
     public static final String warmUpConnectionThreadPoolExecutor = "warmUpConnectionThreadPoolExecutor";
-    public static final String bizInterfereThreadPoolExecutor = "bizInterfereThreadPoolExecutor";
 
     public static final String scheduledThreadPoolExecutor = "scheduledThreadPoolExecutor";
     public static final String inventoryThreadPoolExecutor = "inventoryThreadPoolExecutor";
@@ -169,20 +168,6 @@ public class ThreadPoolConfig {
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(300),
                 new CustomizableThreadFactory("warm-up-connection-thread-pool-"),
-                new ThreadPoolExecutor.DiscardOldestPolicy());
-        executor.allowCoreThreadTimeOut(true);
-        executor.prestartAllCoreThreads();
-        return executor;
-    }
-
-    @Bean(bizInterfereThreadPoolExecutor)
-    public ThreadPoolExecutor bizInterfereThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
-                20,
-                100L,
-                TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(300000),
-                new CustomizableThreadFactory("biz-interface-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();

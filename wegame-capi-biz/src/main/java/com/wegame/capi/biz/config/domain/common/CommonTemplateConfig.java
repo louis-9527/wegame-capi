@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.config.domain.common;
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -17,7 +16,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import static com.wegame.capi.common.Constants.COMMON_CONFIG_SPLIT;
 import static com.wegame.capi.common.Constants.DEFAULT;
 
 /**
@@ -83,11 +81,14 @@ public class CommonTemplateConfig implements Serializable {
             Map<BetTypeEnum, Map<String, Integer>> subMap = item.getValue();
             Assert.isTrue(MapUtils.isNotEmpty(subMap), "rtpMultipleRangeWeightMap subMap is empty");
             for (BetTypeEnum betType : BetTypeEnum.values()) {
-                Map<String, Integer> innerMap = subMap.get(betType);
-                Assert.isTrue(MapUtils.isNotEmpty(innerMap), "rtpMultipleRangeWeightMap subMap.innerMap is empty");
-                innerMap.entrySet().forEach(subItem -> {
-                    validateRange(subItem.getKey());
-                    Assert.isTrue(subItem.getValue() >= 0, "rtpMultipleRangeWeightMap multiple range weight must >= 0");
+                Map<String, Integer> rangeMap = subMap.get(betType);
+                Assert.isTrue(MapUtils.isNotEmpty(rangeMap), "rangeMap is empty");
+                rangeMap.forEach((range, weight) -> {
+                    TemplateMultipleRange multipleRange = TemplateMultipleRange.build(range);
+                    AssertUtil.assertNotNull(multipleRange, ErrorCode.ERR_INTER, "rangeMap range is error: " + range);
+                    AssertUtil.assertTrue(multipleRange.getStart().compareTo(BigDecimal.ZERO) >= 0, ErrorCode.ERR_INTER, "rangeMap range is error: " + range);
+                    AssertUtil.assertTrue(multipleRange.getEnd().compareTo(multipleRange.getStart()) >= 0, ErrorCode.ERR_INTER, "rangeMap range is error: " + range);
+                    AssertUtil.assertTrue(weight >= 0, ErrorCode.ERR_INTER, "rangeMap weight is error: " + weight);
                 });
             }
         });
@@ -106,14 +107,5 @@ public class CommonTemplateConfig implements Serializable {
                 Assert.isTrue(MapUtils.isNotEmpty(rtpMap), rtpName + " : rtpMap is empty");
             });
         });
-    }
-
-    private void validateRange(String rangeStr) {
-        Assert.isTrue(rangeStr.contains(COMMON_CONFIG_SPLIT), "range not contain '_'");
-        String[] rangeArr = rangeStr.split(COMMON_CONFIG_SPLIT);
-        Assert.isTrue(rangeArr.length == 2, "range length is not equals 2");
-        Assert.isTrue(NumberUtil.isNumber(rangeArr[0]), "range first number must be number");
-        Assert.isTrue(NumberUtil.isNumber(rangeArr[1]), "range second number must be number");
-        Assert.isTrue(new BigDecimal(rangeArr[0]).compareTo(new BigDecimal(rangeArr[1])) <= 0, "range must left <= right");
     }
 }
