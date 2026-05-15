@@ -70,6 +70,7 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
     public TemplateMultipleRange getTemplateMultipleRange(BetDo betDo, GamePlayDo gamePlayDo, CommonTemplateConfig commonTemplateConfig) {
         GetPoolConfigRes.BloodPoolConfig bloodPoolConfig = bloodPoolControlService.matchBloodPoolConfig(betDo, gamePlayDo);
         if (Objects.nonNull(bloodPoolConfig)) {
+            // 设置投注上下文
             betDo.setBetBloodPoolControl(BetBloodPoolControlDo.builder()
                     .matchBloodPoolCategory(bloodPoolConfig.getPoolCategory())
                     .matchBloodPoolLevel(bloodPoolConfig.getCurrentLevelNo())

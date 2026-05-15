@@ -72,7 +72,13 @@ public class BetRecordTemplateConverter {
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());
         vo.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         vo.setStatus(betRecordDo.getStatus());
-        vo.setExtendInfo(betRecordDo.getExtendInfo());
+        vo.setExtendInfo(Objects.nonNull(betRecordDo.getExtendInfo())
+                ? BetRecordVo.ExtendInfo
+                .builder()
+                .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
+                .campaignId(betRecordDo.getExtendInfo().getCampaignId())
+                .build()
+                : null);
         vo.setCreateTime(betRecordDo.getCreateTime());
         return vo;
     }

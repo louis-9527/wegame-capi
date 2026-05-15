@@ -15,14 +15,10 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.common.utils.JackpotAmountUtil;
-import org.apache.commons.collections4.MapUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.wegame.capi.biz.builder.BetRecordBuilder.extend_field_campaignId;
-import static com.wegame.capi.biz.builder.BetRecordBuilder.extend_field_ieId;
 
 public class BetWithPayoutReqBuilder {
 
@@ -33,7 +29,7 @@ public class BetWithPayoutReqBuilder {
                 .channelId(betRecordDo.getChannelId())
                 .playerName(betRecordDo.getPlayerName())
                 .refId(buildRefId(betRecordDo))
-                .ieId(MapUtils.isNotEmpty(betRecordDo.getExtendInfo()) ? String.valueOf(betRecordDo.getExtendInfo().get(extend_field_ieId)) : null)
+                .ieId(Objects.nonNull(betRecordDo.getExtendInfo()) ? betRecordDo.getExtendInfo().getIeId() : null)
                 .createTime(DateUtil.toUTC(new Date(betRecordDo.getCreateTime())))
                 .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
                 .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))
@@ -300,7 +296,7 @@ public class BetWithPayoutReqBuilder {
                         .settlementDate(uctSecond)
                         .build())
                 .freeSpinType(1)
-                .campaignId(MapUtils.isNotEmpty(betRecordDo.getExtendInfo()) ? String.valueOf(betRecordDo.getExtendInfo().get(extend_field_campaignId)) : null)
+                .campaignId(betRecordDo.getExtendInfo().getCampaignId())
                 .betValue(AmountUtil.toBigDecimal(betRecordDo.getBetAmount()))
                 .build();
     }

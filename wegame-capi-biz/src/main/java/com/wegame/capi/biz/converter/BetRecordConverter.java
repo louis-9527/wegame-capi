@@ -53,7 +53,13 @@ public class BetRecordConverter {
         betRecordDo.setPayOutAmount(po.getPayOutAmount());
         betRecordDo.setReachMaxMultiple(po.getReachMaxMultiple());
         betRecordDo.setStatus(po.getStatus());
-        betRecordDo.setExtendInfo(po.getExtendInfo());
+        if (Objects.nonNull(po.getExtendInfo())) {
+            betRecordDo.setExtendInfo(BetRecordDo.ExtendInfo.builder()
+                    .ieId(po.getExtendInfo().getIeId())
+                    .rewardUrl(po.getExtendInfo().getRewardUrl())
+                    .campaignId(po.getExtendInfo().getCampaignId())
+                    .build());
+        }
         if (Objects.nonNull(po.getJackpot())) {
             betRecordDo.setJackpot(BetRecordDo.Jackpot.builder()
                     .grandContributionAmount(po.getJackpot().getGrandContributionAmount())
@@ -106,7 +112,13 @@ public class BetRecordConverter {
         po.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         po.setStatus(betRecordDo.getStatus());
         po.setBetTime(betRecordDo.getBetTime());
-        po.setExtendInfo(betRecordDo.getExtendInfo());
+        if (Objects.nonNull(betRecordDo.getExtendInfo())) {
+            po.setExtendInfo(BetRecordPo.ExtendInfo.builder()
+                    .ieId(betRecordDo.getExtendInfo().getIeId())
+                    .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
+                    .campaignId(betRecordDo.getExtendInfo().getCampaignId())
+                    .build());
+        }
         if (Objects.nonNull(betRecordDo.getJackpot())) {
             po.setJackpot(BetRecordPo.Jackpot.builder()
                     .grandContributionAmount(betRecordDo.getJackpot().getGrandContributionAmount())
@@ -158,7 +170,13 @@ public class BetRecordConverter {
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());
         vo.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         vo.setStatus(betRecordDo.getStatus());
-        vo.setExtendInfo(betRecordDo.getExtendInfo());
+        vo.setExtendInfo(Objects.nonNull(betRecordDo.getExtendInfo())
+                ? BetRecordVo.ExtendInfo
+                .builder()
+                .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
+                .campaignId(betRecordDo.getExtendInfo().getCampaignId())
+                .build()
+                : null);
         vo.setCreateTime(betRecordDo.getCreateTime());
         vo.setFreeWheelHandleStatus(betRecordDo.getFreeWheelHandleStatus());
         vo.setCredit(betRecordDo.getCredit());

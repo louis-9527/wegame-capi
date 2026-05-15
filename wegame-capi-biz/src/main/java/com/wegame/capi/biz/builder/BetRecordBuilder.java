@@ -18,12 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class BetRecordBuilder {
-    // 干预事件Id(当这笔订单属于干预订单时生成,对于 EventId 需要传给单钱包)
-    public static final String extend_field_ieId = "ieId";
-    // （星卡）奖励图片url
-    public static final String extend_field_rewardUrl = "rewardUrl";
-    // 预定投注Id
-    public static final String extend_field_campaignId = "campaignId";
 
     public static <T> BetRecordDo<T> build(Long betRecordId,
                                            BetDo betDo,
@@ -37,18 +31,21 @@ public class BetRecordBuilder {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         long currentMilli = DateUtil.getCurrentMilli();
-        Map<String, Object> extendInfo = null;
+        BetRecordDo.ExtendInfo extendInfo = null;
         BetPromotionTypeEnum betPromotionType = betDo.getBetPromotionType();
         AssertUtil.assertNotNull(betPromotionType, ErrorCode.ERR_INTER);
         if (Objects.equals(betPromotionType, BetPromotionTypeEnum.OPERATION_EVENT)) {
-            extendInfo = new HashMap<>();
-            extendInfo.put(extend_field_ieId, betDo.getGameOperationEvent().getOperationEvent().getEventId());
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .ieId(betDo.getGameOperationEvent().getOperationEvent().getEventId())
+                    .build();
         } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.STAR_CARD)) {
-            extendInfo = new HashMap<>();
-            extendInfo.put(extend_field_rewardUrl, betDo.getRewardDetail().getDetails().getImgUrl());
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
+                    .build();
         } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.FREE_SPIN)) {
-            extendInfo = new HashMap<>();
-            extendInfo.put(extend_field_campaignId, betDo.getCampaignId());
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .campaignId(betDo.getCampaignId())
+                    .build();
         }
         BetRecordDo.Inventory inventory = null;
         if (Objects.nonNull(betDo.getBetInventoryControl())) {
