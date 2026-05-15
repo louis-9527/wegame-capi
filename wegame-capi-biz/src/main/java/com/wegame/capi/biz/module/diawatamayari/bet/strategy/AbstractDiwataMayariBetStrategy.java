@@ -46,26 +46,23 @@ public abstract class AbstractDiwataMayariBetStrategy
     DiwataMayariGameContext<DiwataMayariGameRecordDo> diwataMayariGameContext;
     @Autowired
     DiwataMayariBetRecordManager diwataMayariBetRecordManager;
-
     @Autowired
     @Qualifier("diwataMayariOperationEventManager")
-    private DiwataMayariOperationEventManager diwataMayariOperationEventManager;
+    DiwataMayariOperationEventManager diwataMayariOperationEventManager;
     @Autowired
-    private DiwataMayariBetHelper diwataMayariBetHelper;
+    DiwataMayariBetHelper diwataMayariBetHelper;
     @Autowired
-    private DiwataMayariConfig diwataMayariConfig;
+    DiwataMayariConfig diwataMayariConfig;
 
     @Override
     public AbstractGameContext<DiwataMayariGameRecordDo> gameContext() {
         return diwataMayariGameContext;
     }
 
-
     @Override
     public AbstractBetRecordManager<DiwataMayariGameRecordDo> betRecordManager() {
         return diwataMayariBetRecordManager;
     }
-
 
     @Override
     public AbstractOperationEventManager operationEventManager() {
@@ -180,10 +177,6 @@ public abstract class AbstractDiwataMayariBetStrategy
         if (CollectionUtils.isNotEmpty(currentWheelGameRecordList)) {
             DiwataMayariGameRecordDo lastGameRecord = currentWheelGameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
             if (Objects.nonNull(lastGameRecord)) {
-                long payOutAmount = allGameRecordList.stream()
-                        .filter(item -> Objects.nonNull(item.getRewardResult()))
-                        .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                        .sum();
                 betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
             }
         }

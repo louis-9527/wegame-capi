@@ -77,9 +77,15 @@ public class DiwataMayariConfig extends GameBizConfig {
     // * 模板配置
     // */
     private TemplateRangeConfig templateRangeConfig; // todo delete
+    /**
+     * 通用血池控制配置
+     */
     private CommonBloodPoolControlConfig commonBloodPoolControlConfig;
-
+    /**
+     * 通用模版配置
+     */
     private CommonTemplateConfig commonTemplateConfig;
+
     @Data
     @SuperBuilder
     @NoArgsConstructor

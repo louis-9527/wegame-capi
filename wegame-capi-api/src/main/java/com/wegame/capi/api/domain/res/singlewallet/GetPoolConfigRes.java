@@ -1,14 +1,15 @@
 package com.wegame.capi.api.domain.res.singlewallet;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @SuperBuilder
@@ -52,7 +53,7 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
         /**
          * 当前档位
          */
-        private Integer currentLevelNo;
+        private String currentLevelNo;
         /**
          * 平台id   todo @bruce
          */
@@ -81,6 +82,17 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
          * 最后变更时间
          */
         private Date lastChangeAt;
+
+        public boolean match(String userPid, String userChannelId, long betAmount) {
+            return StringUtils.equals(userPid, pid)
+                    && StringUtils.equals(userChannelId, channelId)
+                    && betAmountInRange(betAmount);
+        }
+
+        private boolean betAmountInRange(long betAmount) {
+            return Objects.nonNull(betAmountMin) && betAmountMin.multiply(BigDecimal.valueOf(1000)).longValue() <= betAmount
+                    && Objects.nonNull(betAmountMax) && betAmount <= betAmountMax.multiply(BigDecimal.valueOf(1000)).longValue();
+        }
     }
 }
 

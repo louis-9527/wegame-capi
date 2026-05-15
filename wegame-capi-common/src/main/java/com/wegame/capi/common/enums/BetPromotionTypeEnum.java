@@ -16,7 +16,10 @@ public enum BetPromotionTypeEnum {
     NONE(0, "无"),
     OPERATION_EVENT(1, "干预事件"),
     STAR_CARD(2, "星卡"),
-    FREE_SPIN(3, "预定投注");
+    FREE_SPIN(3, "预定投注"),
+    STAR_CARD_IN_FREE(21, "免费星卡")
+
+    ;
 
     /**
      * 枚举码.

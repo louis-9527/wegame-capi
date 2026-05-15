@@ -64,17 +64,17 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, "BetRecordTemplateEsService");
+        log.info(BUILD_BEAN_FORMAT, "BetRecordTemplateService");
     }
 
-    public T findById(String templateName, Long id, Class<T> clazz) {
+    public T findById(String templateIndexName, Long id, Class<T> clazz) {
         long startTime = System.currentTimeMillis();
-        log.info("findById query, id: {}, templateName: {}", id, templateName);
+        log.info("findById query, id: {}, templateIndexName: {}", id, templateIndexName);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
         try {
             // 1. 组装请求
-            GetRequest getRequest = new GetRequest(templateName, id.toString())
+            GetRequest getRequest = new GetRequest(templateIndexName, id.toString())
                     .fetchSourceContext(new FetchSourceContext(true,
                             new String[]{"id", "bytes", "multiple"},
                             //new String[]{"id", "bytes","multiple"},   // 包含
@@ -97,9 +97,9 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
         }
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateName + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
-    public List<Long> listIdByMultipleRange(String templateName, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
-        log.info("listIdByMultipleRange query, betType: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateName: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateName);
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateIndexName + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByMultipleRange(String templateIndexName, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
+        log.info("listIdByMultipleRange query, betType: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateIndexName: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateIndexName);
         // 构建ES查询
         // 创建布尔查询构建器
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -119,7 +119,7 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
         // 第一次不带 search_after
         Object[] searchAfter = null;
         do {
-            List<Long> batch = fetchBatch(templateName, boolQuery, searchAfter, 5000);
+            List<Long> batch = fetchBatch(templateIndexName, boolQuery, searchAfter, 5000);
             if (batch.isEmpty()) break;
             result.addAll(batch);
             searchAfter = new Object[]{batch.get(batch.size() - 1)}; // 最后一条 id
@@ -127,10 +127,10 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
         return result;
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateName + '_' + #betType.getCode() + '_'+ #betSubType.getCode()+'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
-    public List<Long> listIdByMultipleRange(String templateName, BetTypeEnum betType, BetSubTypeEnum betSubType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
-        log.info("listIdByMultipleRange query, betType: {},betSubType:{}, multipleRangeStart: {}, multipleRangeEnd: {}, templateName: {}",
-                betType.getCode(), betSubType.getCode(), multipleRangeStart, multipleRangeEnd, templateName);
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateIndexName + '_' + #betType.getCode() + '_'+ #betSubType.getCode()+'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByMultipleRange(String templateIndexName, BetTypeEnum betType, BetSubTypeEnum betSubType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
+        log.info("listIdByMultipleRange query, betType: {},betSubType:{}, multipleRangeStart: {}, multipleRangeEnd: {}, templateIndexName: {}",
+                betType.getCode(), betSubType.getCode(), multipleRangeStart, multipleRangeEnd, templateIndexName);
         // 构建ES查询
         // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
         // 创建布尔查询构建器
@@ -152,7 +152,7 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
         // 第一次不带 search_after
         Object[] searchAfter = null;
         do {
-            List<Long> batch = fetchBatch(templateName, boolQuery, searchAfter, 5000);
+            List<Long> batch = fetchBatch(templateIndexName, boolQuery, searchAfter, 5000);
             if (batch.isEmpty()) break;
             result.addAll(batch);
             searchAfter = new Object[]{batch.get(batch.size() - 1)}; // 最后一条 id
@@ -160,10 +160,10 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
         return result;
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateName + '_'+ #tag +'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
-    public List<Long> listIdByTagAndMultipleRange(String templateName, String tag, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
-        log.info("listIdByMultipleRange query, tag: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateName: {}",
-                tag, multipleRangeStart, multipleRangeEnd, templateName);
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateIndexName + '_'+ #tag +'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByTagAndMultipleRange(String templateIndexName, String tag, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
+        log.info("listIdByMultipleRange query, tag: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateIndexName: {}",
+                tag, multipleRangeStart, multipleRangeEnd, templateIndexName);
         // 构建ES查询
         // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
         // 创建布尔查询构建器
@@ -184,7 +184,7 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
         // 第一次不带 search_after
         Object[] searchAfter = null;
         do {
-            List<Long> batch = fetchBatch(templateName, boolQuery, searchAfter, 5000);
+            List<Long> batch = fetchBatch(templateIndexName, boolQuery, searchAfter, 5000);
             if (batch.isEmpty()) break;
             result.addAll(batch);
             searchAfter = new Object[]{batch.get(batch.size() - 1)}; // 最后一条 id
@@ -192,7 +192,7 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
         return result;
     }
 
-    public List<T> listByIdList(String templateName, List<Long> idList, Class<T> clazz) {
+    public List<T> listByIdList(String templateIndexName, List<Long> idList, Class<T> clazz) {
         if (CollectionUtils.isEmpty(idList)) {
             return Collections.emptyList();
         }
@@ -206,28 +206,28 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
                 .withQuery(idsQuery)
                 .withPageable(Pageable.unpaged())
                 .build();
-        SearchHits<T> hits = elasticsearchRestTemplate.search(query, clazz, IndexCoordinates.of(templateName));
+        SearchHits<T> hits = elasticsearchRestTemplate.search(query, clazz, IndexCoordinates.of(templateIndexName));
         return hits.stream()
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList());
     }
 
-    @CachePut(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateName + '_' + #betRecordId")
-    public T putTemplateLocalCache(String templateName, Long betRecordId, T t) {
+    @CachePut(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateIndexName + '_' + #betRecordId")
+    public T putTemplateLocalCache(String templateIndexName, Long betRecordId, T t) {
         return t;
     }
 
-    @CachePut(value = CacheConstants.TEMPLATE_REDIS, key = "#templateName + '_' + #betRecordId")
-    public T putTemplateRedisCache(String templateName, Long betRecordId, T t) {
+    @CachePut(value = CacheConstants.TEMPLATE_REDIS, key = "#templateIndexName + '_' + #betRecordId")
+    public T putTemplateRedisCache(String templateIndexName, Long betRecordId, T t) {
         return t;
     }
 
-    @Cacheable(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateName + '_' + #betRecordId")
-    public T getTemplateWithLocalCache(String templateName, Long betRecordId, Class<T> clazz) {
-        return findById(templateName, betRecordId, clazz);
+    @Cacheable(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateIndexName + '_' + #betRecordId")
+    public T getTemplateWithLocalCache(String templateIndexName, Long betRecordId, Class<T> clazz) {
+        return findById(templateIndexName, betRecordId, clazz);
     }
 
-    private List<Long> fetchBatch(String templateName,
+    private List<Long> fetchBatch(String templateIndexName,
                                   BoolQueryBuilder boolQuery,
                                   Object[] searchAfter,
                                   int size) {
@@ -244,7 +244,7 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
             if (searchAfter != null) {
                 source.searchAfter(searchAfter);
             }
-            SearchRequest request = new SearchRequest(templateName)
+            SearchRequest request = new SearchRequest(templateIndexName)
                     .source(source);
             //.preference("_primary");   // 可选：避免副本 reorder
             SearchResponse resp = restHighLevelClient.search(request, RequestOptions.DEFAULT);

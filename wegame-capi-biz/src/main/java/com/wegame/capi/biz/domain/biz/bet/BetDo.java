@@ -95,6 +95,7 @@ public class BetDo implements Serializable {
     private GamePlayTypeEnum gamePlayType;
 
     private BetInventoryControlDo betInventoryControl;
+    private BetBloodPoolControlDo betBloodPoolControl;
     /// //////////// 波动选择 ///////////////
     private VolatilityTypeEnum volatility;
 }

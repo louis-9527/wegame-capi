@@ -53,6 +53,22 @@ public class CommonTemplateConfig implements Serializable {
         return multipleRange.getEnd().compareTo(endOdds) <= 0;
     }
 
+    public String getIndexName(TemplateIndexTypeEnum templateIndexType) {
+        return templateIndexMap.get(templateIndexType);
+    }
+
+    public Map<String, Integer> getMultipileWeightMap(String key, String subKey, BetTypeEnum betType) {
+        Map<String, String> map = rewardControlMap.get(key);
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        String rtpName = map.get(subKey);
+        AssertUtil.assertStrNotEmpty(rtpName, ErrorCode.ERR_INTER);
+        Map<BetTypeEnum, Map<String, Integer>> rtpMap = rtpMultipleRangeWeightMap.get(rtpName);
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(rtpMap), ErrorCode.ERR_INTER);
+        Map<String, Integer> ret = rtpMap.get(betType);
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(ret), ErrorCode.ERR_INTER);
+        return ret;
+    }
+
     public void validate() {
         validateTemplateWarmUpEndOddsMap();
         validateTemplateIndexMap();
