@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 投注服务
@@ -86,8 +83,10 @@ public class BetService {
             }
         } else {
             UserInfo userInfo = UserInfoContext.getUserInfo();
-            Map<String, Object> ext = userInfo.getExt();
-            String at = ext.getOrDefault(AT, AtTypeEnum.NORMAL.getId()).toString();
+            String at = Optional.ofNullable(userInfo.getExt())
+                    .map(ext -> ext.getOrDefault(AT, AtTypeEnum.NORMAL.getId()))
+                    .map(Object::toString)
+                    .orElse(AtTypeEnum.NORMAL.getId());
             if (Objects.equals(at, AtTypeEnum.NORMAL.getId())) {
                 betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
             } else {
