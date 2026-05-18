@@ -14,9 +14,9 @@ public class Constants {
     public static final Long REQUEST_TIME_OUT = 5 * 60 * 1000L;
 
     public static final String DEFAULT = "Default";
-    public static final String Reward_Config_subkey_DEFAULT = "Default";
-    public static final String Reward_Config_subkey_FreeSpin = "FreeSpin";
-    public static final String Reward_Config_subkey_StarCard = "StarCard";
+    public static final String REWARD_CONFIG_SUBKEY_DEFAULT = "Default";
+    public static final String REWARD_CONFIG_SUBKEY_FREE_SPIN = "FreeSpin";
+    public static final String REWARD_CONFIG_SUBKEY_STAR_CARD = "StarCard";
 
 
 

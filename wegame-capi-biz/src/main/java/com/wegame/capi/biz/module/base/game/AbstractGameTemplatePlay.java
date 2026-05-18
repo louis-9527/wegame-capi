@@ -5,7 +5,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.converter.ToVoConverter;
-import com.wegame.capi.biz.domain.biz.bet.BetBloodPoolControlDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
@@ -68,7 +67,7 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
         GetPoolConfigRes.BloodPoolConfig bloodPoolConfig = bloodPoolControlService.matchBloodPoolConfig(betDo, gamePlayDo);
         if (Objects.nonNull(bloodPoolConfig)) {
             try {
-                TreeMap<String, Integer> multipleWeightMap = commonTemplateConfig.getMultipileWeightMap(String.valueOf(bloodPoolConfig.getPoolCategory()), bloodPoolConfig.getCurrentLevelNo(), betDo.getBetType());
+                TreeMap<String, Integer> multipleWeightMap = commonTemplateConfig.getMultipleWeightMap(String.valueOf(bloodPoolConfig.getPoolCategory()), bloodPoolConfig.getCurrentLevelNo(), betDo.getBetType());
                 return getTemplateMultipleRange(multipleWeightMap);
             } catch (Exception e) {
                 larkHelper.sendWarningMsg(String.format(RTP_EX_MATCH_WARNING_MSG_FORMAT,
@@ -88,7 +87,7 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getBetPromotionType(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(commonTemplateConfig, ErrorCode.ERR_INTER);
-        TreeMap<String, Integer> multipleWeightMap = commonTemplateConfig.getMultipileWeightMap(Constants.DEFAULT,
+        TreeMap<String, Integer> multipleWeightMap = commonTemplateConfig.getMultipleWeightMap(Constants.DEFAULT,
                 betDo.getBetPromotionType().getDefaultRewardControlSubKey(),
                 betDo.getBetType());
         return getTemplateMultipleRange(multipleWeightMap);

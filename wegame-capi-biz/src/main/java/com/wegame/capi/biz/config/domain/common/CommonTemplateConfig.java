@@ -58,7 +58,7 @@ public class CommonTemplateConfig implements Serializable {
         return templateIndexMap.get(templateIndexType);
     }
 
-    public TreeMap<String, Integer> getMultipileWeightMap(String key, String subKey, BetTypeEnum betType) {
+    public TreeMap<String, Integer> getMultipleWeightMap(String key, String subKey, BetTypeEnum betType) {
         TreeMap<String, String> map = rewardControlMap.get(key);
         AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
         String rtpName = map.get(subKey);

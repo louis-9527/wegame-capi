@@ -4,11 +4,13 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import com.wegame.base.enums.EnvEnum;
 import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
+import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateIndexTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -45,6 +45,17 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         if (!supportGame(GameTypeEnum.DIWATA_MAYARI)) {
             return;
         }
+        CommonTemplateConfig commonTemplateConfig = diwataMayariConfig.getCommonTemplateConfig();
+        Map<BetTypeEnum, BigDecimal> oddsMap = commonTemplateConfig.getTemplateWarmUpEndOddsMap();
+        Map<TemplateIndexTypeEnum, String> indexMap = commonTemplateConfig.getTemplateIndexMap();
+        TreeMap<String, TreeMap<BetTypeEnum, TreeMap<String, Integer>>> rtpMultipleRangeWeightMap = commonTemplateConfig.getRtpMultipleRangeWeightMap();
+        TreeMap<String, TreeMap<String, String>> map = commonTemplateConfig.getRewardControlMap();
+        // 预热所有index下的所有需要预热的倍率
+
+        // 预热所有范围的id列表
+
+
+
         List<TemplateTypeEnum> templateTypeList = TemplateTypeEnum.listByGameType(GameTypeEnum.DIWATA_MAYARI);
         Optional.ofNullable(templateTypeList).orElse(Collections.emptyList())
                 .forEach(item -> {
