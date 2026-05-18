@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class BetWithPayoutReqBuilder {
 
-    public static BetWithPayoutReq buildReq(BetRecordDo betRecordDo) {
+    public static BetWithPayoutReq buildReq(BetDo betDo, BetRecordDo betRecordDo) {
         long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
         return BetWithPayoutReq.builder()
                 .pId(betRecordDo.getPId())
@@ -41,12 +41,14 @@ public class BetWithPayoutReqBuilder {
                         // todo 0元投注
                         .isFreeRound(false)
                         .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
+                        .betCategory(betDo.getBetType().getBetCategory())
+                        .enableFundPool(Objects.nonNull(betDo.getBetBloodPoolControl()) ? betDo.getBetBloodPoolControl().isEnableFundPool() : false)
                         .build())
                 .build();
     }
 
-    public static BetWithPayoutReq buildReq(BetRecordDo betRecordDo, List<JackpotRewardPoolDo> jackpotRewardPoolDos) {
-        BetWithPayoutReq req = buildReq(betRecordDo);
+    public static BetWithPayoutReq buildReq(BetDo betDo, BetRecordDo betRecordDo, List<JackpotRewardPoolDo> jackpotRewardPoolDos) {
+        BetWithPayoutReq req = buildReq(betDo, betRecordDo);
         BetWithPayoutReq.BetDetails.JackpotDetails details = BetWithPayoutReq.BetDetails.JackpotDetails.builder()
                 .jackpotPool(buildBetWithPayoutJackpotPool(jackpotRewardPoolDos))
                 .jackpotContributionDetails(buildBetWithPayoutJackpotPoolCommission(betRecordDo))
@@ -173,6 +175,8 @@ public class BetWithPayoutReqBuilder {
                     .settlementDate(uctSecond)
                     .isFreeRound(false)
                     .jackpotDetails(new BetStarSpinReq.BetDetails.JackpotDetails())
+                    .betCategory(betDo.getBetType().getBetCategory())
+                    .enableFundPool(Objects.nonNull(betDo.getBetBloodPoolControl()) ? betDo.getBetBloodPoolControl().isEnableFundPool() : false)
                     .build());
         }
         return betStarSpinReq;

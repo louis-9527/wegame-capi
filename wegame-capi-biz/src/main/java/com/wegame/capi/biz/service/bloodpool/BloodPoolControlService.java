@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.service.SingleWalletConfigService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import com.wegame.capi.infrastructure.helper.LarkHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,7 +29,7 @@ import static com.wegame.capi.api.SingleWalletConfigApi.*;
 @Component
 @Slf4j
 public class BloodPoolControlService {
-
+    private static final List<GameTypeEnum> SUPPORT_GAME_LIST = Arrays.asList(GameTypeEnum.DIWATA_MAYARI);
     @Autowired
     LarkHelper larkHelper;
     @Autowired
@@ -50,6 +52,9 @@ public class BloodPoolControlService {
     }
 
     public boolean judgeEnableBloodPoolControl(BetDo betDo) {
+        if (!SUPPORT_GAME_LIST.contains(betDo.getGameType())) {
+            return false;
+        }
         switch (betDo.getBetPromotionType()) {
             case NONE:
             case STAR_CARD:

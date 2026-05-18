@@ -3,9 +3,11 @@ package com.wegame.capi.biz.service;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.bet.BetBloodPoolControlDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.AbstractBetContext;
+import com.wegame.capi.biz.service.bloodpool.BloodPoolControlService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.AbTypeEnum;
@@ -55,12 +57,15 @@ public class BetService {
 
     @Autowired
     Map<String, AbstractBetContext> contextMap;
+    @Autowired
+    BloodPoolControlService bloodPoolControlService;
 
     public BetResultDo bet(BetDo betDo) {
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_PARAM);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(betDo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         buildGamePlayType(betDo);
+        buildBloodPoolControl(betDo);
         String betContextName = contextNameMap.get(gameType);
         AssertUtil.assertStrNotEmpty(betContextName, ErrorCode.ERR_PARAM, "Not Support Game");
         AbstractBetContext betContext = contextMap.get(betContextName);
@@ -83,5 +88,11 @@ public class BetService {
             // Kapre 强制不走模版
             betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
         }
+    }
+
+    private void buildBloodPoolControl(BetDo betDo) {
+        betDo.setBetBloodPoolControl(BetBloodPoolControlDo.builder()
+                .enableFundPool(bloodPoolControlService.judgeEnableBloodPoolControl(betDo))
+                .build());
     }
 }
