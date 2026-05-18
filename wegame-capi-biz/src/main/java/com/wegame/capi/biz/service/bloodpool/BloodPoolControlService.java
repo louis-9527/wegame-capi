@@ -22,16 +22,16 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.api.SingleWalletConfigApi.*;
 
 /**
- * 游戏模版Play(血池控制)
+ * 血池控制服务
  */
 @Component
 @Slf4j
 public class BloodPoolControlService {
 
     @Autowired
-    GameApiProperty gameApiProperty;
-    @Autowired
     LarkHelper larkHelper;
+    @Autowired
+    GameApiProperty gameApiProperty;
     @Autowired
     SingleWalletConfigService singleWalletConfigService;
 
@@ -49,10 +49,7 @@ public class BloodPoolControlService {
         return matchConfig(userInfo, list, betDo, gamePlayDo);
     }
 
-    public boolean judgeEnableBloodPoolControl(BetDo betDo, GamePlayDo gamePlayDo, GetPoolConfigRes.BloodPoolConfig bloodPoolConfig) {
-        if (Objects.isNull(bloodPoolConfig)) {
-            return false;
-        }
+    public boolean judgeEnableBloodPoolControl(BetDo betDo) {
         switch (betDo.getBetPromotionType()) {
             case NONE:
             case STAR_CARD:
@@ -67,15 +64,18 @@ public class BloodPoolControlService {
 
     private GetPoolConfigRes.BloodPoolConfig matchConfig(UserInfo userInfo, List<GetPoolConfigRes.BloodPoolConfig> configList, BetDo betDo, GamePlayDo gamePlayDo) {
         if (CollectionUtils.isEmpty(configList)) {
+            // 未获取到配置，告警
             larkHelper.sendWarningMsg(String.format(EMPTY_LIST_WARNING_MSG_FORMAT, betDo.getGameId()));
             return null;
         }
         List<GetPoolConfigRes.BloodPoolConfig> matchConfigList = configList.stream().filter(item -> item.match(betDo.getBetAmount(), betDo.getBetType()))
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(matchConfigList)) {
+            // 未匹配到，告警
             larkHelper.sendWarningMsg(String.format(NO_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetType(), betDo.getGameId()));
             return null;
         } else if (matchConfigList.size() > 1) {
+            // 匹配到多条，告警
             larkHelper.sendWarningMsg(String.format(MULTI_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetType(), betDo.getGameId()));
             return null;
         } else {

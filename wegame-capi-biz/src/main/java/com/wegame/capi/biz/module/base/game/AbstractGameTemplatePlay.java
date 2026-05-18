@@ -69,15 +69,15 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
         if (Objects.nonNull(bloodPoolConfig)) {
             // 设置投注上下文
             betDo.setBetBloodPoolControl(BetBloodPoolControlDo.builder()
-                    .matchBloodPoolCategory(bloodPoolConfig.getPoolCategory())
-                    .matchBloodPoolLevel(bloodPoolConfig.getCurrentLevelNo())
-                    .enableFundPool(bloodPoolControlService.judgeEnableBloodPoolControl(betDo, gamePlayDo, bloodPoolConfig))
+                    //.matchBloodPoolCategory(bloodPoolConfig.getPoolCategory())
+                    //.matchBloodPoolLevel(bloodPoolConfig.getCurrentLevelNo())
+                    .enableFundPool(bloodPoolControlService.judgeEnableBloodPoolControl(betDo))
                     .build());
             try {
-                TreeMap<String, Integer> multipleWeightMap = commonTemplateConfig.getMultipileWeightMap(bloodPoolConfig.getPoolCategory(), bloodPoolConfig.getCurrentLevelNo(), betDo.getBetType());
+                TreeMap<String, Integer> multipleWeightMap = commonTemplateConfig.getMultipileWeightMap(String.valueOf(bloodPoolConfig.getPoolCategory()), bloodPoolConfig.getCurrentLevelNo(), betDo.getBetType());
                 return getTemplateMultipleRange(multipleWeightMap);
             } catch (Exception e) {
-                betDo.setBetBloodPoolControl(null);
+                //betDo.setBetBloodPoolControl(null);
                 larkHelper.sendWarningMsg(String.format(RTP_EX_MATCH_WARNING_MSG_FORMAT,
                         bloodPoolConfig.getPoolCategory(),
                         bloodPoolConfig.getCurrentLevelNo(),
