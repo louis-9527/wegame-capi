@@ -10,18 +10,8 @@ db.getCollection("sirena_bet_record").drop();
 db.createCollection("sirena_bet_record");
 // 索引sirena_bet_record-c端查询需要
 db.sirena_bet_record.createIndex({playerId: 1, channelId: 1, status: 1, createTime: -1});
+db.sirena_bet_record.createIndex({playerId: 1, createTime: -1});
 db.sirena_bet_record.createIndex({createTime: -1, status: 1, betSubType: 1, userId : 1,  _id: 1});
-db.sirena_bet_record.createIndex({createTime: -1, status: 1, freeWheelHandleStatus: 1, _id: 1});
-// 索引sirena_bet_record-b端查询需要-使用覆盖索引
-db.sirena_bet_record.createIndex({
-    createTime: -1,
-    channelId: 1,
-    status: 1,
-    payAmount: 1,
-    payOutAmount: 1,
-    userId: 1,
-    betPromotionType: 1
-});
 
 
 // ----------------------------

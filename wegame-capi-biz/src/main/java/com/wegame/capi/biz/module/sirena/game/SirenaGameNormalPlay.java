@@ -344,7 +344,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                         SirenaSymbolDo temp = symbolArr[row][col];
                         BigDecimal symbolMultiple = totalSymbolOdd.multiply(pearlMultiple);
                         // 如果bigPearl元素倍率小于2，修改为2倍
-                        if (sirenaConfig.getMinBigPearlMultiple().compareTo(pearlMultiple) > 0) {
+                        if (sirenaConfig.getMinBigPearlMultiple().compareTo(symbolMultiple) > 0) {
                             symbolMultiple = sirenaConfig.getMinBigPearlMultiple();
                         }
                         SirenaSymbolDo sirenaSymbolDo = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, symbolMultiple);
@@ -369,7 +369,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     }
     private void setSymbolPlaceholder(int row,int col,SirenaSymbolDo[][] symbolArr){
         SirenaSymbolDo temp = symbolArr[row][col];
-        SirenaSymbolDo symbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER;
+        SirenaSymbolDo symbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER.copy();
         symbolPlaceholder.setNestSymbol(temp);
         symbolArr[row][col] = symbolPlaceholder;
     }

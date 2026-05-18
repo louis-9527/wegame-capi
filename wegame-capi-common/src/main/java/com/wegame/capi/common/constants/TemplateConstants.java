@@ -23,5 +23,7 @@ public class TemplateConstants {
 
     public static final String SIRENA_BET_RECORD_TEMPLATE = "sirena_bet_record_template";
 
+    public static final String SIRENA_BET_RECORD_TEMPLATE_V2 = "sirena_bet_record_template_v2";
+
     public static final String ATLANTIS_BET_RECORD_TEMPLATE = "atlantis_bet_record_template";
 }
