@@ -6,6 +6,7 @@
 -- Table: mariamakiling_bet_record
 CREATE TABLE `mariamakiling_bet_record` (
   `_id` varchar(255) NOT NULL COMMENT "主键ID",
+  `parentId` bigint NULL COMMENT "parentID",
   `pId` varchar(255) NULL COMMENT "平台id",
   `channelId` varchar(255) NULL COMMENT "渠道id",
   `gameId` varchar(255) NULL COMMENT "游戏id",
@@ -23,9 +24,14 @@ CREATE TABLE `mariamakiling_bet_record` (
   `payAmount` bigint NULL COMMENT "支付金额 单位：厘",
   `reachMaxMultiple` boolean NULL COMMENT "是否达到最大倍数",
   `payOutAmount` bigint NULL COMMENT "派彩金额 单位：分",
+  `marketFlag` int NULL COMMENT "营销标识 0否 1是",
   `status` int NULL COMMENT "状态 0进行中 1已完结 2无效",
   `betTime` bigint NULL COMMENT "投注时间",
+  `jackpot` text NULL COMMENT "jackpot信息（JSON格式）",
+  `inventory` text NULL COMMENT "库存信息（JSON格式）",
   `credit` bigint NULL COMMENT "用户余额（厘）",
+  `extendInfo` text NULL COMMENT " 扩展信息（JSON格式）",
+  `freeWheelHandleStatus` varchar(255) NULL COMMENT "是否可以继续玩",
   `creator` varchar(255) NULL COMMENT "创建人",
   `createTime` bigint NULL COMMENT "创建时间",
   `updater` varchar(255) NULL COMMENT "更新人",

@@ -170,7 +170,7 @@ api:
               dosPassword: egame-secure-passphrase
       - platformIdList: [1000]
         invokeSingle: true
-        singleDomain: http://sw-wallet-http-ali.casinoplus.ai
+        singleDomain: http://asystem-sw-inhouse-http-main.casinoplus.ai
         freeSpinDomain: http://sw-http-freespin.casinoplus.ai
         promotionDomain: http://reward-http.casinoplus.ai
         operationDomain: http://dos-egame-aliyun.casinoplus.ai
