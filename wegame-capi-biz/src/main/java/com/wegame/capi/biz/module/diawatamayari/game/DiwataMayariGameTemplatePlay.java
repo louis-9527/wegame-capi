@@ -45,7 +45,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         String templateIndexName = diwataMayariConfig.getCommonTemplateConfig().getIndexName(TemplateIndexTypeEnum.getByBetPromotionType(betDo.getBetPromotionType()));
         AssertUtil.assertStrNotEmpty(templateIndexName, ErrorCode.ERR_INTER);
-        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(betDo, gamePlayDo, diwataMayariConfig.getCommonTemplateConfig());
+        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRangeWithBloodPoolControl(betDo, gamePlayDo, diwataMayariConfig.getCommonTemplateConfig());
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
         List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, gamePlayDo.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());

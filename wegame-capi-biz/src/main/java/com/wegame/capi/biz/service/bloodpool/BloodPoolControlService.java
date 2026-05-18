@@ -8,14 +8,15 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.service.SingleWalletConfigService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.infrastructure.helper.LarkHelper;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
+import com.wegame.capi.infrastructure.helper.LarkHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.api.SingleWalletConfigApi.*;
@@ -37,7 +38,7 @@ public class BloodPoolControlService {
     public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        // 1、获取血池控制配置
+        // 1、渠道判断是否支持
         boolean supportDos = gameApiProperty.supportDosChannelIdSet().contains(userInfo.getChannelId());
         if (!supportDos) {
             // 不支持血池控制
@@ -48,12 +49,28 @@ public class BloodPoolControlService {
         return matchConfig(userInfo, list, betDo, gamePlayDo);
     }
 
+    public boolean judgeEnableBloodPoolControl(BetDo betDo, GamePlayDo gamePlayDo, GetPoolConfigRes.BloodPoolConfig bloodPoolConfig) {
+        if (Objects.isNull(bloodPoolConfig)) {
+            return false;
+        }
+        switch (betDo.getBetPromotionType()) {
+            case NONE:
+            case STAR_CARD:
+            case STAR_CARD_IN_FREE:
+            case FREE_SPIN:
+                return true;
+            case OPERATION_EVENT:
+                return false;
+        }
+        return false;
+    }
+
     private GetPoolConfigRes.BloodPoolConfig matchConfig(UserInfo userInfo, List<GetPoolConfigRes.BloodPoolConfig> configList, BetDo betDo, GamePlayDo gamePlayDo) {
         if (CollectionUtils.isEmpty(configList)) {
             larkHelper.sendWarningMsg(String.format(EMPTY_LIST_WARNING_MSG_FORMAT, betDo.getGameId()));
             return null;
         }
-        List<GetPoolConfigRes.BloodPoolConfig> matchConfigList = configList.stream().filter(item -> item.match(userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount()))
+        List<GetPoolConfigRes.BloodPoolConfig> matchConfigList = configList.stream().filter(item -> item.match(betDo.getBetAmount(), betDo.getBetType()))
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(matchConfigList)) {
             larkHelper.sendWarningMsg(String.format(NO_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetType(), betDo.getGameId()));

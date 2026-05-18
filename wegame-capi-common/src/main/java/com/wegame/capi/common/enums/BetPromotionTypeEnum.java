@@ -8,6 +8,8 @@ import lombok.ToString;
 
 import java.util.Objects;
 
+import static com.wegame.capi.common.Constants.*;
+
 @Getter
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -48,5 +50,18 @@ public enum BetPromotionTypeEnum {
             }
         }
         return null;
+    }
+
+    public String getDefaultRewardControlSubKey() {
+        switch (this) {
+            case NONE:
+                return Reward_Config_subkey_DEFAULT;
+            case FREE_SPIN:
+                return Reward_Config_subkey_FreeSpin;
+            case STAR_CARD:
+            case STAR_CARD_IN_FREE:
+                return Reward_Config_subkey_StarCard;
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 }

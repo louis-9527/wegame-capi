@@ -15,6 +15,7 @@ import org.apache.commons.collections4.MapUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static com.wegame.capi.common.Constants.DEFAULT;
 
@@ -40,12 +41,12 @@ public class CommonTemplateConfig implements Serializable {
      * rtp倍率范围权重Map<br/>
      * Map<rtp名称(自定义)，Map<投注类型，Map<左开倍率_右闭倍率，权重>>>
      */
-    private Map<String, Map<BetTypeEnum, Map<String, Integer>>> rtpMultipleRangeWeightMap;
+    private TreeMap<String, TreeMap<BetTypeEnum, TreeMap<String, Integer>>> rtpMultipleRangeWeightMap;
     /**
      * 中奖控制Map<br/>
      * Map<名称(自定义)，Map<名称(各游戏自定义)，rtp名称>>
      */
-    private Map<String, Map<String, String>> rewardControlMap;
+    private TreeMap<String, TreeMap<String, String>> rewardControlMap;
 
     public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
         BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
@@ -57,14 +58,14 @@ public class CommonTemplateConfig implements Serializable {
         return templateIndexMap.get(templateIndexType);
     }
 
-    public Map<String, Integer> getMultipileWeightMap(String key, String subKey, BetTypeEnum betType) {
-        Map<String, String> map = rewardControlMap.get(key);
+    public TreeMap<String, Integer> getMultipileWeightMap(String key, String subKey, BetTypeEnum betType) {
+        TreeMap<String, String> map = rewardControlMap.get(key);
         AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
         String rtpName = map.get(subKey);
         AssertUtil.assertStrNotEmpty(rtpName, ErrorCode.ERR_INTER);
-        Map<BetTypeEnum, Map<String, Integer>> rtpMap = rtpMultipleRangeWeightMap.get(rtpName);
+        TreeMap<BetTypeEnum, TreeMap<String, Integer>> rtpMap = rtpMultipleRangeWeightMap.get(rtpName);
         AssertUtil.assertTrue(MapUtils.isNotEmpty(rtpMap), ErrorCode.ERR_INTER);
-        Map<String, Integer> ret = rtpMap.get(betType);
+        TreeMap<String, Integer> ret = rtpMap.get(betType);
         AssertUtil.assertTrue(MapUtils.isNotEmpty(ret), ErrorCode.ERR_INTER);
         return ret;
     }
@@ -94,7 +95,7 @@ public class CommonTemplateConfig implements Serializable {
         Assert.notNull(rtpMultipleRangeWeightMap, "rtpMultipleRangeWeightMap is null");
         Assert.isTrue(MapUtils.isNotEmpty(rtpMultipleRangeWeightMap), "rtpMultipleRangeWeightMap is empty");
         rtpMultipleRangeWeightMap.entrySet().forEach(item -> {
-            Map<BetTypeEnum, Map<String, Integer>> subMap = item.getValue();
+            TreeMap<BetTypeEnum, TreeMap<String, Integer>> subMap = item.getValue();
             Assert.isTrue(MapUtils.isNotEmpty(subMap), "rtpMultipleRangeWeightMap subMap is empty");
             for (BetTypeEnum betType : BetTypeEnum.values()) {
                 Map<String, Integer> rangeMap = subMap.get(betType);
@@ -119,7 +120,7 @@ public class CommonTemplateConfig implements Serializable {
             Map<String, String> subMap = item.getValue();
             Assert.isTrue(MapUtils.isNotEmpty(subMap), "rewardControlMap subMap is empty");
             subMap.keySet().forEach(rtpName -> {
-                Map<BetTypeEnum, Map<String, Integer>> rtpMap = rtpMultipleRangeWeightMap.get(rtpName);
+                TreeMap<BetTypeEnum, TreeMap<String, Integer>> rtpMap = rtpMultipleRangeWeightMap.get(rtpName);
                 Assert.isTrue(MapUtils.isNotEmpty(rtpMap), rtpName + " : rtpMap is empty");
             });
         });
