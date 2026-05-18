@@ -7,9 +7,6 @@ db.createCollection("bayanihan_bet_record");
 // 索引bayanihan_bet_record-c端查询需要
 db.bayanihan_bet_record.createIndex({playerId: 1, channelId: 1, status: 1, createTime: -1})
 db.bayanihan_bet_record.createIndex({createTime: -1, status: 1, _id: 1})
-// 索引bayanihan_bet_record-b端查询需要-使用覆盖索引
-db.bayanihan_bet_record.createIndex({createTime: -1, channelId: 1, status:1, payAmount:1, payOutAmount:1 ,userId:1, betPromotionType:1})
-
 
 // ----------------------------
 //  Collection structure for bayanihan_game_record
