@@ -54,10 +54,10 @@ public class GameApiProperty implements InitializingBean, Serializable {
         fillPrivateInfoMap();
         fillDosInfo();
         fillDomainInfoMap();
-        log.info("api game privateInfoMap: support pid_channelId {}", privateInfoMap.keySet());
-        log.info("api game domainInfoMap:  {}", domainInfoMap);
-        log.info("api game dosPrivateInfoMap: support channelId {}", dosPrivateInfoMap);
-        log.info("api game dosPrivateInfoMap: support channelId {}", dosDomainInfoMap);
+        //log.info("api game privateInfoMap: support pid_channelId {}", privateInfoMap.keySet());
+        //log.info("api game domainInfoMap:  {}", domainInfoMap);
+        //log.info("api game dosPrivateInfoMap: support channelId {}", dosPrivateInfoMap);
+        //log.info("api game dosPrivateInfoMap: support channelId {}", dosDomainInfoMap);
     }
 
     public boolean isInvokeSingle(String platformId) {

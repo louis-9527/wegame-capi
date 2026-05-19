@@ -3,7 +3,7 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.config.domain.common.CommonBloodPoolControlConfig;
+import com.wegame.capi.biz.config.domain.common.CommonBloodPoolConfig;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import lombok.*;
@@ -73,9 +73,9 @@ public class DiwataMayariConfig extends GameBizConfig {
     //// */
     //private TemplateRangeConfig templateRangeConfig; // todo delete
     /**
-     * 通用血池控制配置
+     * 通用血池配置
      */
-    private CommonBloodPoolControlConfig commonBloodPoolControlConfig;
+    private CommonBloodPoolConfig commonBloodPoolConfig;
     /**
      * 通用模版配置
      */
@@ -191,6 +191,12 @@ public class DiwataMayariConfig extends GameBizConfig {
         this.freeWheelTimesRuleConfigValidate();
         this.rewardMaxMultipleValidate();
         //this.templateRangeConfigValidate();
+        this.commonTemplateConfigValidate();
+    }
+
+    private void commonTemplateConfigValidate() {
+        AssertUtil.assertNotNull(this.commonTemplateConfig, ErrorCode.ERR_INTER, "commonTemplateConfig is null");
+        commonTemplateConfig.validate();
     }
 
     private void freeWheelTimesRuleConfigValidate() {

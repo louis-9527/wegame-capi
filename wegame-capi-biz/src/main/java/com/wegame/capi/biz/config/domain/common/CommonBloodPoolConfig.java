@@ -11,7 +11,7 @@ import java.io.Serializable;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommonBloodPoolControlConfig implements Serializable {
+public class CommonBloodPoolConfig implements Serializable {
     /**
      * 启用/禁用
      */
