@@ -35,9 +35,9 @@ public class FreeSpinController {
     @LoginRequired
     @ApiOperation(value = "freeSpinOfPlayer", httpMethod = "POST")
     @PostMapping("/freeSpinOfPlayer")
-    public CommonResponse<FreeSpinOfPlayerVo> freeSpinOfPlayer(@RequestBody FreeSpinOfPlayerRequest request) {
+    public CommonResponse<CommonRes<Map<String, Object>>> freeSpinOfPlayer(@RequestBody FreeSpinOfPlayerRequest request) {
         request.validate();
-        return build(doToVo(freeSpinService.freeSpinOfPlayer(request.getCheckCurrent())));
+        return build(freeSpinService.freeSpinOfPlayer(request.getCheckCurrent()));
     }
     @LoginRequired
     @ApiOperation(value = "freeSpinHistoryOfPlayer", httpMethod = "POST")
