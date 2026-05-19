@@ -25,12 +25,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public abstract class AbstractTemplateLoadPostHandler<T extends BetRecordTemplateEsDo> extends AbstractPostHandler {
 
-
     public static final List<String> enableEnvList = Lists.newArrayList(
             EnvEnum.STS.getValue(),
             //EnvEnum.PRE.getValue(),
-            EnvEnum.PROD.getValue()
-    );
+            EnvEnum.PROD.getValue());
 
     @Autowired
     BetRecordTemplateService<T> betRecordTemplateService;
