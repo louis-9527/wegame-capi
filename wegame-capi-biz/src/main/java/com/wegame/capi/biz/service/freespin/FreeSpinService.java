@@ -11,8 +11,6 @@ import com.wegame.capi.biz.domain.biz.promotion.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 import static com.wegame.capi.biz.builder.req.FreeSpinHistoryOfPlayerReqBuilder.buildReq;
 import static com.wegame.capi.biz.builder.req.FreeSpinOfPlayerReqBuilder.buildReq;
 import static com.wegame.capi.biz.builder.req.FreeSpinDetailReqBuilder.buildReq;
@@ -33,12 +31,14 @@ public class FreeSpinService {
         return singleWalletFreeSpinApi.freeSpin(req);
     }
 
-    public CommonRes<Map<String, Object>> freeSpinOfPlayer(Boolean checkCurrent) {
-        return singleWalletFreeSpinApi.freeSpinOfPlayer(buildReq(checkCurrent));
+    public FreeSpinOfPlayerDo freeSpinOfPlayer(Boolean checkCurrent) {
+        FreeSpinOfPlayerRes res = singleWalletFreeSpinApi.freeSpinOfPlayer(buildReq(checkCurrent));
+        return resToDo(res);
     }
 
-    public CommonRes<Map<String, Object>> freeSpinHistoryOfPlayer(Integer page, Integer limit) {
-        return singleWalletFreeSpinApi.freeSpinHistoryOfPlayer(buildReq(page, limit));
+    public FreeSpinHistoryOfPlayerDo freeSpinHistoryOfPlayer(Integer page, Integer limit) {
+        FreeSpinHistoryOfPlayerRes res = singleWalletFreeSpinApi.freeSpinHistoryOfPlayer(buildReq(page, limit));
+        return toDo(res);
     }
 
     public FreeSpinDetailDo freeSpinDetail(String campaignId) {
