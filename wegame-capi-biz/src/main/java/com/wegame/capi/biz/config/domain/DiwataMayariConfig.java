@@ -6,10 +6,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.common.CommonBloodPoolControlConfig;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
-import com.wegame.capi.client.enums.AbTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.domain.TemplateMultipleRange;
-import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -20,7 +16,6 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
@@ -73,10 +68,10 @@ public class DiwataMayariConfig extends GameBizConfig {
      */
     private Integer rewardMaxMultiple;
 
-    /// **
-    // * 模板配置
-    // */
-    private TemplateRangeConfig templateRangeConfig; // todo delete
+    ///// **
+    //// * 模板配置
+    //// */
+    //private TemplateRangeConfig templateRangeConfig; // todo delete
     /**
      * 通用血池控制配置
      */
@@ -159,34 +154,34 @@ public class DiwataMayariConfig extends GameBizConfig {
         private Integer stepFreeWheelTimes;
     }
 
-    @Data
-    @ToString
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @EqualsAndHashCode(callSuper = false)
-    public static class TemplateRangeConfig implements Serializable {
-        private static final long serialVersionUID = -734841249803450751L;
-        /**
-         * 预热Map
-         */
-        private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
-        /**
-         * 映射关系
-         * AbTypeEnum -> TemplateTypeEnum
-         */
-        private Map<AbTypeEnum, TemplateTypeEnum> templateMapping;
-        /**
-         * Map<TemplateTypeEnum, Map<BetType, Map<oddsRange, weight>>
-         */
-        private Map<TemplateTypeEnum, Map<BetTypeEnum, Map<String, Integer>>> templateRangeMap;
-
-        public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
-            BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
-            AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
-            return multipleRange.getEnd().compareTo(endOdds) <= 0;
-        }
-    }
+    //@Data
+    //@ToString
+    //@SuperBuilder
+    //@NoArgsConstructor
+    //@AllArgsConstructor
+    //@EqualsAndHashCode(callSuper = false)
+    //public static class TemplateRangeConfig implements Serializable {
+    //    private static final long serialVersionUID = -734841249803450751L;
+    //    /**
+    //     * 预热Map
+    //     */
+    //    private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
+    //    /**
+    //     * 映射关系
+    //     * AbTypeEnum -> TemplateTypeEnum
+    //     */
+    //    private Map<AbTypeEnum, TemplateTypeEnum> templateMapping;
+    //    /**
+    //     * Map<TemplateTypeEnum, Map<BetType, Map<oddsRange, weight>>
+    //     */
+    //    private Map<TemplateTypeEnum, Map<BetTypeEnum, Map<String, Integer>>> templateRangeMap;
+    //
+    //    public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
+    //        BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
+    //        AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
+    //        return multipleRange.getEnd().compareTo(endOdds) <= 0;
+    //    }
+    //}
 
     @Override
     public void bizValidate() {

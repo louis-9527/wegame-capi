@@ -40,7 +40,7 @@ public class BloodPoolControlService {
     public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        // 1、渠道判断是否支持
+        // 渠道判断是否支持
         boolean supportDos = gameApiProperty.supportDosChannelIdSet().contains(userInfo.getChannelId());
         if (!supportDos) {
             // 不支持血池控制

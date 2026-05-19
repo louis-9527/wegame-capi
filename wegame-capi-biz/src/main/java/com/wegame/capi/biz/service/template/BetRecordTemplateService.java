@@ -58,9 +58,9 @@ import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implements InitializingBean {
 
     @Autowired
-    ElasticsearchRestTemplate elasticsearchRestTemplate;
-    @Autowired
     RestHighLevelClient restHighLevelClient;
+    @Autowired
+    ElasticsearchRestTemplate elasticsearchRestTemplate;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -99,8 +99,11 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateIndexName + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(String templateIndexName, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
-        log.info("listIdByMultipleRange query, betType: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateIndexName: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateIndexName);
-        // 构建ES查询
+        log.info("listIdByMultipleRange query, betType: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateIndexName: {}",
+                betType.getCode(),
+                multipleRangeStart,
+                multipleRangeEnd,
+                templateIndexName);
         // 创建布尔查询构建器
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         // 添加betType条件
@@ -128,11 +131,13 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
     }
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateIndexName + '_' + #betType.getCode() + '_'+ #betSubType.getCode()+'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
-    public List<Long> listIdByMultipleRange(String templateIndexName, BetTypeEnum betType, BetSubTypeEnum betSubType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
+    public List<Long> listIdByMultipleRange(String templateIndexName, BetTypeEnum betType, BetSubTypeEnum betSubType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
         log.info("listIdByMultipleRange query, betType: {},betSubType:{}, multipleRangeStart: {}, multipleRangeEnd: {}, templateIndexName: {}",
-                betType.getCode(), betSubType.getCode(), multipleRangeStart, multipleRangeEnd, templateIndexName);
-        // 构建ES查询
-        // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
+                betType.getCode(),
+                betSubType.getCode(),
+                multipleRangeStart,
+                multipleRangeEnd,
+                templateIndexName);
         // 创建布尔查询构建器
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         // 添加betType条件

@@ -28,11 +28,16 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Component
 @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
-public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
+public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler<MalakasBetRecordTemplateEsDo> {
     @Autowired
     MalakasConfig malakasConfig;
     @Autowired
     BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
+
+    @Override
+    public Class<MalakasBetRecordTemplateEsDo> getClassType() {
+        return MalakasBetRecordTemplateEsDo.class;
+    }
 
     public static Map<String, String> normalBetRangeMap = new HashMap<>();
     public static Map<String, String> buyBetRangeMap = new HashMap<>();

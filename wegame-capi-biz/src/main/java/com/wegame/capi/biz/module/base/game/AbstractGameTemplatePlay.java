@@ -16,8 +16,9 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.infrastructure.helper.LarkHelper;
-import lombok.extern.slf4j.Slf4j;
+ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -63,12 +64,13 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
         return TemplateMultipleRange.build(templateMultipleRange);
     }
 
-    public TemplateMultipleRange getTemplateMultipleRangeWithBloodPoolControl(BetDo betDo, GamePlayDo gamePlayDo, CommonTemplateConfig commonTemplateConfig) {
+    public Pair<String, TemplateMultipleRange> getTemplateMultipleRangeWithBloodPoolControl(BetDo betDo, GamePlayDo gamePlayDo, CommonTemplateConfig commonTemplateConfig) {
         GetPoolConfigRes.BloodPoolConfig bloodPoolConfig = bloodPoolControlService.matchBloodPoolConfig(betDo, gamePlayDo);
         if (Objects.nonNull(bloodPoolConfig)) {
             try {
-                TreeMap<String, Integer> multipleWeightMap = commonTemplateConfig.getMultipleWeightMap(String.valueOf(bloodPoolConfig.getPoolCategory()), bloodPoolConfig.getCurrentLevelNo(), betDo.getBetType());
-                return getTemplateMultipleRange(multipleWeightMap);
+                CommonTemplateConfig.Rtp rtp = commonTemplateConfig.getRtp(String.valueOf(bloodPoolConfig.getPoolCategory()), bloodPoolConfig.getCurrentLevelNo());
+                AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
+                return Pair.of(rtp.getIndexName(), getTemplateMultipleRange(rtp.getMultipleRangeWeightMap().get(betDo.getBetType())));
             } catch (Exception e) {
                 larkHelper.sendWarningMsg(String.format(RTP_EX_MATCH_WARNING_MSG_FORMAT,
                         bloodPoolConfig.getPoolCategory(),
@@ -83,13 +85,11 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
         }
     }
 
-    public TemplateMultipleRange getDefaultTemplateMultipleRange(BetDo betDo, CommonTemplateConfig commonTemplateConfig) {
+    private Pair<String, TemplateMultipleRange> getDefaultTemplateMultipleRange(BetDo betDo, CommonTemplateConfig commonTemplateConfig) {
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getBetPromotionType(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(commonTemplateConfig, ErrorCode.ERR_INTER);
-        TreeMap<String, Integer> multipleWeightMap = commonTemplateConfig.getMultipleWeightMap(Constants.DEFAULT,
-                betDo.getBetPromotionType().getDefaultRewardControlSubKey(),
-                betDo.getBetType());
-        return getTemplateMultipleRange(multipleWeightMap);
+        CommonTemplateConfig.Rtp rtp = commonTemplateConfig.getRtp(Constants.DEFAULT, betDo.getBetPromotionType().getDefaultRewardControlSubKey());
+        return Pair.of(rtp.getIndexName(), getTemplateMultipleRange(rtp.getMultipleRangeWeightMap().get(betDo.getBetType())));
     }
 }
