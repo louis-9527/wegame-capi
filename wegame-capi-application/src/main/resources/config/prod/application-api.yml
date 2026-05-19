@@ -5,7 +5,7 @@ api:
       - platformIdList: [50, 52, 55]
         invokeSingle: true
         singleDomain: https://sw-inhouse-http-main-v2.igo10.me
-        singlePoolConfigDomain: http://dos-fund-pool-app-aliyun-qat.platform88.me // todo @bruce
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me // todo @bruce
         freeSpinDomain: https://sw-inhouse-http-freespin.igo10.me
         promotionDomain: https://reward-http.igo10.me
         operationDomain: http://dos-egame-aliyun.platform10.me
@@ -117,7 +117,7 @@ api:
       - platformIdList: [777]
         invokeSingle: true
         singleDomain: http://sw-external-platform-http-main.igo10.me
-        singlePoolConfigDomain: http://dos-fund-pool-app-aliyun-qat.platform88.me // todo @bruce
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me // todo @bruce
         freeSpinDomain: http://sw-inhouse-http-freespin.igo10.me
         promotionDomain: http://reward-http-ep.igo10.me
         operationDomain: http://dos-egame-bp-aliyun.platform10.me
@@ -173,7 +173,7 @@ api:
       - platformIdList: [1000]
         invokeSingle: true
         singleDomain: http://asystem-sw-inhouse-http-main.casinoplus.ai
-        singlePoolConfigDomain: http://dos-fund-pool-app-aliyun-qat.platform88.me // todo @bruce
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me // todo @bruce
         freeSpinDomain: http://sw-http-freespin.casinoplus.ai
         promotionDomain: http://reward-http.casinoplus.ai
         operationDomain: http://dos-egame-aliyun.casinoplus.ai
