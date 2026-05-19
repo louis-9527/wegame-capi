@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import static com.wegame.capi.common.Constants.DEFAULT;
+import static com.wegame.capi.common.Constants.*;
 
 /**
  * 通用模版配置模型
@@ -32,7 +32,7 @@ public class CommonTemplateConfig implements Serializable {
      * 模版预热Map</br>
      * 投注类型 —> 最大倍率（预热范围：[0,最大倍率]）, -1则不预热
      */
-    private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
+    private Map<BetTypeEnum, BigDecimal> warmUpEndMultipleMap;
     /**
      * rtp倍率范围权重Map<br/>
      * Map<rtp名称(自定义)，Map<投注类型，Map<左开倍率_右闭倍率，权重>>>
@@ -45,7 +45,7 @@ public class CommonTemplateConfig implements Serializable {
     private TreeMap<String, TreeMap<String, String>> rtpControlMap;
 
     public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
-        BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
+        BigDecimal endOdds = warmUpEndMultipleMap.get(betType);
         return Objects.nonNull(endOdds) && multipleRange.getEnd().compareTo(endOdds) <= 0;
     }
 
@@ -64,17 +64,15 @@ public class CommonTemplateConfig implements Serializable {
     }
 
     private void validateTemplateWarmUpEndOddsMap() {
-        AssertUtil.assertNotNull(templateWarmUpEndOddsMap, ErrorCode.ERR_INTER, "templateWarmUpEndOddsMap is null");
+        AssertUtil.assertNotNull(warmUpEndMultipleMap, ErrorCode.ERR_INTER, "templateWarmUpEndOddsMap is null");
         for (BetTypeEnum betType : BetTypeEnum.values()) {
-            AssertUtil.assertNotNull(templateWarmUpEndOddsMap.get(betType), ErrorCode.ERR_INTER, "templateWarmUpEndOddsMap.get(betType) is null of " + betType.getCode());
+            AssertUtil.assertNotNull(warmUpEndMultipleMap.get(betType), ErrorCode.ERR_INTER, "templateWarmUpEndOddsMap.get(betType) is null of " + betType.getCode());
         }
     }
 
     private void validateRtpMap() {
         Assert.isTrue(MapUtils.isNotEmpty(rtpMap), "rtpMap is empty");
-        rtpMap.entrySet().forEach(item -> {
-            Rtp rtp = item.getValue();
-            String rtpName = item.getKey();
+        rtpMap.forEach((rtpName, rtp) -> {
             Assert.notNull(rtp,  rtpName + " : rtp is null");
             Assert.notEmpty(rtp.getIndexName(), rtpName + "indexName is empty");
             TreeMap<BetTypeEnum, TreeMap<String, Integer>> multipleRangeWeightMap = rtp.getMultipleRangeWeightMap();
@@ -93,17 +91,16 @@ public class CommonTemplateConfig implements Serializable {
     }
 
     private void validateRewardControlMap() {
-        Assert.notNull(rtpControlMap, "rewardControlMap is null");
-        Assert.isTrue(MapUtils.isNotEmpty(rtpControlMap), "rewardControlMap is empty");
-        Assert.notNull(rtpControlMap.get(DEFAULT), "rewardControlMap defaultVal is null");
-        Assert.isTrue(MapUtils.isNotEmpty(rtpControlMap.get(DEFAULT)), "rewardControlMap defaultVal is empty");
-        rtpControlMap.entrySet().forEach(item -> {
-            Map<String, String> subMap = item.getValue();
-            Assert.isTrue(MapUtils.isNotEmpty(subMap), "rewardControlMap subMap is empty");
-            subMap.keySet().forEach(rtpName -> {
-                Rtp rtp = rtpMap.get(rtpName);
-                Assert.notNull(rtp, rtpName + " : rtp is null");
-            });
+        Assert.notNull(rtpControlMap, "rtpControlMap is null");
+        Assert.isTrue(MapUtils.isNotEmpty(rtpControlMap), "rtpControlMap is empty");
+        Map<String, String> defaultMap = rtpControlMap.get(DEFAULT);
+        Assert.notNull(defaultMap, "rtpControlMap defaultMap is null");
+        Assert.notEmpty(defaultMap.get(RTP_CONTROL_SUBKEY_DEFAULT), "rtpControlMap defaultMap's default is empty");
+        Assert.notEmpty(defaultMap.get(RTP_CONTROL_SUBKEY_FREE_SPIN), "rtpControlMap defaultMap's freeSpin is empty");
+        Assert.notEmpty(defaultMap.get(RTP_CONTROL_SUBKEY_STAR_CARD), "rtpControlMap defaultMap's starCard is empty");
+        rtpControlMap.forEach((key, subMap) -> {
+            Assert.isTrue(MapUtils.isNotEmpty(subMap), "rtpControlMap subMap is empty");
+            subMap.values().forEach(rtpName -> Assert.notNull(rtpMap.get(rtpName), rtpName + " : rtp is null"));
         });
     }
 

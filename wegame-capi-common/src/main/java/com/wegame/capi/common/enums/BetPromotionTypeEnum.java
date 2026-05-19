@@ -55,12 +55,12 @@ public enum BetPromotionTypeEnum {
     public String getDefaultRewardControlSubKey() {
         switch (this) {
             case NONE:
-                return REWARD_CONFIG_SUBKEY_DEFAULT;
+                return RTP_CONTROL_SUBKEY_DEFAULT;
             case FREE_SPIN:
-                return REWARD_CONFIG_SUBKEY_FREE_SPIN;
+                return RTP_CONTROL_SUBKEY_FREE_SPIN;
             case STAR_CARD:
             case STAR_CARD_IN_FREE:
-                return REWARD_CONFIG_SUBKEY_STAR_CARD;
+                return RTP_CONTROL_SUBKEY_STAR_CARD;
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
     }
