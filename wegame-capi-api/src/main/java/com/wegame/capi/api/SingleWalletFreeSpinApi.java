@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
@@ -109,22 +110,22 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
     }
 
     @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
-    public FreeSpinOfPlayerRes freeSpinOfPlayer(FreeSpinOfPlayerReq req) {
+    public CommonRes<Map<String, Object>> freeSpinOfPlayer(FreeSpinOfPlayerReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, freeSpinDomain(req.getPId()))));
-            ResponseEntity<CommonRes<FreeSpinOfPlayerRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinOfPlayerRes>>() {
+            ResponseEntity<CommonRes<Map<String, Object>>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<Map<String, Object>>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            if (!responseEntity.getBody().isSuc()) {
-                FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
-            }
+            //if (!responseEntity.getBody().isSuc()) {
+            //    FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+            //    AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            //    throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
+            //}
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
+            return responseEntity.getBody();
         } catch (BusinessException e) {
             log.error("freeSpinOfPlayer BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;
@@ -135,22 +136,22 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
     }
 
     @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
-    public FreeSpinHistoryOfPlayerRes freeSpinHistoryOfPlayer(FreeSpinHistoryOfPlayerReq req) {
+    public CommonRes<Map<String, Object>> freeSpinHistoryOfPlayer(FreeSpinHistoryOfPlayerReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinHistoryOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_HISTORY_OF_PLAYER, freeSpinDomain(req.getPId()))));
-            ResponseEntity<CommonRes<FreeSpinHistoryOfPlayerRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinHistoryOfPlayerRes>>() {
+            ResponseEntity<CommonRes<Map<String, Object>>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<Map<String, Object>>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            if (!responseEntity.getBody().isSuc()) {
-                FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
-            }
+            //if (!responseEntity.getBody().isSuc()) {
+            //    FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+            //    AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            //    throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
+            //}
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
+            return responseEntity.getBody();
         } catch (BusinessException e) {
             log.error("freeSpinHistoryOfPlayer BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;

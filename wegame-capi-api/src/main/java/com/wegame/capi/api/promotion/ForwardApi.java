@@ -44,7 +44,7 @@ public class ForwardApi extends PromotionBaseApi {
             //if (!responseEntity.getBody().isSuc()) {
             //    throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             //}
-            //AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody();
         } catch (BusinessException e) {
             log.error("promotion forward BusinessException, path: {}, req: {}, errMsg: {}", urlPath, req, e.getMessage(), e);

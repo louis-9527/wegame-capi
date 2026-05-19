@@ -2,6 +2,7 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.domain.request.promotion.FreeSpinHistoryOfPlayerRequest;
 import com.wegame.capi.client.domain.request.promotion.FreeSpinOfPlayerRequest;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 import static com.wegame.base.domain.CommonResponse.build;
 import static com.wegame.capi.biz.converter.promotion.FreeSpinPlayerConverter.doToVo;
@@ -39,9 +42,9 @@ public class FreeSpinController {
     @LoginRequired
     @ApiOperation(value = "freeSpinHistoryOfPlayer", httpMethod = "POST")
     @PostMapping("/freeSpinHistoryOfPlayer")
-    public CommonResponse<FreeSpinHistoryOfPlayerVo> freeSpinHistoryOfPlayer(@RequestBody FreeSpinHistoryOfPlayerRequest request) {
+    public CommonResponse<CommonRes<Map<String, Object>>> freeSpinHistoryOfPlayer(@RequestBody FreeSpinHistoryOfPlayerRequest request) {
         request.validate();
-        return build(toVo(freeSpinService.freeSpinHistoryOfPlayer(request.getPage(), request.getLimit())));
+        return build(freeSpinService.freeSpinHistoryOfPlayer(request.getPage(), request.getLimit()));
     }
 
 }
