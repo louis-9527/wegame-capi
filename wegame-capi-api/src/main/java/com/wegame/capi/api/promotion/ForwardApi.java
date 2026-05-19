@@ -31,7 +31,7 @@ public class ForwardApi extends PromotionBaseApi {
     private static final String PROMOTION_PATH_FORMAT = "%s/%s";
 
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
-    public Map<String, Object> forward(String urlPath, PromotionForwardReq req) {
+    public CommonRes<Map<String, Object>> forward(String urlPath, PromotionForwardReq req) {
         try {
             assembleSignature(req, req.getPreSignature());
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
@@ -41,11 +41,11 @@ public class ForwardApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            if (!responseEntity.getBody().isSuc()) {
-                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
-            }
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
+            //if (!responseEntity.getBody().isSuc()) {
+            //    throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
+            //}
+            //AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            return responseEntity.getBody();
         } catch (BusinessException e) {
             log.error("promotion forward BusinessException, path: {}, req: {}, errMsg: {}", urlPath, req, e.getMessage(), e);
             throw e;
