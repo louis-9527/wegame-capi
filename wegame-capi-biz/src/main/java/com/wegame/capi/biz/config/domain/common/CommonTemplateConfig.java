@@ -38,7 +38,6 @@ public class CommonTemplateConfig implements Serializable {
      * Map<rtp名称(自定义)，Map<投注类型，Map<左开倍率_右闭倍率，权重>>>
      */
     private TreeMap<String, Rtp> rtpMap;
-
     /**
      * rtp控制Map<br/>
      * Map<名称(自定义)，Map<名称(各游戏自定义)，rtp名称>>
