@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.EnvEnum;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.listener.handler.AbstractPostHandler;
@@ -38,39 +40,42 @@ public abstract class AbstractTemplateLoadPostHandler<T extends BetRecordTemplat
     }
 
     public Class<T> getClassType() {
-        // todo abstract
+        // todo abstract this method
         return null;
     }
 
-    public void commonWarmUp(CommonTemplateConfig commonTemplateConfig) {
-        Map<String, CommonTemplateConfig.Rtp> rtpMap = commonTemplateConfig.getRtpMap();
+    public void commonWarmUp(CommonTemplateConfig config) {
+        AssertUtil.assertNotNull(config, ErrorCode.ERR_INTER);
+        Map<String, CommonTemplateConfig.Rtp> rtpMap = config.getRtpMap();
         Set<String> hasWarmUpSet = new HashSet<>();
-        Map<String, Set<Long>> needWarmUpMap = new HashMap<>();
+        Map<String, Set<Long>> toWarmUpMap = new HashMap<>();
         // warmUp template IdList
         rtpMap.entrySet().forEach(item -> {
-            CommonTemplateConfig.Rtp rtp = item.getValue();
-            String indexName = rtp.getIndexName();
-            TreeMap<BetTypeEnum, TreeMap<String, Integer>> multipleRangeWeightMap = rtp.getMultipleRangeWeightMap();
+            String indexName = item.getValue().getIndexName();
+            TreeMap<BetTypeEnum, TreeMap<String, Integer>> multipleRangeWeightMap = item.getValue().getMultipleRangeWeightMap();
             for (BetTypeEnum betType : BetTypeEnum.values()) {
                 Map<String, Integer> weightMap = multipleRangeWeightMap.get(betType);
                 weightMap.keySet().forEach(rangStr -> {
                     String warmUpKey = buildWarmUpKey(indexName, betType, rangStr);
                     if (!hasWarmUpSet.contains(warmUpKey)) {
-                        List<Long> idList = loadTemplateIdList(commonTemplateConfig, indexName, betType, TemplateMultipleRange.build(rangStr));
+                        log.warn("{} to warm up", warmUpKey);
+                        List<Long> idList = loadTemplateIdList(config, indexName, betType, TemplateMultipleRange.build(rangStr));
                         hasWarmUpSet.add(warmUpKey);
                         if (CollectionUtils.isNotEmpty(idList)) {
-                            if (needWarmUpMap.containsKey(indexName)) {
-                                needWarmUpMap.get(indexName).addAll(idList);
+                            if (toWarmUpMap.containsKey(indexName)) {
+                                toWarmUpMap.get(indexName).addAll(idList);
                             } else {
-                                needWarmUpMap.putIfAbsent(indexName, idList.stream().collect(Collectors.toSet()));
+                                toWarmUpMap.putIfAbsent(indexName, idList.stream().collect(Collectors.toSet()));
                             }
                         }
+                    } else {
+                        log.warn("{} has warm up", warmUpKey);
                     }
                 });
             }
         });
         // warmUp template IdList
-        needWarmUpMap.forEach((indexName, idList) -> {
+        toWarmUpMap.forEach((indexName, idList) -> {
             loadLocalCache(indexName, idList.stream().collect(Collectors.toList()), getClassType());
         });
     }
@@ -79,17 +84,17 @@ public abstract class AbstractTemplateLoadPostHandler<T extends BetRecordTemplat
                                          String templateIndexName,
                                          BetTypeEnum betType,
                                          TemplateMultipleRange multipleRange) {
-        log.info("templateIdList load start, templateIndexName: {}, range: {}-{}... {}", templateIndexName, betType, multipleRange.getStart(), multipleRange.getEnd());
+        log.info("templateIdList load start, templateIndexName: {}, range: {}", templateIndexName, multipleRange);
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, betType, multipleRange.getStart(), multipleRange.getEnd());
             if (!commonTemplateConfig.supportWarmUp(betType, multipleRange)) {
-                log.info("templateIdList load end, templateIndexName: {}, range: {}-{}, size: {}，{}, no load betRecordTemplate", templateIndexName, betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+                log.info("templateIdList load end, templateIndexName: {}, range: {}, size: {}, no load betRecordTemplate", templateIndexName, multipleRange, betRecordTemplateIdList.size());
                 return null;
             }
-            log.info("templateIdList load success, templateIndexName: {}, range: {}-{}, size: {}, {}", templateIndexName, betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+            log.info("templateIdList load success, templateIndexName: {}, range: {}, size: {}", templateIndexName, multipleRange, betRecordTemplateIdList.size());
             return betRecordTemplateIdList;
         } catch (Exception e) {
-            log.info("templateIdList load error, templateIndexName: {}, range: {}-{}, {}", templateIndexName, betType, multipleRange.getStart(), multipleRange.getEnd(), e);
+            log.info("templateIdList load error, templateIndexName: {}, range: {}", templateIndexName, multipleRange, e);
             return null;
         }
     }
@@ -100,7 +105,7 @@ public abstract class AbstractTemplateLoadPostHandler<T extends BetRecordTemplat
         }
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
-                log.info("loadLocalCache start, templateIndexName: {}, betType: {},  size: {}", templateIndexName, templateIdList.size());
+                log.info("loadLocalCache start, templateIndexName: {},  size: {}", templateIndexName, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
                     List<T> templateList = betRecordTemplateService.listByIdList(templateIndexName, idList, clazz);
@@ -115,10 +120,8 @@ public abstract class AbstractTemplateLoadPostHandler<T extends BetRecordTemplat
         }
     }
 
-    /**
-     * indexName_betType_rangStr
-     */
     private String buildWarmUpKey(String indexName, BetTypeEnum betType, String rangStr) {
+        // indexName_betType_rangStr
         return String.format("%s_%s_%s", indexName, betType.getCode(), rangStr);
     }
 }

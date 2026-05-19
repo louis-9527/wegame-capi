@@ -38,6 +38,4 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         }
         commonWarmUp(diwataMayariConfig.getCommonTemplateConfig());
     }
-
-
 }

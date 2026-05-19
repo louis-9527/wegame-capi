@@ -40,4 +40,9 @@ public class TemplateMultipleRange implements Serializable {
                 .end(right)
                 .build();
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s_%s", start.toString(), end.toString());
+    }
 }

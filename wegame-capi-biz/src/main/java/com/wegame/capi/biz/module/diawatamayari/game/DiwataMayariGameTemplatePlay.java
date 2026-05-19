@@ -49,14 +49,14 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
         AssertUtil.assertNotNull(pair, ErrorCode.ERR_INTER);
         String templateIndexName = pair.getKey();
         AssertUtil.assertStrNotEmpty(templateIndexName, ErrorCode.ERR_INTER);
-        TemplateMultipleRange templateMultipleRange = pair.getValue();
-        AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
-        gamePlayDo.setTemplateMultipleRange(templateMultipleRange);
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, gamePlayDo.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        TemplateMultipleRange multipleRange = pair.getValue();
+        AssertUtil.assertNotNull(multipleRange, ErrorCode.ERR_INTER);
+        gamePlayDo.setTemplateMultipleRange(multipleRange);
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, gamePlayDo.getBetType(), multipleRange.getStart(), multipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         log.info("match template, templateIndexName: {}, betRecordId:{}", templateIndexName, betRecordId);
-        if (diwataMayariConfig.getCommonTemplateConfig().supportWarmUp(gamePlayDo.getBetType(), templateMultipleRange)) {
+        if (diwataMayariConfig.getCommonTemplateConfig().supportWarmUp(gamePlayDo.getBetType(), multipleRange)) {
             return betRecordTemplateService.getTemplateWithLocalCache(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
         } else {
             return betRecordTemplateService.findById(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
