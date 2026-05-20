@@ -28,6 +28,7 @@ import com.wegame.capi.biz.module.sirena.reward.SirenaRewardHandler;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -194,7 +195,11 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
     private List<GameRecordTemplateDo> getTemplateConfigList(BetDo betDo, GamePlayDo gamePlay) {
         // 1 加载倍率范围
 
-        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
+        AssertUtil.assertNotNull(abType, ErrorCode.ERR_NOT_LOGIN);
+        TemplateTypeEnum templateType = sirenaConfig.getTemplateConfig().getAbTemplateMapping().get(abType);
+        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType(), templateType);
         log.info("random templateMultipleRange: {}", templateMultipleRange);
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
@@ -202,7 +207,6 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
 
         SirenaTagEnum tag = getTagEnum(gamePlay);
         AssertUtil.assertNotNull(tag, ErrorCode.ERR_INTER);
-        TemplateTypeEnum templateType = DEFAULT_TEMPLATE;
         AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
         log.info("random templateType: {}", templateType);
         // 2 加载记录idList
@@ -236,7 +240,7 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         SirenaBetRecordTemplateEsDo template;
         TemplateMultipleWarmUpEnum warmUpEnum = TemplateMultipleWarmUpEnum.valueOfCode(templateType.getGameType());
         AssertUtil.assertNotNull(warmUpEnum, ErrorCode.ERR_INTER);
-        if (warmUpEnum.canWarmUp(tag.getCode(), templateMultipleRange.getEnd())) {
+        if (sirenaConfig.getTemplateConfig().supportWarmUp(tag, templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             template = betRecordTemplateEsService.getTemplateWithLocalCache(templateType, templateId, SirenaBetRecordTemplateEsDo.class);
         } else {
@@ -309,9 +313,9 @@ public class SirenaGameTemplatePlay extends AbstractGame<SirenaGameRecordDo> {
         return wheelDo;
     }
 
-    private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betTypeEnum) {
+    private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betTypeEnum, TemplateTypeEnum templateTypeEnum) {
         String templateMultipleRange;
-        SirenaConfig.TemplateRangeConfig config = sirenaConfig.getTemplateRangeConfig();
+        SirenaConfig.TemplateRangeConfig config = sirenaConfig.getTemplateConfig().getTemplateRangeConfig(templateTypeEnum);
         if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
             templateMultipleRange = randomService.randomKeyByWeight(config.getMainGame());
         } else {

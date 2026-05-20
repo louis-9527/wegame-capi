@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.wegame.capi.common.Constants.SIRENA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -35,10 +32,6 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @ConditionalOnProperty(name = SIRENA_PROP, havingValue = TRUE_VAL)
 public class SirenaTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
 
-    public TemplateTypeEnum getTemplateType() {
-        return TemplateTypeEnum.SIRENA_V2;
-    }
-
     @Autowired
     SirenaConfig sirenaConfig;
 
@@ -50,8 +43,11 @@ public class SirenaTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         if (!supportGame(GameTypeEnum.SIRENA)) {
             return;
         }
-        SirenaConfig.TemplateRangeConfig templateRangeConfig = sirenaConfig.getTemplateRangeConfig();
-        loadTemplate(getTemplateType(), templateRangeConfig);
+        Map<TemplateTypeEnum, SirenaConfig.TemplateRangeConfig> configMap = sirenaConfig.getTemplateConfig().getTemplateRangeConfig();
+        for (Map.Entry<TemplateTypeEnum, SirenaConfig.TemplateRangeConfig> entry : configMap.entrySet()) {
+            TemplateTypeEnum templateType = entry.getKey();
+            loadTemplate(templateType, entry.getValue());
+        }
     }
 
     private void loadTemplate(TemplateTypeEnum templateType, SirenaConfig.TemplateRangeConfig config) {
@@ -105,7 +101,7 @@ public class SirenaTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
             List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByTagAndAvgMultipleRange(templateType, tag.getCode(), multipleRange.getStart(), multipleRange.getEnd(), SirenaBetRecordTemplateEsDo.class);
             TemplateMultipleWarmUpEnum warmUpEnum = TemplateMultipleWarmUpEnum.valueOfCode(templateType.getGameType());
             AssertUtil.assertNotNull(warmUpEnum, ErrorCode.ERR_INTER);
-            if (!warmUpEnum.canWarmUp(tag.getCode(), multipleRange.getEnd())) {
+            if (!sirenaConfig.getTemplateConfig().supportWarmUp(tag, multipleRange)) {
                 log.info("templateIdList load end, template: {}, tag: {}, range: {}-{}, size: {}， no load gameRecordTemplate", templateType.getBetRecordTemplateName(), tag, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;
             }

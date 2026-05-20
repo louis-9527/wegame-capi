@@ -4,9 +4,14 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
+import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.SirenaTagEnum;
 import com.wegame.capi.common.enums.SymbolEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -66,7 +71,7 @@ public class SirenaConfig extends GameBizConfig implements Serializable {
     /**
      * 模板配置
      */
-    private TemplateRangeConfig templateRangeConfig;
+    private TemplateConfig templateConfig;
 
 
     @Data
@@ -85,6 +90,48 @@ public class SirenaConfig extends GameBizConfig implements Serializable {
          * 免费游戏模板配置
          */
         private Map<String, Integer> freeGame;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateConfig implements Serializable {
+
+        private static final long serialVersionUID = -4036721298176088906L;
+        /**
+         * 预热Map
+         */
+        private Map<SirenaTagEnum, BigDecimal> templateWarmUpEndOddsMap;
+
+        /**
+         * AB 分组 → 模板类型（兜底）
+         */
+        private Map<AbTypeEnum, TemplateTypeEnum> abTemplateMapping;
+
+        private Map<TemplateTypeEnum, TemplateRangeConfig> templateRangeConfig;
+
+        public boolean supportWarmUp(SirenaTagEnum tag, TemplateMultipleRange multipleRange) {
+            BigDecimal endOdds = templateWarmUpEndOddsMap.get(tag);
+            AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
+            return multipleRange.getEnd().compareTo(endOdds) <= 0;
+        }
+
+        /**
+         * 模板选择：promotionType 优先，未命中则按 AB 兜底
+         *
+         * @param ctx 本次投注的选择上下文
+         */
+        public TemplateTypeEnum select(TemplateSelectionContext ctx) {
+            return abTemplateMapping.get(ctx.getAbType());
+        }
+
+        public TemplateRangeConfig getTemplateRangeConfig(TemplateTypeEnum templateType) {
+            return templateRangeConfig.get(templateType);
+        }
+
     }
 
 
