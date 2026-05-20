@@ -41,14 +41,13 @@ public class BloodPoolControlService {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 渠道判断是否支持
-        boolean supportDos = gameApiProperty.supportDosChannelIdSet().contains(userInfo.getChannelId());
-        if (!supportDos) {
-            // 不支持血池控制
+        if (!gameApiProperty.supportDosChannelIdSet().contains(userInfo.getChannelId())) {
+            // 非dos不支持血池控制
             log.warn("not support blood pool control, pid: {}, channelId: {}", userInfo.getPId(), userInfo.getChannelId());
             return null;
         }
-        List<GetPoolConfigRes.BloodPoolConfig> list = singleWalletConfigService.getBloodPoolConfigWithCache(userInfo.getPId(), userInfo.getChannelId(), gamePlayDo.getGameType());
-        return matchConfig(userInfo, list, betDo, gamePlayDo);
+        List<GetPoolConfigRes.BloodPoolConfig> configList = singleWalletConfigService.getBloodPoolConfigWithCache(userInfo.getPId(), userInfo.getChannelId(), gamePlayDo.getGameType());
+        return matchConfig(userInfo, configList, betDo, gamePlayDo);
     }
 
     public boolean judgeEnableBloodPoolControl(BetDo betDo) {

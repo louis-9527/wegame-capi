@@ -11,12 +11,9 @@ import com.wegame.capi.api.domain.req.singlewallet.GetPoolConfigReq;
 import com.wegame.capi.api.domain.res.CommonConfigRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
-import com.wegame.capi.infrastructure.helper.LarkHelper;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -42,14 +39,10 @@ public class SingleWalletConfigApi extends SingleWalletBaseApi {
     public static final String RTP_EX_MATCH_WARNING_MSG_FORMAT = "未获取到Rtp倍率范围权重配置，poolCategory: %s，poolLevel: %s，betType: %s, gameId: %s";
     public static final String EXCEPTION_WARNING_MSG_FORMAT = "血池控制配置获取异常，pid：%s，channelId：%s，gameId: %s";
     private static final String GET_FOUND_BLOOD_CONFIG_URL_FORMAT = "%s/fund-pool/game/getPoolList";
-    @Value("${lark.warningRobot}")
-    public String warningRobot;
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     @Autowired
     GameApiProperty gameApiProperty;
-    @Autowired
-    LarkHelper larkHelper;
 
     //    0	成功
     //1001	参数错误
@@ -64,9 +57,10 @@ public class SingleWalletConfigApi extends SingleWalletBaseApi {
             String encryptKeyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId, privateInfo.getPrivateKey());
             String encryptIvString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId, privateInfo.getPrivateIv());
             GetPoolConfigReq req = GetPoolConfigReq.builder()
+                    .platformId(pid)
                     .agentCode(channelId)
                     .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(channelId, FastJsonUtils.toJSONString(GetPoolConfigReq.MessageBody.builder()
-                            .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
+                            .refId(ThreadMdcUtil.getTraceId())
                             .gameCode(gameId)
                             .build())))
                     .build();
@@ -84,11 +78,9 @@ public class SingleWalletConfigApi extends SingleWalletBaseApi {
             return responseEntity.getBody().getData();
         } catch (BusinessException be) {
             log.error("getPoolConfigList BusinessException, req: {}, errMsg: {}", String.format("%s_%s_%s", pid, channelId, gameId), be.getMessage(), be);
-            larkHelper.sendWarningMsg(String.format(EXCEPTION_WARNING_MSG_FORMAT, pid, channelId, gameId));
             throw be;
         } catch (Exception e) {
             log.error("getPoolConfigList Exception, req: {}, errMsg: {}", String.format("%s_%s_%s", pid, channelId, gameId), e.getMessage(), e);
-            larkHelper.sendWarningMsg(String.format(EXCEPTION_WARNING_MSG_FORMAT, pid, channelId, gameId));
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }

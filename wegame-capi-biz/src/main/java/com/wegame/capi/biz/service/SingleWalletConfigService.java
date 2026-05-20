@@ -7,8 +7,10 @@ import com.wegame.capi.api.SingleWalletConfigApi;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
+import com.wegame.capi.infrastructure.helper.LarkHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wegame.capi.api.SingleWalletConfigApi.EXCEPTION_WARNING_MSG_FORMAT;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 
 
@@ -28,8 +31,10 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThre
 @Service
 public class SingleWalletConfigService {
 
+    @Value("${lark.warningRobot}")
+    public String warningRobot;
     @Autowired
-    GameApiProperty gameApiProperty;
+    LarkHelper larkHelper;
     @Autowired
     SingleWalletConfigApi singleWalletConfigApi;
 
@@ -37,10 +42,11 @@ public class SingleWalletConfigService {
         AssertUtil.assertStrNotEmpty(pid, ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
-        if (gameApiProperty.supportDosChannelIdSet().contains(channelId)) {
+        try {
             GetPoolConfigRes res = singleWalletConfigApi.getPoolConfigList(pid, channelId, gameType.getId());
             return Objects.nonNull(res) ? res.getPools() : null;
-        } else {
+        } catch (Exception e) {
+            larkHelper.sendWarningMsg(String.format(EXCEPTION_WARNING_MSG_FORMAT, pid, channelId, gameType.getId()));
             return null;
         }
     }

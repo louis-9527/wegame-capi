@@ -12,9 +12,12 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @ApiModel("获取奖池配置请求模型")
 public class GetPoolConfigReq implements Serializable {
-
     /**
-     * 商户代码（即 providerId）
+     * 平台id
+     */
+    private String platformId;
+    /**
+     * 商户代码（即 providerId）： 渠道id
      */
     private String agentCode;
     /**
