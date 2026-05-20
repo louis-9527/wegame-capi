@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.base.game;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
+import com.wegame.capi.biz.config.domain.common.CommonBloodPoolConfig;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -16,7 +17,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.infrastructure.helper.LarkHelper;
- import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,13 +65,17 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
         return TemplateMultipleRange.build(templateMultipleRange);
     }
 
-    public Pair<String, TemplateMultipleRange> getTemplateMultipleRangeWithBloodPoolControl(BetDo betDo, GamePlayDo gamePlayDo, CommonTemplateConfig commonTemplateConfig) {
-        GetPoolConfigRes.BloodPoolConfig bloodPoolConfig = bloodPoolControlService.matchBloodPoolConfig(betDo, gamePlayDo);
+    public CommonTemplateConfig.Rtp getRtpWithBloodPoolControl(BetDo betDo, GamePlayDo gamePlayDo, CommonBloodPoolConfig commonBloodPoolConfig, CommonTemplateConfig commonTemplateConfig) {
+        if (Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isEnable()) {
+            log.warn("commonBloodPoolConfig enable: {}", commonBloodPoolConfig.isEnable());
+            return getDefaultRtp(betDo, commonTemplateConfig);
+        }
+        GetPoolConfigRes.BloodPoolConfig bloodPoolConfig = bloodPoolControlService.matchBloodPoolConfig(betDo);
         if (Objects.nonNull(bloodPoolConfig)) {
             try {
                 CommonTemplateConfig.Rtp rtp = commonTemplateConfig.getRtp(String.valueOf(bloodPoolConfig.getPoolCategory()), bloodPoolConfig.getCurrentLevelNo());
                 AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
-                return Pair.of(rtp.getIndexName(), getTemplateMultipleRange(rtp.getMultipleRangeWeightMap().get(betDo.getBetType())));
+                return rtp;
             } catch (Exception e) {
                 larkHelper.sendWarningMsg(String.format(RTP_EX_MATCH_WARNING_MSG_FORMAT,
                         bloodPoolConfig.getPoolCategory(),
@@ -78,18 +83,17 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
                         gamePlayDo.getBetType().getCode(),
                         gamePlayDo.getGameType().getId()));
                 log.error("match multipleWeightMap error", e);
-                return getDefaultTemplateMultipleRange(betDo, commonTemplateConfig);
+                return getDefaultRtp(betDo, commonTemplateConfig);
             }
         } else {
-            return getDefaultTemplateMultipleRange(betDo, commonTemplateConfig);
+            return getDefaultRtp(betDo, commonTemplateConfig);
         }
     }
 
-    private Pair<String, TemplateMultipleRange> getDefaultTemplateMultipleRange(BetDo betDo, CommonTemplateConfig commonTemplateConfig) {
+    public CommonTemplateConfig.Rtp getDefaultRtp(BetDo betDo, CommonTemplateConfig commonTemplateConfig) {
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getBetPromotionType(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(commonTemplateConfig, ErrorCode.ERR_INTER);
-        CommonTemplateConfig.Rtp rtp = commonTemplateConfig.getRtp(Constants.DEFAULT, betDo.getBetPromotionType().getDefaultRewardControlSubKey());
-        return Pair.of(rtp.getIndexName(), getTemplateMultipleRange(rtp.getMultipleRangeWeightMap().get(betDo.getBetType())));
+        return commonTemplateConfig.getRtp(Constants.DEFAULT, betDo.getBetPromotionType().getDefaultRtpControlSubKey());
     }
 }

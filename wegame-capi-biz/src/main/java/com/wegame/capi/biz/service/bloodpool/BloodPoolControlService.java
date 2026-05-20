@@ -38,7 +38,7 @@ public class BloodPoolControlService {
     @Autowired
     SingleWalletConfigService singleWalletConfigService;
 
-    public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo, GamePlayDo gamePlayDo) {
+    public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 渠道判断是否支持
@@ -47,8 +47,8 @@ public class BloodPoolControlService {
             log.warn("not support blood pool control, pid: {}, channelId: {}", userInfo.getPId(), userInfo.getChannelId());
             return null;
         }
-        List<GetPoolConfigRes.BloodPoolConfig> configList = singleWalletConfigService.getBloodPoolConfigWithCache(userInfo.getPId(), userInfo.getChannelId(), gamePlayDo.getGameType());
-        return matchConfig(userInfo, configList, betDo, gamePlayDo);
+        List<GetPoolConfigRes.BloodPoolConfig> configList = singleWalletConfigService.getBloodPoolConfigWithCache(userInfo.getPId(), userInfo.getChannelId(), betDo.getGameType());
+        return matchConfig(userInfo, configList, betDo);
     }
 
     public boolean judgeEnableBloodPoolControl(BetDo betDo) {
@@ -67,7 +67,7 @@ public class BloodPoolControlService {
         return false;
     }
 
-    private GetPoolConfigRes.BloodPoolConfig matchConfig(UserInfo userInfo, List<GetPoolConfigRes.BloodPoolConfig> configList, BetDo betDo, GamePlayDo gamePlayDo) {
+    private GetPoolConfigRes.BloodPoolConfig matchConfig(UserInfo userInfo, List<GetPoolConfigRes.BloodPoolConfig> configList, BetDo betDo) {
         if (CollectionUtils.isEmpty(configList)) {
             // 未获取到配置，告警
             larkHelper.sendWarningMsg(String.format(EMPTY_LIST_WARNING_MSG_FORMAT, betDo.getGameId()));

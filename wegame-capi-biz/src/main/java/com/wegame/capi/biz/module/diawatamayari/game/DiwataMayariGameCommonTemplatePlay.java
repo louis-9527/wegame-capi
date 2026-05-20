@@ -67,15 +67,18 @@ public class DiwataMayariGameCommonTemplatePlay implements TemplateGame<DiwataMa
         Map<Long, Long> idMap = idHelper.buildIdMap(templateList);
         List<DiwataMayariGameRecordDo> ret = new ArrayList<>();
         Long maxBatchId = Collections.max(templateList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
-        BigDecimal totalMultiple = BigDecimal.ZERO;
+        DiwataMayariGameRecordDo lastGameRecord = null;
         for (GameRecordTemplateDo templateItem : CollectionUtils.emptyIfNull(templateList)) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
-            DiwataMayariGameRecordDo gameRecordDo = buildGameRecord(gamePlayDo, templateItem, totalMultiple, idMap, lastGameFlag);
-            if (gameRecordDo.getIndex() == 0) {
+            WheelDo<DiwataMayariSymbolDo> wheel = DiwataMayariSymbolUtil.convertWheel(templateItem.getWheel());
+            BigDecimal totalMultiple = BigDecimal.ZERO;
+            if (wheel.getIndex() == 0) {
                 totalMultiple = BigDecimal.ZERO;
             } else {
-                totalMultiple = gameRecordDo.getRewardResult().getTotalMultiple();
+                totalMultiple = Objects.nonNull(lastGameRecord) ? lastGameRecord.getRewardResult().getTotalMultiple() : BigDecimal.ZERO;
             }
+            DiwataMayariGameRecordDo gameRecordDo = buildGameRecord(gamePlayDo, templateItem, wheel, totalMultiple, idMap, lastGameFlag);
+            lastGameRecord = gameRecordDo;
             ret.add(gameRecordDo);
         }
         // 占位元素-将占位元素设置为空:
@@ -86,10 +89,10 @@ public class DiwataMayariGameCommonTemplatePlay implements TemplateGame<DiwataMa
         return ret;
     }
 
-    private DiwataMayariGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal totalMultiple, Map<Long, Long> idMap, boolean lastGameFlag) {
+    private DiwataMayariGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, WheelDo<DiwataMayariSymbolDo> wheel,
+                                                     BigDecimal totalMultiple, Map<Long, Long> idMap, boolean lastGameFlag) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        WheelDo<DiwataMayariSymbolDo> wheel = DiwataMayariSymbolUtil.convertWheel(template.getWheel());
         RewardResultDo<DiwataMayariSymbolDo> rewardResult = diwataMayariRewardHandler.handle(build(DIWATA_MAYARI_GAME_INFO, gamePlay, wheel, totalMultiple));
         Long id = idMap.get(template.getId());
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);

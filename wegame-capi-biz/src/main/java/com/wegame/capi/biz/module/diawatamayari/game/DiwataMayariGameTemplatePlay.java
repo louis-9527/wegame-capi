@@ -45,22 +45,25 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
     public DiwataBetRecordTemplateEsDo getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        Pair<String, TemplateMultipleRange> pair = getTemplateMultipleRangeWithBloodPoolControl(betDo, gamePlayDo, diwataMayariConfig.getCommonTemplateConfig());
-        AssertUtil.assertNotNull(pair, ErrorCode.ERR_INTER);
-        String templateIndexName = pair.getKey();
+        CommonTemplateConfig.Rtp rtp = getRtpWithBloodPoolControl(betDo, gamePlayDo, diwataMayariConfig.getCommonBloodPoolConfig(), diwataMayariConfig.getCommonTemplateConfig());
+        AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
+        String templateIndexName = rtp.getIndexName();
         AssertUtil.assertStrNotEmpty(templateIndexName, ErrorCode.ERR_INTER);
-        TemplateMultipleRange multipleRange = pair.getValue();
+        TemplateMultipleRange multipleRange = getTemplateMultipleRange(rtp.getMultipleRangeWeightMap().get(betDo.getBetType()));
         AssertUtil.assertNotNull(multipleRange, ErrorCode.ERR_INTER);
         gamePlayDo.setTemplateMultipleRange(multipleRange);
         List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, gamePlayDo.getBetType(), multipleRange.getStart(), multipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
-        Long betRecordId = getRandomElement(betRecordIdList);
-        log.info("match template, templateIndexName: {}, betRecordId:{}", templateIndexName, betRecordId);
-        if (diwataMayariConfig.getCommonTemplateConfig().supportWarmUp(gamePlayDo.getBetType(), multipleRange)) {
-            return betRecordTemplateService.getTemplateWithLocalCache(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
-        } else {
-            return betRecordTemplateService.findById(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
-        }
+        //Long betRecordId = getRandomElement(betRecordIdList);
+        //log.info("match template, templateIndexName: {}, betRecordId:{}", templateIndexName, betRecordId);
+        //if (diwataMayariConfig.getCommonTemplateConfig().supportWarmUp(gamePlayDo.getBetType(), multipleRange)) {
+        //    return betRecordTemplateService.getTemplateWithLocalCache(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
+        //} else {
+        //    return betRecordTemplateService.findById(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
+        //}
+        // todo
+        long betRecordId = 2013887804488339492L;
+        return betRecordTemplateService.findById(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
     }
 
     //@Override

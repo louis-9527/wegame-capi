@@ -52,7 +52,7 @@ public enum BetPromotionTypeEnum {
         return null;
     }
 
-    public String getDefaultRewardControlSubKey() {
+    public String getDefaultRtpControlSubKey() {
         switch (this) {
             case NONE:
                 return RTP_CONTROL_SUBKEY_DEFAULT;

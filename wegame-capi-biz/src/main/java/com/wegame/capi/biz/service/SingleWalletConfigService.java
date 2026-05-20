@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wegame.capi.api.SingleWalletConfigApi.EXCEPTION_WARNING_MSG_FORMAT;
 import static com.wegame.capi.common.constants.WarningConstants.EXCEPTION_WARNING_MSG_FORMAT;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 

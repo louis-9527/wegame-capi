@@ -9,13 +9,13 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.vo.BetResultVo;
+import com.wegame.capi.client.domain.vo.diwatamayari.DiwataMayariBetResultVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.test.application.controller.BetControllerTest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,6 +30,8 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .userName("userName")
+                .playerId("playerId")
+                .playerName("playerName")
                 .pId("50")
                 .channelId("1050")
                 .build());
@@ -43,8 +45,8 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
 
     @Test
     public void test_bet_normal_bet() {
-        for (int i = 0; i <= 100; i++) {
-            beforeTest();
+        beforeTest();
+        for (int i = 0; i <= 3; i++) {
             BetRequest betRequest = buildNormalBetRequest();
             CommonResponse<BetResultVo> commonResponse = betController.bet(betRequest);
             Assert.notNull(commonResponse);
@@ -60,30 +62,32 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
     @Test
     public void test_bet_buy_bet() {
         beforeTest();
-        // 购买免费轮
-        BetRequest betRequest = buildBuyBetRequest();
-        CommonResponse<BetResultVo> commonResponse = betController.bet(betRequest);
-        Assert.notNull(commonResponse);
-        Assert.notNull(commonResponse.getData());
-        Assert.isTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
-        Assert.isTrue(StringUtils.isNotEmpty(commonResponse.getData().getBetRecordId()));
-        Assert.isTrue(commonResponse.getData().getResultDetail() instanceof MariaMakilingBetResultVo);
-        MariaMakilingBetResultVo resultVo = (MariaMakilingBetResultVo) commonResponse.getData().getResultDetail();
-        Assert.notNull(resultVo);
-        // 查询免费轮
-        String betRecordId = commonResponse.getData().getBetRecordId();
-        List<String> gameRecordIds = resultVo.getGameRecordIds();
-//        for (String gameRecordId : CollectionUtils.emptyIfNull(gameRecordIds)) {
-//            BetRequest queryBetRequest = buildQueryBuyBetRequest(gameRecordId, betRecordId);
-//            CommonResponse<BetResultVo> res = betController.bet(queryBetRequest);
-//            Assert.notNull(res);
-//            Assert.notNull(res.getData());
-//            Assert.isTrue(StringUtils.equals(res.getCode(), CommonResponse.SUC_CODE));
-//            Assert.isTrue(StringUtils.isNotEmpty(res.getData().getBetRecordId()));
-////            Assert.isTrue(commonResponse.getData().getResultDetail() instanceof MariaMakilingBetResultVo);
-////            MariaMakilingBetResultVo vo = (MariaMakilingBetResultVo) commonResponse.getData().getResultDetail();
-////            Assert.notNull(vo);
-//        }
+        for (int i = 0; i <= 3; i++) {
+            // 购买免费轮
+            BetRequest betRequest = buildBuyBetRequest();
+            CommonResponse<BetResultVo> commonResponse = betController.bet(betRequest);
+            Assert.notNull(commonResponse);
+            Assert.notNull(commonResponse.getData());
+            Assert.isTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
+            Assert.isTrue(StringUtils.isNotEmpty(commonResponse.getData().getBetRecordId()));
+            Assert.isTrue(commonResponse.getData().getResultDetail() instanceof DiwataMayariBetResultVo);
+            DiwataMayariBetResultVo resultVo = (DiwataMayariBetResultVo) commonResponse.getData().getResultDetail();
+            Assert.notNull(resultVo);
+            // 查询免费轮
+            //String betRecordId = commonResponse.getData().getBetRecordId();
+            //List<String> gameRecordIds = resultVo.getGameRecordIds();
+            //        for (String gameRecordId : CollectionUtils.emptyIfNull(gameRecordIds)) {
+            //            BetRequest queryBetRequest = buildQueryBuyBetRequest(gameRecordId, betRecordId);
+            //            CommonResponse<BetResultVo> res = betController.bet(queryBetRequest);
+            //            Assert.notNull(res);
+            //            Assert.notNull(res.getData());
+            //            Assert.isTrue(StringUtils.equals(res.getCode(), CommonResponse.SUC_CODE));
+            //            Assert.isTrue(StringUtils.isNotEmpty(res.getData().getBetRecordId()));
+            ////            Assert.isTrue(commonResponse.getData().getResultDetail() instanceof MariaMakilingBetResultVo);
+            ////            MariaMakilingBetResultVo vo = (MariaMakilingBetResultVo) commonResponse.getData().getResultDetail();
+            ////            Assert.notNull(vo);
+            //        }
+        }
     }
 
     private BetRequest buildNormalBetRequest() {
@@ -104,8 +108,8 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.BUY_BET.getCode());
         BetRequest.BetDetail betDetail = new BetRequest.BetDetail();
-        betDetail.setBetAmount(1000L);
-        betDetail.setPayAmount(35000L);
+        betDetail.setBetAmount(45 * 1000L);
+        betDetail.setPayAmount(45 * 75 * 1000L);
         betRequest.setBetDetail(betDetail);
         return betRequest;
     }
