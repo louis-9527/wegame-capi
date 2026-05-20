@@ -2,10 +2,14 @@ package com.wegame.capi.biz.module.malakas;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
+
+import java.util.List;
+import java.util.Objects;
 
 import static com.wegame.capi.common.enums.SymbolEnum.*;
 import static com.wegame.capi.common.enums.SymbolSizeEnum.S;
@@ -100,4 +104,11 @@ public class MalakasGameHelper {
                     .put(MALAKAS_Wild.getId(), MALAKAS_Wild)
                     .build())
             .build();
+
+    public static long getTotalRewardAmount(List<MalakasGameRecordDo> ret) {
+        return ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+    }
 }

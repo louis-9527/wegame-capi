@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.malakas;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -9,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
@@ -43,6 +46,15 @@ public class MalakasSymbolUtil {
             }
         }
         return newSymbolArr;
+    }
+
+    public static WheelDo<MalakasSymbolDo> convertWheel(Object obj) {
+        WheelDo<MalakasSymbolDo> wheel = JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
+        });
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        // 空元素置为占位元素（以用于中奖计算）
+        wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
+        return wheel;
     }
 
     public static MalakasSymbolDo[][] handleSymbolNullArr(MalakasSymbolDo[][] symbolArr) {
