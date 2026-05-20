@@ -3,6 +3,7 @@ package com.wegame.capi.biz.service.bloodpool;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
+import com.wegame.capi.biz.config.domain.common.CommonBloodPoolConfig;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.service.SingleWalletConfigService;
@@ -38,7 +39,11 @@ public class BloodPoolControlService {
     @Autowired
     SingleWalletConfigService singleWalletConfigService;
 
-    public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo) {
+    public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo, CommonBloodPoolConfig commonBloodPoolConfig) {
+        if (Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isEnable()) {
+            log.warn("commonBloodPoolConfig enable: {}", commonBloodPoolConfig.isEnable());
+            return null;
+        }
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 渠道判断是否支持

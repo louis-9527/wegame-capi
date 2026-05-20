@@ -33,15 +33,14 @@ import static com.wegame.capi.common.constants.WarningConstants.RTP_EX_MATCH_WAR
  */
 @Slf4j
 public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extends BetRecordTemplateEsDo> implements Game<R> {
-
+    @Autowired
+    public LarkHelper larkHelper;
+    @Autowired
+    public RandomService randomService;
     @Autowired
     BloodPoolControlService bloodPoolControlService;
     @Autowired
     public BetRecordTemplateService<T> betRecordTemplateService;
-    @Autowired
-    public RandomService randomService;
-    @Autowired
-    public LarkHelper larkHelper;
 
     public abstract TemplateGame<R, T> templateGame();
 
@@ -66,11 +65,7 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
     }
 
     public CommonTemplateConfig.Rtp getRtpWithBloodPoolControl(BetDo betDo, GamePlayDo gamePlayDo, CommonBloodPoolConfig commonBloodPoolConfig, CommonTemplateConfig commonTemplateConfig) {
-        if (Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isEnable()) {
-            log.warn("commonBloodPoolConfig enable: {}", commonBloodPoolConfig.isEnable());
-            return getDefaultRtp(betDo, commonTemplateConfig);
-        }
-        GetPoolConfigRes.BloodPoolConfig bloodPoolConfig = bloodPoolControlService.matchBloodPoolConfig(betDo);
+        GetPoolConfigRes.BloodPoolConfig bloodPoolConfig = bloodPoolControlService.matchBloodPoolConfig(betDo, commonBloodPoolConfig);
         if (Objects.nonNull(bloodPoolConfig)) {
             try {
                 CommonTemplateConfig.Rtp rtp = commonTemplateConfig.getRtp(String.valueOf(bloodPoolConfig.getPoolCategory()), bloodPoolConfig.getCurrentLevelNo());
