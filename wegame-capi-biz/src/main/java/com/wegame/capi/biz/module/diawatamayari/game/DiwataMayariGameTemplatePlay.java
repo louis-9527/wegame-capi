@@ -22,6 +22,7 @@ import java.util.List;
 
 import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.utils.ListUtil.getRandomElement;
 
 @Slf4j
 @Component("diwataMayariGameTemplatePlay")
@@ -51,16 +52,13 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
         gamePlayDo.setTemplateMultipleRange(multipleRange);
         List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, gamePlayDo.getBetType(), multipleRange.getStart(), multipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
-        //Long betRecordId = getRandomElement(betRecordIdList);
-        //log.info("match template, templateIndexName: {}, betRecordId:{}", templateIndexName, betRecordId);
-        //if (diwataMayariConfig.getCommonTemplateConfig().supportWarmUp(gamePlayDo.getBetType(), multipleRange)) {
-        //    return betRecordTemplateService.getTemplateWithLocalCache(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
-        //} else {
-        //    return betRecordTemplateService.findById(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
-        //}
-        // todo
-        long betRecordId = 2013887804488339492L;
-        return betRecordTemplateService.findById(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
+        Long betRecordId = getRandomElement(betRecordIdList);
+        log.info("match template, templateIndexName: {}, betRecordId:{}", templateIndexName, betRecordId);
+        if (diwataMayariConfig.getCommonTemplateConfig().supportWarmUp(gamePlayDo.getBetType(), multipleRange)) {
+            return betRecordTemplateService.getTemplateWithLocalCache(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
+        } else {
+            return betRecordTemplateService.findById(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
+        }
     }
 
     //@Override
