@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import static com.wegame.capi.api.SingleWalletConfigApi.RTP_EX_MATCH_WARNING_MSG_FORMAT;
+import static com.wegame.capi.common.constants.WarningConstants.RTP_EX_MATCH_WARNING_MSG_FORMAT;
 
 /**
  * 抽象游戏模版Play

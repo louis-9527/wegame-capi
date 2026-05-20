@@ -38,7 +38,9 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
 
     @Data
     @SuperBuilder
-    @ToString(callSuper = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     @ApiModel("血池配置")
     public static class BloodPoolConfig implements Serializable {
         /**

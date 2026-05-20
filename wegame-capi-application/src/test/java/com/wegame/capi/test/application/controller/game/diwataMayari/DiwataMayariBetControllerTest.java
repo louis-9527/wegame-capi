@@ -92,8 +92,8 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
         betRequest.setBetType(BetTypeEnum.NORMAL_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.NORMAL_BET.getCode());
         BetRequest.BetDetail betDetail = new BetRequest.BetDetail();
-        betDetail.setBetAmount(500L);
-        betDetail.setPayAmount(500L);
+        betDetail.setBetAmount(45 * 1000L);
+        betDetail.setPayAmount(45 * 1000L);
         betRequest.setBetDetail(betDetail);
         return betRequest;
     }

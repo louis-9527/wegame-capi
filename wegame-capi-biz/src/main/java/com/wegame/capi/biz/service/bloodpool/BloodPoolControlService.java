@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.api.SingleWalletConfigApi.*;
+import static com.wegame.capi.common.constants.WarningConstants.*;
 
 /**
  * 血池控制服务
@@ -76,11 +77,11 @@ public class BloodPoolControlService {
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(matchConfigList)) {
             // 未匹配到，告警
-            larkHelper.sendWarningMsg(String.format(NO_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetType(), betDo.getGameId()));
+            larkHelper.sendWarningMsg(String.format(NO_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount(), betDo.getGameId()));
             return null;
         } else if (matchConfigList.size() > 1) {
             // 匹配到多条，告警
-            larkHelper.sendWarningMsg(String.format(MULTI_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetType(), betDo.getGameId()));
+            larkHelper.sendWarningMsg(String.format(MULTI_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount(), betDo.getGameId()));
             return null;
         } else {
             return matchConfigList.get(0);

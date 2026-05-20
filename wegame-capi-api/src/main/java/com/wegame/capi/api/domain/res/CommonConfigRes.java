@@ -16,10 +16,10 @@ public class CommonConfigRes<T> implements Serializable {
 
     private static final long serialVersionUID = -636301797303418L;
     public static final String STATUS_SUCCESS = "success";
-    public static final int SUC_CODE = 1;
+    public static final int SUC_CODE = 0;
 
     /**
-     * 响应码: 200成功
+     * 响应码: 0成功
      */
     private Integer code;
     private String message;
