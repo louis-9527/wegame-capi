@@ -391,9 +391,9 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
         // 获取上一轮中奖产生的事件
         List<BizEventEnum> rewardBizEventTypeList = preAtlantisGameRecordDo.getRewardResult().getBizEventList();
         List<GameBizEventDo> rewardEffectBizEventList = preAtlantisGameRecordDo.getRewardResult().getEffectBizEventList();
-        Map<BizEventEnum, GameBizEventDo> rewardBizEventEffectMap = new HashMap<>();
+        Map<Integer, GameBizEventDo> rewardBizEventEffectIndexMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(rewardEffectBizEventList)) {
-            rewardBizEventEffectMap = rewardEffectBizEventList.stream().collect(Collectors.toMap(GameBizEventDo::getBizEventType, e -> e, (e1, e2) -> e1));
+            rewardBizEventEffectIndexMap = rewardEffectBizEventList.stream().collect(Collectors.toMap(GameBizEventDo::getSort, e -> e));
         }
         if (CollectionUtils.isEmpty(rewardBizEventTypeList)) {
             return;
@@ -404,7 +404,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
         for (int i = 0; i < rewardBizEventTypeList.size(); i++) {
             BizEventEnum bizEvent = rewardBizEventTypeList.get(i);
             // game和reward 聚合
-            GameBizEventDo rewardEventDo = rewardBizEventEffectMap.get(bizEvent);
+            GameBizEventDo rewardEventDo = rewardBizEventEffectIndexMap.get(i);
             if (Objects.nonNull(rewardEventDo)) {
                 gameBizEventDoList.add(rewardEventDo);
                 continue;
