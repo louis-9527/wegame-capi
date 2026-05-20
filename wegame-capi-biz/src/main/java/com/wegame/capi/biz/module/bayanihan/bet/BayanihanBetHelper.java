@@ -129,7 +129,10 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
 
             // 免费轮总金额 * 最终倍率
             List<BayanihanGameRecordDo> freeGameList = getFreeBatchGameRecordList(gameRecordList);
-            BigDecimal fgFinalMultiple = freeGameList.get(freeGameList.size() - 1).getCollectionInfo().getCurrentMultiple();
+            BigDecimal fgFinalMultiple = freeGameList.stream()
+                    .map(record -> record.getCollectionInfo().getCurrentMultiple())
+                    .max(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
             builder.fgFinalMultiple(fgFinalMultiple);
             // 免费轮基础中奖金额
             long fgBaseRewardAmount = calculateRewardAmount(freeGameList);
