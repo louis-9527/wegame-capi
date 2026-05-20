@@ -114,61 +114,6 @@ public class DiwataMayariGameCommonTemplatePlay implements TemplateGame<DiwataMa
         return ret;
     }
 
-    //private List<GameRecordTemplateDo> getGameRecordTemplate(GamePlayDo gamePlay) {
-    //    DiwataBetRecordTemplateEsDo template = getTemplateEsDo(gamePlay);
-    //    AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-    //    List<GameRecordTemplateDo> configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
-    //    });
-    //    if (CollectionUtils.isEmpty(configRecordList)) {
-    //        log.error("template is empty, betType:{}, template multiple:{}", gamePlay.getBetType(), template.getMultiple());
-    //    }
-    //    AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
-    //    return configRecordList;
-    //}
-
-    //private DiwataBetRecordTemplateEsDo getTemplateEsDo(GamePlayDo gamePlay) {
-    //    UserInfo userInfo = UserInfoContext.getUserInfo();
-    //    AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-    //    AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
-    //    TemplateTypeEnum templateType = diwataMayariConfig.getTemplateRangeConfig().getTemplateMapping().get(abType);
-    //    AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
-    //    log.info("abType: {}, templateName: {}", abType, templateType.getBetRecordTemplateName());
-    //    TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(templateType, gamePlay.getBetType());
-    //    AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
-    //    AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
-    //    AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
-    //    List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), DiwataBetRecordTemplateEsDo.class);
-    //    AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
-    //    Long betRecordId = getRandomElement(betRecordIdList);
-    //    log.info("hit template betRecordId: {}", betRecordId);
-    //    DiwataBetRecordTemplateEsDo template;
-    //    if (diwataMayariConfig.getTemplateRangeConfig().supportWarmUp(gamePlay.getBetType(), templateMultipleRange)) {
-    //        // 已经被预热的倍率，直接走缓存
-    //        // todo delete log
-    //        log.info("support warm template. load from local cache. betType: {}; templateType: {}. templateMultipleRange: {}", gamePlay.getBetType(), templateType, templateMultipleRange);
-    //        template = betRecordTemplateEsService.getTemplateWithLocalCache(templateType, betRecordId, DiwataBetRecordTemplateEsDo.class);
-    //    } else {
-    //        // 没有被预热的倍率，需要重新查询
-    //        template = betRecordTemplateEsService.findById(templateType, betRecordId, DiwataBetRecordTemplateEsDo.class);
-    //    }
-    //    // 结果验证数据添加
-    //    gamePlay.setTemplateId(betRecordId);
-    //    gamePlay.setTemplateMultipleRange(templateMultipleRange);
-    //    return template;
-    //}
-
-    //private TemplateMultipleRange getTemplateMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType) {
-    //    AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
-    //    AssertUtil.assertNotNull(betType, ErrorCode.ERR_INTER);
-    //    Map<BetTypeEnum, Map<String, Integer>> map = diwataMayariConfig.getTemplateRangeConfig().getTemplateRangeMap().get(templateType);
-    //    AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
-    //    Map<String, Integer> weightMap = map.get(betType);
-    //    String templateMultipleRange = randomService.randomKeyByWeight(weightMap);
-    //    log.info("hit templateType: {}, betType: {}, templateMultipleRange: {}", templateType.name(), betType, templateMultipleRange);
-    //    AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_INTER);
-    //    return TemplateMultipleRange.build(templateMultipleRange);
-    //}
-
     /**
      * 递归处理免费轮，确保同层级先处理完，再进入下一层
      */

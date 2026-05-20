@@ -43,16 +43,18 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
 
     @Test
     public void test_bet_normal_bet() {
-        beforeTest();
-        BetRequest betRequest = buildNormalBetRequest();
-        CommonResponse<BetResultVo> commonResponse = betController.bet(betRequest);
-        Assert.notNull(commonResponse);
-        Assert.notNull(commonResponse.getData());
-        Assert.isTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
-        Assert.isTrue(StringUtils.isNotEmpty(commonResponse.getData().getBetRecordId()));
+        for (int i = 0; i <= 100; i++) {
+            beforeTest();
+            BetRequest betRequest = buildNormalBetRequest();
+            CommonResponse<BetResultVo> commonResponse = betController.bet(betRequest);
+            Assert.notNull(commonResponse);
+            Assert.notNull(commonResponse.getData());
+            Assert.isTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
+            Assert.isTrue(StringUtils.isNotEmpty(commonResponse.getData().getBetRecordId()));
 //        Assert.isTrue(commonResponse.getData().getResultDetail() instanceof MariaMakilingBetResultVo);
 //        MariaMakilingBetResultVo resultVo = (MariaMakilingBetResultVo) commonResponse.getData().getResultDetail();
 //        Assert.notNull(resultVo);
+        }
     }
 
     @Test
