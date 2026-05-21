@@ -104,7 +104,6 @@ public class DiwataMayariSymbolUtil {
         if (CollectionUtils.isEmpty(gameRecordList)) {
             return;
         }
-        long startTime = System.currentTimeMillis();
         gameRecordList.parallelStream().forEach(gameRecord -> {
             DiwataMayariSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
@@ -117,8 +116,6 @@ public class DiwataMayariSymbolUtil {
                 }
             }
         });
-        long endTime = System.currentTimeMillis();
-        log.info("postPlaceholderSymbol cost time: {} ms", (endTime - startTime));
     }
 
     private static void clearIndexRewardSymbol(DiwataMayariSymbolDo[][] symbolArr, RewardSymbolDo<DiwataMayariSymbolDo> rewardSymbol) {

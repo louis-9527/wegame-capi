@@ -16,7 +16,7 @@ import static com.wegame.base.enums.CommonCacheEnvEnum.USER_ID;
 public class BloodPoolConfigCache extends AbstractCache {
 
     public BloodPoolConfigCache() {
-        super(BLOOD_POOL_CONFIG.cacheKeyPrefixName(), 60);
+        super(BLOOD_POOL_CONFIG.cacheKeyPrefixName(), 5);
     }
 
     @Override

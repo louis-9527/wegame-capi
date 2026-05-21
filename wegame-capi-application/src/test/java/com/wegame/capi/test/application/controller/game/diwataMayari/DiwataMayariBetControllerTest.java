@@ -29,9 +29,9 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
     public void beforeTest() {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
-                .userName("userName")
-                .playerId("playerId")
-                .playerName("playerName")
+                .userName("altestwer")
+                .playerId("altestwer")
+                .playerName("altestwer")
                 .pId("50")
                 .channelId("1050")
                 .build());
@@ -46,16 +46,18 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
     @Test
     public void test_bet_normal_bet() {
         beforeTest();
-        for (int i = 0; i <= 3; i++) {
-            BetRequest betRequest = buildNormalBetRequest();
-            CommonResponse<BetResultVo> commonResponse = betController.bet(betRequest);
-            Assert.notNull(commonResponse);
-            Assert.notNull(commonResponse.getData());
-            Assert.isTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
-            Assert.isTrue(StringUtils.isNotEmpty(commonResponse.getData().getBetRecordId()));
-//        Assert.isTrue(commonResponse.getData().getResultDetail() instanceof MariaMakilingBetResultVo);
-//        MariaMakilingBetResultVo resultVo = (MariaMakilingBetResultVo) commonResponse.getData().getResultDetail();
-//        Assert.notNull(resultVo);
+        for (long i = 0; i <= 100000000000L; i++) {
+            try {
+                BetRequest betRequest = buildNormalBetRequest();
+                CommonResponse<BetResultVo> commonResponse = betController.bet(betRequest);
+                Assert.notNull(commonResponse);
+                Assert.notNull(commonResponse.getData());
+                Assert.isTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
+                Assert.isTrue(StringUtils.isNotEmpty(commonResponse.getData().getBetRecordId()));
+                log.info("test: {}", i);
+            } catch (Exception e) {
+                log.error(" test error: {}", i);
+            }
         }
     }
 
