@@ -14,6 +14,7 @@ import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.IdHelper;
+import com.wegame.capi.biz.module.base.WheelHelper;
 import com.wegame.capi.biz.module.base.game.TemplateGame;
 import com.wegame.capi.biz.module.diawatamayari.DiwataMayariSymbolUtil;
 import com.wegame.capi.biz.module.diawatamayari.reward.DiwataMayariRewardHandler;
@@ -32,8 +33,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
-import static com.wegame.capi.biz.module.diawatamayari.DiwataMayariGameHelper.DIWATA_MAYARI_GAME_INFO;
-import static com.wegame.capi.biz.module.diawatamayari.DiwataMayariGameHelper.getTotalRewardAmount;
+import static com.wegame.capi.biz.module.base.WheelHelper.convertWheelAndFillSymbolHolder;
+import static com.wegame.capi.biz.module.diawatamayari.DiwataMayariGameHelper.*;
 import static com.wegame.capi.biz.module.diawatamayari.DiwataMayariSymbolUtil.postProcessPlaceholderSymbol;
 import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -67,11 +68,11 @@ public class DiwataMayariGameCommonTemplatePlay implements TemplateGame<DiwataMa
         Map<Long, Long> idMap = idHelper.buildIdMap(templateList);
         List<DiwataMayariGameRecordDo> ret = new ArrayList<>();
         Long maxBatchId = Collections.max(templateList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
-        BigDecimal lastTotalMultiple = BigDecimal.ZERO;
+        BigDecimal leastLastMultiple = BigDecimal.ZERO;
         for (GameRecordTemplateDo templateItem : CollectionUtils.emptyIfNull(templateList)) {
             boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
-            DiwataMayariGameRecordDo recordDo = buildGameRecord(gamePlayDo, templateItem, lastTotalMultiple, idMap, lastGameFlag);
-            lastTotalMultiple = recordDo.getRewardResult().getTotalMultiple();
+            DiwataMayariGameRecordDo recordDo = buildGameRecord(gamePlayDo, templateItem, leastLastMultiple, idMap, lastGameFlag);
+            leastLastMultiple = recordDo.getRewardResult().getTotalMultiple();
             ret.add(recordDo);
         }
         // 占位元素-将占位元素设置为空:
@@ -82,14 +83,15 @@ public class DiwataMayariGameCommonTemplatePlay implements TemplateGame<DiwataMa
         return ret;
     }
 
-    private DiwataMayariGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal lastTotalMultiple, Map<Long, Long> idMap, boolean lastGameFlag) {
+    private DiwataMayariGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal leastLastMultiple, Map<Long, Long> idMap, boolean lastGameFlag) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        WheelDo<DiwataMayariSymbolDo> wheel = DiwataMayariSymbolUtil.convertWheel(template.getWheel());
+        WheelDo<DiwataMayariSymbolDo> wheel = convertWheelAndFillSymbolHolder(template.getWheel(), DIWATA_MAYARI_SYMBOL_PLACEHOLDER, DiwataMayariSymbolDo.class);
         if (wheel.getIndex() == 0) {
-            lastTotalMultiple = BigDecimal.ZERO;
+            // 每一轮，首回合倍率初始化
+            leastLastMultiple = BigDecimal.ZERO;
         }
-        RewardResultDo<DiwataMayariSymbolDo> rewardResult = diwataMayariRewardHandler.handle(build(DIWATA_MAYARI_GAME_INFO, gamePlay, wheel, lastTotalMultiple));
+        RewardResultDo<DiwataMayariSymbolDo> rewardResult = diwataMayariRewardHandler.handle(build(DIWATA_MAYARI_GAME_INFO, gamePlay, wheel, leastLastMultiple));
         Long id = idMap.get(template.getId());
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         Long parentId = idMap.get(template.getParentId());

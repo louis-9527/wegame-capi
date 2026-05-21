@@ -128,16 +128,6 @@ public class DiwataMayariSymbolUtil {
         symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = null;
     }
 
-
-    public static WheelDo<DiwataMayariSymbolDo> convertWheel(Object obj) {
-        WheelDo<DiwataMayariSymbolDo> wheel = FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), new TypeReference<WheelDo<DiwataMayariSymbolDo>>() {
-        });
-        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
-        // 空元素置为占位元素（以用于中奖计算）
-        wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
-        return wheel;
-    }
-
     public static void print(DiwataMayariSymbolDo[][] symbolArr, String scene) {
         System.out.println("symbolArr: " + scene);
         for (int row = 0; row < symbolArr.length; row++) {

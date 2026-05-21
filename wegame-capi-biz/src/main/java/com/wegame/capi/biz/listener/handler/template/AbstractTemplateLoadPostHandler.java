@@ -98,9 +98,9 @@ public abstract class AbstractTemplateLoadPostHandler<T extends BetRecordTemplat
     }
 
     public void loadLocalCache(String templateIndexName, List<Long> templateIdList, Class<T> clazz) {
-        //if (!supportWarmUpEnv()) {
-        //    return;
-        //}
+        if (!supportWarmUpEnv()) {
+            return;
+        }
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
                 log.info("loadLocalCache start, templateIndexName: {},  size: {}", templateIndexName, templateIdList.size());
