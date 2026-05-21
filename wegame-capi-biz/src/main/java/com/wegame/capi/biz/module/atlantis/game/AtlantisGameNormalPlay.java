@@ -613,7 +613,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(false)
-                .bizEventList(rewardResult.getEffectBizEventList())
+//                .bizEventList(rewardResult.getEffectBizEventList())
                 .creator(userInfo.getPlayerId())
                 .createTime(DateUtil.getCurrentMilli())
                 .updater(userInfo.getPlayerId())
