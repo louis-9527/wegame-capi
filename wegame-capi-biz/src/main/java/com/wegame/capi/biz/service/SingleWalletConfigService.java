@@ -6,20 +6,16 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.SingleWalletConfigApi;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import com.wegame.capi.infrastructure.helper.LarkHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
 import static com.wegame.capi.common.constants.WarningConstants.EXCEPTION_WARNING_MSG_FORMAT;
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 
 
 /**
@@ -31,8 +27,6 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThre
 @Service
 public class SingleWalletConfigService {
 
-    @Value("${lark.warningRobot}")
-    public String warningRobot;
     @Autowired
     LarkHelper larkHelper;
     @Autowired
@@ -56,9 +50,9 @@ public class SingleWalletConfigService {
         return getBloodPoolConfigNoCache(pid, channelId, gameType);
     }
 
-    @Async(defaultThreadPoolExecutor)
     @Cacheable(value = CacheConstants.BLOOD_POOL_CONFIG, key = "#pid + '_' + #channelId + '_' + #gameType.name")
-    public List<GetPoolConfigRes.BloodPoolConfig> asyncPutBloodPoolConfigCache(String pid, String channelId, GameTypeEnum gameType, List<GetPoolConfigRes.BloodPoolConfig> configList) {
+    public List<GetPoolConfigRes.BloodPoolConfig> putBloodPoolConfigCache(String pid, String channelId, GameTypeEnum gameType, List<GetPoolConfigRes.BloodPoolConfig> configList) {
+        log.info("putBloodPoolConfigCache, pid: {}, channelId: {}, gameType: {}", pid, channelId, gameType.getName());
         return configList;
     }
 }

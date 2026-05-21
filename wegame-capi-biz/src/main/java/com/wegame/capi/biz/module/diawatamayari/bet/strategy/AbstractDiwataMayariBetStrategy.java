@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.diawatamayari.bet.strategy;
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.DiwataMayariBetRecordDetailDo;
@@ -124,7 +125,7 @@ public abstract class AbstractDiwataMayariBetStrategy
     private BetResultDo<DiwataMayariBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<DiwataMayariGameRecordDo> list = super.play(betDo, betRecordId, diwataMayariConfig.getPayoutAmountLimitConfig(), null);
+        List<DiwataMayariGameRecordDo> list = gameContext().play(betDo, GamePlayBuilder.build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 2、构建投注记录
         BetRecordDo<DiwataMayariGameRecordDo> betRecord = diwataMayariBetHelper.buildBetRecord(betRecordId, betDo, list);

@@ -10,6 +10,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.biz.service.SingleWalletConfigService;
 import com.wegame.capi.biz.service.bloodpool.BloodPoolControlService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
@@ -41,6 +42,8 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
     BloodPoolControlService bloodPoolControlService;
     @Autowired
     public BetRecordTemplateService<T> betRecordTemplateService;
+    @Autowired
+    public SingleWalletConfigService singleWalletConfigService;
 
     public abstract TemplateGame<R, T> templateGame();
 

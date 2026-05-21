@@ -4,8 +4,8 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.biz.config.domain.common.CommonBloodPoolConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetBloodPoolControlDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.service.SingleWalletConfigService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.api.SingleWalletConfigApi.*;
 import static com.wegame.capi.common.constants.WarningConstants.*;
 
 /**
@@ -53,7 +52,13 @@ public class BloodPoolControlService {
             return null;
         }
         List<GetPoolConfigRes.BloodPoolConfig> configList = singleWalletConfigService.getBloodPoolConfigWithCache(userInfo.getPId(), userInfo.getChannelId(), betDo.getGameType());
-        return matchConfig(userInfo, configList, betDo);
+        GetPoolConfigRes.BloodPoolConfig bloodPoolConfig = matchConfig(userInfo, configList, betDo);
+        // 设置投注上下文
+        betDo.setBetBloodPoolControl(BetBloodPoolControlDo.builder()
+                .enableFundPool(judgeEnableBloodPoolControl(betDo))
+                .matchBloodPoolConfig(bloodPoolConfig)
+                .build());
+        return bloodPoolConfig;
     }
 
     public boolean judgeEnableBloodPoolControl(BetDo betDo) {

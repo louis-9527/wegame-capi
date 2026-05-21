@@ -82,7 +82,7 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
         /**
          * 单笔派奖上限
          */
-        private Long singlePayoutLimit;
+        private BigDecimal singlePayoutLimit;
         /**
          * 最后变更时间
          */
