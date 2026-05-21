@@ -79,11 +79,7 @@ public class BetService {
 
     public void buildGamePlayType(BetDo betDo) {
         if (StringUtils.equals(env, EnvEnum.PROD.getValue())) {
-            if (StringUtils.equals(betDo.getGameType().getId(), GameTypeEnum.KAPRE.getId())) {
-                betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
-            } else {
-                betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-            }
+            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
         } else {
             UserInfo userInfo = UserInfoContext.getUserInfo();
             String at = Optional.ofNullable(userInfo.getExt())
@@ -96,20 +92,6 @@ public class BetService {
                 log.info("userInfo.at: {}, template bet", at);
                 betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
             }
-            //if (AB_CONTROL_GAME_LIST.contains(betDo.getGameType())) {
-            //    if (Objects.equals(ab, AbTypeEnum.A.getId())) {
-            //        betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
-            //    } else {
-            //        log.info("userInfo.ut: {}, template bet", userInfo.getUt());
-            //        betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-            //    }
-            //} else if (FORCE_TEMPLATE_BET_CONTROL_GAME_LIST.contains(betDo.getGameType())) {
-            //    betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-            //} else {
-            //    // Kapre 强制不走模版
-            //    betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
-            //}
         }
-
     }
 }
