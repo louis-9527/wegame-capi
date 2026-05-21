@@ -48,9 +48,9 @@ public abstract class AbstractTemplateLoadPostHandler<T extends BetRecordTemplat
         Set<String> hasWarmUpSet = new HashSet<>();
         Map<String, Set<Long>> toWarmUpMap = new HashMap<>();
         // warmUp template IdList
-        rtpMap.entrySet().forEach(item -> {
-            String indexName = item.getValue().getIndexName();
-            TreeMap<BetTypeEnum, TreeMap<String, Integer>> multipleRangeWeightMap = item.getValue().getMultipleRangeWeightMap();
+        rtpMap.forEach((key, rtp) -> {
+            String indexName = rtp.getIndexName();
+            TreeMap<BetTypeEnum, TreeMap<String, Integer>> multipleRangeWeightMap = rtp.getMultipleRangeWeightMap();
             for (BetTypeEnum betType : BetTypeEnum.values()) {
                 Map<String, Integer> weightMap = multipleRangeWeightMap.get(betType);
                 weightMap.keySet().forEach(rangStr -> {
@@ -98,9 +98,9 @@ public abstract class AbstractTemplateLoadPostHandler<T extends BetRecordTemplat
     }
 
     public void loadLocalCache(String templateIndexName, List<Long> templateIdList, Class<T> clazz) {
-        if (!supportWarmUpEnv()) {
-            return;
-        }
+        //if (!supportWarmUpEnv()) {
+        //    return;
+        //}
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
                 log.info("loadLocalCache start, templateIndexName: {},  size: {}", templateIndexName, templateIdList.size());
