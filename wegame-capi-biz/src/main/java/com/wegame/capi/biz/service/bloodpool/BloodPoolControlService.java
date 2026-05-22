@@ -68,9 +68,10 @@ public class BloodPoolControlService {
         switch (betDo.getBetPromotionType()) {
             case NONE:
             case STAR_CARD:
+                return true;
             case STAR_CARD_IN_FREE:
             case FREE_SPIN:
-                return true;
+                return false;
             case OPERATION_EVENT:
                 return false;
         }

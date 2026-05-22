@@ -22,7 +22,6 @@ public class DiwataMayariGameContext<R> extends AbstractGameContext<R> {
             .put(GamePlayTypeEnum.NORMAL_PLAY, "diwataMayariGameNormalPlay")
             .put(GamePlayTypeEnum.TEMPLATE_PLAY, "diwataMayariGameTemplatePlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "diwataMayariGameEventPlay")
-            .put(GamePlayTypeEnum.BLOOD_POOL_TEMPLATE_PLAY, "diwataMayariGameBloodPoolPlay")
             .build();
 
     @Autowired
