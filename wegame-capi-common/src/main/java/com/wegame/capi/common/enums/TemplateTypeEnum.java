@@ -42,6 +42,8 @@ public enum TemplateTypeEnum {
 
     MANGKUKULAM_V3(GameTypeEnum.MANGKUKULAM, TemplateConstants.MANGKUKULAM_BET_RECORD_TEMPLATE_V3),
 
+    KAPRE(GameTypeEnum.KAPRE, TemplateConstants.KAPRE_BET_RECORD_TEMPLATE),
+
     ;
 
     /**

@@ -22,6 +22,7 @@ public class KapreGameContext<R> extends AbstractGameContext<R> {
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "kapreGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "kapreGameEventPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "kapreGameTemplatePlay")
             .build();
 
     @Autowired
