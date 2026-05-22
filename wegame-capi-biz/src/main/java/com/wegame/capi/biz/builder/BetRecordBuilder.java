@@ -47,6 +47,17 @@ public class BetRecordBuilder {
                     .campaignId(betDo.getCampaignId())
                     .build();
         }
+        if (Objects.nonNull(betDo.getBetBloodPoolControl()) && Objects.nonNull(betDo.getBetBloodPoolControl().getMatchBloodPoolConfig())) {
+            if (Objects.nonNull(extendInfo)) {
+                extendInfo.setPoolCategory(betDo.getBetBloodPoolControl().getMatchBloodPoolConfig().getPoolCategory());
+                extendInfo.setCurrentLevelNo(betDo.getBetBloodPoolControl().getMatchBloodPoolConfig().getCurrentLevelNo());
+            } else {
+                extendInfo = BetRecordDo.ExtendInfo.builder()
+                        .poolCategory(betDo.getBetBloodPoolControl().getMatchBloodPoolConfig().getPoolCategory())
+                        .currentLevelNo(betDo.getBetBloodPoolControl().getMatchBloodPoolConfig().getCurrentLevelNo())
+                        .build();
+            }
+        }
         BetRecordDo.Inventory inventory = null;
         if (Objects.nonNull(betDo.getBetInventoryControl())) {
             inventory = BetRecordDo.Inventory.builder()

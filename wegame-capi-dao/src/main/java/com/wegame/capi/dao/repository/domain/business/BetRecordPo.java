@@ -166,6 +166,15 @@ public class BetRecordPo implements Serializable {
          * 预定投注Id
          */
         private String campaignId;
+        // ------------------------------------------------------------------------------------------------------------
+        /**
+         * 奖池分类： 1：普通/ 2：购买 / 100：全部
+         */
+        private Integer poolCategory;
+        /**
+         * 当前档位
+         */
+        private String currentLevelNo;
     }
 
     @Data

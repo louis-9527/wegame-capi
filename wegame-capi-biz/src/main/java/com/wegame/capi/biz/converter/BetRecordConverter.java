@@ -58,6 +58,8 @@ public class BetRecordConverter {
                     .ieId(po.getExtendInfo().getIeId())
                     .rewardUrl(po.getExtendInfo().getRewardUrl())
                     .campaignId(po.getExtendInfo().getCampaignId())
+                    .poolCategory(po.getExtendInfo().getPoolCategory())
+                    .currentLevelNo(po.getExtendInfo().getCurrentLevelNo())
                     .build());
         }
         if (Objects.nonNull(po.getJackpot())) {
@@ -117,6 +119,8 @@ public class BetRecordConverter {
                     .ieId(betRecordDo.getExtendInfo().getIeId())
                     .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
                     .campaignId(betRecordDo.getExtendInfo().getCampaignId())
+                    .poolCategory(betRecordDo.getExtendInfo().getPoolCategory())
+                    .currentLevelNo(betRecordDo.getExtendInfo().getCurrentLevelNo())
                     .build());
         }
         if (Objects.nonNull(betRecordDo.getJackpot())) {
