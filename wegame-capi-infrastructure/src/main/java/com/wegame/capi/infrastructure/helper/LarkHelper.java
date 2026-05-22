@@ -29,7 +29,7 @@ public class LarkHelper {
             rateLimiter.acquire();
             LarkUtil.sendTextMsg(warningRobot, msg);
         } catch (Exception e) {
-            log.error("sendWarningMsg error", e);
+            log.error("sendWarningMsg error, msg: {}", msg, e);
         }
     }
 }
