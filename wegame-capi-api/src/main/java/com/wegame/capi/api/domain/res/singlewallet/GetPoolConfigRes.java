@@ -59,14 +59,6 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
          * 当前档位
          */
         private String currentLevelNo;
-        ///**
-        // * 平台id   todo @bruce
-        // */
-        //private String pid;
-        ///**
-        // * 渠道id   todo @bruce
-        // */
-        //private String channelId;
         /**
          * 支持的游戏
          */
