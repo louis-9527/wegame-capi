@@ -36,9 +36,7 @@ import static com.wegame.capi.common.utils.ListUtil.getRandomElement;
 @Component("diwataMayariGameTemplatePlay")
 @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
 public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<DiwataMayariGameRecordDo, DiwataBetRecordTemplateEsDo> {
-    private static final int MAX_RETRY_TIMES = 1;
     private static final String DEFAULT_SERVICE_NAME = "default";
-
     @Autowired
     DiwataMayariConfig diwataMayariConfig;
     @Autowired
@@ -51,17 +49,18 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
 
     @Override
     public DiwataBetRecordTemplateEsDo getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
-        return RetryUtil.execute(() ->
-                        fetchTemplate(betDo, gamePlayDo),
-                MAX_RETRY_TIMES, RetryException.class,
-                DEFAULT_SERVICE_NAME);
-    }
-
-    private DiwataBetRecordTemplateEsDo fetchTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         CommonTemplateConfig.Rtp rtp = getRtpWithBloodPoolControl(betDo, gamePlayDo, diwataMayariConfig.getCommonBloodPoolConfig(), diwataMayariConfig.getCommonTemplateConfig());
         AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
+        PayoutAmountLimitConfig config = diwataMayariConfig.getPayoutAmountLimitConfig();
+        return RetryUtil.execute(() -> fetchTemplate(betDo, gamePlayDo, rtp),
+                config.getRetryCount(),
+                RetryException.class,
+                DEFAULT_SERVICE_NAME);
+    }
+
+    private DiwataBetRecordTemplateEsDo fetchTemplate(BetDo betDo, GamePlayDo gamePlayDo, CommonTemplateConfig.Rtp rtp) {
         String templateIndexName = rtp.getIndexName();
         AssertUtil.assertStrNotEmpty(templateIndexName, ErrorCode.ERR_INTER);
         TemplateMultipleRange multipleRange = getTemplateMultipleRange(rtp.getMultipleRangeWeightMap().get(betDo.getBetType()));
@@ -83,46 +82,32 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
 
     private void templateValidate(BetDo betDo, DiwataBetRecordTemplateEsDo templateEsDo) {
         if (Objects.nonNull(betDo.getBetBloodPoolControl()) && Objects.nonNull(betDo.getBetBloodPoolControl().getMatchBloodPoolConfig())) {
-            templateValidateInBloodControl(betDo, templateEsDo);
-        } else {
-            templateValidateOutBloodControl(betDo, templateEsDo);
-        }
-    }
-
-    private void templateValidateInBloodControl(BetDo betDo, DiwataBetRecordTemplateEsDo templateEsDo) {
-        BigDecimal singlePayoutLimit = betDo.getBetBloodPoolControl().getMatchBloodPoolConfig().getSinglePayoutLimit();
-        BigDecimal currentPayOutAmount = new BigDecimal(betDo.getBetAmount()).divide(new BigDecimal(1000)).multiply(new BigDecimal(templateEsDo.getMultiple()));
-        if (singlePayoutLimit.compareTo(currentPayOutAmount) < 0) {
-            log.warn("InBloodControl payOutAmount exceed limit, betDo: {}, bloodConfig: {}, templateId: {}, multiple: {}",
-                    betDo,
-                    betDo.getBetBloodPoolControl().getMatchBloodPoolConfig(),
-                    templateEsDo.getId(),
-                    templateEsDo.getMultiple());
-            // 后处理：同步刷新血池配置缓存
-            UserInfo userInfo = UserInfoContext.getUserInfo();
-            List<GetPoolConfigRes.BloodPoolConfig> list = singleWalletConfigService.getBloodPoolConfigNoCache(userInfo.getPId(), userInfo.getChannelId(), betDo.getGameType());
-            if (CollectionUtils.isNotEmpty(list)) {
-                singleWalletConfigService.putBloodPoolConfigCache(userInfo.getPId(), userInfo.getChannelId(), betDo.getGameType(), list);
+            BigDecimal singlePayoutLimit = betDo.getBetBloodPoolControl().getMatchBloodPoolConfig().getSinglePayoutLimit();
+            BigDecimal currentPayOutAmount = new BigDecimal(betDo.getBetAmount()).divide(new BigDecimal(1000)).multiply(new BigDecimal(templateEsDo.getMultiple()));
+            if (singlePayoutLimit.compareTo(currentPayOutAmount) < 0) {
+                log.warn("InBloodControl payOutAmount exceed limit, betDo: {}, bloodConfig: {}, templateId: {}, multiple: {}",
+                        betDo,
+                        betDo.getBetBloodPoolControl().getMatchBloodPoolConfig(),
+                        templateEsDo.getId(),
+                        templateEsDo.getMultiple());
+                throw new RetryException(ErrorCode.ERR_INTER);
             }
-            throw new RetryException(ErrorCode.ERR_INTER);
-        }
-    }
-
-    private void templateValidateOutBloodControl(BetDo betDo, DiwataBetRecordTemplateEsDo templateEsDo) {
-        PayoutAmountLimitConfig payoutAmountLimitConfig = diwataMayariConfig.getPayoutAmountLimitConfig();
-        List<BetTypeEnum> limitBetTypeList = payoutAmountLimitConfig.getLimitBetTypeList();
-        long limitAmount = payoutAmountLimitConfig.getLimitAmount();
-        if (!limitBetTypeList.contains(betDo.getBetType()) || limitAmount <= 0) {
-            // 无任何限制
-            return;
-        }
-        double currentPayOutAmount = betDo.getBetAmount() * templateEsDo.getMultiple();
-        if (limitAmount < currentPayOutAmount) {
-            log.warn("OutBloodControl payOutAmount exceed limit, betDo: {}, templateId: {}, multiple: {}",
-                    betDo,
-                    templateEsDo.getId(),
-                    templateEsDo.getMultiple());
-            throw new RetryException(ErrorCode.ERR_INTER);
+        } else {
+            PayoutAmountLimitConfig payoutAmountLimitConfig = diwataMayariConfig.getPayoutAmountLimitConfig();
+            List<BetTypeEnum> limitBetTypeList = payoutAmountLimitConfig.getLimitBetTypeList();
+            long limitAmount = payoutAmountLimitConfig.getLimitAmount();
+            if (!limitBetTypeList.contains(betDo.getBetType()) || limitAmount <= 0) {
+                // 无任何限制
+                return;
+            }
+            double currentPayOutAmount = betDo.getBetAmount() * templateEsDo.getMultiple();
+            if (currentPayOutAmount > limitAmount) {
+                log.warn("OutBloodControl payOutAmount exceed limit, betDo: {}, templateId: {}, multiple: {}",
+                        betDo,
+                        templateEsDo.getId(),
+                        templateEsDo.getMultiple());
+                throw new RetryException(ErrorCode.ERR_INTER);
+            }
         }
     }
 }

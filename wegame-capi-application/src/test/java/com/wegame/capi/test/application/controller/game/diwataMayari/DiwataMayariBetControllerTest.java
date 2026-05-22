@@ -46,7 +46,7 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
     @Test
     public void test_bet_normal_bet() {
         beforeTest();
-        for (long i = 0; i <= 10L; i++) {
+        for (long i = 0; i <= 10000000L; i++) {
             try {
                 BetRequest betRequest = buildNormalBetRequest();
                 CommonResponse<BetResultVo> commonResponse = betController.bet(betRequest);
@@ -64,7 +64,7 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
     @Test
     public void test_bet_buy_bet() {
         beforeTest();
-        for (long i = 0; i <= 10L; i++) {
+        for (long i = 0; i <= 10000000L; i++) {
             // 购买免费轮
             try {
                 BetRequest betRequest = buildBuyBetRequest();
