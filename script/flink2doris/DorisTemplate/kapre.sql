@@ -26,6 +26,7 @@ CREATE TABLE `kapre_bet_record` (
   `status` int NULL COMMENT "状态 0进行中 1已完结 2无效",
   `betTime` datetime NULL COMMENT "投注时间",
   `credit` bigint NULL COMMENT "用户余额（厘）",
+  `extendInfo` text NULL COMMENT " 扩展信息（JSON格式）",
   `creator` varchar(255) NULL COMMENT "创建人",
   `createTime` datetime NULL COMMENT "创建时间",
   `updater` varchar(255) NULL COMMENT "更新人",
