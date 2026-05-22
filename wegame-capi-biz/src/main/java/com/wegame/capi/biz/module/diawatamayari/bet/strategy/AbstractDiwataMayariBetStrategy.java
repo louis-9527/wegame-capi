@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.GamePlayBuilder;
-import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.DiwataMayariBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -52,8 +51,6 @@ public abstract class AbstractDiwataMayariBetStrategy
     DiwataMayariOperationEventManager diwataMayariOperationEventManager;
     @Autowired
     DiwataMayariBetHelper diwataMayariBetHelper;
-    @Autowired
-    DiwataMayariConfig diwataMayariConfig;
 
     @Override
     public AbstractGameContext<DiwataMayariGameRecordDo> gameContext() {

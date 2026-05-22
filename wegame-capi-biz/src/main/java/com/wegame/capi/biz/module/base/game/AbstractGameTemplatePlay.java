@@ -10,7 +10,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.RandomService;
-import com.wegame.capi.biz.service.SingleWalletConfigService;
 import com.wegame.capi.biz.service.bloodpool.BloodPoolControlService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
@@ -20,7 +19,6 @@ import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.infrastructure.helper.LarkHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -42,8 +40,6 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
     BloodPoolControlService bloodPoolControlService;
     @Autowired
     public BetRecordTemplateService<T> betRecordTemplateService;
-    @Autowired
-    public SingleWalletConfigService singleWalletConfigService;
 
     public abstract TemplateGame<R, T> templateGame();
 
