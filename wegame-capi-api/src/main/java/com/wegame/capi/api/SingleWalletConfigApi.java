@@ -8,7 +8,7 @@ import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.base.SingleWalletBaseApi;
 import com.wegame.capi.api.domain.req.singlewallet.GetPoolConfigReq;
-import com.wegame.capi.api.domain.res.CommonConfigRes;
+import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
@@ -33,7 +33,7 @@ import java.net.URI;
 @Component
 public class SingleWalletConfigApi extends SingleWalletBaseApi {
 
-   private static final String GET_FOUND_BLOOD_CONFIG_URL_FORMAT = "%s/fund-pool/game/getPoolList";
+    private static final String GET_FOUND_BLOOD_CONFIG_URL_FORMAT = "%s/fund-pool/game/getPoolList";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     @Autowired
@@ -63,8 +63,8 @@ public class SingleWalletConfigApi extends SingleWalletBaseApi {
             MultiValueMap<String, String> headers = buildHeaders(encryptKeyString, encryptIvString);
             RequestEntity<GetPoolConfigReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(GET_FOUND_BLOOD_CONFIG_URL_FORMAT, singlePoolConfigDomain(pid))));
-            ResponseEntity<CommonConfigRes<GetPoolConfigRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
-                    new ParameterizedTypeReference<CommonConfigRes<GetPoolConfigRes>>() {
+            ResponseEntity<CommonRes<GetPoolConfigRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
+                    new ParameterizedTypeReference<CommonRes<GetPoolConfigRes>>() {
                     });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
