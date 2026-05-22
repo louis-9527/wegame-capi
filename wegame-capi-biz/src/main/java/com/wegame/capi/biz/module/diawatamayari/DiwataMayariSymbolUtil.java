@@ -45,6 +45,15 @@ public class DiwataMayariSymbolUtil {
         rewardSymbolList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
     }
 
+    public static WheelDo<DiwataMayariSymbolDo> convertWheel(Object obj) {
+        WheelDo<DiwataMayariSymbolDo> wheel = FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), new TypeReference<WheelDo<DiwataMayariSymbolDo>>() {
+        });
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        // 空元素置为占位元素（以用于中奖计算）
+        wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
+        return wheel;
+    }
+
     public static DiwataMayariSymbolDo[][] handleSymbolNullArr(DiwataMayariSymbolDo[][] symbolArr) {
         int row = symbolArr.length;
         int col = symbolArr[0].length;

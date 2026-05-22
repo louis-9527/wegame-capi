@@ -10,7 +10,6 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.diwatamayari.DiwataMayariBetResultVo;
-import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -20,13 +19,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class DiwataMayariBetControllerTest extends BetControllerTest {
 
     @BeforeAll
     public void beforeTest() {
+        Map<String, Object> ext = new HashMap<>();
+        ext.put("at", "template");
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .userName("altestwer")
@@ -34,6 +36,7 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
                 .playerName("altestwer")
                 .pId("50")
                 .channelId("1050")
+                .ext(ext)
                 .build());
         OperatorContext.setOperator(Operator.builder()
                 .name("system")
@@ -103,8 +106,8 @@ public class DiwataMayariBetControllerTest extends BetControllerTest {
         betRequest.setBetType(BetTypeEnum.NORMAL_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.NORMAL_BET.getCode());
         BetRequest.BetDetail betDetail = new BetRequest.BetDetail();
-        betDetail.setBetAmount(45 * 1000L);
-        betDetail.setPayAmount(45 * 1000L);
+        betDetail.setBetAmount(2 * 1000L);
+        betDetail.setPayAmount(2 * 1000L);
         betRequest.setBetDetail(betDetail);
         return betRequest;
     }

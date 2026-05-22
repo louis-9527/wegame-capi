@@ -14,9 +14,7 @@ import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.IdHelper;
-import com.wegame.capi.biz.module.base.WheelHelper;
 import com.wegame.capi.biz.module.base.game.TemplateGame;
-import com.wegame.capi.biz.module.diawatamayari.DiwataMayariSymbolUtil;
 import com.wegame.capi.biz.module.diawatamayari.reward.DiwataMayariRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -33,8 +31,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
-import static com.wegame.capi.biz.module.base.WheelHelper.convertWheelAndFillSymbolHolder;
 import static com.wegame.capi.biz.module.diawatamayari.DiwataMayariGameHelper.*;
+import static com.wegame.capi.biz.module.diawatamayari.DiwataMayariSymbolUtil.convertWheel;
 import static com.wegame.capi.biz.module.diawatamayari.DiwataMayariSymbolUtil.postProcessPlaceholderSymbol;
 import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -86,7 +84,7 @@ public class DiwataMayariGameCommonTemplatePlay implements TemplateGame<DiwataMa
     private DiwataMayariGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal leastLastMultiple, Map<Long, Long> idMap, boolean lastGameFlag) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        WheelDo<DiwataMayariSymbolDo> wheel = convertWheelAndFillSymbolHolder(template.getWheel(), DIWATA_MAYARI_SYMBOL_PLACEHOLDER, DiwataMayariSymbolDo.class);
+        WheelDo<DiwataMayariSymbolDo> wheel = convertWheel(template.getWheel());
         if (wheel.getIndex() == 0) {
             // 每一轮，首回合倍率初始化
             leastLastMultiple = BigDecimal.ZERO;

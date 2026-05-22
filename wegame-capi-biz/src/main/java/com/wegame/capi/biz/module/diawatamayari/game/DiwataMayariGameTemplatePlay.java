@@ -83,8 +83,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
     private void templateValidate(BetDo betDo, DiwataBetRecordTemplateEsDo templateEsDo) {
         if (Objects.nonNull(betDo.getBetBloodPoolControl()) && Objects.nonNull(betDo.getBetBloodPoolControl().getMatchBloodPoolConfig())) {
             BigDecimal singlePayoutLimit = betDo.getBetBloodPoolControl().getMatchBloodPoolConfig().getSinglePayoutLimit();
-            // todo @bruce
-            BigDecimal currentPayOutAmount = new BigDecimal(betDo.getBetAmount()).divide(new BigDecimal(1000)).multiply(new BigDecimal(templateEsDo.getMultiple()));
+            BigDecimal currentPayOutAmount = new BigDecimal(betDo.getPayAmount()).divide(new BigDecimal(1000)).multiply(new BigDecimal(templateEsDo.getMultiple()));
             if (currentPayOutAmount.compareTo(singlePayoutLimit) > 0) {
                 log.warn("InBloodControl payOutAmount exceed limit, betDo: {}, bloodConfig: {}, templateId: {}, multiple: {}",
                         betDo,
@@ -101,8 +100,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
                 // 无任何限制
                 return;
             }
-            // todo @bruce
-            double currentPayOutAmount = betDo.getBetAmount() * templateEsDo.getMultiple();
+            double currentPayOutAmount = betDo.getPayAmount() * templateEsDo.getMultiple();
             if (currentPayOutAmount > limitAmount) {
                 log.warn("OutBloodControl payOutAmount exceed limit, betDo: {}, templateId: {}, multiple: {}",
                         betDo,
