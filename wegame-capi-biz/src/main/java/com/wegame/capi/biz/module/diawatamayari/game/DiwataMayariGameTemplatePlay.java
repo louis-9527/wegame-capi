@@ -84,7 +84,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
         if (Objects.nonNull(betDo.getBetBloodPoolControl()) && Objects.nonNull(betDo.getBetBloodPoolControl().getMatchBloodPoolConfig())) {
             BigDecimal singlePayoutLimit = betDo.getBetBloodPoolControl().getMatchBloodPoolConfig().getSinglePayoutLimit();
             BigDecimal currentPayOutAmount = new BigDecimal(betDo.getBetAmount()).divide(new BigDecimal(1000)).multiply(new BigDecimal(templateEsDo.getMultiple()));
-            if (singlePayoutLimit.compareTo(currentPayOutAmount) < 0) {
+            if (currentPayOutAmount.compareTo(singlePayoutLimit) > 0) {
                 log.warn("InBloodControl payOutAmount exceed limit, betDo: {}, bloodConfig: {}, templateId: {}, multiple: {}",
                         betDo,
                         betDo.getBetBloodPoolControl().getMatchBloodPoolConfig(),
