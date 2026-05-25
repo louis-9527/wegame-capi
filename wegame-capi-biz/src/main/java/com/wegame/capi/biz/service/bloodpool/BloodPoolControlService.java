@@ -90,15 +90,15 @@ public class BloodPoolControlService {
             larkHelper.sendWarningMsg(String.format(EMPTY_LIST_WARNING_MSG_FORMAT, betDo.getGameId(), ThreadMdcUtil.getTraceId()));
             return null;
         }
-        List<GetPoolConfigRes.BloodPoolConfig> matchConfigList = configList.stream().filter(item -> item.match(betDo.getBetAmount(), betDo.getBetType()))
+        List<GetPoolConfigRes.BloodPoolConfig> matchConfigList = configList.stream().filter(item -> item.match(betDo.getPayAmount(), betDo.getBetType()))
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(matchConfigList)) {
             // 未匹配到，告警
-            larkHelper.sendWarningMsg(String.format(NO_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount(), betDo.getGameId(), ThreadMdcUtil.getTraceId()));
+            larkHelper.sendWarningMsg(String.format(NO_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getPayAmount(), betDo.getGameId(), ThreadMdcUtil.getTraceId()));
             return null;
         } else if (matchConfigList.size() > 1) {
             // 匹配到多条，告警
-            larkHelper.sendWarningMsg(String.format(MULTI_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount(), betDo.getGameId(), ThreadMdcUtil.getTraceId()));
+            larkHelper.sendWarningMsg(String.format(MULTI_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getPayAmount(), betDo.getGameId(), ThreadMdcUtil.getTraceId()));
             return null;
         } else {
             return matchConfigList.get(0);

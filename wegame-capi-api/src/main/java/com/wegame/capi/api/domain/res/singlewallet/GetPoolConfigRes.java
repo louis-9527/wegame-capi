@@ -80,16 +80,22 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
          */
         private Date lastChangeAt;
 
-        public boolean match(long betAmount, BetTypeEnum betType) {
-            return matchBetType(betType) && betAmountInRange(betAmount);
+        /**
+         * 根据支付金额和投注类型进行匹配
+         * @param payAmount
+         * @param betType
+         * @return
+         */
+        public boolean match(long payAmount, BetTypeEnum betType) {
+            return matchBetType(betType) && betAmountInRange(payAmount);
         }
 
         /**
          * 左开右闭
          */
-        private boolean betAmountInRange(long betAmount) {
-            return Objects.nonNull(betAmountMin) && betAmountMin.multiply(BigDecimal.valueOf(1000)).longValue() < betAmount
-                    && Objects.nonNull(betAmountMax) && betAmount <= betAmountMax.multiply(BigDecimal.valueOf(1000)).longValue();
+        private boolean betAmountInRange(long payAmount) {
+            return Objects.nonNull(betAmountMin) && betAmountMin.multiply(BigDecimal.valueOf(1000)).longValue() < payAmount
+                    && Objects.nonNull(betAmountMax) && payAmount <= betAmountMax.multiply(BigDecimal.valueOf(1000)).longValue();
         }
 
         private boolean matchBetType(BetTypeEnum betType) {
