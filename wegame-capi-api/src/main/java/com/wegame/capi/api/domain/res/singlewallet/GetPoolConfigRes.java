@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wegame.capi.common.Constants.CONST_1000;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -94,8 +96,8 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
          * 左开右闭
          */
         private boolean betAmountInRange(long payAmount) {
-            return Objects.nonNull(betAmountMin) && betAmountMin.multiply(BigDecimal.valueOf(1000)).longValue() < payAmount
-                    && Objects.nonNull(betAmountMax) && payAmount <= betAmountMax.multiply(BigDecimal.valueOf(1000)).longValue();
+            return Objects.nonNull(betAmountMin) && betAmountMin.multiply(BigDecimal.valueOf(CONST_1000)).longValue() < payAmount
+                    && Objects.nonNull(betAmountMax) && payAmount <= betAmountMax.multiply(BigDecimal.valueOf(CONST_1000)).longValue();
         }
 
         private boolean matchBetType(BetTypeEnum betType) {
