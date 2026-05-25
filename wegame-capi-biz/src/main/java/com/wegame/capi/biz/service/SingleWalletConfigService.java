@@ -3,6 +3,7 @@ package com.wegame.capi.biz.service;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.SingleWalletConfigApi;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -40,7 +41,7 @@ public class SingleWalletConfigService {
             GetPoolConfigRes res = singleWalletConfigApi.getPoolConfigList(pid, channelId, gameType.getId());
             return Objects.nonNull(res) ? res.getPools() : null;
         } catch (Exception e) {
-            larkHelper.sendWarningMsg(String.format(EXCEPTION_WARNING_MSG_FORMAT, pid, channelId, gameType.getId()));
+            larkHelper.sendWarningMsg(String.format(EXCEPTION_WARNING_MSG_FORMAT, pid, channelId, gameType.getId(), ThreadMdcUtil.getTraceId()));
             return null;
         }
     }

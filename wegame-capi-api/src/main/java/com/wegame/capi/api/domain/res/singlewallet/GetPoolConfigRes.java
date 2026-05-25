@@ -21,7 +21,7 @@ public class GetPoolConfigRes extends SingleWalletBaseRes {
 
     private static final int POOL_CATEGORY_NORMAL = 1;
     private static final int POOL_CATEGORY_BUY = 2;
-    private static final int POOL_CATEGORY_ALL = 3;
+    private static final int POOL_CATEGORY_ALL = 100;
 
     /**
      * agentCode

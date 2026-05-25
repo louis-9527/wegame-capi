@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.base.game;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.biz.config.domain.common.CommonBloodPoolConfig;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
@@ -75,7 +76,7 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
                         bloodPoolConfig.getPoolCategory(),
                         bloodPoolConfig.getCurrentLevelNo(),
                         gamePlayDo.getBetType().getCode(),
-                        gamePlayDo.getGameType().getId()));
+                        gamePlayDo.getGameType().getId(), ThreadMdcUtil.getTraceId()));
                 log.error("match multipleWeightMap error", e);
                 return getDefaultRtp(betDo, commonTemplateConfig);
             }

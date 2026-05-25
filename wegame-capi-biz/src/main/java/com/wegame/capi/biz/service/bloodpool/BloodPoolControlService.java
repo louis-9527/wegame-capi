@@ -2,6 +2,7 @@ package com.wegame.capi.biz.service.bloodpool;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.biz.config.domain.common.CommonBloodPoolConfig;
 import com.wegame.capi.biz.domain.biz.bet.BetBloodPoolControlDo;
@@ -10,6 +11,7 @@ import com.wegame.capi.biz.service.SingleWalletConfigService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import com.wegame.capi.infrastructure.helper.LarkHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,10 @@ public class BloodPoolControlService {
     public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo, CommonBloodPoolConfig commonBloodPoolConfig) {
         if (Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isEnable()) {
             log.warn("commonBloodPoolConfig enable: {}", commonBloodPoolConfig.isEnable());
+            return null;
+        }
+        if (Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.FREE_SPIN)
+                || Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.STAR_CARD_IN_FREE)) {
             return null;
         }
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -81,18 +87,18 @@ public class BloodPoolControlService {
     private GetPoolConfigRes.BloodPoolConfig matchConfig(UserInfo userInfo, List<GetPoolConfigRes.BloodPoolConfig> configList, BetDo betDo) {
         if (CollectionUtils.isEmpty(configList)) {
             // 未获取到配置，告警
-            larkHelper.sendWarningMsg(String.format(EMPTY_LIST_WARNING_MSG_FORMAT, betDo.getGameId()));
+            larkHelper.sendWarningMsg(String.format(EMPTY_LIST_WARNING_MSG_FORMAT, betDo.getGameId(), ThreadMdcUtil.getTraceId()));
             return null;
         }
         List<GetPoolConfigRes.BloodPoolConfig> matchConfigList = configList.stream().filter(item -> item.match(betDo.getBetAmount(), betDo.getBetType()))
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(matchConfigList)) {
             // 未匹配到，告警
-            larkHelper.sendWarningMsg(String.format(NO_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount(), betDo.getGameId()));
+            larkHelper.sendWarningMsg(String.format(NO_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount(), betDo.getGameId(), ThreadMdcUtil.getTraceId()));
             return null;
         } else if (matchConfigList.size() > 1) {
             // 匹配到多条，告警
-            larkHelper.sendWarningMsg(String.format(MULTI_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount(), betDo.getGameId()));
+            larkHelper.sendWarningMsg(String.format(MULTI_MATCH_WARNING_MSG_FORMAT, userInfo.getPId(), userInfo.getChannelId(), betDo.getBetAmount(), betDo.getGameId(), ThreadMdcUtil.getTraceId()));
             return null;
         } else {
             return matchConfigList.get(0);
