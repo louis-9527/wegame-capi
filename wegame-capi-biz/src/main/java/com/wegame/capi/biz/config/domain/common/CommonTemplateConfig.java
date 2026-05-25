@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import static com.wegame.capi.common.Constants.*;
 /**
  * 通用模版配置模型
  */
+@Slf4j
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -54,6 +56,7 @@ public class CommonTemplateConfig implements Serializable {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
         String rtpName = map.get(subKey);
         AssertUtil.assertStrNotEmpty(rtpName, ErrorCode.ERR_INTER);
+        log.info("match rtp, key: {}, subKey: {}, rtpName: {}", rtpName);
         return rtpMap.get(rtpName);
     }
 
