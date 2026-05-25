@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
@@ -24,7 +23,6 @@ import static com.wegame.capi.common.Constants.*;
 /**
  * 通用模版配置模型
  */
-@Slf4j
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -56,7 +54,6 @@ public class CommonTemplateConfig implements Serializable {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
         String rtpName = map.get(subKey);
         AssertUtil.assertStrNotEmpty(rtpName, ErrorCode.ERR_INTER);
-        log.info("match rtp, key: {}, subKey: {}, rtpName: {}", rtpName);
         return rtpMap.get(rtpName);
     }
 
@@ -76,7 +73,7 @@ public class CommonTemplateConfig implements Serializable {
     private void validateRtpMap() {
         Assert.isTrue(MapUtils.isNotEmpty(rtpMap), "rtpMap is empty");
         rtpMap.forEach((rtpName, rtp) -> {
-            Assert.notNull(rtp,  rtpName + " : rtp is null");
+            Assert.notNull(rtp, rtpName + " : rtp is null");
             Assert.notEmpty(rtp.getIndexName(), rtpName + "indexName is empty");
             TreeMap<BetTypeEnum, TreeMap<String, Integer>> multipleRangeWeightMap = rtp.getMultipleRangeWeightMap();
             for (BetTypeEnum betType : BetTypeEnum.values()) {

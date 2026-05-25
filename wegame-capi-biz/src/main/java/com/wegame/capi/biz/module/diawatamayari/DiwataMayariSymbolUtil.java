@@ -63,7 +63,7 @@ public class DiwataMayariSymbolUtil {
                 if (Objects.isNull(symbolArr[i][j])) {
                     newSymbolArr[i][j] = DiwataMayariGameHelper.DIWATA_MAYARI_SYMBOL_PLACEHOLDER;
                 } else {
-                    newSymbolArr[i][j] = symbolArr[i][j].copy();
+                    newSymbolArr[i][j] = symbolArr[i][j].copyAll();
                 }
             }
         }
