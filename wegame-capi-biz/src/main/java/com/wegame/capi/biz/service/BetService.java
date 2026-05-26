@@ -45,22 +45,6 @@ public class BetService {
             .put(GameTypeEnum.KAPRE, "kapreBetContext")
             .put(GameTypeEnum.MANGKUKULAM, "mangkukulamBetContext")
             .build();
-    private static final List<GameTypeEnum> AB_CONTROL_GAME_LIST = Arrays.asList(
-            GameTypeEnum.MARIA_MAKILING,
-            GameTypeEnum.MALAKAS,
-            GameTypeEnum.IBONG_ADARNA,
-            GameTypeEnum.BAKUNAWA,
-            // todo 测试阶段，上线强制走template
-            GameTypeEnum.KAPRE
-
-    );
-
-    private static final List<GameTypeEnum> FORCE_TEMPLATE_BET_CONTROL_GAME_LIST = Arrays.asList(
-            GameTypeEnum.LAM_ANG,
-            GameTypeEnum.DIWATA_MAYARI,
-            GameTypeEnum.MANGKUKULAM,
-            GameTypeEnum.KAPRE
-    );
 
     @Autowired
     Map<String, AbstractBetContext> contextMap;
