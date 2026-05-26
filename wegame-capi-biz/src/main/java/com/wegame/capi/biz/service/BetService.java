@@ -9,7 +9,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.AbstractBetContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.AtTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -19,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 投注服务
@@ -45,22 +46,6 @@ public class BetService {
             .put(GameTypeEnum.KAPRE, "kapreBetContext")
             .put(GameTypeEnum.MANGKUKULAM, "mangkukulamBetContext")
             .build();
-    private static final List<GameTypeEnum> AB_CONTROL_GAME_LIST = Arrays.asList(
-            GameTypeEnum.MARIA_MAKILING,
-            GameTypeEnum.MALAKAS,
-            GameTypeEnum.IBONG_ADARNA,
-            GameTypeEnum.BAKUNAWA,
-            // todo 测试阶段，上线强制走template
-            GameTypeEnum.KAPRE
-
-    );
-
-    private static final List<GameTypeEnum> FORCE_TEMPLATE_BET_CONTROL_GAME_LIST = Arrays.asList(
-            GameTypeEnum.LAM_ANG,
-            GameTypeEnum.DIWATA_MAYARI,
-            GameTypeEnum.MANGKUKULAM,
-            GameTypeEnum.KAPRE
-    );
 
     @Autowired
     Map<String, AbstractBetContext> contextMap;
