@@ -42,10 +42,18 @@ public class BayanihanBetHelper implements BetHelper<BayanihanBetRecordDetailDo,
         GameRecordCalcResult result = calcRewardAmount(gameRecordList);
         //计算实际金额
         long actualRewardAmount = result.getTotalRewardAmount();
+        boolean reachMaxMultiple = reachMaxMultiple(actualRewardAmount, betDo.getBetAmount(), bayanihanConfig.getRewardMaxMultiple());
+        if (reachMaxMultiple) {
+            // 将最后一回合设置为达到最大倍数
+            BayanihanGameRecordDo last = gameRecordList.get(gameRecordList.size() - 1 );
+            if (Objects.nonNull(last) && !last.getRewardResult().getAccumulateReachMaxMultiple()) {
+                last.getRewardResult().setAccumulateReachMaxMultiple(reachMaxMultiple);
+            }
+        }
         BetRecordDo<BayanihanGameRecordDo> res =  BetRecordBuilder.build(betRecordId,
                 betDo,
                 maxAmountControl(actualRewardAmount, betDo.getBetAmount(), bayanihanConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(actualRewardAmount, betDo.getBetAmount(), bayanihanConfig.getRewardMaxMultiple()),
+                reachMaxMultiple,
                 null,
                 gameRecordList);
         res.setFreeGameInfo(BetRecordDo.FreeGameInfo.builder()

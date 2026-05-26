@@ -15,6 +15,7 @@ import com.wegame.capi.biz.domain.biz.symbol.BayanihanSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.base.AmountHelper;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.bayanihan.BayanihanGameHelper;
 import com.wegame.capi.biz.module.bayanihan.BayanihanProbabilisticUtil;
@@ -67,19 +68,25 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
     public List<BayanihanGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
 
         List<BayanihanGameRecordDo> ret = new ArrayList<>();
-        AtomicLong totalRewardAmount = new AtomicLong(0L);
+        AtomicLong rewardMainGame = new AtomicLong(0L);
+        AtomicLong rewardFreeGame = new AtomicLong(0L);
+        AmountHandleDo amountHandleDo = AmountHandleDo.builder()
+                .freeGameAmount(rewardFreeGame)
+                .mainGameAmount(rewardMainGame).build();
         LinkedList<FreeWheelHandleDo> freeWheelList = new LinkedList<>();
-        handleMainGame(gamePlay, ret, totalRewardAmount, freeWheelList);
+        handleMainGame(gamePlay, ret, amountHandleDo, freeWheelList);
+        CollectionInfo collectionInfo = null;
         if (!freeWheelList.isEmpty()) {
-            CollectionInfo collectionInfo = initCollectionInfo();
+            collectionInfo = initCollectionInfo();
             BayanihanGameRecordDo last = ret.get(ret.size() - 1);
             last.setCollectionInfo(collectionInfo.snapshot());
-            handleFreeGame(gamePlay, ret, totalRewardAmount, freeWheelList, collectionInfo);
+            handleFreeGame(gamePlay, ret, amountHandleDo, freeWheelList, collectionInfo);
         }
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
 //        print(ret);
+        log.info("actual reward amount: {}", getRewardAmountNow(amountHandleDo, collectionInfo));
         return ret;
     }
     private void print(List<BayanihanGameRecordDo> ret) {
@@ -88,7 +95,22 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         }
     }
 
-    private void handleMainGame(GamePlayDo gamePlay, List<BayanihanGameRecordDo> ret, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList) {
+    private Long getRewardAmountNow(AmountHandleDo amountHandleDo, CollectionInfo collectionInfo) {
+        if (Objects.isNull(collectionInfo)) {
+            return amountHandleDo.getMainGameAmount().get();
+        }else {
+            BigDecimal multiNow = collectionInfo.getCurrentMultiple();
+            BigDecimal freeGameAmount = BigDecimal.valueOf(amountHandleDo.getFreeGameAmount().get())
+                    .multiply(multiNow);
+            BigDecimal mainGameAmount = BigDecimal.valueOf(amountHandleDo.getMainGameAmount().get());
+            return freeGameAmount.add(mainGameAmount).longValue();
+        }
+    }
+
+    private void handleMainGame(GamePlayDo gamePlay,
+                                List<BayanihanGameRecordDo> ret,
+                                AmountHandleDo amountHandleDo,
+                                LinkedList<FreeWheelHandleDo> freeWheelList) {
         WheelDo<BayanihanSymbolDo> firstWheel = null;
         switch (gamePlay.getBetType()) {
             // 正常投注
@@ -104,35 +126,38 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         }
 
         // 默认都是1倍
-        RewardResultDo<BayanihanSymbolDo> rewardResult = bayanihanRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, firstWheel, null, totalRewardAmount.get()));
+        RewardResultDo<BayanihanSymbolDo> rewardResult = bayanihanRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, firstWheel, null));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
         long gameRecordId = generateGameRecordId();
         BayanihanGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, firstWheel, rewardResult, null);
         ret.add(gameRecord);
-        totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList, false, null);
+        amountHandleDo.increaseMainGame(rewardResult.getTotalRewardAmount());
+        loopPlayOnPreGameRecord(gamePlay, ret, amountHandleDo, gameRecord, freeWheelList, false, null);
     }
 
-    private void handleFreeGame(GamePlayDo gamePlay, List<BayanihanGameRecordDo> ret, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList, CollectionInfo collectionInfo) {
+    private void handleFreeGame(GamePlayDo gamePlay, List<BayanihanGameRecordDo> ret, AmountHandleDo amountHandleDo, LinkedList<FreeWheelHandleDo> freeWheelList, CollectionInfo collectionInfo) {
         Map<IndexDo, BayanihanSymbolDo> beforeStickyWildIndex = null;
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo preFreeWheelHandleDo = freeWheelList.removeFirst();
             BayanihanGameRecordDo parentGameRecord = preFreeWheelHandleDo.getParentGameRecord();
             for (int i = Constants.CONST_0; i < preFreeWheelHandleDo.getTaskTimes(); i++) {
+                if (reachMax(gamePlay, amountHandleDo, collectionInfo)) {
+                    break;
+                }
                 // 免费轮处理
                 WheelDo<BayanihanSymbolDo> firstWheel = this.generateFirstWheel(false, true, beforeStickyWildIndex);
                 // 默认都是1倍
                 collectionInfo.collectSymbol(BayanihanSymbolUtil.countNewSymbolInColumn(firstWheel.getSymbolArr(), COLLECT_SYMBOL_ID));
-                RewardResultDo<BayanihanSymbolDo> rewardResult = bayanihanRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, firstWheel, null, totalRewardAmount.get()));
+                RewardResultDo<BayanihanSymbolDo> rewardResult = bayanihanRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, firstWheel, null));
                 AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
                 // 组装-游戏记录
                 long gameRecordId = generateGameRecordId();
                 BayanihanGameRecordDo gameRecord = buildGameRecord(gameRecordId, parentGameRecord.getId(), gamePlay.getBetRecordId(), gameRecordId, firstWheel, rewardResult, collectionInfo);
                 ret.add(gameRecord);
                 parentGameRecord.addGameRecordId(gameRecordId);
-                totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-                loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList, true, collectionInfo);
+                amountHandleDo.increaseFreeGame(rewardResult.getTotalRewardAmount());
+                loopPlayOnPreGameRecord(gamePlay, ret, amountHandleDo, gameRecord, freeWheelList, true, collectionInfo);
                 beforeStickyWildIndex = getStickyWildIndex(ret.get(ret.size() - 1).getWheel());
             }
         }
@@ -286,14 +311,14 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
 
     private void loopPlayOnPreGameRecord(GamePlayDo gamePlay,
                                          List<BayanihanGameRecordDo> ret,
-                                         AtomicLong totalRewardAmount,
+                                         AmountHandleDo amountHandleDo,
                                          BayanihanGameRecordDo preGameRecord,
                                          LinkedList<FreeWheelHandleDo> freeWheelList,
                                          boolean freeWheel,
                                          CollectionInfo collectionInfo) {
-        if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
+        if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), amountHandleDo, collectionInfo)) {
             WheelDo<BayanihanSymbolDo> wheel = generateFromPreWheel(preGameRecord, freeWheel);
-            RewardResultDo<BayanihanSymbolDo> rewardResult = bayanihanRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple(), totalRewardAmount.get()));
+            RewardResultDo<BayanihanSymbolDo> rewardResult = bayanihanRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
             if (freeWheel && Objects.nonNull(collectionInfo)) {
                 collectionInfo.collectSymbol(BayanihanSymbolUtil.countNewSymbolInColumn(wheel.getSymbolArr(), COLLECT_SYMBOL_ID));
             }
@@ -301,8 +326,12 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
             BayanihanGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(),
                     preGameRecord.getBatchId(), wheel, rewardResult, collectionInfo);
             ret.add(gameRecord);
-            totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList, freeWheel, collectionInfo);
+            if (freeWheel) {
+                amountHandleDo.increaseFreeGame(rewardResult.getTotalRewardAmount());
+            }else {
+                amountHandleDo.increaseMainGame(rewardResult.getTotalRewardAmount());
+            }
+            loopPlayOnPreGameRecord(gamePlay, ret, amountHandleDo, gameRecord, freeWheelList, freeWheel, collectionInfo);
         } else {
             if (!preGameRecord.getRewardResult().getAccumulateReachMaxMultiple()) {
                 if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
@@ -318,18 +347,25 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         }
     }
 
-    private boolean canContinuePlayOnPreWheel(GamePlayDo gamePlay, RewardResultDo<BayanihanSymbolDo> rewardResult, AtomicLong totalRewardAmount) {
+    private boolean canContinuePlayOnPreWheel(GamePlayDo gamePlay, RewardResultDo<BayanihanSymbolDo> rewardResult, AmountHandleDo amountHandleDo, CollectionInfo collectionInfo) {
         if (Objects.isNull(rewardResult)) {
             return false;
         }
         if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return false;
         }
-        if (rewardResult.getAccumulateReachMaxMultiple()) {
-            log.warn("reach max reward multiple bet. totalRewardAmount: {}, betAmount: {}", totalRewardAmount.get(), gamePlay.getBetAmount());
+        if (reachMax(gamePlay, amountHandleDo, collectionInfo)) {
+            log.warn("reach max reward multiple bet.");
+            // 设置为达到最大倍数
+            rewardResult.setAccumulateReachMaxMultiple(true);
             return false;
         }
         return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
+    }
+
+    private boolean reachMax(GamePlayDo gamePlay, AmountHandleDo amountHandleDo, CollectionInfo collectionInfo) {
+        Long currentAmount = getRewardAmountNow(amountHandleDo, collectionInfo);
+        return AmountHelper.reachMaxMultiple(currentAmount, gamePlay.getBetAmount(), bayanihanConfig.getRewardMaxMultiple());
     }
 
     private BayanihanGameRecordDo buildGameRecord(Long id,
@@ -407,5 +443,22 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
         private BayanihanGameRecordDo parentGameRecord;
         // 任务执行次数
         private int taskTimes;
+    }
+
+    @Data
+    @SuperBuilder
+    private static class AmountHandleDo {
+        // 免费游戏金额
+        private AtomicLong freeGameAmount;
+        // 主游戏金额
+        private AtomicLong mainGameAmount;
+
+        public void increaseMainGame(Long amount) {
+            mainGameAmount.addAndGet(amount);
+        }
+
+        public void increaseFreeGame(Long amount) {
+            freeGameAmount.addAndGet(amount);
+        }
     }
 }

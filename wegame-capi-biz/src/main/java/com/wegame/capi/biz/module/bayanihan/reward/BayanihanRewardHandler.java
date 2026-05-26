@@ -37,7 +37,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
@@ -114,12 +113,12 @@ public class BayanihanRewardHandler extends AbstractRewardHandler<BayanihanSymbo
                     .rewardSymbolList(rewardLine.getRewardSymbolList())
                     .build());
         }
-        long totalAmount = Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount;
-        boolean reachMaxMultiple = reachMaxMultiple(
-                rewardHandle.getGamePlayType(),
-                totalAmount,
-                rewardHandle.getBetAmount(),
-                bayanihanConfig.getRewardMaxMultiple());
+//        long totalAmount = Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount;
+//        boolean reachMaxMultiple = reachMaxMultiple(
+//                rewardHandle.getGamePlayType(),
+//                totalAmount,
+//                rewardHandle.getBetAmount(),
+//                bayanihanConfig.getRewardMaxMultiple());
         // 5.构建中奖结果
         return RewardResultDo.<BayanihanSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
@@ -129,7 +128,7 @@ public class BayanihanRewardHandler extends AbstractRewardHandler<BayanihanSymbo
                 .totalMultiple(totalMultiple)
                 .hasRewardFreeWheel(false)
                 .rewardLineDetailList(rewardLineDetailList)
-                .accumulateReachMaxMultiple(reachMaxMultiple)
+                .accumulateReachMaxMultiple(Boolean.FALSE)
                 .rewardFreeWheelTimes(0)
                 .build();
     }

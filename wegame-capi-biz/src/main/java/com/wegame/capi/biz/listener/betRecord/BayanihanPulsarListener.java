@@ -37,7 +37,7 @@ public class BayanihanPulsarListener extends AbstractPulsarListener<BayanihanGam
 
     @Override
     public TypeReference<MQMessage<BetRecordDo<BayanihanGameRecordDo>>> getTypeReference() {
-        log.info("BayanihanPulsarListener getTypeReference。。。 ");
+//        log.info("BayanihanPulsarListener getTypeReference。。。 ");
         return new TypeReference<MQMessage<BetRecordDo<BayanihanGameRecordDo>>>() {
         };
     }
