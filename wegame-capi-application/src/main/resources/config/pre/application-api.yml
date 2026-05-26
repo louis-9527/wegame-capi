@@ -57,6 +57,11 @@ api:
                 2Xs3r+wtjZBpOrZxn5dMUhEHC7jm/0eLUcwOJ0lkoEnl
                 -----END ENCRYPTED PRIVATE KEY-----
               dosPassword: egame-secure-passphrase
+            - platformId: 52
+              channelId: 2050
+              privateKey: cbb82974fd6bf143e68b1dc51d2426951e5b1fc7d35c656f5ac8f18ae9254023
+              privateIv: 4e1d77560440ab55fea1a18e0b6da6b9
+              dosSupport: false
           igo:
             - platformId: 55
               channelId: 2051
