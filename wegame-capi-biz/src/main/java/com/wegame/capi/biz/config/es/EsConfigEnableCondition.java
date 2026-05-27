@@ -37,7 +37,8 @@ public class EsConfigEnableCondition implements Condition {
             Constants.MALAKAS_PROP,
             Constants.MANGKUKULAM_PROP,
             Constants.MARIA_MAKILING_PROP,
-            Constants.KAPRE_PROP);
+            Constants.KAPRE_PROP,
+            Constants.SIRENA_PROP);
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
