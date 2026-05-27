@@ -100,6 +100,10 @@ public abstract class AbstractGameContext<R> {
                     }
                     return;
                 case EVENT_PLAY:
+                    if (Objects.equals(gamePlayDo.getGameType(), GameTypeEnum.BAYANIHAN)) {
+                        //todo 添加校验
+                        return;
+                    }
                     AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
                     // 上限和下限
                     Long availableBonus = gamePlayDo.getAvailableBonus();
