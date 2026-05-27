@@ -55,7 +55,7 @@ public class BayanihanGameEventPlay extends AbstractGame<BayanihanGameRecordDo> 
     @Override
     public List<BayanihanGameRecordDo> play(BetDo bet, GamePlayDo gamePlay) {
         List<BayanihanGameRecordDo> ret = new ArrayList<>();
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.ATLANTIS);
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.BAYANIHAN);
         // 获取首轮(batchId == 0 and index == 0)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
