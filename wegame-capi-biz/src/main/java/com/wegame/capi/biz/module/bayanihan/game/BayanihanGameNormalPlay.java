@@ -86,7 +86,7 @@ public class BayanihanGameNormalPlay extends AbstractGame<BayanihanGameRecordDo>
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
 //        print(ret);
-        log.info("actual reward amount: {}", getRewardAmountNow(amountHandleDo, collectionInfo));
+//        log.info("actual reward amount: {}", getRewardAmountNow(amountHandleDo, collectionInfo));
         return ret;
     }
     private void print(List<BayanihanGameRecordDo> ret) {
