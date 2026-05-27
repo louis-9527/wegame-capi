@@ -12,25 +12,15 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Configuration
-@ConditionalOnExpression(value = "${" +
-        // XXX_PROP + "} || ${" +  // 新增游戏加该配置
-        DIWATA_MAYARI_PROP + "} || ${" +
-        BAKUNAWA_PROP + "} || ${" +
-        LAMANG_PROP + "} || ${" +
-        IBONG_ADARNA_PROP + "} || ${" +
-        MALAKAS_PROP + "} || ${" +
-        MANGKUKULAM_PROP + "} || ${" +
-        SIRENA_PROP + "} || ${" +
-        MARIA_MAKILING_PROP
-        + "}")
+@Conditional(EsConfigEnableCondition.class)
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
     private String uris;
