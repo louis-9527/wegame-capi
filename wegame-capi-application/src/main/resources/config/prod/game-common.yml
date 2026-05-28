@@ -60,6 +60,7 @@ dynamic:
         mangkukulam: ${spring.application.name}_${spring.application.env}_cd_Ap_Mangkukulam
         sirena: ${spring.application.name}_${spring.application.env}_cd_Ap_Sirena
         atlantis: ${spring.application.name}_${spring.application.env}_cd_Ap_Atlantis
+        bayanihan: ${spring.application.name}_${spring.application.env}_cd_Ap_Bayanihan
       pulsar:
         auth:
           issuer_url: https://auth.streamnative.cloud
