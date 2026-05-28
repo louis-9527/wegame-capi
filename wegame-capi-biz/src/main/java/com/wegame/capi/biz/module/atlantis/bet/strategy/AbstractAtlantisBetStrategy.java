@@ -95,7 +95,7 @@ public abstract class AbstractAtlantisBetStrategy
             } else {
                 // 1.2 否，则走其他投注流程
                 // 1.2.1、判断能否走干预事件投注
-                if (isCanOperationEventBet(betDo)) {
+                if (this.atlantisIsCanOperationEvent(betDo) && isCanOperationEventBet(betDo)) {
                     // 1.2.11 命中干预事件：走干预事件投注
                     return betForOperationEvent(betDo);
                 } else {
@@ -126,6 +126,12 @@ public abstract class AbstractAtlantisBetStrategy
                     .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                     .sum();
         }
+    }
+
+    private boolean atlantisIsCanOperationEvent(BetDo betDo) {
+        // atlantis 只normal 和lockBoy(EX_BET)可支持dos
+        BetSubTypeEnum betSubType = betDo.getBetSubType();
+        return Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET) || Objects.equals(betSubType, BetSubTypeEnum.EX_BET);
     }
 
     /**

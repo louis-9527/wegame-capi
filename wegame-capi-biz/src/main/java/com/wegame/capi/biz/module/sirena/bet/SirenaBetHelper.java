@@ -6,12 +6,10 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.SirenaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.KapreBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.SirenaBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
@@ -41,12 +39,16 @@ public class SirenaBetHelper implements BetHelper<SirenaBetRecordDetailDo, Siren
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        return BetRecordBuilder.build(betRecordId,
+        BetRecordDo<SirenaGameRecordDo> betRecordDo =  BetRecordBuilder.build(betRecordId,
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), sirenaConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), sirenaConfig.getRewardMaxMultiple()),
                 null,
                 gameRecordList);
+        betRecordDo.setNextTemplateId(betDo.getNextTemplateId());
+        betRecordDo.setTemplateType(betDo.getTemplateType());
+
+        return betRecordDo;
     }
 
     @Override

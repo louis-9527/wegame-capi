@@ -36,7 +36,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 public class SirenaTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
 
     public TemplateTypeEnum getTemplateType() {
-        return TemplateTypeEnum.SIRENA;
+        return TemplateTypeEnum.SIRENA_V2;
     }
 
     @Autowired

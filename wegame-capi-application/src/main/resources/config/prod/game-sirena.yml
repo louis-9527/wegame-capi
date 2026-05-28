@@ -4,14 +4,14 @@ spring:
     mongodb:
       dynamic:
         sirena_mdb:
-          primary_uri: mongodb+srv://PRODmakiling_Service:gpiFR29Io1WvH2e4@prod-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/sirena?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://PRODmakiling_Service:gpiFR29Io1WvH2e4@prod-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/sirena?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://PRODsirena_Service:jVVMdzyYk8kSSZ1@prod-innovatech-slot-1-pri.mongodb.singapore.nosql.aliyuncs.com/sirena?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://PRODsirena_Service:jVVMdzyYk8kSSZ1@prod-innovatech-slot-1-pri.mongodb.singapore.nosql.aliyuncs.com/sirena?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: sirena
 ## pulsar
 pulsar:
   dynamic:
     sirena:
-      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      url: pulsar+ssl://pc-aa3bb700.alicloud-apse1-prod-1g8lo.ali.snio.cloud:6651
       tenant: ${spring.application.name}_Sirena
       namespace: ${spring.application.env}
       bet_topic: Sirena_topic
@@ -19,4 +19,4 @@ pulsar:
       auth:
         issuer_url: "https://auth.streamnative.cloud/"
         credentials_file_path: /game_pulsar_privateKey.json
-        audience: "urn:sn:pulsar:o-cv5fz:egame-qat"
+        audience: "urn:sn:pulsar:o-5d4ps:innovatech-prod"
