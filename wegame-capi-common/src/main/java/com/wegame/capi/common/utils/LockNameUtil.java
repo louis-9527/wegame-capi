@@ -42,6 +42,7 @@ public class LockNameUtil {
 
     private static final String JACKPOT_REWARD_LOCK = "lock:jackpot_reward_lock:%s";
 
+    private static final String BLOOD_POOL_CONFIG_SCHEDULER_LOCK = "lock:blood_pool_config_scheduler_lock:%s";
 
     private LockNameUtil() {
     }
@@ -132,5 +133,10 @@ public class LockNameUtil {
     public static String getContinuePlayRecordLock(GameTypeEnum gameType, Long betRecordId) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(CONTINUE_PLAY_RECORD_LOCK, gameType.getName(), betRecordId);
+    }
+
+    public static String getBloodPoolConfigSchedulerLockName(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(BLOOD_POOL_CONFIG_SCHEDULER_LOCK, gameType.getId());
     }
 }
