@@ -23,7 +23,7 @@ public class DiwataMayariBloodPoolConfigScheduler extends AbstractBloodPoolConfi
         return GameTypeEnum.DIWATA_MAYARI;
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "* * * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
