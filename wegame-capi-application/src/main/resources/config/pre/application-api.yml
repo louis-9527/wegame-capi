@@ -5,7 +5,7 @@ api:
       - platformIdList: [50, 52, 55]
         invokeSingle: true
         singleDomain: https://sw-http-main-apisix.igo9.me
-        singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me // todo @bruce
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo9.me
         freeSpinDomain: https://sw-http-freespin.igo9.me
         promotionDomain: https://reward-http.igo9.me
         operationDomain: http://dos-egame-aliyun.fpms99.me
@@ -66,6 +66,7 @@ api:
       - platformIdList: [777]
         invokeSingle: true
         singleDomain: http://sw-external-platform-http-main.igo10.me
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo9.me
         freeSpinDomain: http://sw-inhouse-http-freespin.igo10.me
         promotionDomain: http://reward-http-ep.igo10.me
         operationDomain: http://dos-egame-bp-aliyun.platform10.me
@@ -121,7 +122,7 @@ api:
       - platformIdList: [70]
         invokeSingle: true
         singleDomain: https://sw-http-main-apisix-ali.nwrplatform99.com
-        singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me // todo @bruce
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo9.me
         freeSpinDomain: https://sw-http-main-apisix-ali.nwrplatform99.com
         promotionDomain: https://reward-http.nwrplatform99.com
         operationDomain: http://dos-egame.nwrplatform99.com
