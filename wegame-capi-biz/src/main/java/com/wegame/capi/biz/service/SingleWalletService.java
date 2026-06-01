@@ -20,6 +20,7 @@ import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
+import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.*;
@@ -74,6 +75,18 @@ public class SingleWalletService {
         AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
         AssertUtil.assertNotNull(res.getCredit(), ErrorCode.ERR_NET);
         return res.getCredit();
+    }
+
+    public BigDecimal getCredit(UserInfo userInfo) {
+        try {
+            GetCreditRes res = singleWalletApi.getCredit(GetCreditReqBuilder.buildReq(userInfo));
+            AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
+            AssertUtil.assertNotNull(res.getCredit(), ErrorCode.ERR_NET);
+            return res.getCredit();
+        } catch (Exception e) {
+            log.info("geCredit err, userInfo: {}", userInfo, e);
+            return null;
+        }
     }
 
     public SingleWalletBetResultDo betWithPayout(BetDo betDo, BetRecordDo betRecordDo) {

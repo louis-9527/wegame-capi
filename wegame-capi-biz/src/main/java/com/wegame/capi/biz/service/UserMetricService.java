@@ -4,21 +4,20 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
-import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 用户统计服务
+ * 用户埋点服务
  *
  * @author genereate
  */
@@ -26,12 +25,48 @@ import java.util.Map;
 @Component
 public class UserMetricService {
 
-    // user:metric:{gameId}:{pid}:{channelId}:{playerId}
-    private static final String format = "user:metric:%s:%s:%s:%s";
+    // user:metric:global:{gameId}:{pid}:{channelId}:{playerId}
+    private static final String _GLOBAL_KEY_FORMAT = "user:metric:global:%s:%s:%s:%s";
+    // user:metric:today:{gameId}:{pid}:{channelId}:{playerId}
+    private static final String _TODAY_KEY_FORMAT = "user:metric:today:%s:%s:%s:%s";
+
+    public static final String user_metric_registerTime = "registerTime";
+    public static final String user_metric_lastLoginTime = "lastLoginTime";
+    public static final String user_metric_enterBalance = "enterBalance";
+    public static final String user_metric_currentBalance = "currentBalance";
+    public static final String user_metric_exitBalance = "exitBalance";
+    //public static final String user_metric_registerTime = "registerTime";
+    //public static final String user_metric_registerTime = "registerTime";
+    //public static final String user_metric_registerTime = "registerTime";
+    ///**
+    // * 总投注次数
+    // */
+    //private Integer totalBetTimes;
+    ///**
+    // * 当日投注次数
+    // */
+    //private Integer todayBetTimes;
+    ///**
+    // * 总投注金额
+    // */
+    //private Long totalBetAmount;
+    ///**
+    // * 当日投注总金额
+    // */
+    //private Long totalPayoutAmount;
+    ///**
+    // * 连续不中奖次数
+    // */
+    //private Integer continueEmptyTimes;
+    ///**
+    // * 当日不中FG次数
+    // */
+    //private Integer todayNoFgTimes;
+
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
-    UserLoginInfoService userLoginInfoService;
+    SingleWalletService singleWalletService;
 
     //    - 累计游戏局数，只计算在本游戏的投注次数。
     //            - 总投注，只计算在本游戏中的投注金额。
@@ -45,18 +80,6 @@ public class UserMetricService {
     //- 当前余额
     // 注册时间
 
-    //public void beforeLoginMetric(UserInfo userInfo) {
-    //    UserLoginInfoDo userLoginInfo = userLoginInfoService.selectOne(UserLoginInfoQuery.builder()
-    //            .pId(userInfo.getPId())
-    //            .channelId(Long.valueOf(userInfo.getChannelId()))
-    //            .gameId(userInfo.getGameId())
-    //            .userId(Long.valueOf(userInfo.getId()))
-    //            .playerId(userInfo.getPlayerId())
-    //            .build());
-    //    Date loginTime = userLoginInfo.getLoginTime();
-    //    // 统计昨日是否登陆。todo
-    //}
-
     /**
      * 登陆统计
      * 1、用户注册时间
@@ -66,21 +89,32 @@ public class UserMetricService {
      * 5、当前余额
      */
     public void loginMetric(UserInfo userInfo, Date registerTime, Date lastLoginTime) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("registerTime", registerTime);
-        map.put("lastLoginTime", lastLoginTime);
-
-        redisTemplate.opsForHash().putAll(key(u));
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put(user_metric_registerTime, registerTime);
+            map.put(user_metric_lastLoginTime, lastLoginTime);
+            BigDecimal credit = singleWalletService.getCredit(userInfo);
+            map.put(user_metric_enterBalance, credit);
+            map.put(user_metric_currentBalance, credit);
+            map.put(user_metric_exitBalance, credit); // todo
+            redisTemplate.opsForHash().putAll(globalKey(userInfo), map);
+        } catch (Exception e) {
+            log.error("loginMetric error, userInfo: {}, map: {}", userInfo, e);
+        }
     }
 
     public UserMetricInfoDo get() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        Map<Object, Object> map = redisTemplate.opsForHash().entries(key(userInfo));
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(globalKey(userInfo));
         return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(map), UserMetricInfoDo.class);
     }
 
-    private String key(UserInfo userInfo) {
-        return String.format(format, userInfo.getGameId(), userInfo.getPId(), userInfo.getChannelId(), userInfo.getPlayerId());
+    private String globalKey(UserInfo userInfo) {
+        return String.format(_GLOBAL_KEY_FORMAT, userInfo.getGameId(), userInfo.getPId(), userInfo.getChannelId(), userInfo.getPlayerId());
+    }
+
+    private String todayKey(UserInfo userInfo) {
+        return String.format(_TODAY_KEY_FORMAT, userInfo.getGameId(), userInfo.getPId(), userInfo.getChannelId(), userInfo.getPlayerId());
     }
 }
