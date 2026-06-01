@@ -257,7 +257,6 @@ CREATE TABLE `bayanihan_star_card_record` (
   `pId` varchar(255) NULL COMMENT "平台ID",
   `rewardId` varchar(255) NULL COMMENT "奖励ID",
   `rewardConfigId` varchar(255) NULL COMMENT "奖励配置id",
-  `pId` varchar(255) NULL COMMENT "平台ID",
   `gameId` varchar(255) NULL COMMENT "游戏ID",
   `channelId` varchar(255) NULL COMMENT "渠道ID",
   `betRecordId` bigint NULL COMMENT "投注记录ID",
