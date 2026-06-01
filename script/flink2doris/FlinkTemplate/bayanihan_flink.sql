@@ -37,7 +37,7 @@ CREATE TEMPORARY TABLE mongo_bet_record_source (
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
-  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:gNIFe0zzbC4U7D24h3L@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bayanihan?ssl=false&readPreference=secondary',
+  'uri' = '${secret_values.mongo_endpoint}',
   'database' = 'bayanihan',
   'collection' = 'bayanihan_bet_record',
   'scan.startup.mode' = 'initial',
@@ -66,7 +66,7 @@ CREATE TEMPORARY TABLE mongo_game_record_source (
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
-  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:gNIFe0zzbC4U7D24h3L@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bayanihan?ssl=false&readPreference=secondary',
+  'uri' = '${secret_values.mongo_endpoint}',
   'database' = 'bayanihan',
   'collection' = 'bayanihan_game_record',
   'scan.startup.mode' = 'initial',
@@ -81,7 +81,7 @@ CREATE TEMPORARY TABLE mongo_operation_event_config_source (
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
-  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:gNIFe0zzbC4U7D24h3L@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bayanihan?ssl=false&readPreference=secondary',
+  'uri' = '${secret_values.mongo_endpoint}',
   'database' = 'bayanihan',
   'collection' = 'bayanihan_operation_event_config',
   'scan.startup.mode' = 'initial',
@@ -100,7 +100,7 @@ CREATE TEMPORARY TABLE mongo_operation_event_config_record_source (
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
-  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:gNIFe0zzbC4U7D24h3L@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bayanihan?ssl=false&readPreference=secondary',
+  'uri' = '${secret_values.mongo_endpoint}',
   'database' = 'bayanihan',
   'collection' = 'bayanihan_operation_event_config_record',
   'scan.startup.mode' = 'initial',
@@ -132,7 +132,7 @@ CREATE TEMPORARY TABLE mongo_operation_event_detail_source (
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
-  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:gNIFe0zzbC4U7D24h3L@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bayanihan?ssl=false&readPreference=secondary',
+  'uri' = '${secret_values.mongo_endpoint}',
   'database' = 'bayanihan',
   'collection' = 'bayanihan_operation_event_detail',
   'scan.startup.mode' = 'initial',
@@ -164,7 +164,7 @@ CREATE TEMPORARY TABLE mongo_operation_event_source (
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
-  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:gNIFe0zzbC4U7D24h3L@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bayanihan?ssl=false&readPreference=secondary',
+  'uri' = '${secret_values.mongo_endpoint}',
   'database' = 'bayanihan',
   'collection' = 'bayanihan_operation_event',
   'scan.startup.mode' = 'initial',
@@ -193,7 +193,7 @@ CREATE TEMPORARY TABLE mongo_star_card_record_source (
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
-  'uri' = 'mongodb+srv://QATmakiling_Doris_Service:gNIFe0zzbC4U7D24h3L@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bayanihan?ssl=false&readPreference=secondary',
+  'uri' = '${secret_values.mongo_endpoint}',
   'database' = 'bayanihan',
   'collection' = 'bayanihan_star_card_record',
   'scan.startup.mode' = 'initial',
@@ -240,10 +240,10 @@ CREATE TEMPORARY TABLE doris_bet_record_sink (
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
-  'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
+  'fenodes' = '${secret_values.doris_endpoint}',
   'table.identifier' = 'bayanihan.bayanihan_bet_record',
-  'username' = 'QATmakiling_Doris_Service',
-  'password' = 'D180HNf5aXMuhIvt',
+  'username' = '${secret_values.doris_username}',
+  'password' = '${secret_values.doris_password}',
   'sink.label-prefix' = 'doris_bet_record_label',
   'sink.properties.format' = 'json',
   'sink.properties.read_json_by_line' = 'true',
@@ -277,10 +277,10 @@ CREATE TEMPORARY TABLE doris_game_record_sink (
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
-  'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
+  'fenodes' = '${secret_values.doris_endpoint}',
   'table.identifier' = 'bayanihan.bayanihan_game_record',
-  'username' = 'QATmakiling_Doris_Service',
-  'password' = 'D180HNf5aXMuhIvt',
+  'username' = '${secret_values.doris_username}',
+  'password' = '${secret_values.doris_password}',
   'sink.label-prefix' = 'doris_game_record_label',
   'sink.properties.format' = 'json',
   'sink.properties.read_json_by_line' = 'true',
@@ -300,10 +300,10 @@ CREATE TEMPORARY TABLE doris_operation_event_config_sink (
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
-  'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
+  'fenodes' = '${secret_values.doris_endpoint}',
   'table.identifier' = 'bayanihan.bayanihan_operation_event_config',
-  'username' = 'QATmakiling_Doris_Service',
-  'password' = 'D180HNf5aXMuhIvt',
+  'username' = '${secret_values.doris_username}',
+  'password' = '${secret_values.doris_password}',
   'sink.label-prefix' = 'doris_operation_event_config_label',
   'sink.properties.format' = 'json',
   'sink.properties.read_json_by_line' = 'true',
@@ -327,10 +327,10 @@ CREATE TEMPORARY TABLE doris_operation_event_config_record_sink (
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
-  'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
+  'fenodes' = '${secret_values.doris_endpoint}',
   'table.identifier' = 'bayanihan.bayanihan_operation_event_config_record',
-  'username' = 'QATmakiling_Doris_Service',
-  'password' = 'D180HNf5aXMuhIvt',
+  'username' = '${secret_values.doris_username}',
+  'password' = '${secret_values.doris_password}',
   'sink.label-prefix' = 'doris_operation_event_config_record_label',
   'sink.properties.format' = 'json',
   'sink.properties.read_json_by_line' = 'true',
@@ -367,10 +367,10 @@ CREATE TEMPORARY TABLE doris_operation_event_detail_sink (
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
-  'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
+  'fenodes' = '${secret_values.doris_endpoint}',
   'table.identifier' = 'bayanihan.bayanihan_operation_event_detail',
-  'username' = 'QATmakiling_Doris_Service',
-  'password' = 'D180HNf5aXMuhIvt',
+  'username' = '${secret_values.doris_username}',
+  'password' = '${secret_values.doris_password}',
   'sink.label-prefix' = 'doris_operation_event_detail_label',
   'sink.properties.format' = 'json',
   'sink.properties.read_json_by_line' = 'true',
@@ -407,10 +407,10 @@ CREATE TEMPORARY TABLE doris_operation_event_sink (
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
-  'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
+  'fenodes' = '${secret_values.doris_endpoint}',
   'table.identifier' = 'bayanihan.bayanihan_operation_event',
-  'username' = 'QATmakiling_Doris_Service',
-  'password' = 'D180HNf5aXMuhIvt',
+  'username' = '${secret_values.doris_username}',
+  'password' = '${secret_values.doris_password}',
   'sink.label-prefix' = 'doris_operation_event_label',
   'sink.properties.format' = 'json',
   'sink.properties.read_json_by_line' = 'true',
@@ -444,10 +444,10 @@ CREATE TEMPORARY TABLE doris_star_card_record_sink (
   PRIMARY KEY(`_id`) NOT ENFORCED
 ) WITH (
   'connector' = 'doris',
-  'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
+  'fenodes' = '${secret_values.doris_endpoint}',
   'table.identifier' = 'bayanihan.bayanihan_star_card_record',
-  'username' = 'QATmakiling_Doris_Service',
-  'password' = 'D180HNf5aXMuhIvt',
+  'username' = '${secret_values.doris_username}',
+  'password' = '${secret_values.doris_password}',
   'sink.label-prefix' = 'doris_star_card_record_label',
   'sink.properties.format' = 'json',
   'sink.properties.read_json_by_line' = 'true',
