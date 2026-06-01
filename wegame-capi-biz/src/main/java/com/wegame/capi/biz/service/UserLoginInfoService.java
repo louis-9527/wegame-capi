@@ -5,6 +5,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.user.UserLoginInfoConverter;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
+import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoPo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoQuery;
 import com.wegame.capi.dao.mapper.user.UserLoginInfoManualMapper;
@@ -191,7 +192,7 @@ public class UserLoginInfoService {
 
     /// ////////////  above auto generated ///////////////
     @Async(defaultThreadPoolExecutor)
-    public void asyncAddOrUpdate(UserLoginInfoDo userLoginInfoDo) {
+    public void asyncAddOrUpdate(UserInfo userInfo, UserLoginInfoDo userLoginInfoDo) {
         try {
             UserLoginInfoPo userLoginInfoFromDb = userLoginInfoMapper.selectOne(UserLoginInfoQuery.builder()
                     .pId(userLoginInfoDo.getPId())
@@ -209,7 +210,9 @@ public class UserLoginInfoService {
                         .loginTime(userLoginInfoDo.getLoginTime())
                         .build());
             }
-            userMetricService.afterLoginMetric();
+            Date lastLoginTime = Objects.nonNull(userLoginInfoFromDb) ? userLoginInfoFromDb.getLoginTime() : null;
+            Date registerTime = Objects.nonNull(userLoginInfoFromDb) ? userLoginInfoFromDb.getCreateTime() : userLoginInfoDo.getRegisterTime();
+            userMetricService.loginMetric(userInfo, registerTime, lastLoginTime);
         } catch (Exception e) {
             log.warn("asyncAddOrUpdate Exception, req: {}, errMsg: {}", userLoginInfoDo, e.getMessage(), e);
         }

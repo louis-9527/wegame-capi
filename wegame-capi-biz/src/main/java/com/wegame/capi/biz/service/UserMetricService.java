@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,8 +26,8 @@ import java.util.Map;
 @Component
 public class UserMetricService {
 
-    // user:metric:{gameId}:{playerId}
-    private static final String format = "user:metric:%s:%s";
+    // user:metric:{gameId}:{pid}:{channelId}:{playerId}
+    private static final String format = "user:metric:%s:%s:%s:%s";
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
@@ -59,22 +60,17 @@ public class UserMetricService {
     /**
      * 登陆统计
      * 1、用户注册时间
-     * 2、昨日是否登陆
+     * 2、上一次登陆时间
      * 3、当前进入时余额
      * 4、上一次退出时余额
      * 5、当前余额
-     * @param userInfo
      */
-    public void loginMetric(UserInfo userInfo) {
-        // 1、
-        UserLoginInfoDo userLoginInfo = userLoginInfoService.selectOne(UserLoginInfoQuery.builder()
-                .pId(userInfo.getPId())
-                .channelId(Long.valueOf(userInfo.getChannelId()))
-                .gameId(userInfo.getGameId())
-                .userId(Long.valueOf(userInfo.getId()))
-                .playerId(userInfo.getPlayerId())
-                .build());
-        Date registerDate = userLoginInfo.getRegisterTime();
+    public void loginMetric(UserInfo userInfo, Date registerTime, Date lastLoginTime) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("registerTime", registerTime);
+        map.put("lastLoginTime", lastLoginTime);
+
+        redisTemplate.opsForHash().putAll(key(u));
     }
 
     public UserMetricInfoDo get() {
@@ -85,6 +81,6 @@ public class UserMetricService {
     }
 
     private String key(UserInfo userInfo) {
-        return String.format(format, userInfo.getGameId(), userInfo.getPlayerId());
+        return String.format(format, userInfo.getGameId(), userInfo.getPId(), userInfo.getChannelId(), userInfo.getPlayerId());
     }
 }

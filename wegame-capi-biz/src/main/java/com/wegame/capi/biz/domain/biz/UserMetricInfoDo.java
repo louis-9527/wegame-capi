@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -56,7 +57,19 @@ public class UserMetricInfoDo implements Serializable {
      */
     private Date registerTime;
     /**
-     * 昨日登陆标识
+     * 上一次登陆时间
      */
-    private Boolean yesterdayLogin;
+    private Date lastLoginTime;
+
+
+    @JsonIgnore
+    public boolean isYesterdayLogin() {
+        return true; // todo @bruce
+    }
+
+    @JsonIgnore
+    public boolean isTodayRegister() {
+        return true; // todo @bruce
+    }
+
 }
