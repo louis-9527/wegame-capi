@@ -5,7 +5,7 @@ api:
       - platformIdList: [50, 52, 55]
         invokeSingle: true
         singleDomain: https://sw-inhouse-http-main-v2.igo10.me
-        singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me // todo @bruce
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo9.me
         freeSpinDomain: https://sw-inhouse-http-freespin.igo10.me
         promotionDomain: https://reward-http.igo10.me
         operationDomain: http://dos-egame-aliyun.platform10.me
