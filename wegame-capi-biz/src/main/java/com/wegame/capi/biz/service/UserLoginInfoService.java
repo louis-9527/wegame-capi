@@ -35,6 +35,8 @@ public class UserLoginInfoService {
     UserLoginInfoMapper userLoginInfoMapper;
     @Autowired
     UserLoginInfoManualMapper userLoginInfoManualMapper;
+    @Autowired
+    UserMetricService userMetricService;
 
     /**
      * 新增
@@ -191,22 +193,23 @@ public class UserLoginInfoService {
     @Async(defaultThreadPoolExecutor)
     public void asyncAddOrUpdate(UserLoginInfoDo userLoginInfoDo) {
         try {
-            Long id = userLoginInfoMapper.selectId(UserLoginInfoQuery.builder()
+            UserLoginInfoPo userLoginInfoFromDb = userLoginInfoMapper.selectOne(UserLoginInfoQuery.builder()
                     .pId(userLoginInfoDo.getPId())
                     .channelId(userLoginInfoDo.getChannelId())
                     .gameId(userLoginInfoDo.getGameId())
                     .userId(userLoginInfoDo.getUserId())
                     .playerId(userLoginInfoDo.getPlayerId())
                     .build());
-            if (Objects.isNull(id)) {
+            if (Objects.isNull(userLoginInfoFromDb)) {
                 userLoginInfoDo.setRegisterTime(new Date());
                 add(userLoginInfoDo);
             } else {
                 update(UserLoginInfoDo.builder()
-                        .id(id)
+                        .id(userLoginInfoFromDb.getId())
                         .loginTime(userLoginInfoDo.getLoginTime())
                         .build());
             }
+            userMetricService.afterLoginMetric();
         } catch (Exception e) {
             log.warn("asyncAddOrUpdate Exception, req: {}, errMsg: {}", userLoginInfoDo, e.getMessage(), e);
         }

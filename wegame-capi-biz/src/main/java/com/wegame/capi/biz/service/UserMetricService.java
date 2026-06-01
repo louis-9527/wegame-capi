@@ -1,9 +1,20 @@
 package com.wegame.capi.biz.service;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
+import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.Map;
 
 /**
  * 用户统计服务
@@ -13,8 +24,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class UserMetricService {
+
+    // user:metric:{gameId}:{playerId}
+    private static final String format = "user:metric:%s:%s";
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    UserLoginInfoService userLoginInfoService;
 
     //    - 累计游戏局数，只计算在本游戏的投注次数。
     //            - 总投注，只计算在本游戏中的投注金额。
@@ -28,5 +44,47 @@ public class UserMetricService {
     //- 当前余额
     // 注册时间
 
+    //public void beforeLoginMetric(UserInfo userInfo) {
+    //    UserLoginInfoDo userLoginInfo = userLoginInfoService.selectOne(UserLoginInfoQuery.builder()
+    //            .pId(userInfo.getPId())
+    //            .channelId(Long.valueOf(userInfo.getChannelId()))
+    //            .gameId(userInfo.getGameId())
+    //            .userId(Long.valueOf(userInfo.getId()))
+    //            .playerId(userInfo.getPlayerId())
+    //            .build());
+    //    Date loginTime = userLoginInfo.getLoginTime();
+    //    // 统计昨日是否登陆。todo
+    //}
 
+    /**
+     * 登陆统计
+     * 1、用户注册时间
+     * 2、昨日是否登陆
+     * 3、当前进入时余额
+     * 4、上一次退出时余额
+     * 5、当前余额
+     * @param userInfo
+     */
+    public void loginMetric(UserInfo userInfo) {
+        // 1、
+        UserLoginInfoDo userLoginInfo = userLoginInfoService.selectOne(UserLoginInfoQuery.builder()
+                .pId(userInfo.getPId())
+                .channelId(Long.valueOf(userInfo.getChannelId()))
+                .gameId(userInfo.getGameId())
+                .userId(Long.valueOf(userInfo.getId()))
+                .playerId(userInfo.getPlayerId())
+                .build());
+        Date registerDate = userLoginInfo.getRegisterTime();
+    }
+
+    public UserMetricInfoDo get() {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(key(userInfo));
+        return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(map), UserMetricInfoDo.class);
+    }
+
+    private String key(UserInfo userInfo) {
+        return String.format(format, userInfo.getGameId(), userInfo.getPlayerId());
+    }
 }
