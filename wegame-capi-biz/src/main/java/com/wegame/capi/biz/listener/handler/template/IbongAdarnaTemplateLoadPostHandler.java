@@ -20,9 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.IBONG_ADARNA_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * 模版预加载后处理执行器
@@ -30,11 +33,16 @@ import static com.wegame.capi.common.Constants.*;
 @Slf4j
 @Component
 @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
-public class IbongAdarnaTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
+public class IbongAdarnaTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler<IbongAdarnaBetRecordTemplateEsDo> {
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
     @Autowired
     BetRecordTemplateEsService<IbongAdarnaBetRecordTemplateEsDo> betRecordTemplateEsService;
+
+    @Override
+    public Class<IbongAdarnaBetRecordTemplateEsDo> getClassType() {
+        return IbongAdarnaBetRecordTemplateEsDo.class;
+    }
 
     protected TemplateTypeEnum getTemplateType() {
         return TemplateTypeEnum.IBONG_ADARNA;

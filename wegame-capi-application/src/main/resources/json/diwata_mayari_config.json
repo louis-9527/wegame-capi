@@ -1,5 +1,92 @@
 {
     "diwatamayari": {
+        "commonBloodPoolConfig": {
+            "enable": true
+        },
+        "commonTemplateConfig": {
+            "warmUpEndMultipleMap": {
+                "NORMAL_BET": 8,
+                "BUY_BET": 5
+            },
+            "rtpMap": {
+                "96rtp": {
+                    "indexName": "diwatamayari_bet_record_template_v3",
+                    "multipleRangeWeightMap": {
+                        "NORMAL_BET": {
+                            "1_3": 43022,
+                            "3_5": 19903,
+                            "5_8": 12266
+                        },
+                        "BUY_BET": {
+                            "1_3": 43022,
+                            "3_5": 19903,
+                            "5_8": 12266
+                        }
+                    }
+                },
+                "97rtp": {
+                    "indexName": "diwatamayari_bet_record_template_v4",
+                    "multipleRangeWeightMap": {
+                        "NORMAL_BET": {
+                            "1_3": 43022,
+                            "3_5": 19903,
+                            "5_8": 12266
+                        },
+                        "BUY_BET": {
+                            "1_3": 43022,
+                            "3_5": 19903,
+                            "5_8": 12266
+                        }
+                    }
+                },
+                "98rtp": {
+                    "indexName": "diwatamayari_bet_record_template_v3",
+                    "multipleRangeWeightMap": {
+                        "NORMAL_BET": {
+                            "1_3": 43022,
+                            "3_5": 19903,
+                            "5_8": 12266
+                        },
+                        "BUY_BET": {
+                            "1_3": 43022,
+                            "3_5": 19903,
+                            "5_8": 12266
+                        }
+                    }
+                }
+            },
+            "rtpControlMap": {
+                "Default": {
+                    "StarCard": "96rtp",
+                    "FreeSpin": "97rtp",
+                    "Default": "98rtp"
+                },
+                "1": {
+                    "1": "97rtp",
+                    "2": "98rtp",
+                    "3": "98rtp",
+                    "4": "98rtp",
+                    "5": "98rtp",
+                    "6": "98rtp"
+                },
+                "2": {
+                    "1": "97rtp",
+                    "2": "98rtp",
+                    "3": "98rtp",
+                    "4": "98rtp",
+                    "5": "98rtp",
+                    "6": "98rtp"
+                },
+                "100": {
+                    "1": "97rtp",
+                    "2": "98rtp",
+                    "3": "98rtp",
+                    "4": "98rtp",
+                    "5": "98rtp",
+                    "6": "98rtp"
+                }
+            }
+        },
         "freeWheelTimesRuleConfig": {
             "baseFreeWheelTimes": 8,
             "stepFreeWheelTimes": 1
@@ -500,107 +587,9 @@
             }
         },
         "rewardMaxMultiple": "25000",
-        "templateRangeConfig": {
-            "templateWarmUpEndOddsMap": {
-                "NORMAL_BET": 5,
-                "BUY_BET": 3
-            },
-            "templateMapping": {
-                "A": "DIWATA_MAYARI",
-                "B": "DIWATA_MAYARI_V3"
-            },
-            "templateRangeMap": {
-                "DIWATA_MAYARI": {
-                    "NORMAL_BET": {
-                        "0_0": 30000000,
-                        "0_0.5": 4473000,
-                        "0.5_1": 1671487,
-                        "1_3": 2000000,
-                        "3_5": 1000000,
-                        "5_8": 430000,
-                        "8_15": 420000,
-                        "15_30": 300000,
-                        "30_50": 200000,
-                        "50_70": 100000,
-                        "70_100": 60955,
-                        "100_300": 32844,
-                        "300_500": 5748,
-                        "500_1000": 1900,
-                        "1000_5000": 455
-                    },
-                    "BUY_BET": {
-                        "0_1": 300003,
-                        "1_2": 200000,
-                        "2_3": 10170,
-                        "3_5": 4300,
-                        "5_8": 2000,
-                        "8_15": 1280,
-                        "15_30": 200,
-                        "30_50": 100
-                    }
-                },
-                "DIWATA_MAYARI_V3": {
-                    "NORMAL_BET": {
-                        "0_0": 20000000,
-                        "0_0.5": 10000000,
-                        "0.5_1": 5000000,
-                        "1_3": 2000000,
-                        "3_5": 1000000,
-                        "5_8": 600000,
-                        "8_15": 350000,
-                        "15_30": 220000,
-                        "30_50": 120000,
-                        "50_70": 70000,
-                        "70_100": 60955,
-                        "100_300": 32844,
-                        "300_500": 5748,
-                        "500_1000": 1900,
-                        "1000_5000": 455
-                    },
-                    "BUY_BET": {
-                        "0_1": 300003,
-                        "1_2": 200000,
-                        "2_3": 10170,
-                        "3_5": 4300,
-                        "5_8": 2000,
-                        "8_15": 1280,
-                        "15_30": 200,
-                        "30_50": 100
-                    }
-                }
-            }
-        },
         "payoutAmountLimitConfig": {
             "retryCount": 1,
             "limitAmount": 1000000000
-        },
-        "bizInterfereConfig": {
-            "enabled": true,
-            "multipleControlConfig": {
-                "enabled": true,
-                "multipleControlConfigMap": {
-                    "MULTIPLE_CONTROL_11": {
-                        "usableTemplateMultipleRange": "70_300",
-                        "betIntoRewardRatio": 3,
-                        "rewardUsableAmount": 2000000
-                    },
-                    "MULTIPLE_CONTROL_12": {
-                        "usableTemplateMultipleRange": "300_500",
-                        "betIntoRewardRatio": 0.7,
-                        "rewardUsableAmount": 4000000
-                    },
-                    "MULTIPLE_CONTROL_13": {
-                        "usableTemplateMultipleRange": "500_1000",
-                        "betIntoRewardRatio": 0.2,
-                        "rewardUsableAmount": 7500000
-                    },
-                    "MULTIPLE_CONTROL_14": {
-                        "usableTemplateMultipleRange": "1000_5000",
-                        "betIntoRewardRatio": 0.1,
-                        "rewardUsableAmount": 20000000
-                    }
-                }
-            }
         }
     }
 }

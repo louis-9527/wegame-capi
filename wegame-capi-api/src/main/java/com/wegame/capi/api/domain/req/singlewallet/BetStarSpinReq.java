@@ -48,6 +48,9 @@ public class BetStarSpinReq extends BaseReq {
         private Boolean isFreeRound;
         private JackpotDetails jackpotDetails;
 
+        private int betCategory;
+        private boolean enableFundPool;
+
         @Data
         @SuperBuilder
         @NoArgsConstructor

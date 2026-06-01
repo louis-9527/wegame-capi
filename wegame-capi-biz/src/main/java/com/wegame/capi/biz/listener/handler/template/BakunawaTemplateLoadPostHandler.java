@@ -29,11 +29,16 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Component
 @ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
-public class BakunawaTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
+public class BakunawaTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler<BakunawaBetRecordTemplateEsDo> {
     @Autowired
     BakunawaConfig bakunawaConfig;
     @Autowired
     BetRecordTemplateEsService<BakunawaBetRecordTemplateEsDo> betRecordTemplateEsService;
+
+    @Override
+    public Class<BakunawaBetRecordTemplateEsDo> getClassType() {
+        return BakunawaBetRecordTemplateEsDo.class;
+    }
 
     protected TemplateTypeEnum getTemplateType() {
         return TemplateTypeEnum.BAKUNAWA;

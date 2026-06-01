@@ -1,13 +1,15 @@
 package com.wegame.capi.biz.domain.biz;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * bet_record：投注记录
@@ -73,18 +75,6 @@ public class BetRecordDo<T> implements Serializable {
      * @see com.wegame.capi.common.enums.BetPromotionTypeEnum
      */
     private Integer betPromotionType;
-    /**
-     * 业务干预类型
-     *
-     * @see com.wegame.capi.common.enums.BizInterfereTypeEnum
-     */
-    private Integer bizInterfereType;
-    /**
-     * 业务干预子类型
-     *
-     * @see com.wegame.capi.common.enums.BizInterfereSubTypeEnum
-     */
-    private Integer bizInterfereSubType;
     /**
      * 投注id（单钱包）
      */
@@ -185,6 +175,15 @@ public class BetRecordDo<T> implements Serializable {
          * 预定投注Id
          */
         private String campaignId;
+        // ------------------------------------------------------------------------------------------------------------
+        /**
+         * 奖池分类： 1：普通/ 2：购买 / 100：全部
+         */
+        private Integer poolCategory;
+        /**
+         * 当前档位
+         */
+        private String currentLevelNo;
     }
 
     @Data

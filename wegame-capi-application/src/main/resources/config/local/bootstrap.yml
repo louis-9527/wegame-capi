@@ -64,6 +64,6 @@ game:
     IbongAdarna: false
     Lamang: false
     Bakunawa: false
-    DiwataMayari: false
+    DiwataMayari: true
     Kapre: false
-    Mangkukulam: true
+    Mangkukulam: false

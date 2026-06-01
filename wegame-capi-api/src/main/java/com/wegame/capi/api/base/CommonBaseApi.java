@@ -47,6 +47,10 @@ public class CommonBaseApi extends BaseApi {
         return gameApiProperty.getDomain(pid, DomainTypeEnum.SINGLE_DOMAIN);
     }
 
+    public String singlePoolConfigDomain(String pid) {
+        return gameApiProperty.getDomain(pid, DomainTypeEnum.SINGLE_POOL_CONFIG_DOMAIN);
+    }
+
     public String freeSpinDomain(String pid) {
         return gameApiProperty.getDomain(pid, DomainTypeEnum.FREE_SPIN_DOMAIN);
     }
