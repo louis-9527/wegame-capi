@@ -3,11 +3,16 @@ package com.wegame.capi.biz.service;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 用户埋点服务
@@ -67,6 +73,8 @@ public class UserMetricService {
     RedisTemplate redisTemplate;
     @Autowired
     SingleWalletService singleWalletService;
+    @Autowired
+    BetRecordService betRecordService;
 
     //    - 累计游戏局数，只计算在本游戏的投注次数。
     //            - 总投注，只计算在本游戏中的投注金额。
@@ -88,7 +96,7 @@ public class UserMetricService {
      * 4、上一次退出时余额
      * 5、当前余额
      */
-    public void loginMetric(UserInfo userInfo, Date registerTime, Date lastLoginTime) {
+    public void afterLoginMetric(UserInfo userInfo, Date registerTime, Date lastLoginTime) {
         try {
             Map<String, Object> map = new HashMap<>();
             map.put(user_metric_registerTime, registerTime);
@@ -96,10 +104,34 @@ public class UserMetricService {
             BigDecimal credit = singleWalletService.getCredit(userInfo);
             map.put(user_metric_enterBalance, credit);
             map.put(user_metric_currentBalance, credit);
-            map.put(user_metric_exitBalance, credit); // todo
+            BetRecordDo betRecordDo = betRecordService.get(BetRecordQuery.builder()
+                            .playerId(userInfo.getPlayerId())
+                            .status(BetStatusEnum.SUCCESS.getCode())
+                            .orderByClause("createTime")
+                            .limit(1)
+                            .direction(Sort.Direction.DESC)
+                            .build(),
+                    GameTypeEnum.valueOfId(userInfo.getGameId()));
+            map.put(user_metric_exitBalance, Objects.nonNull(betRecordDo) ? betRecordDo.getCredit() : null); // todo 余额单位
             redisTemplate.opsForHash().putAll(globalKey(userInfo), map);
         } catch (Exception e) {
-            log.error("loginMetric error, userInfo: {}, map: {}", userInfo, e);
+            log.error("afterLoginMetric error, userInfo: {}, map: {}", userInfo, e);
+        }
+    }
+
+    /**
+     * 投注统计
+     * 1、用户注册时间
+     * 2、上一次登陆时间
+     * 3、当前进入时余额
+     * 4、上一次退出时余额
+     * 5、当前余额
+     */
+    public void afterBetMetric(UserInfo userInfo, Date registerTime, Date lastLoginTime) {
+        try {
+
+        } catch (Exception e) {
+            log.error("afterBetMetric error, userInfo: {}, map: {}", userInfo, e);
         }
     }
 
