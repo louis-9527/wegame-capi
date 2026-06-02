@@ -2,7 +2,7 @@ package com.wegame.capi.biz.module.lamang.game;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.config.dgit omain.LamangConfig;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
