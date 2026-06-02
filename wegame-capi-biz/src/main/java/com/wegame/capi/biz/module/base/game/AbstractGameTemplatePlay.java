@@ -114,22 +114,13 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
         }
     }
 
-    public T fetchTemplate(GamePlayDo gamePlayDo,
-                           CommonTemplateConfig commonTemplateConfig,
+    public T fetchTemplateInRandom(GamePlayDo gamePlayDo,
                            String templateIndexName,
                            TemplateMultipleRange multipleRange,
                            Class<T> clazz) {
         AssertUtil.assertStrNotEmpty(templateIndexName, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(multipleRange, ErrorCode.ERR_INTER);
         gamePlayDo.setTemplateMultipleRange(multipleRange);
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, gamePlayDo.getBetType(), multipleRange.getStart(), multipleRange.getEnd());
-        AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
-        Long betRecordId = getRandomElement(betRecordIdList);
-        log.info("fetch template, templateIndexName: {}, betRecordId:{}", templateIndexName, betRecordId);
-        if (commonTemplateConfig.supportWarmUp(gamePlayDo.getBetType(), multipleRange)) {
-            return betRecordTemplateService.getTemplateWithLocalCache(templateIndexName, betRecordId, clazz);
-        } else {
-            return betRecordTemplateService.findById(templateIndexName, betRecordId, clazz);
-        }
+        return betRecordTemplateService.randomTemplateWithNoCache(templateIndexName, gamePlayDo.getBetType(), multipleRange.getStart(), multipleRange.getEnd(), clazz);
     }
 }

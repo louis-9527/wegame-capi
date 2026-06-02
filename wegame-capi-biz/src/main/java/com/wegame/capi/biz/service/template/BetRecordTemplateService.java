@@ -17,9 +17,12 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -39,10 +42,7 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
@@ -226,6 +226,28 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
     @Cacheable(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateIndexName + '_' + #betRecordId")
     public T getTemplateWithLocalCache(String templateIndexName, Long betRecordId, Class<T> clazz) {
         return findById(templateIndexName, betRecordId, clazz);
+    }
+
+    public T randomTemplateWithNoCache(String templateIndexName, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
+        // 1. 构建区间查询
+        FunctionScoreQueryBuilder functionScoreQuery = QueryBuilders.functionScoreQuery(
+                // 区间过滤条件
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.termQuery("betType", betType.getCode()))
+                        .must(QueryBuilders.rangeQuery("multiple")
+                                .gte(multipleRangeStart)
+                                .lte(multipleRangeEnd)),
+                // 随机打分打乱顺序
+                ScoreFunctionBuilders.randomFunction()
+        ).boostMode(CombineFunction.REPLACE);
+        // 2. 构建查询
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(functionScoreQuery)
+                .withPageable(org.springframework.data.domain.Pageable.ofSize(1))
+                .build();
+        // 3. 执行查询
+        SearchHit<T> searchHit = elasticsearchRestTemplate.searchOne(searchQuery, clazz, IndexCoordinates.of(templateIndexName));
+        return Objects.nonNull(searchHit) ? searchHit.getContent() : null;
     }
 
     private List<Long> fetchBatch(String templateIndexName,
