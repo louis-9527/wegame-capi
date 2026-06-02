@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -69,9 +70,13 @@ public class LamangConfig extends GameBizConfig implements Serializable{
     private JackPotConfig jackPotConfig;
 
     /**
-     * 模板配置
+     * 模板配置 todo delete
      */
     private TemplateConfig templateConfig;
+    /**
+     * 通用模版配置
+     */
+    private CommonTemplateConfig commonTemplateConfig;
 
     @Data
     @SuperBuilder
@@ -336,6 +341,13 @@ public class LamangConfig extends GameBizConfig implements Serializable{
         jackPotConfigValidate();
         freeWheelTimesValidate();
         validateTemplateConfig();
+        commonTemplateConfigValidate();
+    }
+
+    private void commonTemplateConfigValidate() {
+        // todo 放开校验
+        //AssertUtil.assertNotNull(this.commonTemplateConfig, ErrorCode.ERR_INTER, "commonTemplateConfig is null");
+        //commonTemplateConfig.validate();
     }
 
     private void validateTemplateConfig() {

@@ -36,7 +36,6 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         if (!supportGame(GameTypeEnum.DIWATA_MAYARI)) {
             return;
         }
-        // todo @bruce
-        //commonWarmUp(lamangConfig.getCommonTemplateConfig());
+        commonWarmUp(lamangConfig.getCommonTemplateConfig());
     }
 }

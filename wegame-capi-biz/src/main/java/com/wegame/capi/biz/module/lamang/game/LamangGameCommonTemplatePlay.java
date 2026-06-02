@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.lamang.game;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -8,13 +7,11 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -48,15 +45,8 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangGameCommonTemplatePlay implements TemplateGame<LamangGameRecordDo, LamangBetRecordTemplateEsDo> {
 
-
-    private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final int FIRST_WHEEL_INDEX = 0;
     private static final GameInfoDo gameInfo = LamangGameHelper.LAMANG_GAME_INFO;
-    //
-    //@Autowired
-    //LamangConfig lamangConfig;
-    //@Autowired
-    //SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Autowired
     IdHelper idHelper;
@@ -103,7 +93,7 @@ public class LamangGameCommonTemplatePlay implements TemplateGame<LamangGameReco
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         WheelDo<LamangSymbolDo> wheel = convertWheel(template.getWheel());
-        if (wheel.getIndex() == 0) {
+        if (wheel.getIndex() == FIRST_WHEEL_INDEX) {
             // 每一轮，首回合倍率初始化
             lastWheelMultiple = null;
         }
