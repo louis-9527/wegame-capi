@@ -47,31 +47,12 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<DiwataMayar
         if (!Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.NONE)) {
             CommonTemplateConfig.Rtp rtp = getDefaultRtp(betDo, lamangConfig.getCommonTemplateConfig());
             AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
-            return fetchTemplate(betDo, gamePlayDo, rtp);
+            return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtp, DiwataBetRecordTemplateEsDo.class);
         } else {
             // todo @jayni 根据个人干预 获取 rtp
             CommonTemplateConfig.Rtp rtp = getDefaultRtp(betDo, lamangConfig.getCommonTemplateConfig());
             AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
-            return fetchTemplate(betDo, gamePlayDo, rtp);
+            return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtp, DiwataBetRecordTemplateEsDo.class);
         }
-    }
-
-    private DiwataBetRecordTemplateEsDo fetchTemplate(BetDo betDo, GamePlayDo gamePlayDo, CommonTemplateConfig.Rtp rtp) {
-        String templateIndexName = rtp.getIndexName();
-        AssertUtil.assertStrNotEmpty(templateIndexName, ErrorCode.ERR_INTER);
-        TemplateMultipleRange multipleRange = getTemplateMultipleRange(rtp.getMultipleRangeWeightMap().get(betDo.getBetType()));
-        AssertUtil.assertNotNull(multipleRange, ErrorCode.ERR_INTER);
-        gamePlayDo.setTemplateMultipleRange(multipleRange);
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, gamePlayDo.getBetType(), multipleRange.getStart(), multipleRange.getEnd());
-        AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
-        Long betRecordId = getRandomElement(betRecordIdList);
-        log.info("fetch template, templateIndexName: {}, betRecordId:{}", templateIndexName, betRecordId);
-        DiwataBetRecordTemplateEsDo templateEsDo;
-        if (lamangConfig.getCommonTemplateConfig().supportWarmUp(gamePlayDo.getBetType(), multipleRange)) {
-            templateEsDo = betRecordTemplateService.getTemplateWithLocalCache(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
-        } else {
-            templateEsDo = betRecordTemplateService.findById(templateIndexName, betRecordId, DiwataBetRecordTemplateEsDo.class);
-        }
-        return templateEsDo;
     }
 }

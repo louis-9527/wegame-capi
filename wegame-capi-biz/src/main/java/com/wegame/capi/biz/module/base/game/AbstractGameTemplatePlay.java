@@ -10,6 +10,7 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
+import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.biz.service.bloodpool.BloodPoolControlService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateService;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import static com.wegame.capi.common.constants.WarningConstants.RTP_EX_MATCH_WARNING_MSG_FORMAT;
+import static com.wegame.capi.common.utils.ListUtil.getRandomElement;
 
 /**
  * 抽象游戏模版Play
@@ -90,5 +92,28 @@ public abstract class AbstractGameTemplatePlay<R extends ToVoConverter, T extend
         AssertUtil.assertNotNull(betDo.getBetPromotionType(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(commonTemplateConfig, ErrorCode.ERR_INTER);
         return commonTemplateConfig.getRtp(Constants.DEFAULT, betDo.getBetPromotionType().getDefaultRtpControlSubKey());
+    }
+
+    public T fetchTemplate(BetDo betDo,
+                            GamePlayDo gamePlayDo,
+                            CommonTemplateConfig commonTemplateConfig,
+                            CommonTemplateConfig.Rtp rtp,
+                            Class<T> clazz) {
+        String templateIndexName = rtp.getIndexName();
+        AssertUtil.assertStrNotEmpty(templateIndexName, ErrorCode.ERR_INTER);
+        TemplateMultipleRange multipleRange = getTemplateMultipleRange(rtp.getMultipleRangeWeightMap().get(betDo.getBetType()));
+        AssertUtil.assertNotNull(multipleRange, ErrorCode.ERR_INTER);
+        gamePlayDo.setTemplateMultipleRange(multipleRange);
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateIndexName, gamePlayDo.getBetType(), multipleRange.getStart(), multipleRange.getEnd());
+        AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
+        Long betRecordId = getRandomElement(betRecordIdList);
+        log.info("fetch template, templateIndexName: {}, betRecordId:{}", templateIndexName, betRecordId);
+        T templateEsDo;
+        if (commonTemplateConfig.supportWarmUp(gamePlayDo.getBetType(), multipleRange)) {
+            templateEsDo = betRecordTemplateService.getTemplateWithLocalCache(templateIndexName, betRecordId, clazz);
+        } else {
+            templateEsDo = betRecordTemplateService.findById(templateIndexName, betRecordId, clazz);
+        }
+        return templateEsDo;
     }
 }
