@@ -5,6 +5,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.service.UserMetricService;
@@ -59,8 +60,8 @@ public class UserMetricServiceTest extends BaseTest {
         Date lastLoginTime = DateUtil.getDayBegin(new Date());
         for (int i = 0; i < 10; i++) {
             userMetricService.afterLoginMetric(userInfo, registerTime, lastLoginTime);
-            Map<String, Object> map = userMetricService.get(userInfo);
-            log.info("test_afterLoginMetric, map: {}", map);
+            UserMetricInfoDo infoDo = userMetricService.getUserMetricInfo(userInfo);
+            log.info("test_afterLoginMetric, infoDo: {}", infoDo);
         }
     }
 
@@ -80,8 +81,8 @@ public class UserMetricServiceTest extends BaseTest {
         for (int i = 0; i < 100; i++) {
             boolean hasRewarFreeWheel = false;
             userMetricService.afterBetMetric(userInfo, betRecordDo, result, hasRewarFreeWheel);
-            Map<String, Object> map = userMetricService.get(userInfo);
-            log.info("test_afterLoginMetric, map: {}", map);
+            UserMetricInfoDo infoDo = userMetricService.getUserMetricInfo(userInfo);
+            log.info("test_afterLoginMetric, infoDo: {}", infoDo);
         }
     }
 }

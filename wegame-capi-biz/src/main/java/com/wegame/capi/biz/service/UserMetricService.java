@@ -3,7 +3,9 @@ package com.wegame.capi.biz.service;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.builder.UserMetricInfoBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -46,6 +48,9 @@ public class UserMetricService {
     @Autowired
     BetRecordService betRecordService;
 
+    public UserMetricInfoDo getUserMetricInfo(UserInfo userInfo) {
+        return UserMetricInfoBuilder.build(get(userInfo));
+    }
     /**
      * 登陆统计
      * 1、用户注册时间
@@ -132,7 +137,7 @@ public class UserMetricService {
         return updateMap;
     }
 
-    public Map<String, Object> get(UserInfo userInfo) {
+    private Map<String, Object> get(UserInfo userInfo) {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         Map<String, Object> map = redisTemplate.opsForHash().entries(key(userInfo));
         log.info("user metric info, playerId: {}, {}", userInfo.getPlayerId(), map);
