@@ -340,14 +340,13 @@ public class LamangConfig extends GameBizConfig implements Serializable{
         rewardMaxMultipleValidate();
         jackPotConfigValidate();
         freeWheelTimesValidate();
-        validateTemplateConfig();
+        //validateTemplateConfig(); todo delete @bruce
         commonTemplateConfigValidate();
     }
 
     private void commonTemplateConfigValidate() {
-        // todo 放开校验
-        //AssertUtil.assertNotNull(this.commonTemplateConfig, ErrorCode.ERR_INTER, "commonTemplateConfig is null");
-        //commonTemplateConfig.validate();
+        AssertUtil.assertNotNull(this.commonTemplateConfig, ErrorCode.ERR_INTER, "commonTemplateConfig is null");
+        commonTemplateConfig.validate();
     }
 
     private void validateTemplateConfig() {

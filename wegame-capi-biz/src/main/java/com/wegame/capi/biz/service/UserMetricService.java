@@ -4,14 +4,13 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.UserMetricHelper;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,21 +63,10 @@ public class UserMetricService {
         map.put(user_metric_registerTime, registerTime);
         map.put(user_metric_lastLoginTime, lastLoginTime);
         BigDecimal credit = singleWalletService.getCredit(userInfo);
-        map.put(user_metric_enterBalance, credit);
-        map.put(user_metric_currentBalance, credit);
-        try {
-            BetRecordDo betRecordDo = betRecordService.get(BetRecordQuery.builder()
-                            .playerId(userInfo.getPlayerId())
-                            .status(BetStatusEnum.SUCCESS.getCode())
-                            .orderByClause("createTime")
-                            .limit(1)
-                            .direction(Sort.Direction.DESC)
-                            .build(),
-                    GameTypeEnum.valueOfId(userInfo.getGameId()));
-            map.put(user_metric_exitBalance, Objects.nonNull(betRecordDo) ? betRecordDo.getCredit() : null); // todo 余额单位
-        } catch (Exception e) {
-            log.error("afterLoginMetric error, userInfo: {}, map: {}", userInfo, e);
-        }
+        map.put(user_metric_enterBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
+        map.put(user_metric_currentBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
+        BetRecordDo lastBetRecordDo = getLastBetRecord(userInfo);
+        map.put(user_metric_exitBalance, Objects.nonNull(lastBetRecordDo) ? lastBetRecordDo.getCredit() : 0);
         redisTemplate.opsForHash().putAll(key(userInfo), map);
     }
 
@@ -92,20 +80,19 @@ public class UserMetricService {
      * 6、当日连续不中FG次数
      */
     //@Async(metricThreadPoolExecutor) todo @bruce
-    public void afterBetMetric(BetDo betDo, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
+    public void afterBetMetric(UserInfo userInfo, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
         try {
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
             AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER);
             AssertUtil.assertNotNull(result, ErrorCode.ERR_INTER);
-            UserInfo userInfo = UserInfoContext.getUserInfo();
-            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
             if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId())
                     || !Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)
-                    || !Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.NONE)) {
+                    || !Objects.equals(betRecordDo.getBetPromotionType(), BetPromotionTypeEnum.NONE.getCode())) {
                 return;
             }
             Map<String, Object> mapFromDb = get(userInfo);
-            Map<String, Object> map = buildUpdateMap(mapFromDb, betRecordDo, result, hasRewarFreeWheel);
-            redisTemplate.opsForHash().putAll(key(userInfo), map);
+            Map<String, Object> updateMap = buildUpdateMap(mapFromDb, betRecordDo, result, hasRewarFreeWheel);
+            redisTemplate.opsForHash().putAll(key(userInfo), updateMap);
         } catch (Exception e) {
             log.error("afterBetMetric error", e);
         }
@@ -128,13 +115,13 @@ public class UserMetricService {
         // todayContinueNoFgTimes 值情况：null, 0, 大于0
         if (Objects.isNull(todayContinueNoFgTimes) || todayContinueNoFgTimes > 0) {
             if (hasRewarFreeWheel) {
-                // 中奖后,清0
+                // 中奖后清0。清0后当天不再统计
                 todayContinueNoFgTimes = 0;
             } else {
                 // 未中奖，设置1
                 todayContinueNoFgTimes = Objects.isNull(todayContinueNoFgTimes) ? 1 : todayContinueNoFgTimes + 1;
             }
-            updateMap.put(user_metric_currentBalance, String.format(_WITH_DATE_SPECIAL_VAL_FORMAT, DateUtil.getDateString(new Date()), todayContinueNoFgTimes));
+            updateMap.put(user_metric_todayContinueNoFgTimes, String.format(_WITH_DATE_SPECIAL_VAL_FORMAT, DateUtil.getDateString(new Date()), todayContinueNoFgTimes));
         }
         long currentBalance = result.getCredit();
         updateMap.put(user_metric_currentBalance, currentBalance);
@@ -144,10 +131,27 @@ public class UserMetricService {
     public Map<String, Object> get(UserInfo userInfo) {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         Map<String, Object> map = redisTemplate.opsForHash().entries(key(userInfo));
+        log.info("user metric info, playerId: {}, {}", userInfo.getPlayerId(), map);
         return Objects.isNull(map) ? new HashMap<>() : map;
     }
 
     private String key(UserInfo userInfo) {
         return String.format(_KEY_FORMAT, userInfo.getGameId(), userInfo.getPId(), userInfo.getChannelId(), userInfo.getPlayerId());
+    }
+
+    private BetRecordDo getLastBetRecord(UserInfo userInfo) {
+        try {
+            return betRecordService.get(BetRecordQuery.builder()
+                            .playerId(userInfo.getPlayerId())
+                            .status(BetStatusEnum.SUCCESS.getCode())
+                            .orderByClause("createTime")
+                            .limit(1)
+                            .direction(Sort.Direction.DESC)
+                            .build(),
+                    GameTypeEnum.valueOfId(userInfo.getGameId()));
+        } catch (Exception e) {
+            log.error("getLastBetRecord error, userInfo: {}", userInfo, e);
+            return null;
+        }
     }
 }

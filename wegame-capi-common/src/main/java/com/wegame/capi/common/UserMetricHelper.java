@@ -3,10 +3,13 @@ package com.wegame.capi.common;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -19,8 +22,6 @@ import static com.wegame.capi.common.constants.MetricConstants.*;
 @Slf4j
 @Data
 @SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 public class UserMetricHelper implements Serializable {
@@ -30,7 +31,7 @@ public class UserMetricHelper implements Serializable {
      */
     public static int getTotalBetTimes(Map<String, Object> map) {
         Object obj = map.get(user_metric_totalBetTimes);
-        return Objects.isNull(obj) ? 0 : (int) obj;
+        return Objects.nonNull(obj) && NumberUtils.isDigits(obj.toString()) ? NumberUtils.toInt(obj.toString()) : 0;
     }
 
     /**
@@ -61,7 +62,7 @@ public class UserMetricHelper implements Serializable {
     public static long getTotalBetAmount(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_totalBetAmount);
-        return Objects.isNull(obj) ? 0 : (long) obj;
+        return Objects.nonNull(obj) && NumberUtils.isDigits(obj.toString()) ? NumberUtils.toLong(obj.toString()) : 0;
     }
 
     /**
@@ -70,7 +71,7 @@ public class UserMetricHelper implements Serializable {
     public static long getTotalPayoutAmount(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_totalPayoutAmount);
-        return Objects.isNull(obj) ? 0 : (long) obj;
+        return Objects.nonNull(obj) && NumberUtils.isDigits(obj.toString()) ? NumberUtils.toLong(obj.toString()) : 0;
     }
 
     /**
@@ -79,7 +80,7 @@ public class UserMetricHelper implements Serializable {
     public static int getContinueEmptyTimes(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_continueEmptyTimes);
-        return Objects.isNull(obj) ? 0 : (int) obj;
+        return Objects.nonNull(obj) && NumberUtils.isDigits(obj.toString()) ? NumberUtils.toInt(obj.toString()) : 0;
     }
 
     /**
@@ -87,8 +88,8 @@ public class UserMetricHelper implements Serializable {
      * <p>
      * 特殊说明：redis 存储格式：{YYYYMMDD}_{times} ***
      * <p>
-     * @return
-     * 1、 为空：当日未累计
+     *
+     * @return 1、 为空：当日未累计
      * 2、 为0: 中fg后清0, 清0后当日不可再累计
      * 3、 大于0: 当日累计且大于0（未清0）
      */
@@ -112,7 +113,7 @@ public class UserMetricHelper implements Serializable {
     }
 
     /**
-     * 进入时余额
+     * 进入时余额, 可能为空
      */
     public static BigDecimal getEnterBalance(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
@@ -126,11 +127,11 @@ public class UserMetricHelper implements Serializable {
     public static BigDecimal getExitBalance(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_exitBalance);
-        return Objects.isNull(obj) ? null : new BigDecimal(obj.toString());
+        return Objects.isNull(obj) ? BigDecimal.ZERO : new BigDecimal(obj.toString());
     }
 
     /**
-     * 当前余额
+     * 当前余额, 可能为空
      */
     public static BigDecimal getCurrentBalance(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
