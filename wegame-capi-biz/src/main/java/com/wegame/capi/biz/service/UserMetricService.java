@@ -56,18 +56,22 @@ public class UserMetricService {
      */
     //@Async(metricThreadPoolExecutor) // todo @bruce
     public void afterLoginMetric(UserInfo userInfo, Date registerTime, Date lastLoginTime) {
-        if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId())) {
-            return;
-        }
-        Map<String, Object> map = new HashMap<>();
-        map.put(user_metric_registerTime, registerTime);
-        map.put(user_metric_lastLoginTime, lastLoginTime);
-        BigDecimal credit = singleWalletService.getCredit(userInfo);
-        map.put(user_metric_enterBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
-        map.put(user_metric_currentBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
-        BetRecordDo lastBetRecordDo = getLastBetRecord(userInfo);
-        map.put(user_metric_exitBalance, Objects.nonNull(lastBetRecordDo) ? lastBetRecordDo.getCredit() : 0);
-        redisTemplate.opsForHash().putAll(key(userInfo), map);
+       try {
+           if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId())) {
+               return;
+           }
+           Map<String, Object> map = new HashMap<>();
+           map.put(user_metric_registerTime, registerTime);
+           map.put(user_metric_lastLoginTime, lastLoginTime);
+           BigDecimal credit = singleWalletService.getCredit(userInfo);
+           map.put(user_metric_enterBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
+           map.put(user_metric_currentBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
+           BetRecordDo lastBetRecordDo = getLastBetRecord(userInfo);
+           map.put(user_metric_exitBalance, Objects.nonNull(lastBetRecordDo) ? lastBetRecordDo.getCredit() : 0);
+           redisTemplate.opsForHash().putAll(key(userInfo), map);
+       } catch (Exception e) {
+           log.error("afterBetMetric error, userInfo: {}", userInfo, e);
+       }
     }
 
     /**
@@ -94,7 +98,7 @@ public class UserMetricService {
             Map<String, Object> updateMap = buildUpdateMap(mapFromDb, betRecordDo, result, hasRewarFreeWheel);
             redisTemplate.opsForHash().putAll(key(userInfo), updateMap);
         } catch (Exception e) {
-            log.error("afterBetMetric error", e);
+            log.error("afterBetMetric error, userInfo: {}", userInfo, e);
         }
     }
 
