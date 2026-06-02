@@ -5,7 +5,7 @@ spring:
     timeout: 900
     cluster:
       nodes:
-        - prod-sirena-pri.redis.singapore.rds.aliyuncs.com:6379
+        - prod-bayanihan-pri.redis.singapore.rds.aliyuncs.com:6379
       max-redirects: 3
     redisson:
       minIdlePoolSize: 50
