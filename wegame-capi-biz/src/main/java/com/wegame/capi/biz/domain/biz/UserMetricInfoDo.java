@@ -66,6 +66,10 @@ public class UserMetricInfoDo implements Serializable {
      * 上一次登陆时间
      */
     private Date lastLoginTime;
+    /**
+     * 干预记录
+     */
+    private Map<String, Long> interventionRecord;
 
     public boolean isYesterdayLogin() {
         return Objects.nonNull(lastLoginTime)

@@ -1,8 +1,10 @@
 package com.wegame.capi.common;
 
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,6 +16,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -155,6 +158,14 @@ public class UserMetricHelper implements Serializable {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_lastLoginTime);
         return Objects.isNull(obj) ? null : (Date) obj;
+    }
+
+    /**
+     * 用户干预记录
+     */
+    public static Map<String, Long> getInterventionRecord(Map<String, Object> map) {
+        Object obj = map.get(user_metric_interventionRecord);
+        return Objects.nonNull(obj) ? FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), new TypeReference<Map<String, Long>>(){}) : new HashMap<>();
     }
 
     //public static boolean isYesterdayLogin(Map<String, Object> map) {

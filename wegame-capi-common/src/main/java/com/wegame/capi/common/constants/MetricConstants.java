@@ -27,5 +27,8 @@ public class MetricConstants {
     public static final String user_metric_continueEmptyTimes = "continueEmptyTimes";
     // 当日不中FG次数
     public static final String user_metric_todayContinueNoFgTimes = "todayNoFgTimes";
+    // 用户干预记录： Map<干预规则Id, 干预时间戳>
+    public static final String user_metric_interventionRecord = "interventionRecord";
+
 
 }

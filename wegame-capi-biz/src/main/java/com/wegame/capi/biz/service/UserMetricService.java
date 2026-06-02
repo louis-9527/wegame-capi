@@ -15,6 +15,7 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -134,6 +135,11 @@ public class UserMetricService {
         }
         long currentBalance = result.getCredit();
         updateMap.put(user_metric_currentBalance, currentBalance);
+        if(StringUtils.isNotEmpty(betRecordDo.getExtendInfo().getInterventionRuleId())) {
+            Map<String, Long> interventionRecord = UserMetricHelper.getInterventionRecord(mapFromDb);
+            interventionRecord.put(betRecordDo.getExtendInfo().getInterventionRuleId(), System.currentTimeMillis());
+            updateMap.put(user_metric_interventionRecord, betRecordDo.getExtendInfo().getInterventionRuleId());
+        }
         return updateMap;
     }
 

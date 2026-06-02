@@ -23,6 +23,7 @@ public class UserMetricInfoBuilder {
                 .currentBalance(UserMetricHelper.getCurrentBalance(map))
                 .registerTime(UserMetricHelper.getRegisterTime(map))
                 .lastLoginTime(UserMetricHelper.getLastLoginTime(map))
+                .interventionRecord(UserMetricHelper.getInterventionRecord(map))
                 .build();
     }
 }
