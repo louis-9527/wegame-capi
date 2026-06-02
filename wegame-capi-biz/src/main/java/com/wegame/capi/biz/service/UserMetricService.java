@@ -1,12 +1,8 @@
 package com.wegame.capi.biz.service;
 
-import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.biz.builder.UserMetricInfoBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.client.context.UserInfo;
@@ -14,12 +10,9 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.utils.MapUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.beans.BeanMap;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -27,7 +20,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.wegame.capi.biz.domain.biz.UserMetricInfoDo.*;
+import static com.wegame.capi.common.constants.MetricConstants.*;
 
 /**
  * 用户埋点服务
@@ -48,18 +41,6 @@ public class UserMetricService {
     SingleWalletService singleWalletService;
     @Autowired
     BetRecordService betRecordService;
-
-    //    - 累计游戏局数，只计算在本游戏的投注次数。
-    //            - 总投注，只计算在本游戏中的投注金额。
-    //            - 总派彩，只计算在本游戏中的派彩金额。 不计算jackpot
-    //- 连续空盘计数，每次空盘+1，中奖后清0。
-    //
-    //            - 当日不中FG次数，每次不中+1，击中后清0，当日不再累计。
-    //            - 最后离开时余额：玩家登录后，保存最后投注时的余额。
-    //            - 今日游戏局数
-    //- 本次进入游戏余额：带了多少钱进入游戏
-    //- 当前余额
-    // 注册时间
 
     /**
      * 登陆统计
@@ -120,18 +101,18 @@ public class UserMetricService {
             if (!Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.NONE)) {
                 return;
             }
-            UserMetricInfoDo userMetricInfoDo = get(userInfo);
-            UserMetricInfoDo newUserMetricInfoDo = UserMetricInfoBuilder.build(userMetricInfoDo, betRecordDo, result, hasRewarFreeWheel);
-            redisTemplate.opsForHash().putAll(key(userInfo), MapUtil.objectToMap(newUserMetricInfoDo));
+            // todo
+            //UserMetricInfoDo userMetricInfoDo = get(userInfo);
+            //UserMetricInfoDo newUserMetricInfoDo = UserMetricInfoBuilder.build(userMetricInfoDo, betRecordDo, result, hasRewarFreeWheel);
+            //redisTemplate.opsForHash().putAll(key(userInfo), MapUtil.objectToMap(newUserMetricInfoDo));
         } catch (Exception e) {
             log.error("afterBetMetric error", e);
         }
     }
 
-    public UserMetricInfoDo get(UserInfo userInfo) {
+    public Map<String, Object> get(UserInfo userInfo) {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        Map<String, Object> map = redisTemplate.opsForHash().entries(key(userInfo));
-        return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(map), UserMetricInfoDo.class);
+        return redisTemplate.opsForHash().entries(key(userInfo));
     }
 
     private String key(UserInfo userInfo) {

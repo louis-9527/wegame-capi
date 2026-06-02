@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
+import com.wegame.capi.biz.module.base.MetricHelper;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.common.utils.AmountUtil;
 
@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class UserMetricInfoBuilder {
 
-    public static UserMetricInfoDo build(UserMetricInfoDo userMetricInfoDo, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
-        UserMetricInfoDo infoDo = new UserMetricInfoDo();
+    public static MetricHelper build(MetricHelper userMetricInfoDo, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
+        MetricHelper infoDo = new MetricHelper();
         infoDo.setTotalBetTimes(Objects.nonNull(userMetricInfoDo.getTotalBetTimes()) ? userMetricInfoDo.getTotalBetTimes() + 1 : 1);
         //infoDo.setTodayBetTimes(); todo
         infoDo.setTotalBetTimes(Objects.nonNull(userMetricInfoDo.getTodayBetTimes()) ? userMetricInfoDo.getTodayBetTimes() + 1 : 1);
