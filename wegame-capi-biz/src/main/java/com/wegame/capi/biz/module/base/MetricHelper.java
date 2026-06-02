@@ -166,7 +166,9 @@ public class MetricHelper implements Serializable {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         long payOutAmount = getTotalPayoutAmount(map);
         long totalBetAmount = getTotalBetAmount(map);
-        // todo settle totalBetAmount = 0
-        return 0;
+        if (totalBetAmount == 0) {
+            return 0;
+        }
+        return payOutAmount / totalBetAmount;
     }
 }
