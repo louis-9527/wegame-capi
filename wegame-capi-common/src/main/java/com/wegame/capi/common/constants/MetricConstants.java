@@ -14,6 +14,7 @@ public class MetricConstants {
     public static final String user_metric_exitBalance = "exitBalance";
     // 当前余额
     public static final String user_metric_currentBalance = "currentBalance";
+
     // 总投注次数
     public static final String user_metric_totalBetTimes = "totalBetTimes";
     // 当日总注次数

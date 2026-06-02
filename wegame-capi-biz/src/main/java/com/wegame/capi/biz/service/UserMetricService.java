@@ -134,7 +134,8 @@ public class UserMetricService {
 
     public Map<String, Object> get(UserInfo userInfo) {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        return redisTemplate.opsForHash().entries(key(userInfo));
+        Map<String, Object> map = redisTemplate.opsForHash().entries(key(userInfo));
+        return Objects.isNull(map) ? new HashMap<>() : map;
     }
 
     private String key(UserInfo userInfo) {

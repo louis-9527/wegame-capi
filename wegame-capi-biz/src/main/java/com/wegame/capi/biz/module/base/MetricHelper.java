@@ -37,7 +37,7 @@ public class MetricHelper implements Serializable {
      * 当日投注总金额
      */
     public int getTodayBetTimes(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_todayBetTimes);
         if (Objects.isNull(obj)) {
             return 0;
@@ -52,19 +52,19 @@ public class MetricHelper implements Serializable {
     }
 
     /**
-     * 当日投注总金额
+     * 总投注总金额
      */
     public long getTotalBetAmount(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_totalBetAmount);
         return Objects.isNull(obj) ? 0 : (long) obj;
     }
 
     /**
-     * 总投派彩金额
+     * 总派彩金额
      */
     public long getTotalPayoutAmount(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_totalPayoutAmount);
         return Objects.isNull(obj) ? 0 : (long) obj;
     }
@@ -73,23 +73,23 @@ public class MetricHelper implements Serializable {
      * 连续空盘次数
      */
     public int getContinueEmptyTimes(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_continueEmptyTimes);
         return Objects.isNull(obj) ? 0 : (int) obj;
     }
 
-    /// ** todo
-    // * 当日不中FG次数
-    // * <p>
-    // * 特殊说明：redis 存储格式：{YYYYMMDD}_{times} *** todo
-    // * <p>
-    // * times 为空：当日未累计
-    // * times 为0: 中fg后清0
-    // * times 大与0: 当日累计且大于0
-    // */
-    @JsonIgnore
+    /**
+     * 当日不中FG次数
+     * <p>
+     * 特殊说明：redis 存储格式：{YYYYMMDD}_{times} ***
+     * <p>
+     * @return
+     * 1、 为空：当日未累计
+     * 2、 为0: 中fg后清0
+     * 3、 大于0: 当日累计且大于0（未清0）
+     */
     public Integer getTodayContinueNoFgTimes(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_todayContinueNoFgTimes);
         if (Objects.isNull(obj)) {
             return null;
@@ -107,7 +107,7 @@ public class MetricHelper implements Serializable {
      * 进入时余额
      */
     public BigDecimal getEnterBalance(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_enterBalance);
         return Objects.isNull(obj) ? null : new BigDecimal(obj.toString());
     }
@@ -116,7 +116,7 @@ public class MetricHelper implements Serializable {
      * 退出时余额
      */
     public BigDecimal getExitBalance(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_exitBalance);
         return Objects.isNull(obj) ? null : new BigDecimal(obj.toString());
     }
@@ -125,7 +125,7 @@ public class MetricHelper implements Serializable {
      * 当前余额
      */
     public BigDecimal getCurrentBalance(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_currentBalance);
         return Objects.isNull(obj) ? null : new BigDecimal(obj.toString());
     }
@@ -134,7 +134,7 @@ public class MetricHelper implements Serializable {
      * 注册时间
      */
     public Date getRegisterTime(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_registerTime);
         return Objects.isNull(obj) ? null : (Date) obj;
     }
@@ -143,20 +143,30 @@ public class MetricHelper implements Serializable {
      * 上一次登陆时间
      */
     public Date getLastLoginTime(Map<String, Object> map) {
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_lastLoginTime);
         return Objects.isNull(obj) ? null : (Date) obj;
     }
 
     public boolean isYesterdayLogin(Map<String, Object> map) {
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Date yesterdayTime = getLastLoginTime(map);
         return Objects.nonNull(yesterdayTime)
                 && DateUtil.isBetween(yesterdayTime, DateUtil.getYesterdayBegin(), DateUtil.getYesterdayEnd());
     }
 
     public boolean isTodayRegister(Map<String, Object> map) {
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Date registerTime = getRegisterTime(map);
         return Objects.nonNull(registerTime)
                 && DateUtil.isBetween(registerTime, DateUtil.getTodayBegin(), DateUtil.getTodayEnd());
+    }
+
+    public double getRtp(Map<String, Object> map) {
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
+        long payOutAmount = getTotalPayoutAmount(map);
+        long totalBetAmount = getTotalBetAmount(map);
+        // todo settle totalBetAmount = 0
+        return 0;
     }
 }
