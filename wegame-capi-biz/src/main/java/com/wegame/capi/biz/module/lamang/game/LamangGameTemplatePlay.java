@@ -12,19 +12,16 @@ import com.wegame.capi.biz.module.base.game.AbstractGameTemplatePlay;
 import com.wegame.capi.biz.module.base.game.TemplateGame;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Objects;
 
 import static com.wegame.capi.common.Constants.LAMANG_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
-import static com.wegame.capi.common.utils.ListUtil.getRandomElement;
 
 @Slf4j
 @Component("lamangGameTemplatePlay")
