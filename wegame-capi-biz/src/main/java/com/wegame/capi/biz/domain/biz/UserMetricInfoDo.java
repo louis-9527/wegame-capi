@@ -67,7 +67,7 @@ public class UserMetricInfoDo implements Serializable {
      */
     private Date lastLoginTime;
     /**
-     * 干预记录
+     * 干预记录 <ruleId, 时间戳>
      */
     private Map<String, Long> interventionRecord;
 
