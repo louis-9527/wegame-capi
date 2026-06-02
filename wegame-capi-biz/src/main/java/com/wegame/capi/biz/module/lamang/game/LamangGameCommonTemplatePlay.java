@@ -3,31 +3,28 @@ package com.wegame.capi.biz.module.lamang.game;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
-import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
-import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.base.IdHelper;
 import com.wegame.capi.biz.module.base.game.TemplateGame;
 import com.wegame.capi.biz.module.lamang.LamangGameHelper;
 import com.wegame.capi.biz.module.lamang.LamangSymbolUtil;
 import com.wegame.capi.biz.module.lamang.reward.LamangRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.AbTypeEnum;
-import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TtlUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +37,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.module.lamang.LamangGameHelper.getTotalRewardAmount;
+import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.convertWheel;
+import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.postProcessPlaceholderSymbol;
 import static com.wegame.capi.common.Constants.LAMANG_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
@@ -48,14 +48,18 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangGameCommonTemplatePlay implements TemplateGame<LamangGameRecordDo, LamangBetRecordTemplateEsDo> {
 
+
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
-    private static final int RECORD_FIRST_INDEX = 0;
+    private static final int FIRST_WHEEL_INDEX = 0;
     private static final GameInfoDo gameInfo = LamangGameHelper.LAMANG_GAME_INFO;
+    //
+    //@Autowired
+    //LamangConfig lamangConfig;
+    //@Autowired
+    //SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Autowired
-    LamangConfig lamangConfig;
-    @Autowired
-    SnowflakeIdGenerator snowflakeIdGenerator;
+    IdHelper idHelper;
     @Autowired
     LamangRewardHandler lamangRewardHandler;
 
@@ -70,195 +74,71 @@ public class LamangGameCommonTemplatePlay implements TemplateGame<LamangGameReco
         templateList = templateList.stream()
                 .sorted(Comparator.comparing(GameRecordTemplateDo::getBatchId).thenComparing(GameRecordTemplateDo::getIndex))
                 .collect(Collectors.toList());
-        // 模版列表转换 // todo 使用通用
-        return play(betDo, gamePlayDo, templateList);
+        // 模版列表转换
+        return convertTemplateList(gamePlayDo, templateList);
     }
 
-    public List<LamangGameRecordDo> play(BetDo betDo, GamePlayDo gamePlay, List<GameRecordTemplateDo> configRecordList) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        AssertUtil.assertNotNull(configRecordList, ErrorCode.ERR_INTER);
+    private List<LamangGameRecordDo> convertTemplateList(GamePlayDo gamePlayDo, List<GameRecordTemplateDo> templateList) {
+        Map<Long, Long> idMap = idHelper.buildIdMap(templateList);
         List<LamangGameRecordDo> ret = new ArrayList<>();
-        // 获取首轮(batchId == 0 and index == 0)
-        GameRecordTemplateDo firstRecord = configRecordList.stream()
-                .filter(record -> Objects.equals(RECORD_DEFAULT_PARENT_ID, record.getParentId()) && Objects.equals(RECORD_FIRST_INDEX, record.getIndex()))
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
-
-        // 处理首轮
-        long firstGameRecordId = generateGameRecordId();
-        LamangGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, null);
-        ret.add(firstGameRecord);
-        // 按 batchId 分组 & 记录 ID 映射
-        Map<Long, List<GameRecordTemplateDo>> groupedByBatchId = configRecordList.stream()
-                .collect(Collectors.groupingBy(GameRecordTemplateDo::getBatchId));
-
-        // 获取首批次并排序
-        List<GameRecordTemplateDo> firstBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
-                .stream()
-                .sorted(Comparator.comparing(GameRecordTemplateDo::getIndex))
-                .collect(Collectors.toList());
-        // 处理每个批次
-        LamangGameRecordDo lastGameRecord = firstGameRecord;
-
-        for (GameRecordTemplateDo recordDo : firstBatchList) {
-            // 非首回合
-            if (!Objects.equals(RECORD_DEFAULT_PARENT_ID, recordDo.getParentId())) {
-                // 处理首轮普通轮
-                long gameRecordId = generateGameRecordId();
-                // 用上一回合的倍率
-                LamangGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, lastGameRecord.getRewardResult().getTotalMultiple());
-                ret.add(gameRecord);
-                lastGameRecord = gameRecord;
-            }
-
-            if (CollectionUtils.isEmpty(recordDo.getGameRecordIds())) {
-                continue;
-            }
-            // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
+        Long maxBatchId = Collections.max(templateList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
+        BigDecimal lastWheelMultiple = null;
+        Long currentTotalRewardAmount = 0L;
+        for (GameRecordTemplateDo templateItem : CollectionUtils.emptyIfNull(templateList)) {
+            boolean lastGameFlag = Objects.equals(templateItem.getBatchId(), maxBatchId);
+            LamangGameRecordDo recordDo = buildGameRecord(currentTotalRewardAmount, gamePlayDo, templateItem, lastWheelMultiple, idMap, lastGameFlag);
+            lastWheelMultiple = recordDo.getRewardResult().getTotalMultiple();
+            ret.add(recordDo);
+            currentTotalRewardAmount = getTotalRewardAmount(ret);
         }
-        // 设置结束
-        if (CollectionUtils.isNotEmpty(ret)) {
-            ret.get(ret.size() - 1).setLastGameFlag(true);
-        }
-        // 结果验证数据添加
-        //// 总中奖金额
-        long totalRewardAmount = ret.stream()
-                .filter(item -> Objects.nonNull(item.getRewardResult()))
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
-        gamePlay.setOverallRewardAmount(totalRewardAmount);
+        // 占位元素-将占位元素设置为空:
+        postProcessPlaceholderSymbol(ret);
+        // 计算总中奖金额（设置到上下文用于playResultValidate校验）
+        gamePlayDo.setOverallRewardAmount(getTotalRewardAmount(ret));
+        // 返回
         return ret;
     }
 
-    /**
-     * 游戏模板选择
-     *
-     * @param gamePlay
-     * @param userInfo
-     * @return
-     */
-    private TemplateTypeEnum selectTemplateType(GamePlayDo gamePlay, UserInfo userInfo) {
-        // 构建选择上下文，决定模板类型：promotionType 优先，未命中则按 AB 兜底
-        AbTypeEnum abType = AbTypeEnum.valueOfId(userInfo.getUt());
-        AssertUtil.assertNotNull(abType, ErrorCode.ERR_NOT_LOGIN);
-        TemplateSelectionContext ctx = TemplateSelectionContext.builder()
-                .promotionType(gamePlay.getBetPromotionType())
-                .abType(abType)
-                .build();
-        TemplateTypeEnum templateType = lamangConfig.getTemplateConfig().select(ctx);
-        AssertUtil.assertNotNull(templateType, ErrorCode.ERR_INTER);
-        log.info("templateType selected: {},index: {}, promotionType: {}, abType: {}", templateType.name(), templateType.getBetRecordTemplateName(),
-                ctx.getPromotionType(), abType);
-        return templateType;
-    }
-
-
-    /**
-     * 递归处理免费轮，确保同层级先处理完，再进入下一层
-     */
-    private void processFreeRounds(
-            List<LamangGameRecordDo> ret,
-            GamePlayDo gamePlay,
-            GameRecordTemplateDo recordDo,
-            LamangGameRecordDo parent,
-            Map<Long, List<GameRecordTemplateDo>> groupedByBatchId) {
-        Map<GameRecordTemplateDo, LamangGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
-
-        List<Long> gameRecordIds = new ArrayList<>();
-        for (Long batchId : recordDo.getGameRecordIds()) {
-            List<GameRecordTemplateDo> currentLevelRecords = groupedByBatchId.get(batchId);
-            currentLevelRecords.sort(Comparator.comparing(GameRecordTemplateDo::getIndex));
-            // 处理当前层级的每个记录
-            LamangGameRecordDo preGameRecord = null;
-            for (GameRecordTemplateDo record : currentLevelRecords) {
-                long gameRecordId = generateGameRecordId();
-                LamangGameRecordDo gameRecord = null;
-                if (record.getIndex() == 0) {
-                    gameRecordIds.add(gameRecordId);
-                    // 首回合倍率为空
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record, null);
-                    ret.add(gameRecord);
-                } else {
-                    // 后续回合倍率传入前一回合的倍率
-                    BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record, totalMultipleAmount);
-                    ret.add(gameRecord);
-                }
-                preGameRecord = gameRecord;
-                if (CollectionUtils.isNotEmpty(record.getGameRecordIds())) {
-                    nextLevelGameRecordMap.put(record, gameRecord);
-                }
-            }
-        }
-        parent.setGameRecordIds(gameRecordIds);
-        for (Map.Entry<GameRecordTemplateDo, LamangGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
-            GameRecordTemplateDo key = entry.getKey();
-            LamangGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId);
-        }
-    }
-
-    /**
-     * 构建并处理投注记录
-     */
-    private LamangGameRecordDo processGameRecord(
-            GamePlayDo gamePlay,
-            long gameRecordId,
-            long parentId,
-            long batchId,
-            GameRecordTemplateDo recordDo,
-            BigDecimal totalMultiple) {
-
-        // 确定 `TotalMultiple` 参数
-        WheelDo<LamangSymbolDo> lamangSymbolWheel = this.convertWheel(recordDo.getWheel());
-        LamangSymbolDo[][] symbolArr = lamangSymbolWheel.getSymbolArr();
-        // 处理空值
-        lamangSymbolWheel.setSymbolArr(LamangSymbolUtil.copySymbolArrWithPlaceHolder(symbolArr));
-        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, lamangSymbolWheel, totalMultiple));
-        // 构建时还原
-        lamangSymbolWheel.setSymbolArr(symbolArr);
-        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, lamangSymbolWheel, rewardResult);
-    }
-
-    private LamangGameRecordDo buildGameRecord(Long id,
-                                               Long parentId,
-                                               Long betRecordId,
-                                               Long batchId,
-                                               WheelDo<LamangSymbolDo> wheel,
-                                               RewardResultDo<LamangSymbolDo> rewardResult) {
+    private LamangGameRecordDo buildGameRecord(Long currentTotalRewardAmount, GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal lastWheelMultiple, Map<Long, Long> idMap, boolean lastGameFlag) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        int drawTimes = LamangSymbolUtil.countNewScatterAndScatter1InWheel(wheel.getSymbolArr());
+        WheelDo<LamangSymbolDo> wheel = convertWheel(template.getWheel());
+        if (wheel.getIndex() == 0) {
+            // 每一轮，首回合倍率初始化
+            lastWheelMultiple = null;
+        }
+        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, lastWheelMultiple, currentTotalRewardAmount));
+        Long id = idMap.get(template.getId());
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
+        Long parentId = idMap.get(template.getParentId());
+        AssertUtil.assertNotNull(parentId, ErrorCode.ERR_INTER);
+        Long batchId = idMap.get(template.getBatchId());
+        AssertUtil.assertNotNull(batchId, ErrorCode.ERR_INTER);
+        int jackpotDrawTimes = LamangSymbolUtil.countNewScatterAndScatter1InWheel(wheel.getSymbolArr());
         return LamangGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
-                .betRecordId(betRecordId)
+                .betRecordId(gamePlay.getBetRecordId())
                 .batchId(batchId)
                 .playerId(userInfo.getPlayerId())
                 .playerName(userInfo.getPlayerName())
-                .index(wheel.getIndex())
+                .index(template.getIndex())
                 .freeWheelFlag(wheel.isFreeFlag())
                 .wheel(wheel)
                 .rewardResult(rewardResult)
-                .gameRecordIds(null)
-                .lastGameFlag(false)
-                .jackpotDrawTimes(drawTimes)
+                .gameRecordIds(Optional.ofNullable(template.getGameRecordIds())
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(idMap::get)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()))
+                .lastGameFlag(lastGameFlag)
+                .jackpotDrawTimes(jackpotDrawTimes)
                 .creator(userInfo.getPlayerId())
                 .createTime(DateUtil.getCurrentMilli())
                 .updater(userInfo.getPlayerId())
                 .updateTime(DateUtil.getCurrentMilli())
                 .expireAt(TtlUtil.calculateExpiredAt(DateUtil.getCurrentMilli()))
                 .build();
-    }
-
-    private WheelDo<LamangSymbolDo> convertWheel(Object obj) {
-        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<LamangSymbolDo>>() {
-        });
-    }
-
-    private long generateGameRecordId() {
-        return snowflakeIdGenerator.nextId();
     }
 }

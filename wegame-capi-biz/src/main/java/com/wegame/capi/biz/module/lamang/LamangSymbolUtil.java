@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.lamang;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
@@ -7,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -173,6 +176,14 @@ public class LamangSymbolUtil {
         });
     }
 
+    public static WheelDo<LamangSymbolDo> convertWheel(Object obj) {
+        WheelDo<LamangSymbolDo> wheel = JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<LamangSymbolDo>>() {
+        });
+        wheel.setSymbolArr(copySymbolArrWithPlaceHolder(wheel.getSymbolArr()));
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        // 空元素置为占位元素（以用于中奖计算）
+        return wheel;
+    }
 
     /**
      * 用于单元测试输出
