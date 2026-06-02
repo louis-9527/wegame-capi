@@ -229,25 +229,30 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
     }
 
     public T randomTemplateWithNoCache(String templateIndexName, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
-        // 1. 构建区间查询
-        FunctionScoreQueryBuilder functionScoreQuery = QueryBuilders.functionScoreQuery(
-                // 区间过滤条件
-                QueryBuilders.boolQuery()
-                        .must(QueryBuilders.termQuery("betType", betType.getCode()))
-                        .must(QueryBuilders.rangeQuery("multiple")
-                                .gte(multipleRangeStart)
-                                .lte(multipleRangeEnd)),
-                // 随机打分打乱顺序
-                ScoreFunctionBuilders.randomFunction()
-        ).boostMode(CombineFunction.REPLACE);
-        // 2. 构建查询
-        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(functionScoreQuery)
-                .withPageable(org.springframework.data.domain.Pageable.ofSize(1))
-                .build();
-        // 3. 执行查询
-        SearchHit<T> searchHit = elasticsearchRestTemplate.searchOne(searchQuery, clazz, IndexCoordinates.of(templateIndexName));
-        return Objects.nonNull(searchHit) ? searchHit.getContent() : null;
+        long startTime = System.currentTimeMillis();
+        try {
+            // 1. 构建区间查询
+            FunctionScoreQueryBuilder functionScoreQuery = QueryBuilders.functionScoreQuery(
+                    // 区间过滤条件
+                    QueryBuilders.boolQuery()
+                            .must(QueryBuilders.termQuery("betType", betType.getCode()))
+                            .must(QueryBuilders.rangeQuery("multiple")
+                                    .gte(multipleRangeStart)
+                                    .lte(multipleRangeEnd)),
+                    // 随机打分打乱顺序
+                    ScoreFunctionBuilders.randomFunction()
+            ).boostMode(CombineFunction.REPLACE);
+            // 2. 构建查询
+            NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                    .withQuery(functionScoreQuery)
+                    .withPageable(org.springframework.data.domain.Pageable.ofSize(1))
+                    .build();
+            // 3. 执行查询
+            SearchHit<T> searchHit = elasticsearchRestTemplate.searchOne(searchQuery, clazz, IndexCoordinates.of(templateIndexName));
+            return Objects.nonNull(searchHit) ? searchHit.getContent() : null;
+        } finally {
+            log.info("randomTemplateWithNoCache templateIndexName: {}, cost time: {} ms", templateIndexName, System.currentTimeMillis() - startTime);
+        }
     }
 
     private List<Long> fetchBatch(String templateIndexName,
