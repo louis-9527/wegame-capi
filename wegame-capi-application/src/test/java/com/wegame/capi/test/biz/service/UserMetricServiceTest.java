@@ -80,6 +80,9 @@ public class UserMetricServiceTest extends BaseTest {
                 .build();
         for (int i = 0; i < 100; i++) {
             boolean hasRewarFreeWheel = false;
+            BetRecordDo.ExtendInfo extendInfo = new BetRecordDo.ExtendInfo();
+            extendInfo.setInterventionRuleId("ruleId" + i);
+            betRecordDo.setExtendInfo(extendInfo);
             userMetricService.afterBetMetric(userInfo, betRecordDo, result, hasRewarFreeWheel);
             UserMetricInfoDo infoDo = userMetricService.getUserMetricInfo(userInfo);
             log.info("test_afterLoginMetric, infoDo: {}", infoDo);

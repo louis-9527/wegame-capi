@@ -138,7 +138,7 @@ public class UserMetricService {
         if(StringUtils.isNotEmpty(betRecordDo.getExtendInfo().getInterventionRuleId())) {
             Map<String, Long> interventionRecord = UserMetricHelper.getInterventionRecord(mapFromDb);
             interventionRecord.put(betRecordDo.getExtendInfo().getInterventionRuleId(), System.currentTimeMillis());
-            updateMap.put(user_metric_interventionRecord, betRecordDo.getExtendInfo().getInterventionRuleId());
+            updateMap.put(user_metric_interventionRecord, interventionRecord);
         }
         return updateMap;
     }
