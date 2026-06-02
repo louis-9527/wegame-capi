@@ -5,11 +5,13 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
+import com.wegame.capi.biz.module.base.MetricHelper;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +111,26 @@ public class UserMetricService {
             log.error("afterBetMetric error", e);
         }
     }
+
+    //public static MetricHelper build(MetricHelper userMetricInfoDo, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
+    //    MetricHelper infoDo = new MetricHelper();
+    //    infoDo.setTotalBetTimes(Objects.nonNull(userMetricInfoDo.getTotalBetTimes()) ? userMetricInfoDo.getTotalBetTimes() + 1 : 1);
+    //    //infoDo.setTodayBetTimes(); todo
+    //    infoDo.setTotalBetTimes(Objects.nonNull(userMetricInfoDo.getTodayBetTimes()) ? userMetricInfoDo.getTodayBetTimes() + 1 : 1);
+    //    infoDo.setTotalBetAmount(Objects.nonNull(userMetricInfoDo.getTotalBetAmount()) ? userMetricInfoDo.getTotalBetAmount() + betRecordDo.getPayAmount() : betRecordDo.getPayAmount());
+    //    infoDo.setTotalPayoutAmount(Objects.nonNull(userMetricInfoDo.getTotalPayoutAmount()) ? userMetricInfoDo.getTotalPayoutAmount() + betRecordDo.getPayOutAmount() : betRecordDo.getPayOutAmount());
+    //    infoDo.setContinueEmptyTimes(betRecordDo.getPayOutAmount() > 0L ? 0 : infoDo.getContinueEmptyTimes() + 1);
+    //    // todo
+    //    infoDo.setTodayNoFgTimes(hasRewarFreeWheel ? 0 : (Objects.nonNull(userMetricInfoDo.getTodayContinueNoFgTimes()) ? userMetricInfoDo.getTodayContinueNoFgTimes() + 1 : 1));
+    //    infoDo.setEnterBalance(userMetricInfoDo.getEnterBalance());
+    //    infoDo.setExitBalance(userMetricInfoDo.getExitBalance());
+    //    infoDo.setCurrentBalance(Objects.nonNull(result) ? AmountUtil.toBigDecimal(result.getCredit()) : null);
+    //    infoDo.setRegisterTime(userMetricInfoDo.getRegisterTime());
+    //    infoDo.setLastLoginTime(userMetricInfoDo.getLastLoginTime());
+    //
+    //    // todo
+    //    return infoDo;
+    //}
 
     public Map<String, Object> get(UserInfo userInfo) {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
