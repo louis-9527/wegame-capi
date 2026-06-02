@@ -39,7 +39,7 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = LAMANG_JSON_ROOT_NAME)
-public class LamangConfig extends GameBizConfig implements Serializable{
+public class LamangConfig extends GameBizConfig implements Serializable {
 
     private static final long serialVersionUID = 5582097906043304355L;
 
@@ -68,11 +68,6 @@ public class LamangConfig extends GameBizConfig implements Serializable{
      * jackpot 配置
      */
     private JackPotConfig jackPotConfig;
-
-    /**
-     * 模板配置 todo delete
-     */
-    private TemplateConfig templateConfig;
     /**
      * 通用模版配置
      */
@@ -340,23 +335,12 @@ public class LamangConfig extends GameBizConfig implements Serializable{
         rewardMaxMultipleValidate();
         jackPotConfigValidate();
         freeWheelTimesValidate();
-        //validateTemplateConfig(); todo delete @bruce
         commonTemplateConfigValidate();
     }
 
     private void commonTemplateConfigValidate() {
         AssertUtil.assertNotNull(this.commonTemplateConfig, ErrorCode.ERR_INTER, "commonTemplateConfig is null");
         commonTemplateConfig.validate();
-    }
-
-    private void validateTemplateConfig() {
-        templateConfig.getAbTemplateMapping().forEach((key, value) -> {
-            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfig().get(value), ErrorCode.ERR_PARAM, "ab: " + key + ",templateType is null");
-        });
-        templateConfig.getPromotionTemplateMapping().forEach((key, value) -> {
-            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfig().get(value), ErrorCode.ERR_PARAM, "promotion: " + key + ",templateType is null");
-        });
-        templateConfig.getTemplateRangeConfig().values().forEach(TemplateRangeConfig::validate);
     }
 
     private void jackPotConfigValidate() {
