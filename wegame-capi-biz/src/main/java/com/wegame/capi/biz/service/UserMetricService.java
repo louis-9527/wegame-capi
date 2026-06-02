@@ -2,27 +2,29 @@ package com.wegame.capi.biz.service;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-import com.wegame.capi.biz.module.base.MetricHelper;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.UserMetricHelper;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.common.constants.MetricConstants.*;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.metricThreadPoolExecutor;
 
 /**
  * 用户埋点服务
@@ -36,7 +38,8 @@ public class UserMetricService {
 
     // user:metric:{gameId}:{pid}:{channelId}:{playerId}
     private static final String _KEY_FORMAT = "user:metric:%s:%s:%s:%s";
-
+    // {YYYYMMDD}:{times}
+    private static final String _WITH_DATE_SPECIAL_VAL_FORMAT = "%s_%s";
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
@@ -52,6 +55,7 @@ public class UserMetricService {
      * 4、上一次退出时余额
      * 5、当前余额
      */
+    //@Async(metricThreadPoolExecutor) // todo @bruce
     public void afterLoginMetric(UserInfo userInfo, Date registerTime, Date lastLoginTime) {
         if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId())) {
             return;
@@ -87,50 +91,55 @@ public class UserMetricService {
      * 5、空盘累计次数
      * 6、当日连续不中FG次数
      */
-    //@Async(defaultThreadPoolExecutor)
+    //@Async(metricThreadPoolExecutor) todo @bruce
     public void afterBetMetric(BetDo betDo, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
         try {
             AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER);
             AssertUtil.assertNotNull(result, ErrorCode.ERR_INTER);
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-            if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId())) {
+            if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId())
+                    || !Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)
+                    || !Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.NONE)) {
                 return;
             }
-            if (!Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)) {
-                return;
-            }
-            if (!Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.NONE)) {
-                return;
-            }
-            // todo
-            //UserMetricInfoDo userMetricInfoDo = get(userInfo);
-            //UserMetricInfoDo newUserMetricInfoDo = UserMetricInfoBuilder.build(userMetricInfoDo, betRecordDo, result, hasRewarFreeWheel);
-            //redisTemplate.opsForHash().putAll(key(userInfo), MapUtil.objectToMap(newUserMetricInfoDo));
+            Map<String, Object> mapFromDb = get(userInfo);
+            Map<String, Object> map = buildUpdateMap(mapFromDb, betRecordDo, result, hasRewarFreeWheel);
+            redisTemplate.opsForHash().putAll(key(userInfo), map);
         } catch (Exception e) {
             log.error("afterBetMetric error", e);
         }
     }
 
-    //public static MetricHelper build(MetricHelper userMetricInfoDo, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
-    //    MetricHelper infoDo = new MetricHelper();
-    //    infoDo.setTotalBetTimes(Objects.nonNull(userMetricInfoDo.getTotalBetTimes()) ? userMetricInfoDo.getTotalBetTimes() + 1 : 1);
-    //    //infoDo.setTodayBetTimes(); todo
-    //    infoDo.setTotalBetTimes(Objects.nonNull(userMetricInfoDo.getTodayBetTimes()) ? userMetricInfoDo.getTodayBetTimes() + 1 : 1);
-    //    infoDo.setTotalBetAmount(Objects.nonNull(userMetricInfoDo.getTotalBetAmount()) ? userMetricInfoDo.getTotalBetAmount() + betRecordDo.getPayAmount() : betRecordDo.getPayAmount());
-    //    infoDo.setTotalPayoutAmount(Objects.nonNull(userMetricInfoDo.getTotalPayoutAmount()) ? userMetricInfoDo.getTotalPayoutAmount() + betRecordDo.getPayOutAmount() : betRecordDo.getPayOutAmount());
-    //    infoDo.setContinueEmptyTimes(betRecordDo.getPayOutAmount() > 0L ? 0 : infoDo.getContinueEmptyTimes() + 1);
-    //    // todo
-    //    infoDo.setTodayNoFgTimes(hasRewarFreeWheel ? 0 : (Objects.nonNull(userMetricInfoDo.getTodayContinueNoFgTimes()) ? userMetricInfoDo.getTodayContinueNoFgTimes() + 1 : 1));
-    //    infoDo.setEnterBalance(userMetricInfoDo.getEnterBalance());
-    //    infoDo.setExitBalance(userMetricInfoDo.getExitBalance());
-    //    infoDo.setCurrentBalance(Objects.nonNull(result) ? AmountUtil.toBigDecimal(result.getCredit()) : null);
-    //    infoDo.setRegisterTime(userMetricInfoDo.getRegisterTime());
-    //    infoDo.setLastLoginTime(userMetricInfoDo.getLastLoginTime());
-    //
-    //    // todo
-    //    return infoDo;
-    //}
+    private Map<String, Object> buildUpdateMap(Map<String, Object> mapFromDb, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
+        Map<String, Object> updateMap = new HashMap<>();
+        long totalBetTimes = UserMetricHelper.getTotalBetTimes(mapFromDb) + 1;
+        updateMap.put(user_metric_totalBetTimes, totalBetTimes);
+        int todayBetTimes = UserMetricHelper.getTodayBetTimes(mapFromDb);
+        updateMap.put(user_metric_todayBetTimes, String.format(_WITH_DATE_SPECIAL_VAL_FORMAT, DateUtil.getDateString(new Date()), todayBetTimes + 1));
+        long totalBetAmount = UserMetricHelper.getTotalBetAmount(mapFromDb) + betRecordDo.getPayAmount();
+        updateMap.put(user_metric_totalBetAmount, totalBetAmount);
+        long totalPayOutAmount = UserMetricHelper.getTotalPayoutAmount(mapFromDb) + betRecordDo.getPayOutAmount();
+        updateMap.put(user_metric_totalPayoutAmount, totalPayOutAmount);
+        int continueEmptyTimes = UserMetricHelper.getContinueEmptyTimes(mapFromDb);
+        continueEmptyTimes = betRecordDo.getPayOutAmount() > 0 ? 0 : continueEmptyTimes + 1;
+        updateMap.put(user_metric_continueEmptyTimes, continueEmptyTimes);
+        Integer todayContinueNoFgTimes = UserMetricHelper.getTodayContinueNoFgTimes(mapFromDb);
+        // todayContinueNoFgTimes 值情况：null, 0, 大于0
+        if (Objects.isNull(todayContinueNoFgTimes) || todayContinueNoFgTimes > 0) {
+            if (hasRewarFreeWheel) {
+                // 中奖后,清0
+                todayContinueNoFgTimes = 0;
+            } else {
+                // 未中奖，设置1
+                todayContinueNoFgTimes = Objects.isNull(todayContinueNoFgTimes) ? 1 : todayContinueNoFgTimes + 1;
+            }
+            updateMap.put(user_metric_currentBalance, String.format(_WITH_DATE_SPECIAL_VAL_FORMAT, DateUtil.getDateString(new Date()), todayContinueNoFgTimes));
+        }
+        long currentBalance = result.getCredit();
+        updateMap.put(user_metric_currentBalance, currentBalance);
+        return updateMap;
+    }
 
     public Map<String, Object> get(UserInfo userInfo) {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);

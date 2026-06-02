@@ -100,6 +100,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 result = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
+        // 注意： userMetricService.afterBetMetric 中 syncOpt 为是否中免费轮 ！！！
         userMetricService.afterBetMetric(betDo, betRecordDo, result, syncOpt);
         operationEventControlService.onBetComplete(betDo, betRecordDo, result);
         return result;
