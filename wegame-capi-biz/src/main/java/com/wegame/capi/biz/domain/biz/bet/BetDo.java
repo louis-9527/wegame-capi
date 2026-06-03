@@ -98,5 +98,9 @@ public class BetDo implements Serializable {
     private BetBloodPoolControlDo betBloodPoolControl;
     /// //////////// 波动选择 ///////////////
     private VolatilityTypeEnum volatility;
+    /**
+     * 干预id
+     */
+    private String interventionRuleId;
 }
 

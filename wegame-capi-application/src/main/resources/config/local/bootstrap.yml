@@ -19,6 +19,12 @@ logging:
     com.alibaba.cloud.nacos: DEBUG
     # Spring配置绑定模块：打印配置注入、更新日志（可选）
     # org.springframework.boot.context.properties: DEBUG
+
+liteflow:
+  # 从 classpath 加载本地 JSON 文件
+  rule-source: classpath:common_intervention_rules.xml
+  support-multiple-type: true
+
 spring:
   cloud:
     nacos:

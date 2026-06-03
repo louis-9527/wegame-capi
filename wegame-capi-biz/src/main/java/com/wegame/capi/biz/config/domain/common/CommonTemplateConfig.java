@@ -57,6 +57,10 @@ public class CommonTemplateConfig implements Serializable {
         return rtpMap.get(rtpName);
     }
 
+    public Rtp getRtpByRtpName(String rtpName) {
+        return rtpMap.get(rtpName);
+    }
+
     public void validate() {
         validateTemplateWarmUpEndOddsMap();
         validateRtpMap();
