@@ -7,6 +7,8 @@ import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
+import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEsDo;
 import com.wegame.capi.biz.module.base.game.AbstractGameTemplatePlay;
 import com.wegame.capi.biz.module.base.game.TemplateGame;
@@ -26,7 +28,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Component("lamangGameTemplatePlay")
 @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
-public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<DiwataMayariGameRecordDo, DiwataBetRecordTemplateEsDo> {
+public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameRecordDo, LamangBetRecordTemplateEsDo> {
     @Autowired
     LamangConfig lamangConfig;
     @Autowired
@@ -38,18 +40,18 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<DiwataMayar
     }
 
     @Override
-    public DiwataBetRecordTemplateEsDo getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
+    public LamangBetRecordTemplateEsDo getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         if (!Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.NONE)) {
             CommonTemplateConfig.Rtp rtp = getDefaultRtp(betDo, lamangConfig.getCommonTemplateConfig());
             AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
-            return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtp, DiwataBetRecordTemplateEsDo.class);
+            return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtp, LamangBetRecordTemplateEsDo.class);
         } else {
             // todo @jayni 根据个人干预 获取 rtp
             CommonTemplateConfig.Rtp rtp = getDefaultRtp(betDo, lamangConfig.getCommonTemplateConfig());
             AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
-            return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtp, DiwataBetRecordTemplateEsDo.class);
+            return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtp, LamangBetRecordTemplateEsDo.class);
         }
     }
 }
