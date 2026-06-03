@@ -1,7 +1,5 @@
 package com.wegame.capi.biz.domain.biz;
 
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -81,11 +79,10 @@ public class UserMetricInfoDo implements Serializable {
                 && DateUtil.isBetween(registerTime, DateUtil.getTodayBegin(), DateUtil.getTodayEnd());
     }
 
-    public double getRtp(Map<String, Object> map) {
-        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
+    public double getRtp() {
         if (totalBetAmount == 0) {
             return 0;
         }
-        return totalPayoutAmount / totalBetAmount;
+        return totalPayoutAmount / (double) totalBetAmount;
     }
 }

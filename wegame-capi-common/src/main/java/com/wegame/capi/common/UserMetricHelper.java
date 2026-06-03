@@ -161,34 +161,11 @@ public class UserMetricHelper implements Serializable {
     }
 
     /**
-     * 用户干预记录
+     * 干预记录
      */
     public static Map<String, Long> getInterventionRecord(Map<String, Object> map) {
         Object obj = map.get(user_metric_interventionRecord);
-        return Objects.nonNull(obj) ? FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), new TypeReference<Map<String, Long>>(){}) : new HashMap<>();
+        return Objects.nonNull(obj) ? FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), new TypeReference<Map<String, Long>>() {
+        }) : new HashMap<>();
     }
-
-    //public static boolean isYesterdayLogin(Map<String, Object> map) {
-    //    AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
-    //    Date yesterdayTime = getLastLoginTime(map);
-    //    return Objects.nonNull(yesterdayTime)
-    //            && DateUtil.isBetween(yesterdayTime, DateUtil.getYesterdayBegin(), DateUtil.getYesterdayEnd());
-    //}
-    //
-    //public static boolean isTodayRegister(Map<String, Object> map) {
-    //    AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
-    //    Date registerTime = getRegisterTime(map);
-    //    return Objects.nonNull(registerTime)
-    //            && DateUtil.isBetween(registerTime, DateUtil.getTodayBegin(), DateUtil.getTodayEnd());
-    //}
-    //
-    //public static double getRtp(Map<String, Object> map) {
-    //    AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
-    //    long payOutAmount = getTotalPayoutAmount(map);
-    //    long totalBetAmount = getTotalBetAmount(map);
-    //    if (totalBetAmount == 0) {
-    //        return 0;
-    //    }
-    //    return payOutAmount / totalBetAmount;
-    //}
 }
