@@ -33,7 +33,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         if (env.equals(EnvEnum.LOCAL.getValue())) {
             return;
         }
-        if (!supportGame(GameTypeEnum.DIWATA_MAYARI)) {
+        if (!supportGame(GameTypeEnum.LAM_ANG)) {
             return;
         }
         commonWarmUp(lamangConfig.getCommonTemplateConfig());
