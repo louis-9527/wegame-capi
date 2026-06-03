@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.UserMetricHelper;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
@@ -121,17 +122,19 @@ public class UserMetricService {
         int continueEmptyTimes = UserMetricHelper.getContinueEmptyTimes(mapFromDb);
         continueEmptyTimes = betRecordDo.getPayOutAmount() > 0 ? 0 : continueEmptyTimes + 1;
         updateMap.put(user_metric_continueEmptyTimes, continueEmptyTimes);
-        Integer todayContinueNoFgTimes = UserMetricHelper.getTodayContinueNoFgTimes(mapFromDb);
-        // todayContinueNoFgTimes 值情况：null, 0, 大于0
-        if (Objects.isNull(todayContinueNoFgTimes) || todayContinueNoFgTimes > 0) {
-            if (hasRewarFreeWheel) {
-                // 中奖后清0。清0后当天不再统计
-                todayContinueNoFgTimes = 0;
-            } else {
-                // 未中奖，设置1
-                todayContinueNoFgTimes = Objects.isNull(todayContinueNoFgTimes) ? 1 : todayContinueNoFgTimes + 1;
+        if (StringUtils.equals(betRecordDo.getBetType(), BetTypeEnum.NORMAL_BET.getCode())) {
+            Integer todayContinueNoFgTimes = UserMetricHelper.getTodayContinueNoFgTimes(mapFromDb);
+            // todayContinueNoFgTimes 值情况：null, 0, 大于0
+            if (Objects.isNull(todayContinueNoFgTimes) || todayContinueNoFgTimes > 0) {
+                if (hasRewarFreeWheel) {
+                    // 中奖后清0。清0后当天不再统计
+                    todayContinueNoFgTimes = 0;
+                } else {
+                    // 未中奖，设置1
+                    todayContinueNoFgTimes = Objects.isNull(todayContinueNoFgTimes) ? 1 : todayContinueNoFgTimes + 1;
+                }
+                updateMap.put(user_metric_todayContinueNoFgTimes, String.format(_WITH_DATE_SPECIAL_VAL_FORMAT, DateUtil.getDateString(new Date()), todayContinueNoFgTimes));
             }
-            updateMap.put(user_metric_todayContinueNoFgTimes, String.format(_WITH_DATE_SPECIAL_VAL_FORMAT, DateUtil.getDateString(new Date()), todayContinueNoFgTimes));
         }
         long currentBalance = result.getCredit();
         updateMap.put(user_metric_currentBalance, currentBalance);
