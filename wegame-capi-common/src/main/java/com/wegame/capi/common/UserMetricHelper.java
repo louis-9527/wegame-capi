@@ -118,28 +118,28 @@ public class UserMetricHelper implements Serializable {
     /**
      * 进入时余额, 可能为空
      */
-    public static BigDecimal getEnterBalance(Map<String, Object> map) {
+    public static Long getEnterBalance(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_enterBalance);
-        return Objects.isNull(obj) ? null : new BigDecimal(obj.toString());
+        return Objects.isNull(obj) ? null : Long.valueOf(obj.toString());
     }
 
     /**
      * 退出时余额
      */
-    public static BigDecimal getExitBalance(Map<String, Object> map) {
+    public static long getExitBalance(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_exitBalance);
-        return Objects.isNull(obj) ? BigDecimal.ZERO : new BigDecimal(obj.toString());
+        return Objects.isNull(obj) ? 0L : Long.valueOf(obj.toString());
     }
 
     /**
      * 当前余额, 可能为空
      */
-    public static BigDecimal getCurrentBalance(Map<String, Object> map) {
+    public static Long getCurrentBalance(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_currentBalance);
-        return Objects.isNull(obj) ? null : new BigDecimal(obj.toString());
+        return Objects.isNull(obj) ? null : Long.valueOf(obj.toString());
     }
 
     /**

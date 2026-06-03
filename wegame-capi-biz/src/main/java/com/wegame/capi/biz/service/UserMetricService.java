@@ -53,6 +53,7 @@ public class UserMetricService {
     public UserMetricInfoDo getUserMetricInfo(UserInfo userInfo) {
         return UserMetricInfoBuilder.build(get(userInfo));
     }
+
     /**
      * 登陆统计
      * 1、用户注册时间
@@ -74,7 +75,7 @@ public class UserMetricService {
            map.put(user_metric_enterBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
            map.put(user_metric_currentBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
            BetRecordDo lastBetRecordDo = getLastBetRecord(userInfo);
-           map.put(user_metric_exitBalance, Objects.nonNull(lastBetRecordDo) ? lastBetRecordDo.getCredit() : 0);
+           map.put(user_metric_exitBalance, Objects.nonNull(lastBetRecordDo) ? lastBetRecordDo.getCredit() : 0L);
            redisTemplate.opsForHash().putAll(key(userInfo), map);
        } catch (Exception e) {
            log.error("afterBetMetric error, userInfo: {}", userInfo, e);

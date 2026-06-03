@@ -47,15 +47,15 @@ public class UserMetricInfoDo implements Serializable {
     /**
      * 进入时余额，可能为空
      */
-    private BigDecimal enterBalance;
+    private Long enterBalance;
     /**
      * 退出时余额
      */
-    private BigDecimal exitBalance;
+    private long exitBalance;
     /**
      * 当前余额，可能为空
      */
-    private BigDecimal currentBalance;
+    private Long currentBalance;
     /**
      * 注册时间
      */
