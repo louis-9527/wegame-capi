@@ -63,6 +63,7 @@ public class FgLimitIntervention extends AbstractNodeComponent<FgLimitInterventi
                 contextDo.getChainResult(this.getNodeId()).setBetRecordTemplateEsDo((BetRecordTemplateEsDo)obj);
                 return;
             }else {
+                contextDo.setCurrentCmpResultPoint(null);
                 retryCount--;
             }
         }
