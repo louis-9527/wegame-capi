@@ -1,10 +1,12 @@
 package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
@@ -167,6 +169,27 @@ public class BayanihanConfig extends GameBizConfig{
          * 免费游戏模板配置
          */
         private Map<String, Integer> freeGame;
+
+        public void validate() {
+            Assert.notNull(mainGame, "templateRangeConfig.mainGame is null");
+            Assert.notNull(freeGame, "templateRangeConfig.freeGame is null");
+            this.getMainGame().keySet().forEach(templateMultipleRange -> {
+                Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.mainGame.key not contain '_'");
+                String[] multipleRangeArr = templateMultipleRange.split("_");
+                Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.mainGame.key length is not eqauls 2");
+                Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.mainGame.key first number must be number");
+                Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.mainGame.key first number must be number");
+                Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.mainGame.key first number must be less than or equal to the second number");
+            });
+            this.getFreeGame().keySet().forEach(templateMultipleRange -> {
+                Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.freeGame.key not contain '_'");
+                String[] multipleRangeArr = templateMultipleRange.split("_");
+                Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.freeGame.key length is not eqauls 2");
+                Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.freeGame.key first number must be number");
+                Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.freeGame.key first number must be number");
+                Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.freeGame.key first number must be less than or equal to the second number");
+            });
+        }
     }
 
     @Override
@@ -184,15 +207,32 @@ public class BayanihanConfig extends GameBizConfig{
 
     private void templateConfigValidate() {
         AssertUtil.assertNotNull(this.templateConfig, ErrorCode.ERR_INTER, "templateConfig is null");
-        AssertUtil.assertNotNull(this.templateConfig.getTemplateRangeConfig(), ErrorCode.ERR_INTER, "templateConfig is null");
-        for (Map.Entry<TemplateTypeEnum, TemplateRangeConfig> entry: this.templateConfig.getTemplateRangeConfig().entrySet()) {
-            AssertUtil.assertNotNull(entry.getKey(), ErrorCode.ERR_INTER, "unknown templateType");
-            AssertUtil.assertNotNull(entry.getValue(), ErrorCode.ERR_INTER, "config can not be null");
+        templateMappingValidate(this.templateConfig.getAbTemplateMapping());
+        templateRangeMapValidate(this.getTemplateConfig().getTemplateRangeConfig());
+    }
+
+    private void templateMappingValidate(Map<AbTypeEnum, TemplateTypeEnum> templateMapping) {
+        AssertUtil.assertNotNull(templateMapping, ErrorCode.ERR_INTER, "templateRangeConfig.templateMapping is null");
+        for (AbTypeEnum abType : AbTypeEnum.values()) {
+            // 每个AB类型只能有一个模板
+            AssertUtil.assertNotNull(templateMapping.get(abType), ErrorCode.ERR_INTER, "templateMapping.get(abType) is null of " + abType.getId());
+            // 模版必须是diwata 的gameType 类型
+            AssertUtil.assertTrue(Objects.equals(templateMapping.get(abType).getGameType(), GameTypeEnum.BAYANIHAN), ErrorCode.ERR_INTER, "templateMapping.get(abType) is not BAYANIHAN of " + abType.getId());
         }
-        AssertUtil.assertNotNull(this.templateConfig.getAbTemplateMapping(), ErrorCode.ERR_INTER, "freeGameConfig is null");
-        for (Map.Entry<AbTypeEnum, TemplateTypeEnum> entry: this.templateConfig.getAbTemplateMapping().entrySet()) {
-            AssertUtil.assertNotNull(entry.getValue(), ErrorCode.ERR_INTER, "unknown templateType");
-        }
+    }
+
+    private void templateRangeMapValidate(Map<TemplateTypeEnum, TemplateRangeConfig> rangeConfigMap) {
+        AssertUtil.assertNotNull(rangeConfigMap, ErrorCode.ERR_INTER, "templateRangeConfig.templateRangeMap is null");
+        rangeConfigMap.forEach((templateType, rangConfig) -> {
+            // 必须是diwata 的gameType 类型
+            AssertUtil.assertTrue(Objects.equals(templateType.getGameType(), GameTypeEnum.BAYANIHAN), ErrorCode.ERR_INTER, "templateRangeConfig.templateRangeMap.get(templateType) is not BAYANIHAN of " + templateType.name());
+            // betTypeMap必须配置完
+            AssertUtil.assertNotNull(rangConfig, ErrorCode.ERR_INTER, "templateRangeConfig.templateRangeMap.get(templateType) is null of " + templateType.name());
+            AssertUtil.assertNotNull(rangConfig.getFreeGame(), ErrorCode.ERR_INTER, "freegame config is null");
+            AssertUtil.assertNotNull(rangConfig.getMainGame(), ErrorCode.ERR_INTER, "maingame config is null");
+
+            rangConfig.validate();
+        });
     }
 
     private void oddsConfigValidate() {
