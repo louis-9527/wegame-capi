@@ -29,6 +29,7 @@
         <wegame-base.version>1.0.2.20260513-SNAPSHOT</wegame-base.version>
         <pulsar-client.version>4.0.2</pulsar-client.version>
         <liteflow.version>2.15.3</liteflow.version>
+        <liteflow.rule.nacos.version>2.16.0</liteflow.rule.nacos.version>
     </properties>
 
     <dependencyManagement>
@@ -93,6 +94,11 @@
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-spring-boot-starter</artifactId>
                 <version>${liteflow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yomahub</groupId>
+                <artifactId>liteflow-rule-nacos</artifactId>
+                <version>${liteflow.rule.nacos.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
