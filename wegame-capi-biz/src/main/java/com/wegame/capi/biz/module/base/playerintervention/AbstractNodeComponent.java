@@ -67,7 +67,7 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
 
     protected abstract void intervention(PlayerInterventionParamDo paramDo, T config, PlayerInterventionContextDo contextDo);
 
-    protected  void doProcess(PlayerInterventionParamDo paramDo, T config, PlayerInterventionContextDo contextDo) throws Exception {
+    public void doProcess(PlayerInterventionParamDo paramDo, T config, PlayerInterventionContextDo contextDo) throws Exception {
         contextDo.setCurrentCmpResultPoint(null);
         if (!this.canContinue(paramDo, config, contextDo)) {
             return;
