@@ -174,11 +174,25 @@ public class BayanihanConfig extends GameBizConfig{
         this.oddsConfigValidate();
         this.probabilisticConfigValidate();
         this.rewardMaxMultipleValidate();
+        this.templateConfigValidate();
     }
 
     private void rewardMaxMultipleValidate() {
         AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
         AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
+    }
+
+    private void templateConfigValidate() {
+        AssertUtil.assertNotNull(this.templateConfig, ErrorCode.ERR_INTER, "templateConfig is null");
+        AssertUtil.assertNotNull(this.templateConfig.getTemplateRangeConfig(), ErrorCode.ERR_INTER, "templateConfig is null");
+        for (Map.Entry<TemplateTypeEnum, TemplateRangeConfig> entry: this.templateConfig.getTemplateRangeConfig().entrySet()) {
+            AssertUtil.assertNotNull(entry.getKey(), ErrorCode.ERR_INTER, "unknown templateType");
+            AssertUtil.assertNotNull(entry.getValue(), ErrorCode.ERR_INTER, "config can not be null");
+        }
+        AssertUtil.assertNotNull(this.templateConfig.getAbTemplateMapping(), ErrorCode.ERR_INTER, "freeGameConfig is null");
+        for (Map.Entry<AbTypeEnum, TemplateTypeEnum> entry: this.templateConfig.getAbTemplateMapping().entrySet()) {
+            AssertUtil.assertNotNull(entry.getValue(), ErrorCode.ERR_INTER, "unknown templateType");
+        }
     }
 
     private void oddsConfigValidate() {
