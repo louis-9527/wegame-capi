@@ -55,7 +55,7 @@ public class PlayerInterventionContextDo implements Serializable {
             return null;
         }
         List<PlayerInterventionResultDo> list = this.chainInterventionResultMap.values().stream()
-                .sorted(Comparator.comparing(PlayerInterventionResultDo::getChainSort).reversed()).collect(Collectors.toList());
+                .sorted(Comparator.comparing(PlayerInterventionResultDo::getCmpSort).reversed()).collect(Collectors.toList());
         return list.get(0);
     }
 

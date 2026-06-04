@@ -86,7 +86,7 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
         PlayerInterventionResultDo postInterventionResult = playerInterventionService.postIntervention(betDo.getGameType(), playerInterventionParamDo, contextDo);
         LamangBetRecordTemplateEsDo templateEsDo = this.fetchTemplate(postInterventionResult, betDo, gamePlayDo);
         if (Objects.nonNull(templateEsDo)) {
-            betDo.setInterventionRuleId(preInterventionResult.getComponentId());
+            betDo.setInterventionRuleId(postInterventionResult.getComponentId());
         }
         return templateEsDo;
     }
