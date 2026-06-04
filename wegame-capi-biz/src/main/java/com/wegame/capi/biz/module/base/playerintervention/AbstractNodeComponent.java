@@ -90,6 +90,8 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
         T config = this.getCmpData(this.beanClass());
         PlayerInterventionContextDo contextDo = this.getContextBean(PlayerInterventionContextDo.class);
         this.doProcess(paramDo, config, contextDo);
+        // point 组件内失效
+        contextDo.setCurrentCmpResultPoint(null);
     }
 
     @SuppressWarnings("unchecked")
