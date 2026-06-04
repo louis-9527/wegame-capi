@@ -22,8 +22,9 @@ logging:
 
 liteflow:
   # 从 classpath 加载本地 JSON 文件
-  rule-source: classpath:common_intervention_rules.xml
+  rule-source: classpath:**_intervention_rules.xml
   support-multiple-type: true
+  check-node-exists: true
 
 spring:
   cloud:

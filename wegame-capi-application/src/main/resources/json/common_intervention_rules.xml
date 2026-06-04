@@ -80,8 +80,8 @@
 
 
         THEN(
-        newUserHelpIntervention.data(newUserIntervention_data),.tag('11'),
-        retentionUserHelpIntervention.data(retentionUserHelpIntervention_data),.tag('10'),
+        newUserHelpIntervention.data(newUserIntervention_data).tag('11'),
+        retentionUserHelpIntervention.data(retentionUserHelpIntervention_data).tag('10'),
         returnUserIntervention.data(returnUserIntervention_data).tag('9'),
         newUserIntervention.data(newUserIntervention_data).tag('7'),
         fgIntervention.data(fgIntervention_data).tag('6'),
@@ -121,8 +121,9 @@
 
 
         THEN(
-        fgLimitIntervention.data(fgLimitIntervention_data),.tag('8'),
-        newUserEmptyIntervention.data(newUserEmptyIntervention_data),.tag('4'),
+        fgLimitIntervention.data(fgLimitIntervention_data).tag('8'),
+        newUserEmptyIntervention.data(newUserEmptyIntervention_data).tag('4'),
         normalEmptyIntervention.data(normalEmptyIntervention_data).tag('3')
-        );    </chain>
+        );
+    </chain>
 </flow>
