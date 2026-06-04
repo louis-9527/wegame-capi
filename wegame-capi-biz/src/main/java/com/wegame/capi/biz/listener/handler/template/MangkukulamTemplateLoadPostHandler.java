@@ -26,12 +26,16 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Component
 @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
-public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
+public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler<MangkukulamBetRecordTemplateEsDo> {
     @Autowired
     MangkukulamConfig mangkukulamConfig;
-
     @Autowired
     BetRecordTemplateEsService<MangkukulamBetRecordTemplateEsDo> betRecordTemplateEsService;
+
+    @Override
+    public Class<MangkukulamBetRecordTemplateEsDo> getClassType() {
+        return MangkukulamBetRecordTemplateEsDo.class;
+    }
 
     @Override
     public void handle() {

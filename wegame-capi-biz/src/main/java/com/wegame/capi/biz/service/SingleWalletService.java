@@ -97,7 +97,7 @@ public class SingleWalletService {
                 } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
                     commonRes = singleWalletApi.starSpin(buildStarSpinReq(betDo, betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
                 } else {
-                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
+                    commonRes = singleWalletApi.betWithPayout(buildReq(betDo, betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
                 }
             } else {
                 if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
@@ -105,7 +105,7 @@ public class SingleWalletService {
                 } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
                     commonRes = singleWalletApi.starSpin(buildStarSpinReq(betDo, betRecordDo));
                 } else {
-                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
+                    commonRes = singleWalletApi.betWithPayout(buildReq(betDo, betRecordDo));
                 }
             }
             AssertUtil.assertNotNull(commonRes, ErrorCode.ERR_NET);

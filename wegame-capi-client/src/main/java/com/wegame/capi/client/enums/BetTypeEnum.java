@@ -2,6 +2,8 @@ package com.wegame.capi.client.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import lombok.ToString;
 
 /**
@@ -44,6 +46,16 @@ public enum BetTypeEnum {
             }
         }
         return null;
+    }
+
+    public int getBetCategory() {
+        switch (this) {
+            case NORMAL_BET:
+                return 1;
+            case BUY_BET:
+                return 2;
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 
     public String getCode() {

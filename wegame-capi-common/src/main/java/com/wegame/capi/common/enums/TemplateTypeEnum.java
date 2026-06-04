@@ -51,6 +51,8 @@ public enum TemplateTypeEnum {
 
     BAYANIHAN_V2(GameTypeEnum.BAYANIHAN, TemplateConstants.BAYANIHAN_BET_RECORD_TEMPLATE_V2),
 
+    KAPRE(GameTypeEnum.KAPRE, TemplateConstants.KAPRE_BET_RECORD_TEMPLATE),
+
     ;
 
     /**

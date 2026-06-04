@@ -14,7 +14,7 @@ public class TemplateConstants {
 
     public static final String DIWATA_MAYARI_BET_RECORD_TEMPLATE = "diwatamayari_bet_record_template_v3";
     // public static final String DIWATA_MAYARI_BET_RECORD_TEMPLATE_V2 = "diwatamayari_bet_record_template_v2";
-    public static final String DIWATA_MAYARI_BET_RECORD_TEMPLATE_V3 = "diwatamayari_bet_record_template_v4";
+    public static final String DIWATA_MAYARI_BET_RECORD_TEMPLATE_V3 = "diwatamayari_bet_record_template_v5";
 
 
     // public static final String MANGKUKULAM_BET_RECORD_TEMPLATE = "mangkukulam_bet_record_template";
@@ -30,4 +30,7 @@ public class TemplateConstants {
     public static final String BAYANIHAN_BET_RECORD_TEMPLATE_V1 = "bayanihan_bet_record_template";
 
     public static final String BAYANIHAN_BET_RECORD_TEMPLATE_V2 = "bayanihan_bet_record_template_v2";
+
+    public static final String KAPRE_BET_RECORD_TEMPLATE = "kapre_bet_record_template_v2";
+
 }
