@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -32,7 +33,10 @@ public class RetentionUserHelpIntervention extends AbstractNodeComponent<Retenti
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
         boolean yesterdayLogin = userMetricInfoDo.isYesterdayLogin();
         int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
-        long currentCredit = userMetricInfoDo.getCurrentBalance();
+        Long currentCredit = userMetricInfoDo.getCurrentBalance();
+        if (Objects.isNull(currentCredit)){
+            return false;
+        }
         double rtp = userMetricInfoDo.getRtp();
         BigDecimal betAmount = new BigDecimal(paramDo.getBetAmount());
         return yesterdayLogin &&

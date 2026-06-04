@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -31,9 +32,13 @@ public class ReturnUserHelpIntervention extends AbstractNodeComponent<ReturnUser
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, ReturnUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
-        long enterBalance = Optional.ofNullable(userMetricInfoDo.getEnterBalance()).orElse(0L);
-        long exitBalance = userMetricInfoDo.getExitBalance();
-        long currentBalance = userMetricInfoDo.getCurrentBalance();
+        Long enterBalance = userMetricInfoDo.getEnterBalance();
+        Long exitBalance = userMetricInfoDo.getExitBalance();
+        Long currentBalance = userMetricInfoDo.getCurrentBalance();
+        if (Objects.isNull(enterBalance) || Objects.isNull(exitBalance) || Objects.isNull(currentBalance)){
+            return false;
+        }
+
         int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
         double rtp = userMetricInfoDo.getRtp();
         BigDecimal betAmount = new BigDecimal(paramDo.getBetAmount());
