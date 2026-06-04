@@ -1,8 +1,6 @@
 package com.wegame.capi.biz.domain.intervention;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.Lists;
-import com.wegame.capi.common.enums.InterventionChainIdTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 玩家干预上下文,链中结果存放
@@ -27,23 +26,37 @@ public class PlayerInterventionContextDo implements Serializable {
      */
     private PlayerInterventionResultDo preCmpResult;
     /**
-     * 多条链结果
+     * 组件结果
      */
-    private List<PlayerInterventionResultDo> chainInterventionResultList;
+    private PlayerInterventionResultDo currentCmpResultPoint;
+    /**
+     * 多条链结果
+     * key:cmpId
+     * value:result
+     */
+    private Map<String, PlayerInterventionResultDo> chainInterventionResultMap;
 
-    public void addChainResult( PlayerInterventionResultDo result) {
-        if (Objects.isNull(this.chainInterventionResultList)) {
-            this.chainInterventionResultList= Lists.newArrayList();
+    public void addChainResult(PlayerInterventionResultDo result) {
+        if (CollectionUtil.isEmpty(this.chainInterventionResultMap)) {
+            this.chainInterventionResultMap = new HashMap<>();
         }
-        this.chainInterventionResultList.add( result);
+        this.chainInterventionResultMap.put(result.getComponentId(), result);
+    }
+
+    public PlayerInterventionResultDo getChainResult(String cmpId) {
+        if (CollectionUtil.isEmpty(this.chainInterventionResultMap)) {
+            return null;
+        }
+        return this.chainInterventionResultMap.get(cmpId);
     }
 
     public PlayerInterventionResultDo getChainResult() {
-        if (CollectionUtil.isEmpty(this.chainInterventionResultList)){
+        if (CollectionUtil.isEmpty(this.chainInterventionResultMap)) {
             return null;
         }
-        this.chainInterventionResultList.sort(Comparator.comparing(PlayerInterventionResultDo::getCmpSort).reversed());
-        return this.chainInterventionResultList.get(0);
+        List<PlayerInterventionResultDo> list = this.chainInterventionResultMap.values().stream()
+                .sorted(Comparator.comparing(PlayerInterventionResultDo::getChainSort).reversed()).collect(Collectors.toList());
+        return list.get(0);
     }
 
 }

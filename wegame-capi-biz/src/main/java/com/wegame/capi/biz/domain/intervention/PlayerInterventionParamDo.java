@@ -9,6 +9,12 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -33,6 +39,13 @@ public class PlayerInterventionParamDo {
      */
     private long betAmount;
 
+    /**
+     * 额外操作
+     * key:cmp id
+     * value:具体操作
+     */
+    private Map<String, Function> extOperator;
+
     public static PlayerInterventionParamDo buildDo(UserMetricInfoDo userMetricInfoDo, BetRecordTemplateEsDo betRecordTemplateEsDo, BetTypeEnum betType, long betAmount){
         return PlayerInterventionParamDo.builder()
                 .userMetricInfoDo(userMetricInfoDo)
@@ -40,6 +53,20 @@ public class PlayerInterventionParamDo {
                 .betType(betType)
                 .betAmount(betAmount)
                 .build();
+    }
+
+    public void addExtOperator(String cmpId, Function function){
+        if (Objects.isNull(this.extOperator)){
+            this.extOperator = new ConcurrentHashMap<>();
+        }
+        this.extOperator.put(cmpId, function);
+    }
+
+    public Function getExtOperatorFc(String cmpId){
+        if (Objects.isNull(this.extOperator)){
+            return null;
+        }
+        return this.extOperator.get(cmpId);
     }
 
 }

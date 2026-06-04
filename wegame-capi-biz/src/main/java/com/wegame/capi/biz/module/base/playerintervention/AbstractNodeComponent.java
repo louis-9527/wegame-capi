@@ -67,11 +67,8 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
 
     protected abstract void intervention(PlayerInterventionParamDo paramDo, T config, PlayerInterventionContextDo contextDo);
 
-    @Override
-    public void process() throws Exception {
-        PlayerInterventionParamDo paramDo = this.getRequestData();
-        T config = this.getCmpData(this.beanClass());
-        PlayerInterventionContextDo contextDo = this.getContextBean(PlayerInterventionContextDo.class);
+    protected  void doProcess(PlayerInterventionParamDo paramDo, T config, PlayerInterventionContextDo contextDo) throws Exception {
+        contextDo.setCurrentCmpResultPoint(null);
         if (!this.canContinue(paramDo, config, contextDo)) {
             return;
         }
@@ -85,6 +82,14 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
             return;
         }
         this.intervention(paramDo, config, contextDo);
+    }
+
+    @Override
+    public void process() throws Exception {
+        PlayerInterventionParamDo paramDo = this.getRequestData();
+        T config = this.getCmpData(this.beanClass());
+        PlayerInterventionContextDo contextDo = this.getContextBean(PlayerInterventionContextDo.class);
+        this.doProcess(paramDo, config, contextDo);
     }
 
     @SuppressWarnings("unchecked")
@@ -134,6 +139,7 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
                 .betRecordTemplateEsDo(betRecordTemplateEsDo)
                 .build();
         contextDo.setPreCmpResult(currentResult);
+        contextDo.setCurrentCmpResultPoint(currentResult);
         contextDo.addChainResult(currentResult);
     }
 

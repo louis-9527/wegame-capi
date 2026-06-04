@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.lamang.game;
 
 import cn.hutool.core.util.StrUtil;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
@@ -19,6 +20,7 @@ import com.wegame.capi.biz.service.UserMetricService;
 import com.wegame.capi.biz.service.intervention.PlayerInterventionService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.common.constants.InterventionRuleIdConstants;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import static com.wegame.capi.common.Constants.LAMANG_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -72,19 +75,27 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         UserMetricInfoDo userMetricInfo = userMetricService.getUserMetricInfo(userInfo);
-        PlayerInterventionParamDo.buildDo(userMetricInfo, null, betDo.getBetType(), betDo.getBetAmount());
+        PlayerInterventionParamDo playerInterventionParamDo = PlayerInterventionParamDo.buildDo(userMetricInfo, null, betDo.getBetType(), betDo.getBetAmount());
+        this.paramExtOperatorBuilder(playerInterventionParamDo, betDo, gamePlayDo);
         // 前置
         PlayerInterventionContextDo contextDo = new PlayerInterventionContextDo();
-        PlayerInterventionResultDo preInterventionResult = playerInterventionService.preIntervention(betDo.getGameType(), PlayerInterventionParamDo.buildDo(userMetricInfo, null, betDo.getBetType(), betDo.getBetAmount()), contextDo);
+        PlayerInterventionResultDo preInterventionResult = playerInterventionService.preIntervention(betDo.getGameType(), playerInterventionParamDo, contextDo);
         LamangBetRecordTemplateEsDo preTemplateEsDo = this.fetchTemplate(preInterventionResult, betDo, gamePlayDo);
         // 后置
-        PlayerInterventionResultDo postInterventionResult = playerInterventionService.postIntervention(betDo.getGameType(), PlayerInterventionParamDo.buildDo(userMetricInfo, preTemplateEsDo, betDo.getBetType(), betDo.getBetAmount()), contextDo);
+        playerInterventionParamDo.setBetRecordTemplateEsDo(preTemplateEsDo);
+        PlayerInterventionResultDo postInterventionResult = playerInterventionService.postIntervention(betDo.getGameType(), playerInterventionParamDo, contextDo);
         LamangBetRecordTemplateEsDo templateEsDo = this.fetchTemplate(postInterventionResult, betDo, gamePlayDo);
         if (Objects.nonNull(templateEsDo)) {
             betDo.setInterventionRuleId(preInterventionResult.getComponentId());
         }
         return templateEsDo;
     }
+
+    private void paramExtOperatorBuilder(PlayerInterventionParamDo param, BetDo betDo, GamePlayDo gamePlayDo) {
+        Function function= (Function<PlayerInterventionResultDo, LamangBetRecordTemplateEsDo>) resultDo -> fetchTemplate(resultDo, betDo, gamePlayDo);
+        param.addExtOperator(InterventionRuleIdConstants.FG_LIMIT_INTERVENTION, function);
+    }
+
 
     private LamangBetRecordTemplateEsDo fetchTemplate(PlayerInterventionResultDo interventionResult, BetDo betDo, GamePlayDo gamePlayDo) {
         if (Objects.isNull(interventionResult)) {
