@@ -2,6 +2,7 @@ package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
@@ -90,6 +91,27 @@ public class SirenaConfig extends GameBizConfig implements Serializable {
          * 免费游戏模板配置
          */
         private Map<String, Integer> freeGame;
+
+        public void validate() {
+            Assert.notNull(mainGame, "templateRangeConfig.mainGame is null");
+            Assert.notNull(freeGame, "templateRangeConfig.freeGame is null");
+            this.getMainGame().keySet().forEach(templateMultipleRange -> {
+                Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.mainGame.key not contain '_'");
+                String[] multipleRangeArr = templateMultipleRange.split("_");
+                Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.mainGame.key length is not eqauls 2");
+                Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.mainGame.key first number must be number");
+                Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.mainGame.key first number must be number");
+                Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.mainGame.key first number must be less than or equal to the second number");
+            });
+            this.getFreeGame().keySet().forEach(templateMultipleRange -> {
+                Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.freeGame.key not contain '_'");
+                String[] multipleRangeArr = templateMultipleRange.split("_");
+                Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.freeGame.key length is not eqauls 2");
+                Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.freeGame.key first number must be number");
+                Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.freeGame.key first number must be number");
+                Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.freeGame.key first number must be less than or equal to the second number");
+            });
+        }
     }
 
     @Data
@@ -226,6 +248,18 @@ public class SirenaConfig extends GameBizConfig implements Serializable {
         this.freeWheelTimesValidate();
         this.rewardMaxMultipleValidate();
         this.rewardNotifyMinMultipleValidate();
+        this.validateTemplateConfig();
+    }
+
+    private void validateTemplateConfig() {
+        templateConfig.getAbTemplateMapping().forEach((key, value) -> {
+            AssertUtil.assertNotNull(value, ErrorCode.ERR_PARAM, "ab: " + key + ",templateType is null");
+            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfig().get(value), ErrorCode.ERR_PARAM, "ab: " + key + ",templateRangeConfig is null");
+        });
+        templateConfig.getTemplateRangeConfig().forEach((templateType, rangeConfig) -> {
+            AssertUtil.assertNotNull(templateType, ErrorCode.ERR_PARAM, "templateRangeConfig.templateType is null");
+            rangeConfig.validate();
+        });
     }
 
     private void rewardNotifyMinMultipleValidate() {
