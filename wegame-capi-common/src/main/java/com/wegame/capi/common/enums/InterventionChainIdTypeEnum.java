@@ -19,8 +19,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum InterventionChainIdTypeEnum {
-    PRE_INTERVENTION("preIntervention", "%_preIntervention", "前置干预", 1),
-    POST_INTERVENTION("postIntervention", "%_postIntervention", "后置干预", 2),
+    PRE_INTERVENTION("preIntervention", "%s_preIntervention", "前置干预", 1),
+    POST_INTERVENTION("postIntervention", "%s_postIntervention", "后置干预", 2),
     ;
 
     private final String id;
@@ -29,7 +29,7 @@ public enum InterventionChainIdTypeEnum {
     private final int defaultSort;
 
     public String formatChainId(GameTypeEnum gameType) {
-        return String.format(format, gameType.getId());
+        return String.format(this.format, gameType.getId());
     }
 
     public static InterventionChainIdTypeEnum valueOfConfigId(String configId) {
