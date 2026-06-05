@@ -465,9 +465,13 @@ public class MangkukulamConfig extends GameBizConfig implements Serializable{
 
     private void templateRangeConfigValidate() {
         templateConfig.getAbTemplateMapping().forEach((k, v) -> {
-            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfigMapping().get(v), ErrorCode.ERR_PARAM, "template is null");
+            AssertUtil.assertNotNull(v, ErrorCode.ERR_PARAM, "ab: " + k + ",templateType is null");
+            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfigMapping().get(v), ErrorCode.ERR_PARAM, "ab: " + k + ",templateRangeConfig is null");
         });
-        templateConfig.getTemplateRangeConfigMapping().values().forEach(TemplateRangeConfig::validate);
+        templateConfig.getTemplateRangeConfigMapping().forEach((templateType, rangeConfig) -> {
+            AssertUtil.assertNotNull(templateType, ErrorCode.ERR_PARAM, "templateRangeConfig.templateType is null");
+            rangeConfig.validate();
+        });
     }
 
     private void rewardMaxMultipleValidate() {
