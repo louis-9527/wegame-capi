@@ -16,7 +16,7 @@ import com.wegame.capi.biz.manager.InventoryManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.SingleWalletService;
-import com.wegame.capi.biz.service.UserMetricService;
+import com.wegame.capi.biz.service.metric.UserMetricService;
 import com.wegame.capi.biz.service.operation.OperationEventControlService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;

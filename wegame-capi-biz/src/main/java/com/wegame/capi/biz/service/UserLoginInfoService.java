@@ -5,6 +5,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.user.UserLoginInfoConverter;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
+import com.wegame.capi.biz.service.metric.UserMetricService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoPo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoQuery;
@@ -203,16 +204,17 @@ public class UserLoginInfoService {
                     .build());
             if (Objects.isNull(userLoginInfoFromDb)) {
                 userLoginInfoDo.setRegisterTime(new Date());
+                userLoginInfoDo.setLoginTime(new Date());
                 add(userLoginInfoDo);
             } else {
                 update(UserLoginInfoDo.builder()
                         .id(userLoginInfoFromDb.getId())
-                        .loginTime(userLoginInfoDo.getLoginTime())
+                        .loginTime(new Date())
                         .build());
             }
             Date lastLoginTime = Objects.nonNull(userLoginInfoFromDb) ? userLoginInfoFromDb.getLoginTime() : null;
             Date registerTime = Objects.nonNull(userLoginInfoFromDb) ? userLoginInfoFromDb.getRegisterTime() : userLoginInfoDo.getRegisterTime();
-            userMetricService.afterLoginMetric(userInfo, registerTime, lastLoginTime);
+            userMetricService.afterLoginMetric(userInfo, registerTime, lastLoginTime, userLoginInfoDo.getLoginTime());
         } catch (Exception e) {
             log.warn("asyncAddOrUpdate Exception, req: {}, errMsg: {}", userLoginInfoDo, e.getMessage(), e);
         }

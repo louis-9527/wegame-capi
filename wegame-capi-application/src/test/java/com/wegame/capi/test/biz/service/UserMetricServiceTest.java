@@ -6,9 +6,8 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-import com.wegame.capi.biz.service.UserMetricService;
+import com.wegame.capi.biz.service.metric.UserMetricService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -59,7 +58,7 @@ public class UserMetricServiceTest extends BaseTest {
         Date registerTime = DateUtil.getYesterdayBegin();
         Date lastLoginTime = DateUtil.getDayBegin(new Date());
         for (int i = 0; i < 10; i++) {
-            userMetricService.afterLoginMetric(userInfo, registerTime, lastLoginTime);
+            userMetricService.afterLoginMetric(userInfo, registerTime, lastLoginTime,lastLoginTime);
             UserMetricInfoDo infoDo = userMetricService.getUserMetricInfo(userInfo);
             log.info("test_afterLoginMetric, infoDo: {}", infoDo);
         }

@@ -3,6 +3,7 @@ package com.wegame.capi.biz.domain.biz;
 import com.wegame.base.utils.DateUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -60,17 +61,26 @@ public class UserMetricInfoDo implements Serializable {
      */
     private Date registerTime;
     /**
-     * 昨日登陆时间
+     * 当前登陆时间
      */
-    private Date yesterdayLoginTime;
+    private Date currentLoginTime;
+    /**
+     * 上一次登陆时间
+     */
+    private Date lastLoginTime;
+    /**
+     * 昨日是否投注：true/false/null
+     */
+    private Boolean yesterdayHasBet;
     /**
      * 干预记录 <ruleId, 时间戳>
      */
     private Map<String, Long> interventionRecord;
 
     public boolean isYesterdayLogin() {
-        return Objects.nonNull(yesterdayLoginTime)
-                && DateUtil.isBetween(yesterdayLoginTime, DateUtil.getYesterdayBegin(), DateUtil.getYesterdayEnd());
+        //。todo fix
+        return Objects.nonNull(lastLoginTime)
+                && DateUtil.isBetween(lastLoginTime, DateUtil.getYesterdayBegin(), DateUtil.getYesterdayEnd());
     }
 
     public boolean isTodayRegister() {
@@ -83,5 +93,21 @@ public class UserMetricInfoDo implements Serializable {
             return 0;
         }
         return totalPayoutAmount / (double) totalBetAmount;
+    }
+
+    /**
+     * 本次登陆后是否触发某条规则
+     * @param ruleId
+     * @return
+     */
+    public boolean afterCurrentLoginHashTriggerIndexRule(String ruleId) {
+        if (MapUtils.isNotEmpty(interventionRecord)) {
+            return false;
+        }
+        Long lastInterventionTimestamp = interventionRecord.get(ruleId);
+        if (Objects.isNull(lastInterventionTimestamp)) {
+            return false;
+        }
+        return lastInterventionTimestamp > currentLoginTime.getTime();
     }
 }

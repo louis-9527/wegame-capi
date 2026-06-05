@@ -130,7 +130,6 @@ public class BetRecordService extends AbstractService {
         return poToDo(betRecordPo);
     }
 
-    // @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
     public BetRecordDo get(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);

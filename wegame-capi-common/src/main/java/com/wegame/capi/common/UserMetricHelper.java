@@ -86,32 +86,12 @@ public class UserMetricHelper implements Serializable {
     }
 
     /**
-     * 当日不中FG次数
-     * <p>
-     * 特殊说明：redis 存储格式：{YYYYMMDD}_{times} ***
-     * <p>
-     *
-     * @return 1、 为空：当日未累计
-     * 2、 为0: 中fg后清0, 清0后当日不可再累计
-     * 3、 大于0: 当日累计且大于0（未清0）
+     * 累计不中FG次数
      */
-    public static Integer getTodayContinueNoFgTimes(Map<String, Object> map) {
+    public static int getContinueNoFgTimes(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
-        Object obj = map.get(user_metric_todayContinueNoFgTimes);
-        if (Objects.isNull(obj)) {
-            return null;
-        }
-        String[] arr = obj.toString().split(common_spit);
-        if (arr.length != 2) {
-            log.error("getTodayContinueNoFgTimes format error, todayContinueNoFgTimes: {}", obj);
-            return null;
-        }
-        String todayStr = DateUtil.getDateString(new Date());
-        if (StringUtils.equals(arr[0], todayStr)) {
-            return Integer.valueOf(arr[1]);
-        } else {
-            return null;
-        }
+        Object obj = map.get(user_metric_continueNoFgTimes);
+        return Objects.nonNull(obj) && NumberUtils.isDigits(obj.toString()) ? NumberUtils.toInt(obj.toString()) : 0;
     }
 
     /**
@@ -124,9 +104,9 @@ public class UserMetricHelper implements Serializable {
     }
 
     /**
-     * 退出时余额
+     * 退出时余额, 可能为空
      */
-    public static long getExitBalance(Map<String, Object> map) {
+    public static Long getExitBalance(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_exitBalance);
         return Objects.isNull(obj) ? null : Long.valueOf(obj.toString());
@@ -155,8 +135,24 @@ public class UserMetricHelper implements Serializable {
      */
     public static Date getLastLoginTime(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
-        Object obj = map.get(user_metric_yesterdayLoginTime);
+        Object obj = map.get(user_metric_lastLoginTime);
         return Objects.isNull(obj) ? null : (Date) obj;
+    }
+
+    /**
+     * 当前登陆时间
+     */
+    public static Date getCurrentLoginTime(Map<String, Object> map) {
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
+        Object obj = map.get(user_metric_currentLoginTime);
+        return Objects.isNull(obj) ? null : (Date) obj;
+    }
+
+
+    public static Boolean getYesterdayHasBet(Map<String, Object> map) {
+        AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
+        Object obj = map.get(user_metric_yesterdayHasBet);
+        return Objects.isNull(obj) ? null : (Boolean) obj;
     }
 
     /**

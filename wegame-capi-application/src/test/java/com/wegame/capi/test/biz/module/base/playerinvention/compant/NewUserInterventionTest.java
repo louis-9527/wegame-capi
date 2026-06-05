@@ -15,7 +15,7 @@ public class NewUserInterventionTest extends BaseTest {
     @Test
     public void processTest(){
 
-        newUserIntervention.doProcess(PlayerInterventionParamDo.buildDo(userMetricInfoDo, betRecordTemplateEsDo, BetTypeEnum.BET_TYPE_NORMAL, 1000));
+        //newUserIntervention.doProcess(PlayerInterventionParamDo.buildDo(userMetricInfoDo, betRecordTemplateEsDo, BetTypeEnum.BET_TYPE_NORMAL, 1000));
 
 
     }

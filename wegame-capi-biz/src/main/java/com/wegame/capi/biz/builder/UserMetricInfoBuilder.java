@@ -17,12 +17,14 @@ public class UserMetricInfoBuilder {
                 .totalBetAmount(UserMetricHelper.getTotalBetAmount(map))
                 .totalPayoutAmount(UserMetricHelper.getTotalPayoutAmount(map))
                 .continueEmptyTimes(UserMetricHelper.getContinueEmptyTimes(map))
-                .todayContinueNoFgTimes(UserMetricHelper.getTodayContinueNoFgTimes(map))
+                .todayContinueNoFgTimes(UserMetricHelper.getContinueNoFgTimes(map))
                 .enterBalance(UserMetricHelper.getEnterBalance(map))
                 .exitBalance(UserMetricHelper.getExitBalance(map))
                 .currentBalance(UserMetricHelper.getCurrentBalance(map))
                 .registerTime(UserMetricHelper.getRegisterTime(map))
-                .yesterdayLoginTime(UserMetricHelper.getLastLoginTime(map))
+                .currentLoginTime(UserMetricHelper.getCurrentLoginTime(map))
+                .lastLoginTime(UserMetricHelper.getLastLoginTime(map))
+                .yesterdayHasBet(UserMetricHelper.getYesterdayHasBet(map))
                 .interventionRecord(UserMetricHelper.getInterventionRecord(map))
                 .build();
     }
