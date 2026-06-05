@@ -134,7 +134,7 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
         InterventionChainIdTypeEnum chainIdType = InterventionChainIdTypeEnum.valueOfConfigId(this.getChainId());
         AssertUtil.assertNotNull(chainIdType, ErrorCode.ERR_INTER, "chainIdType is null");
         PlayerInterventionResultDo currentResult = PlayerInterventionResultDo.builder()
-                .chainId(chainIdType.getId())
+                .chainId(this.getChainId())
                 .chainSort(chainIdType.getDefaultSort())
                 .componentId(this.getNodeId())
                 .cmpSort(Integer.valueOf(this.getTag()))

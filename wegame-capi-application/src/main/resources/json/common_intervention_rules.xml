@@ -55,7 +55,6 @@
 
 
         retentionUserHelpIntervention_data = '{
-        "isYesterdayLogin":"true",
         "minTodayGameCount":20,
         "betAmountCoefficient":"5",
         "maxRtp":"0.8",

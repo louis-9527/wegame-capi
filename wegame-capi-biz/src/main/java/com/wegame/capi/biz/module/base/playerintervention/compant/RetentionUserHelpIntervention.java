@@ -30,7 +30,7 @@ public class RetentionUserHelpIntervention extends AbstractNodeComponent<Retenti
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, RetentionUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         boolean yesterdayLogin = userMetricInfoDo.isYesterdayLogin();
         int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
         Long currentCredit = userMetricInfoDo.getCurrentBalance();
@@ -59,11 +59,11 @@ public class RetentionUserHelpIntervention extends AbstractNodeComponent<Retenti
     @Override
     protected void intervention(PlayerInterventionParamDo paramDo, RetentionUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         long enterBalance = Optional.ofNullable(userMetricInfoDo.getEnterBalance()).orElse(0L);
-        long betAmount = paramDo.getBetAmount();
+        long payAmount = paramDo.getPayAmount();
         BigDecimal betAmountCoefficient = config.getBetAmountCoefficient();
-        BigDecimal baseMultiple = BigDecimal.valueOf(enterBalance / (double) betAmount).multiply(betAmountCoefficient);
+        BigDecimal baseMultiple = BigDecimal.valueOf(enterBalance / (double) payAmount).multiply(betAmountCoefficient);
         BigDecimal start = baseMultiple.multiply(BigDecimal.ONE.subtract(config.getMultipleBias()));
         BigDecimal end = baseMultiple.multiply(BigDecimal.ONE.add(config.getMultipleBias()));
         super.buildInterventionResult(paramDo, config, contextDo, TemplateMultipleRange.builder().start(start).end(end).build(),null,null);
@@ -71,11 +71,6 @@ public class RetentionUserHelpIntervention extends AbstractNodeComponent<Retenti
 
     @Data
     public static class RetentionUserHelpInterventionConfigDo implements InterventionConfig {
-        /**
-         * 是否昨日有登录
-         * {@link DefaultInterventionConfigDo#isYesterdayLogin()}
-         */
-        private boolean isYesterdayLogin;
         /**
          * 最小今日局数
          * {@link DefaultInterventionConfigDo#getMinTodayGameCount()}

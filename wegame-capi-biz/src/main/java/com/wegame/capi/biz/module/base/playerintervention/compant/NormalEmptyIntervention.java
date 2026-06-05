@@ -28,11 +28,11 @@ public class NormalEmptyIntervention extends AbstractNodeComponent<NormalEmptyIn
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, NormalEmptyInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         int totalBetTimes = userMetricInfoDo.getTotalBetTimes();
         int continueEmptyTimes = userMetricInfoDo.getContinueEmptyTimes();
         BetRecordTemplateEsDo betRecordTemplateEsDo = paramDo.getBetRecordTemplateEsDo();
-        AssertUtil.assertNotNull(betRecordTemplateEsDo, ErrorCode.ERR_PARAM, "betRecordTemplateEsDo is null");
+        AssertUtil.assertNotNull(betRecordTemplateEsDo, ErrorCode.ERR_PARAM);
         Double multiple = betRecordTemplateEsDo.getMultiple();
 
         return totalBetTimes >= config.getMinTotalGameCount() &&

@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.base.playerintervention.compant;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.*;
 import com.wegame.capi.biz.module.base.playerintervention.AbstractNodeComponent;
@@ -19,6 +21,7 @@ public class NewUserIntervention extends AbstractNodeComponent<NewUserInterventi
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, NewUserInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         return userMetricInfoDo.isTodayRegister() && userMetricInfoDo.getTotalBetTimes() <= config.getMaxTotalGameCount();
     }
 

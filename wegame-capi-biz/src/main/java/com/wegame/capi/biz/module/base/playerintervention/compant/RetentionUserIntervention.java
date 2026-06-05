@@ -22,7 +22,7 @@ public class RetentionUserIntervention extends AbstractNodeComponent<RetentionUs
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, RetentionUserInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         return userMetricInfoDo.isYesterdayLogin() && userMetricInfoDo.getTotalBetTimes() <= config.getMaxTotalGameCount();
     }
 

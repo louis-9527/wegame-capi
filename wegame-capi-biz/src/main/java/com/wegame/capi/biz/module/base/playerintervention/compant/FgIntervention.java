@@ -25,9 +25,9 @@ public class FgIntervention extends AbstractNodeComponent<FgIntervention.FgInter
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, FgInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         // 玩家使用普通投注时 && 当日不中FG次数 >= 100
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         BetTypeEnum betType = paramDo.getBetType();
-        AssertUtil.assertNotNull(betType, ErrorCode.ERR_PARAM, "betType is null");
+        AssertUtil.assertNotNull(betType, ErrorCode.ERR_PARAM);
         Integer todayContinueNoFgTimes = Optional.ofNullable(userMetricInfoDo.getTodayContinueNoFgTimes()).orElse(0);
         List<BetTypeEnum> supportBetTypes = Optional.ofNullable(config.getSupportBetTypeList()).orElse(Collections.emptyList());
         return supportBetTypes.contains(betType) && todayContinueNoFgTimes >= config.getMinTodayNoHitFgCount();
