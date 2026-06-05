@@ -2,7 +2,6 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
-import com.wegame.base.enums.EnvEnum;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.template.mariamakiling.MariaMakilingBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
@@ -30,11 +29,16 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Component
 @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
-public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
+public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler<MariaMakilingBetRecordTemplateEsDo> {
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
     BetRecordTemplateEsService<MariaMakilingBetRecordTemplateEsDo> betRecordTemplateEsService;
+
+    @Override
+    public Class<MariaMakilingBetRecordTemplateEsDo> getClassType() {
+        return MariaMakilingBetRecordTemplateEsDo.class;
+    }
 
     protected TemplateTypeEnum getTemplateType() {
         return TemplateTypeEnum.MARIA_MAKILING;

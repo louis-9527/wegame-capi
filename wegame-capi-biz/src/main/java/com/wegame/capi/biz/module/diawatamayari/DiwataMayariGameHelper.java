@@ -1,11 +1,15 @@
 package com.wegame.capi.biz.module.diawatamayari;
 
 import com.google.common.collect.ImmutableMap;
+import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
+
+import java.util.List;
+import java.util.Objects;
 
 import static com.wegame.capi.common.enums.SymbolEnum.*;
 
@@ -114,4 +118,11 @@ public class DiwataMayariGameHelper {
                     .put(DIWATA_MAYARI_WILD_STICK.getId(), DIWATA_MAYARI_WILD_STICK)
                     .build())
             .build();
+
+    public static long getTotalRewardAmount(List<DiwataMayariGameRecordDo> ret) {
+        return ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+    }
 }

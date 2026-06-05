@@ -13,6 +13,14 @@ public class Constants {
     public static final String APP_SECRET = "MIIEowIBAAKCAQEAmP8M8b1C12VA9hB3iIHjvQYnda1QovLp+zKTbY2WRRAIGPfT";
     public static final Long REQUEST_TIME_OUT = 5 * 60 * 1000L;
 
+    public static final String DEFAULT = "Default";
+    public static final String RTP_CONTROL_SUBKEY_DEFAULT = "Default";
+    public static final String RTP_CONTROL_SUBKEY_DEFAULT_A = "DefaultA"; // ab控制：a
+    public static final String RTP_CONTROL_SUBKEY_DEFAULT_B = "DefaultB"; // ab控制：b
+    public static final String RTP_CONTROL_SUBKEY_FREE_SPIN = "FreeSpin";
+    public static final String RTP_CONTROL_SUBKEY_STAR_CARD = "StarCard";
+    public static final String RTP_CONTROL_SUBKEY_DOS = "Dos";
+
     public static final String COMMON_JSON_CONFIG_SEPARATOR = "_";
     public static final String COMMON_CONFIG_SPLIT = "_";
 

@@ -68,5 +68,15 @@ public class DiwataMayariSymbolDo extends SymbolDo {
                 .symbolType(getSymbolType())
                 .build();
     }
+
+    @JsonIgnore
+    public DiwataMayariSymbolDo copyAll() {
+        return DiwataMayariSymbolDo.builder()
+                .id(getId())
+                .name(getName())
+                .symbolType(getSymbolType())
+                .main(main)
+                .build();
+    }
 }
 

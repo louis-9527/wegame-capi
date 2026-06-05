@@ -1,26 +1,21 @@
 package com.wegame.capi.biz.module.diawatamayari;
 
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
-import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.common.enums.SymbolEnum;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
-import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
@@ -45,8 +40,18 @@ public class DiwataMayariSymbolUtil {
         }
         return newSymbolArr;
     }
-    public static void clearRewardSymbol(DiwataMayariSymbolDo[][] symbolArr, List<RewardSymbolDo<DiwataMayariSymbolDo>> rewardSymbolList ) {
+
+    public static void clearRewardSymbol(DiwataMayariSymbolDo[][] symbolArr, List<RewardSymbolDo<DiwataMayariSymbolDo>> rewardSymbolList) {
         rewardSymbolList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+    }
+
+    public static WheelDo<DiwataMayariSymbolDo> convertWheel(Object obj) {
+        WheelDo<DiwataMayariSymbolDo> wheel = FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), new TypeReference<WheelDo<DiwataMayariSymbolDo>>() {
+        });
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        // 空元素置为占位元素（以用于中奖计算）
+        wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
+        return wheel;
     }
 
     public static DiwataMayariSymbolDo[][] handleSymbolNullArr(DiwataMayariSymbolDo[][] symbolArr) {
@@ -57,8 +62,8 @@ public class DiwataMayariSymbolUtil {
             for (int j = 0; j < col; j++) {
                 if (Objects.isNull(symbolArr[i][j])) {
                     newSymbolArr[i][j] = DiwataMayariGameHelper.DIWATA_MAYARI_SYMBOL_PLACEHOLDER;
-                }else {
-                    newSymbolArr[i][j] = symbolArr[i][j].copy();
+                } else {
+                    newSymbolArr[i][j] = symbolArr[i][j].copyAll();
                 }
             }
         }
@@ -66,9 +71,9 @@ public class DiwataMayariSymbolUtil {
     }
 
 
-
     /**
      * 重建元素数组：（非空元素按列下移处理）
+     *
      * @param symbolArr
      */
     public static void rebuildSymbolArr(DiwataMayariSymbolDo[][] symbolArr) {
@@ -103,11 +108,11 @@ public class DiwataMayariSymbolUtil {
         }
         return count;
     }
+
     public static void postProcessPlaceholderSymbol(List<DiwataMayariGameRecordDo> gameRecordList) {
         if (CollectionUtils.isEmpty(gameRecordList)) {
             return;
         }
-        long startTime = System.currentTimeMillis();
         gameRecordList.parallelStream().forEach(gameRecord -> {
             DiwataMayariSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
@@ -120,8 +125,6 @@ public class DiwataMayariSymbolUtil {
                 }
             }
         });
-        long endTime = System.currentTimeMillis();
-        log.info("postPlaceholderSymbol cost time: {} ms", (endTime - startTime));
     }
 
     private static void clearIndexRewardSymbol(DiwataMayariSymbolDo[][] symbolArr, RewardSymbolDo<DiwataMayariSymbolDo> rewardSymbol) {

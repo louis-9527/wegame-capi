@@ -30,13 +30,17 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Component
 @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
-public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
+public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler<LamangBetRecordTemplateEsDo> {
     @Autowired
     LamangConfig lamangConfig;
 
     @Autowired
     BetRecordTemplateEsService<LamangBetRecordTemplateEsDo> betRecordTemplateEsService;
 
+    @Override
+    public Class<LamangBetRecordTemplateEsDo> getClassType() {
+        return LamangBetRecordTemplateEsDo.class;
+    }
 
     @Override
     public void handle() {
@@ -105,7 +109,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         }
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
-                log.info("loadLocalCache start, templateType : {}, betType: {}, size: {}",templateType.getBetRecordTemplateName(), betType, templateIdList.size());
+                log.info("loadLocalCache start, templateType : {}, betType: {}, size: {}", templateType.getBetRecordTemplateName(), betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
                     List<LamangBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, LamangBetRecordTemplateEsDo.class);

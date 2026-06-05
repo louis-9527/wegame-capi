@@ -22,11 +22,6 @@ public class GameBizConfig implements Serializable, ConfigValidate {
      */
     private PayoutAmountLimitConfig payoutAmountLimitConfig = new PayoutAmountLimitConfig();
 
-    /**
-     * 业务干预配置
-     */
-    private BizInterfereConfig bizInterfereConfig = new BizInterfereConfig();
-
     public void bizValidate() {
         throw new BusinessException(ErrorCode.ERR_INTER, "no support");
     }
@@ -36,7 +31,6 @@ public class GameBizConfig implements Serializable, ConfigValidate {
     public void validate() {
         AssertUtil.assertNotNull(payoutAmountLimitConfig, ErrorCode.ERR_PARAM);
         payoutAmountLimitConfig.validate();
-        bizInterfereConfig.validate();
         this.bizValidate();
     }
 

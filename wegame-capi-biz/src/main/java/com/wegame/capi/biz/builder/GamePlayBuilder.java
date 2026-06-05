@@ -27,7 +27,6 @@ public class GamePlayBuilder {
                         .parentBetRecordId(betDo.getParentBetRecordId())
                         .build() : null)
                 .betPromotionType(betDo.getBetPromotionType())
-                .bizInterfereContext(betDo.getBizInterfereContext())
                 .build();
     }
 }

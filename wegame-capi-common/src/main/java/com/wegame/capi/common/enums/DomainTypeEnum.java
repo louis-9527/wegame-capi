@@ -13,7 +13,8 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum DomainTypeEnum {
 
-    SINGLE_DOMAIN("singleDomain", "进行中"),
+    SINGLE_DOMAIN("singleDomain", "singleDomain"),
+    SINGLE_POOL_CONFIG_DOMAIN("singlePoolConfigDomain", "singlePoolConfigDomain"),
     FREE_SPIN_DOMAIN("freeSpinDomain", "freeSpinDomain"),
     PROMOTION_DOMAIN("promotionDomain", "promotionDomain"),
     OPERATION_DOMAIN("operationDomain", "operationDomain");
