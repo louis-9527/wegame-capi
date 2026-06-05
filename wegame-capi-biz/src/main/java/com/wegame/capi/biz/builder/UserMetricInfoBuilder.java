@@ -22,7 +22,7 @@ public class UserMetricInfoBuilder {
                 .exitBalance(UserMetricHelper.getExitBalance(map))
                 .currentBalance(UserMetricHelper.getCurrentBalance(map))
                 .registerTime(UserMetricHelper.getRegisterTime(map))
-                .lastLoginTime(UserMetricHelper.getLastLoginTime(map))
+                .yesterdayLoginTime(UserMetricHelper.getLastLoginTime(map))
                 .interventionRecord(UserMetricHelper.getInterventionRecord(map))
                 .build();
     }

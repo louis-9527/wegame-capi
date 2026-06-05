@@ -211,7 +211,7 @@ public class UserLoginInfoService {
                         .build());
             }
             Date lastLoginTime = Objects.nonNull(userLoginInfoFromDb) ? userLoginInfoFromDb.getLoginTime() : null;
-            Date registerTime = Objects.nonNull(userLoginInfoFromDb) ? userLoginInfoFromDb.getCreateTime() : userLoginInfoDo.getRegisterTime();
+            Date registerTime = Objects.nonNull(userLoginInfoFromDb) ? userLoginInfoFromDb.getRegisterTime() : userLoginInfoDo.getRegisterTime();
             userMetricService.afterLoginMetric(userInfo, registerTime, lastLoginTime);
         } catch (Exception e) {
             log.warn("asyncAddOrUpdate Exception, req: {}, errMsg: {}", userLoginInfoDo, e.getMessage(), e);

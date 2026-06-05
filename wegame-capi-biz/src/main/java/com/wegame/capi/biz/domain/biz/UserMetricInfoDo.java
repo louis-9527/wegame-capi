@@ -50,7 +50,7 @@ public class UserMetricInfoDo implements Serializable {
     /**
      * 退出时余额
      */
-    private long exitBalance;
+    private Long exitBalance;
     /**
      * 当前余额，可能为空
      */
@@ -60,17 +60,17 @@ public class UserMetricInfoDo implements Serializable {
      */
     private Date registerTime;
     /**
-     * 上一次登陆时间
+     * 昨日登陆时间
      */
-    private Date lastLoginTime;
+    private Date yesterdayLoginTime;
     /**
      * 干预记录 <ruleId, 时间戳>
      */
     private Map<String, Long> interventionRecord;
 
     public boolean isYesterdayLogin() {
-        return Objects.nonNull(lastLoginTime)
-                && DateUtil.isBetween(lastLoginTime, DateUtil.getYesterdayBegin(), DateUtil.getYesterdayEnd());
+        return Objects.nonNull(yesterdayLoginTime)
+                && DateUtil.isBetween(yesterdayLoginTime, DateUtil.getYesterdayBegin(), DateUtil.getYesterdayEnd());
     }
 
     public boolean isTodayRegister() {

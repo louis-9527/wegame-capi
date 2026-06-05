@@ -20,14 +20,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.common.constants.MetricConstants.*;
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.metricThreadPoolExecutor;
 
 /**
  * 用户埋点服务
@@ -70,12 +68,15 @@ public class UserMetricService {
            }
            Map<String, Object> map = new HashMap<>();
            map.put(user_metric_registerTime, registerTime);
-           map.put(user_metric_lastLoginTime, lastLoginTime);
+           // judge is or not yesterday login
+           if (Objects.nonNull(lastLoginTime) && DateUtil.isBetween(lastLoginTime, DateUtil.getYesterdayBegin(), DateUtil.getYesterdayEnd())) {
+               map.put(user_metric_yesterdayLoginTime, lastLoginTime);
+           }
            BigDecimal credit = singleWalletService.getCredit(userInfo);
            map.put(user_metric_enterBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
            map.put(user_metric_currentBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
            BetRecordDo lastBetRecordDo = getLastBetRecord(userInfo);
-           map.put(user_metric_exitBalance, Objects.nonNull(lastBetRecordDo) ? lastBetRecordDo.getCredit() : 0L);
+           map.put(user_metric_exitBalance, Objects.nonNull(lastBetRecordDo) ? lastBetRecordDo.getCredit() : null);
            redisTemplate.opsForHash().putAll(key(userInfo), map);
        } catch (Exception e) {
            log.error("afterBetMetric error, userInfo: {}", userInfo, e);

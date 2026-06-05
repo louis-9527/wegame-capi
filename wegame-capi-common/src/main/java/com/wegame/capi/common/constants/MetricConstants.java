@@ -6,8 +6,8 @@ public class MetricConstants {
 
     // 注册时间
     public static final String user_metric_registerTime = "registerTime";
-    // 上一次登陆时间
-    public static final String user_metric_lastLoginTime = "lastLoginTime";
+    // 昨日登陆时间
+    public static final String user_metric_yesterdayLoginTime = "yesterdayLoginTime";
     // 进入游戏时余额
     public static final String user_metric_enterBalance = "enterBalance";
     // 退出游戏时余额

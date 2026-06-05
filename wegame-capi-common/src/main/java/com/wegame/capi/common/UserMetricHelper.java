@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,7 +129,7 @@ public class UserMetricHelper implements Serializable {
     public static long getExitBalance(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
         Object obj = map.get(user_metric_exitBalance);
-        return Objects.isNull(obj) ? 0L : Long.valueOf(obj.toString());
+        return Objects.isNull(obj) ? null : Long.valueOf(obj.toString());
     }
 
     /**
@@ -156,7 +155,7 @@ public class UserMetricHelper implements Serializable {
      */
     public static Date getLastLoginTime(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
-        Object obj = map.get(user_metric_lastLoginTime);
+        Object obj = map.get(user_metric_yesterdayLoginTime);
         return Objects.isNull(obj) ? null : (Date) obj;
     }
 
