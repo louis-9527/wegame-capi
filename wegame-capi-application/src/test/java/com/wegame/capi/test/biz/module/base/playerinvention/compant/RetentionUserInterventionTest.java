@@ -1,5 +1,6 @@
 package com.wegame.capi.test.biz.module.base.playerinvention.compant;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
@@ -52,6 +53,7 @@ public class RetentionUserInterventionTest {
 
         PlayerInterventionContextDo contextDo = new PlayerInterventionContextDo();
         retentionUserIntervention.doProcess(paramDo, config, contextDo);
+        log.info("processTest_success param:{},context:{}", JSON.toJSONString(paramDo),JSON.toJSONString(contextDo));
         this.assertIt(contextDo);
     }
 

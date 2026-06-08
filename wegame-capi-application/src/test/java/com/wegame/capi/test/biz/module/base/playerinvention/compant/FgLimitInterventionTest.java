@@ -86,6 +86,7 @@ public class FgLimitInterventionTest {
         doReturn(config).when(fgLimitIntervention).getCmpData(FgLimitIntervention.FgLimitInterventionConfigDo.class);
         doReturn(contextDo).when(fgLimitIntervention).getContextBean(PlayerInterventionContextDo.class);
         fgLimitIntervention.process();
+        log.info("processTest_success param:{},context:{}", JSON.toJSONString(paramDo),JSON.toJSONString(contextDo));
         this.assertIt(contextDo);
     }
 

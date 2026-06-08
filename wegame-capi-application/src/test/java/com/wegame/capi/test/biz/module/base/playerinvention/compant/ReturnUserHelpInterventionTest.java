@@ -1,5 +1,6 @@
 package com.wegame.capi.test.biz.module.base.playerinvention.compant;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
@@ -12,6 +13,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.constants.InterventionRuleIdConstants;
 import com.wegame.capi.common.enums.InterventionChainIdTypeEnum;
 import com.wegame.capi.common.enums.RepeatTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,7 +26,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doReturn;
-
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 public class ReturnUserHelpInterventionTest {
     private static final String TAG="9";
@@ -73,6 +75,7 @@ public class ReturnUserHelpInterventionTest {
         config.setMultipleBias(new BigDecimal("0.10"));
         PlayerInterventionContextDo contextDo = new PlayerInterventionContextDo();
         returnUserHelpIntervention.doProcess(paramDo, config, contextDo);
+        log.info("processTest_success param:{},context:{}", JSON.toJSONString(paramDo),JSON.toJSONString(contextDo));
         this.assertIt(contextDo);
     }
 

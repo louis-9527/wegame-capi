@@ -1,5 +1,6 @@
 package com.wegame.capi.test.biz.module.base.playerinvention.compant;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
@@ -12,6 +13,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.constants.InterventionRuleIdConstants;
 import com.wegame.capi.common.enums.InterventionChainIdTypeEnum;
 import com.wegame.capi.common.enums.RepeatTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,7 +26,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doReturn;
-
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 public class NormalEmptyInterventionTest {
     private static final String TAG="3";
@@ -64,6 +66,7 @@ public class NormalEmptyInterventionTest {
         config.setInterventionTemplateRange("0_1");
         PlayerInterventionContextDo contextDo = new PlayerInterventionContextDo();
         normalEmptyIntervention.doProcess(paramDo, config, contextDo);
+        log.info("processTest_success param:{},context:{}", JSON.toJSONString(paramDo),JSON.toJSONString(contextDo));
         this.assertIt(contextDo);
     }
 

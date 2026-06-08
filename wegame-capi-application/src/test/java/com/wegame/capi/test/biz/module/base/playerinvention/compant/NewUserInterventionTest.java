@@ -1,5 +1,6 @@
 package com.wegame.capi.test.biz.module.base.playerinvention.compant;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionParamDo;
@@ -54,6 +55,7 @@ public class NewUserInterventionTest {
         config.setRtpName("98rtp");
         PlayerInterventionContextDo contextDo = new PlayerInterventionContextDo();
         newUserIntervention.doProcess(paramDo, config, contextDo);
+        log.info("processTest_success param:{},context:{}", JSON.toJSONString(paramDo),JSON.toJSONString(contextDo));
         Assertions.assertNotNull(contextDo.getPreCmpResult());
 //        assertNull(contextDo.getCurrentCmpResultPoint());
         Assertions.assertNotNull(contextDo.getChainInterventionResultMap());

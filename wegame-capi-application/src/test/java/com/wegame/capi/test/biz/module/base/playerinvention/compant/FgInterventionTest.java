@@ -61,7 +61,7 @@ public class FgInterventionTest {
         config.setRtpName(RTP_NAME);
         PlayerInterventionContextDo contextDo = new PlayerInterventionContextDo();
         fgIntervention.doProcess(paramDo, config, contextDo);
-        log.info("FgInterventionTest param:{},context:{}", JSON.toJSONString(paramDo),JSON.toJSONString(contextDo));
+        log.info("processTest_success param:{},context:{}", JSON.toJSONString(paramDo),JSON.toJSONString(contextDo));
         this.assertIt(contextDo);
     }
 
