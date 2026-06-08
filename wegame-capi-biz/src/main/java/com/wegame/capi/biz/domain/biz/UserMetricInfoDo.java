@@ -82,10 +82,7 @@ public class UserMetricInfoDo implements Serializable {
     }
 
     public double getRtp() {
-        if (totalBetAmount == 0) {
-            return 0;
-        }
-        return totalPayoutAmount / (double) totalBetAmount;
+        return totalBetAmount  == 0L ? 0 : totalPayoutAmount / (double) totalBetAmount;
     }
 
     /**
