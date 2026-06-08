@@ -50,7 +50,7 @@ public class ReturnUserHelpInterventionTest {
                 .userMetricInfoDo(
                         UserMetricInfoDo.builder()
                                 .registerTime(DateUtil.getYesterdayBegin())
-                                .yesterdayLoginTime(DateUtil.getYesterdayBegin())
+                                .lastLoginTime(DateUtil.getYesterdayBegin())
                                 .totalBetTimes(100)
                                 .todayBetTimes(20)
                                 .currentBalance(1000L)

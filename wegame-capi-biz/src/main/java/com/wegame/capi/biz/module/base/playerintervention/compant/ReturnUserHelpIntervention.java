@@ -43,10 +43,12 @@ public class ReturnUserHelpIntervention extends AbstractNodeComponent<ReturnUser
         int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
         double rtp = userMetricInfoDo.getRtp();
         BigDecimal betAmount = new BigDecimal(paramDo.getBetAmount());
+
         return enterBalance>exitBalance &&
                 todayBetTimes >= config.getMinTodayGameCount() &&
                 currentBalance <= betAmount.multiply(config.getBetAmountCoefficient()).longValue() &&
-                rtp <= config.getMaxRtp().doubleValue()
+                rtp <= config.getMaxRtp().doubleValue() &&
+                !userMetricInfoDo.afterCurrentLoginHashTriggerIndexRule(this.getNodeId())
                 ;
     }
 

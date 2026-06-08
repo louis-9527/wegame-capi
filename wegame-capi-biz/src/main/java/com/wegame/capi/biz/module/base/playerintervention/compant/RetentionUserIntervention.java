@@ -20,11 +20,16 @@ import java.util.Objects;
 @LiteflowComponent(id = InterventionRuleIdConstants.RETENTION_USER_INTERVENTION)
 public class RetentionUserIntervention extends AbstractNodeComponent<RetentionUserIntervention.RetentionUserInterventionConfigDo> {
 
+    /**
+     * 昨日有投注记录。
+     * 今日累计游戏局数 <= 200
+     */
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, RetentionUserInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
-        return Objects.nonNull(userMetricInfoDo.getYesterdayHasBet()) && userMetricInfoDo.getYesterdayHasBet() && userMetricInfoDo.getTotalBetTimes() <= config.getMaxTotalGameCount();
+        return Objects.nonNull(userMetricInfoDo.getYesterdayHasBet()) && userMetricInfoDo.getYesterdayHasBet() &&
+                userMetricInfoDo.getTotalBetTimes() <= config.getMaxTotalGameCount();
     }
 
     @Override

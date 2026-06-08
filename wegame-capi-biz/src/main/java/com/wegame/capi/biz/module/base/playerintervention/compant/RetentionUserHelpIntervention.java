@@ -31,7 +31,7 @@ public class RetentionUserHelpIntervention extends AbstractNodeComponent<Retenti
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, RetentionUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
-        boolean yesterdayLogin = userMetricInfoDo.isYesterdayLogin();
+        Boolean yesterdayHasBet = userMetricInfoDo.getYesterdayHasBet();
         int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
         Long currentCredit = userMetricInfoDo.getCurrentBalance();
         if (Objects.isNull(currentCredit)){
@@ -39,7 +39,7 @@ public class RetentionUserHelpIntervention extends AbstractNodeComponent<Retenti
         }
         double rtp = userMetricInfoDo.getRtp();
         BigDecimal betAmount = new BigDecimal(paramDo.getBetAmount());
-        return yesterdayLogin &&
+        return Objects.nonNull(yesterdayHasBet) && yesterdayHasBet &&
                 todayBetTimes >= config.getMinTodayGameCount() &&
                 currentCredit <= betAmount.multiply(config.getBetAmountCoefficient()).longValue() &&
                 rtp <= config.getMaxRtp().doubleValue()

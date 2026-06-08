@@ -50,7 +50,7 @@ public class RetentionUserHelpInterventionTest {
                 .userMetricInfoDo(
                         UserMetricInfoDo.builder()
                                 .registerTime(DateUtil.getYesterdayBegin())
-                                .yesterdayLoginTime(DateUtil.getYesterdayBegin())
+                                .yesterdayHasBet(true)
                                 .totalBetTimes(100)
                                 .todayBetTimes(20)
                                 .currentBalance(1000L)
