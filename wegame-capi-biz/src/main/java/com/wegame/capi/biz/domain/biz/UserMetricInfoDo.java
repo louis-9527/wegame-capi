@@ -39,11 +39,10 @@ public class UserMetricInfoDo implements Serializable {
     private int continueEmptyTimes;
     /**
      * 当日不中FG次数
-     * 1、为空：当日未累计
-     * 2、为0: 中fg后清0
-     * 3、大与0: 当日累计且大于0
+     * 1、为0: 中fg后清0
+     * 2、大于0: 当日累计且大于0
      */
-    private Integer todayContinueNoFgTimes;
+    private int todayContinueNoFgTimes;
     /**
      * 进入时余额，可能为空
      */
@@ -99,9 +98,6 @@ public class UserMetricInfoDo implements Serializable {
             return false;
         }
         Long lastInterventionTimestamp = interventionRecord.get(ruleId);
-        if (Objects.isNull(lastInterventionTimestamp)) {
-            return false;
-        }
-        return Objects.nonNull(currentLoginTime) && lastInterventionTimestamp > currentLoginTime.getTime();
+        return Objects.nonNull(lastInterventionTimestamp) && Objects.nonNull(currentLoginTime) && lastInterventionTimestamp > currentLoginTime.getTime();
     }
 }
