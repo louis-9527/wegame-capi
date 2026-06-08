@@ -95,13 +95,13 @@ public class UserMetricInfoDo implements Serializable {
      * @return
      */
     public boolean afterCurrentLoginHashTriggerIndexRule(String ruleId) {
-        if (MapUtils.isNotEmpty(interventionRecord)) {
+        if (MapUtils.isEmpty(interventionRecord)) {
             return false;
         }
         Long lastInterventionTimestamp = interventionRecord.get(ruleId);
         if (Objects.isNull(lastInterventionTimestamp)) {
             return false;
         }
-        return lastInterventionTimestamp > currentLoginTime.getTime();
+        return Objects.nonNull(currentLoginTime) && lastInterventionTimestamp > currentLoginTime.getTime();
     }
 }
