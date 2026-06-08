@@ -43,7 +43,7 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
             AssertUtil.assertTrue(contextDo.getPreCmpResult().getChainSort() <= chainIdType.getDefaultSort(), ErrorCode.ERR_INTER);
             if (Objects.equals(chainId, contextDo.getPreCmpResult().getChainId())) {
                 // 同一个组件允许重入
-                return Objects.equals(contextDo.getPreCmpResult().getComponentId(), this.getNodeId());
+                return Objects.equals(contextDo.getPreCmpResult().getCmpId(), this.getNodeId());
             }
             String sortStr = this.getTag();
             AssertUtil.assertTrue(NumberUtil.isInteger(sortStr), ErrorCode.ERR_PARAM);
@@ -65,19 +65,32 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
 
     public void doProcess(PlayerInterventionParamDo paramDo, T config, PlayerInterventionContextDo contextDo) throws Exception {
         contextDo.setCurrentCmpResultPoint(null);
+        PlayerInterventionContextDo.InterventionTraceInfo traceInfo = new PlayerInterventionContextDo.InterventionTraceInfo();
+        traceInfo.setChainId(this.getChainId());
+        traceInfo.setCmpId(this.getNodeId());
         if (!this.canContinue(paramDo, config, contextDo)) {
+            traceInfo.setMessage("not hit ,canContinue false");
+            contextDo.addInterventionTraceInfo(traceInfo);
             return;
         }
         if (!this.triggerCondition(paramDo, config, contextDo)) {
+            traceInfo.setMessage("not hit ,triggerCondition false");
+            contextDo.addInterventionTraceInfo(traceInfo);
             return;
         }
         if (!this.triggerProbability(paramDo, config, contextDo)) {
+            traceInfo.setMessage("not hit ,triggerProbability false");
+            contextDo.addInterventionTraceInfo(traceInfo);
             return;
         }
         if (!this.repeatCondition(paramDo, config, contextDo)) {
+            traceInfo.setMessage("not hit ,repeatCondition false");
+            contextDo.addInterventionTraceInfo(traceInfo);
             return;
         }
         this.intervention(paramDo, config, contextDo);
+        traceInfo.setMessage("hit");
+        contextDo.addInterventionTraceInfo(traceInfo);
     }
 
     @Override
@@ -115,7 +128,7 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
 
     protected boolean canTrigger(BigDecimal triggerProbability) {
         int proInt = triggerProbability.multiply(new BigDecimal(Constants.CONST_10000)).intValue();
-        if (proInt<=0 || proInt>=Constants.CONST_10000){
+        if (proInt <= 0 || proInt >= Constants.CONST_10000) {
             return true;
         }
         int randomInt = randomService.randomInt(Constants.CONST_1, Constants.CONST_10000);
@@ -133,7 +146,7 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
         PlayerInterventionResultDo currentResult = PlayerInterventionResultDo.builder()
                 .chainId(this.getChainId())
                 .chainSort(chainIdType.getDefaultSort())
-                .componentId(this.getNodeId())
+                .cmpId(this.getNodeId())
                 .cmpSort(Integer.valueOf(this.getTag()))
                 .rtpName(config.getRtpName())
                 .backstopRtpName(config.getBackstopRtpName())

@@ -1,13 +1,11 @@
 package com.wegame.capi.test.biz.module.base.playerinvention.compant;
 
-import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionParamDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionResultDo;
 import com.wegame.capi.biz.module.base.playerintervention.compant.NewUserEmptyIntervention;
-import com.wegame.capi.biz.module.base.playerintervention.compant.ReturnUserHelpIntervention;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -78,7 +76,7 @@ public class NewUserEmptyInterventionTest {
         assertEquals(cmpResult.getChainId(), CHAIN_ID_TYPE.formatChainId(GameTypeEnum.LAM_ANG));
         assertEquals(cmpResult.getChainSort() + "", CHAIN_ID_TYPE.getDefaultSort() + "");
         assertEquals(cmpResult.getCmpSort() + "", TAG);
-        assertEquals(CMP_ID, cmpResult.getComponentId());
+        assertEquals(CMP_ID, cmpResult.getCmpId());
         assertNotNull(cmpResult.getTemplateMultipleRange());
 
     }

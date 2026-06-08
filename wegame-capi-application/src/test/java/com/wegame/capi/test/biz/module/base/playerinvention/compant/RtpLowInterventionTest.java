@@ -4,7 +4,6 @@ import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionParamDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionResultDo;
-import com.wegame.capi.biz.module.base.playerintervention.compant.RtpHighIntervention;
 import com.wegame.capi.biz.module.base.playerintervention.compant.RtpLowIntervention;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -68,7 +67,7 @@ public class RtpLowInterventionTest {
         assertEquals(cmpResult.getChainId(), CHAIN_ID_TYPE.formatChainId(GameTypeEnum.LAM_ANG));
         assertEquals(cmpResult.getChainSort() + "", CHAIN_ID_TYPE.getDefaultSort() + "");
         assertEquals(cmpResult.getCmpSort() + "", TAG);
-        assertEquals(CMP_ID, cmpResult.getComponentId());
+        assertEquals(CMP_ID, cmpResult.getCmpId());
         assertEquals(cmpResult.getRtpName(), RTP_NAME);
     }
 

@@ -22,8 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 
 @Slf4j
@@ -66,7 +64,7 @@ public class RetentionUserInterventionTest {
         Assertions.assertEquals(cmpResult.getChainId(), InterventionChainIdTypeEnum.PRE_INTERVENTION.formatChainId(GameTypeEnum.LAM_ANG));
         Assertions.assertEquals(cmpResult.getChainSort() + "", InterventionChainIdTypeEnum.PRE_INTERVENTION.getDefaultSort() + "");
         Assertions.assertEquals(cmpResult.getCmpSort() + "", "5");
-        Assertions.assertEquals(InterventionRuleIdConstants.RETENTION_USER_INTERVENTION, cmpResult.getComponentId());
+        Assertions.assertEquals(InterventionRuleIdConstants.RETENTION_USER_INTERVENTION, cmpResult.getCmpId());
         Assertions.assertEquals(cmpResult.getRtpName(), "98rtp");
     }
 

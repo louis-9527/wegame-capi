@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.lamang.game;
 
 import cn.hutool.core.util.StrUtil;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
@@ -87,7 +86,7 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
         PlayerInterventionResultDo postInterventionResult = playerInterventionService.postIntervention(betDo.getGameType(), playerInterventionParamDo, contextDo);
         LamangBetRecordTemplateEsDo templateEsDo = this.fetchTemplate(postInterventionResult, betDo, gamePlayDo);
         if (Objects.nonNull(templateEsDo)) {
-            betDo.setInterventionRuleId(postInterventionResult.getComponentId());
+            betDo.setInterventionRuleId(postInterventionResult.getCmpId());
         }
         return templateEsDo;
     }

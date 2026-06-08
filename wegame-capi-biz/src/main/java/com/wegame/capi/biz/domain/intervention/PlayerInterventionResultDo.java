@@ -25,7 +25,7 @@ public class PlayerInterventionResultDo {
     /**
      * 组件id
      */
-    private String componentId;
+    private String cmpId;
     /**
      * cmp Sort
      */

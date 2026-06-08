@@ -1,10 +1,8 @@
 package com.wegame.capi.biz.domain.intervention;
 
 import cn.hutool.core.collection.CollectionUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.google.common.collect.Lists;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -36,11 +34,28 @@ public class PlayerInterventionContextDo implements Serializable {
      */
     private Map<String, PlayerInterventionResultDo> chainInterventionResultMap;
 
+    /**
+     * 干预链
+     */
+    private List<InterventionTraceInfo> traceInfoList;
+
+    public void addInterventionTraceInfo(InterventionTraceInfo traceInfo) {
+        if (Objects.isNull(traceInfo)) {
+            return;
+        }
+        if (CollectionUtil.isEmpty(this.traceInfoList)) {
+            this.traceInfoList = Lists.newArrayList();
+        }
+        this.traceInfoList.add(traceInfo);
+
+    }
+
+
     public void addChainResult(PlayerInterventionResultDo result) {
         if (CollectionUtil.isEmpty(this.chainInterventionResultMap)) {
             this.chainInterventionResultMap = new HashMap<>();
         }
-        this.chainInterventionResultMap.put(result.getComponentId(), result);
+        this.chainInterventionResultMap.put(result.getCmpId(), result);
     }
 
     public PlayerInterventionResultDo getChainResult(String cmpId) {
@@ -57,6 +72,20 @@ public class PlayerInterventionContextDo implements Serializable {
         List<PlayerInterventionResultDo> list = this.chainInterventionResultMap.values().stream()
                 .sorted(Comparator.comparing(PlayerInterventionResultDo::getCmpSort).reversed()).collect(Collectors.toList());
         return list.get(0);
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class InterventionTraceInfo {
+        public InterventionTraceInfo(String chainId, String cmpId, String message) {
+            this.chainId = chainId;
+            this.cmpId = cmpId;
+            this.message = message;
+        }
+        private String chainId;
+        private String cmpId;
+        private String message;
     }
 
 }

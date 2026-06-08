@@ -64,7 +64,7 @@ public class RtpHighInterventionTest {
         assertEquals(cmpResult.getChainId(), CHAIN_ID_TYPE.formatChainId(GameTypeEnum.LAM_ANG));
         assertEquals(cmpResult.getChainSort() + "", CHAIN_ID_TYPE.getDefaultSort() + "");
         assertEquals(cmpResult.getCmpSort() + "", TAG);
-        assertEquals(CMP_ID, cmpResult.getComponentId());
+        assertEquals(CMP_ID, cmpResult.getCmpId());
         assertEquals(cmpResult.getRtpName(), RTP_NAME);
     }
 

@@ -85,7 +85,7 @@ public class ReturnUserHelpInterventionTest {
         assertEquals(cmpResult.getChainId(), CHAIN_ID_TYPE.formatChainId(GameTypeEnum.LAM_ANG));
         assertEquals(cmpResult.getChainSort() + "", CHAIN_ID_TYPE.getDefaultSort() + "");
         assertEquals(cmpResult.getCmpSort() + "", TAG);
-        assertEquals(CMP_ID, cmpResult.getComponentId());
+        assertEquals(CMP_ID, cmpResult.getCmpId());
         assertEquals(cmpResult.getBackstopRtpName(), RTP_NAME);
         assertNotNull(cmpResult.getTemplateMultipleRange());
 
