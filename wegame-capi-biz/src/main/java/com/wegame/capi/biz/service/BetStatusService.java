@@ -89,8 +89,7 @@ public class BetStatusService {
                 if (Objects.equals(BetStatusEnum.SUCCESS, betStatus)) {
                     handle(betRecordDo, gameType, betStatus, betStatusRes);
                     inventoryManager.increaseInventory(BetStatusEnum.SUCCESS, betRecordDo);
-                    // todo @bruce userMetricService.afterBetMetric(UserInfoContext.getUserInfo(), betRecordDo, result, syncOpt);
-                    break;
+                    // todo @bruce userMetricService.afterBetMetric(UserInfoContext.getUserInfo(), betRecordDo, result, syncOpt);break;
                 } else if (Objects.equals(BetStatusEnum.FAIL, betStatus)) {
                     log.warn("convertBetStatus warn bet fail, betRecordId: {}, betStatusRes: {}", betRecordDo.getId(), betStatusRes);
                     handle(betRecordDo, gameType, betStatus, betStatusRes);

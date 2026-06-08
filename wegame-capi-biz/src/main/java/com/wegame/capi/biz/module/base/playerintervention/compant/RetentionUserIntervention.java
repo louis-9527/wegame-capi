@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 次留干预
@@ -23,7 +24,7 @@ public class RetentionUserIntervention extends AbstractNodeComponent<RetentionUs
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, RetentionUserInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
-        return userMetricInfoDo.isYesterdayLogin() && userMetricInfoDo.getTotalBetTimes() <= config.getMaxTotalGameCount();
+        return Objects.nonNull(userMetricInfoDo.getYesterdayHasBet()) && userMetricInfoDo.getYesterdayHasBet() && userMetricInfoDo.getTotalBetTimes() <= config.getMaxTotalGameCount();
     }
 
     @Override

@@ -77,12 +77,6 @@ public class UserMetricInfoDo implements Serializable {
      */
     private Map<String, Long> interventionRecord;
 
-    public boolean isYesterdayLogin() {
-        //。todo fix
-        return Objects.nonNull(lastLoginTime)
-                && DateUtil.isBetween(lastLoginTime, DateUtil.getYesterdayBegin(), DateUtil.getYesterdayEnd());
-    }
-
     public boolean isTodayRegister() {
         return Objects.nonNull(registerTime)
                 && DateUtil.isBetween(registerTime, DateUtil.getTodayBegin(), DateUtil.getTodayEnd());
