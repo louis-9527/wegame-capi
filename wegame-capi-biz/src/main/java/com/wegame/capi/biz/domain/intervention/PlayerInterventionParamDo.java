@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.intervention;
 
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import lombok.AllArgsConstructor;
@@ -40,30 +41,36 @@ public class PlayerInterventionParamDo {
     private long betAmount;
 
     /**
+     * 支付金额
+     */
+    private long payAmount;
+
+    /**
      * 额外操作
      * key:cmp id
      * value:具体操作
      */
     private Map<String, Function> extOperator;
 
-    public static PlayerInterventionParamDo buildDo(UserMetricInfoDo userMetricInfoDo, BetRecordTemplateEsDo betRecordTemplateEsDo, BetTypeEnum betType, long betAmount){
+    public static PlayerInterventionParamDo buildDo(UserMetricInfoDo userMetricInfoDo, BetRecordTemplateEsDo betRecordTemplateEsDo, BetDo betDo) {
         return PlayerInterventionParamDo.builder()
                 .userMetricInfoDo(userMetricInfoDo)
                 .betRecordTemplateEsDo(betRecordTemplateEsDo)
-                .betType(betType)
-                .betAmount(betAmount)
+                .betType(betDo.getBetType())
+                .betAmount(betDo.getBetAmount())
+                .payAmount(betDo.getPayAmount())
                 .build();
     }
 
-    public void addExtOperator(String cmpId, Function function){
-        if (Objects.isNull(this.extOperator)){
+    public void addExtOperator(String cmpId, Function function) {
+        if (Objects.isNull(this.extOperator)) {
             this.extOperator = new ConcurrentHashMap<>();
         }
         this.extOperator.put(cmpId, function);
     }
 
-    public Function getExtOperatorFc(String cmpId){
-        if (Objects.isNull(this.extOperator)){
+    public Function getExtOperatorFc(String cmpId) {
+        if (Objects.isNull(this.extOperator)) {
             return null;
         }
         return this.extOperator.get(cmpId);

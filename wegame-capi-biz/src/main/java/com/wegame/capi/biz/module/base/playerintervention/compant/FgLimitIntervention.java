@@ -2,9 +2,7 @@ package com.wegame.capi.biz.module.base.playerintervention.compant;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.RetryUtil;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.intervention.*;
@@ -52,22 +50,22 @@ public class FgLimitIntervention extends AbstractNodeComponent<FgLimitInterventi
         }
 
         int retryCount = config.getInterventionRetryCount();
-        while (retryCount > 0){
+        while (retryCount > 0) {
             Object obj = fc.apply(currentCmpResult);
-            AssertUtil.assertNotNull(obj,ErrorCode.ERR_INTER,"fc is result is null of cmpId "+this.getNodeId());
-            paramDo.setBetRecordTemplateEsDo((BetRecordTemplateEsDo)obj);
+            AssertUtil.assertNotNull(obj, ErrorCode.ERR_INTER);
+            paramDo.setBetRecordTemplateEsDo((BetRecordTemplateEsDo) obj);
             super.doProcess(paramDo, config, contextDo);
             PlayerInterventionResultDo resultPoint = contextDo.getCurrentCmpResultPoint();
             // 表示不走这个规则了
-            if (Objects.isNull(resultPoint)){
-                contextDo.getChainResult(this.getNodeId()).setBetRecordTemplateEsDo((BetRecordTemplateEsDo)obj);
+            if (Objects.isNull(resultPoint)) {
+                contextDo.getChainResult(this.getNodeId()).setBetRecordTemplateEsDo((BetRecordTemplateEsDo) obj);
                 return;
-            }else {
+            } else {
                 contextDo.setCurrentCmpResultPoint(null);
                 retryCount--;
             }
         }
-        throw new BusinessException(ErrorCode.ERR_INTER,"please retry");
+        throw new BusinessException(ErrorCode.ERR_INTER, "please retry");
     }
 
     /**
@@ -79,12 +77,12 @@ public class FgLimitIntervention extends AbstractNodeComponent<FgLimitInterventi
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, FgLimitInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
-        AssertUtil.assertNotNull(paramDo.getBetType(), ErrorCode.ERR_PARAM, "betType is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(paramDo.getBetType(), ErrorCode.ERR_PARAM);
         List<BetTypeEnum> supportBetTypes = Optional.ofNullable(config.getSupportBetTypeList()).orElse(Collections.emptyList());
         int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
         BetRecordTemplateEsDo betRecordTemplateEsDo = paramDo.getBetRecordTemplateEsDo();
-        AssertUtil.assertNotNull(betRecordTemplateEsDo, ErrorCode.ERR_PARAM, "fgLimitIntervention,betRecordTemplateEsDo is null");
+        AssertUtil.assertNotNull(betRecordTemplateEsDo, ErrorCode.ERR_PARAM);
         boolean hasFreeGame = Optional.ofNullable(betRecordTemplateEsDo.getHasFreeGame()).orElse(false);
         Double templateMultiple = Optional.ofNullable(betRecordTemplateEsDo.getMultiple()).orElse(0d);
 
@@ -106,7 +104,6 @@ public class FgLimitIntervention extends AbstractNodeComponent<FgLimitInterventi
 
     @Override
     protected void intervention(PlayerInterventionParamDo paramDo, FgLimitInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
-        // todo 重试逻辑补充
         super.buildInterventionResult(paramDo, config, contextDo, null, null, null);
     }
 
@@ -122,11 +119,6 @@ public class FgLimitIntervention extends AbstractNodeComponent<FgLimitInterventi
          * {@link DefaultInterventionConfigDo#getMaxTotalGameCount()}
          */
         private Integer maxTotalGameCount;
-        /**
-         * 是否击中fg
-         * {@link DefaultInterventionConfigDo#isHitFg()}
-         */
-        private boolean isHitFg;
         /**
          * 最小模版倍率
          * {@link DefaultInterventionConfigDo#getMinTemplateMultiple()}

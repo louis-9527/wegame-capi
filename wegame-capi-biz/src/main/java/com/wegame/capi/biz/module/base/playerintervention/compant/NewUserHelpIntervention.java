@@ -32,7 +32,7 @@ public class NewUserHelpIntervention extends AbstractNodeComponent<NewUserHelpIn
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, NewUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         boolean todayRegister = userMetricInfoDo.isTodayRegister();
         int totalBetTimes = userMetricInfoDo.getTotalBetTimes();
         int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
@@ -69,11 +69,12 @@ public class NewUserHelpIntervention extends AbstractNodeComponent<NewUserHelpIn
     @Override
     protected void intervention(PlayerInterventionParamDo paramDo, NewUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         long enterBalance = Optional.ofNullable(userMetricInfoDo.getEnterBalance()).orElse(0L);
-        long betAmount = paramDo.getBetAmount();
+        long payAmount = paramDo.getPayAmount();
+        AssertUtil.assertTrue(payAmount>0, ErrorCode.ERR_PARAM);
         BigDecimal betAmountCoefficient = config.getBetAmountCoefficient();
-        BigDecimal baseMultiple = BigDecimal.valueOf(enterBalance / (double) betAmount).multiply(betAmountCoefficient);
+        BigDecimal baseMultiple = BigDecimal.valueOf(enterBalance / (double) payAmount).multiply(betAmountCoefficient);
         BigDecimal start = baseMultiple.multiply(BigDecimal.ONE.subtract(config.getMultipleBias()));
         BigDecimal end = baseMultiple.multiply(BigDecimal.ONE.add(config.getMultipleBias()));
         super.buildInterventionResult(paramDo, config, contextDo,TemplateMultipleRange.builder().start(start).end(end).build(),null,null);
@@ -81,11 +82,6 @@ public class NewUserHelpIntervention extends AbstractNodeComponent<NewUserHelpIn
 
     @Data
     public static class NewUserHelpInterventionConfigDo implements InterventionConfig {
-        /**
-         * 是否当日注册
-         * {@link DefaultInterventionConfigDo#isToDayRegister()}
-         */
-        private boolean isToDayRegister;
         /**
          * 最大累计游戏局数
          * {@link DefaultInterventionConfigDo#getMaxTotalGameCount()}

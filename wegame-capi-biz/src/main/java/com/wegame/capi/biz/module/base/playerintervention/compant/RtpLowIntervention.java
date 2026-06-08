@@ -22,7 +22,7 @@ public class RtpLowIntervention extends AbstractNodeComponent<RtpLowIntervention
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, RtpLowInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
-        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         double rtp = userMetricInfoDo.getRtp();
         return rtp <= config.getMaxRtp().doubleValue();
     }

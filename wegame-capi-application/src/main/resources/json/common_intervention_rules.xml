@@ -1,7 +1,6 @@
 <flow>
     <chain name="zhumeng004_preIntervention">
         newUserIntervention_data = '{
-        "isToDayRegister":"true",
         "maxTotalGameCount":27,
         "triggerProbability":"1",
         "repeatType":"always_repeat",
@@ -41,7 +40,6 @@
         }';
 
         newUserHelpIntervention_data = '{
-        "isToDayRegister":"true",
         "maxTotalGameCount":100,
         "minTodayGameCount":20,
         "betAmountCoefficient":"5",
@@ -55,7 +53,6 @@
 
 
         retentionUserHelpIntervention_data = '{
-        "isYesterdayLogin":"true",
         "minTodayGameCount":20,
         "betAmountCoefficient":"5",
         "maxRtp":"0.8",
@@ -95,7 +92,6 @@
         fgLimitIntervention_data = '{
         "supportBetTypeList":["NORMAL_BET"],
         "maxTotalGameCount":200,
-        "isHitFg":"true",
         "minTemplateMultiple":"30",
         "triggerProbability":"1",
         "repeatType":"always_repeat",

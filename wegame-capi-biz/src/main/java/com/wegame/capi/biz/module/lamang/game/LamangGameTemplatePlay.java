@@ -74,7 +74,7 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         UserMetricInfoDo userMetricInfo = userMetricService.getUserMetricInfo(userInfo);
-        PlayerInterventionParamDo playerInterventionParamDo = PlayerInterventionParamDo.buildDo(userMetricInfo, null, betDo.getBetType(), betDo.getBetAmount());
+        PlayerInterventionParamDo playerInterventionParamDo = PlayerInterventionParamDo.buildDo(userMetricInfo, null, betDo);
         this.paramExtOperatorBuilder(playerInterventionParamDo, betDo, gamePlayDo);
         // 前置
         PlayerInterventionContextDo contextDo = new PlayerInterventionContextDo();
@@ -86,13 +86,13 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
         PlayerInterventionResultDo postInterventionResult = playerInterventionService.postIntervention(betDo.getGameType(), playerInterventionParamDo, contextDo);
         LamangBetRecordTemplateEsDo templateEsDo = this.fetchTemplate(postInterventionResult, betDo, gamePlayDo);
         if (Objects.nonNull(templateEsDo)) {
-            betDo.setInterventionRuleId(postInterventionResult.getComponentId());
+            betDo.setInterventionRuleId(postInterventionResult.getCmpId());
         }
         return templateEsDo;
     }
 
     private void paramExtOperatorBuilder(PlayerInterventionParamDo param, BetDo betDo, GamePlayDo gamePlayDo) {
-        Function function= (Function<PlayerInterventionResultDo, LamangBetRecordTemplateEsDo>) resultDo -> fetchTemplate(resultDo, betDo, gamePlayDo);
+        Function function = (Function<PlayerInterventionResultDo, LamangBetRecordTemplateEsDo>) resultDo -> fetchTemplate(resultDo, betDo, gamePlayDo);
         param.addExtOperator(InterventionRuleIdConstants.FG_LIMIT_INTERVENTION, function);
     }
 
@@ -107,18 +107,29 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
         LamangBetRecordTemplateEsDo templateEsDo = null;
         if (StrUtil.isNotEmpty(interventionResult.getRtpName())) {
             CommonTemplateConfig.Rtp rtpByRtpName = lamangConfig.getCommonTemplateConfig().getRtpByRtpName(interventionResult.getRtpName());
-            AssertUtil.assertNotNull(rtpByRtpName, ErrorCode.ERR_INTER, "RtpName is null: " + interventionResult.getRtpName());
+            AssertUtil.assertNotNull(rtpByRtpName, ErrorCode.ERR_INTER);
             if (Objects.nonNull(interventionResult.getTemplateMultipleRange())) {
                 templateEsDo = super.fetchTemplateInRandom(gamePlayDo, rtpByRtpName.getIndexName(), interventionResult.getTemplateMultipleRange(), LamangBetRecordTemplateEsDo.class);
+                if (Objects.nonNull(templateEsDo)) {
+                    return templateEsDo;
+                }
             } else {
-                return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtpByRtpName, LamangBetRecordTemplateEsDo.class);
+                return super.fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtpByRtpName, LamangBetRecordTemplateEsDo.class);
+            }
+        } else {
+            // 使用默认rtp
+            if (Objects.nonNull(interventionResult.getTemplateMultipleRange())) {
+                CommonTemplateConfig.Rtp defaultRtp = getDefaultRtp(betDo, lamangConfig.getCommonTemplateConfig());
+                templateEsDo = super.fetchTemplateInRandom(gamePlayDo, defaultRtp.getIndexName(), interventionResult.getTemplateMultipleRange(), LamangBetRecordTemplateEsDo.class);
+                if (Objects.nonNull(templateEsDo)) {
+                    return templateEsDo;
+                }
             }
         }
-
-        if (Objects.isNull(templateEsDo) && StrUtil.isNotEmpty(interventionResult.getBackstopRtpName())) {
+        if (StrUtil.isNotEmpty(interventionResult.getBackstopRtpName())) {
             CommonTemplateConfig.Rtp rtpByRtpName = lamangConfig.getCommonTemplateConfig().getRtpByRtpName(interventionResult.getRtpName());
-            AssertUtil.assertNotNull(rtpByRtpName, ErrorCode.ERR_INTER, "RtpName is null: " + interventionResult.getRtpName());
-            return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtpByRtpName, LamangBetRecordTemplateEsDo.class);
+            AssertUtil.assertNotNull(rtpByRtpName, ErrorCode.ERR_INTER);
+            return super.fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtpByRtpName, LamangBetRecordTemplateEsDo.class);
         }
         return templateEsDo;
     }
