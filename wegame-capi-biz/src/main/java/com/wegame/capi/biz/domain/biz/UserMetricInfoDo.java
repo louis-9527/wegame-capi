@@ -42,7 +42,7 @@ public class UserMetricInfoDo implements Serializable {
      * 1、为0: 中fg后清0
      * 2、大于0: 当日累计且大于0
      */
-    private Integer todayContinueNoFgTimes;
+    private int todayContinueNoFgTimes;
     /**
      * 进入时余额，可能为空
      */
