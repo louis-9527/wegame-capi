@@ -37,7 +37,7 @@ public class UserMetricHelper implements Serializable {
     }
 
     /**
-     * 当日投注总金额
+     * 当日投注总金额. {YYYYMMDD}_{times}
      */
     public static int getTodayBetTimes(Map<String, Object> map) {
         AssertUtil.assertNotNull(map, ErrorCode.ERR_INTER);
