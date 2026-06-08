@@ -34,28 +34,24 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
      * @return true/false
      */
     protected boolean canContinue(PlayerInterventionParamDo paramDo, T config, PlayerInterventionContextDo contextDo) {
-        AssertUtil.assertNotNull(contextDo, ErrorCode.ERR_INTER, "PlayerInterventionContextDo is null");
-        if (Objects.isNull(contextDo.getPreCmpResult())) {
-            return true;
-        }
-
-        String chainId = this.getChainId();
+        AssertUtil.assertNotNull(contextDo, ErrorCode.ERR_INTER);
         if (Objects.nonNull(contextDo.getPreCmpResult())) {
+            String chainId = this.getChainId();
             // 上一个结果的链优先级不能大于当前链优先级
             InterventionChainIdTypeEnum chainIdType = InterventionChainIdTypeEnum.valueOfConfigId(this.getChainId());
-            AssertUtil.assertNotNull(chainIdType, ErrorCode.ERR_INTER, "chainIdType is null of " + this.getChainId());
-            AssertUtil.assertTrue(contextDo.getPreCmpResult().getChainSort() >= chainIdType.getDefaultSort(), ErrorCode.ERR_INTER, "chainId sort error of " + this.getChainId());
+            AssertUtil.assertNotNull(chainIdType, ErrorCode.ERR_INTER);
+            AssertUtil.assertTrue(contextDo.getPreCmpResult().getChainSort() <= chainIdType.getDefaultSort(), ErrorCode.ERR_INTER);
             if (Objects.equals(chainId, contextDo.getPreCmpResult().getChainId())) {
-                return false;
+                // 同一个组件允许重入
+                return Objects.equals(contextDo.getPreCmpResult().getComponentId(), this.getNodeId());
             }
             String sortStr = this.getTag();
-            AssertUtil.assertTrue(NumberUtil.isInteger(sortStr), ErrorCode.ERR_PARAM, "rule sort is not integer");
+            AssertUtil.assertTrue(NumberUtil.isInteger(sortStr), ErrorCode.ERR_PARAM);
             int cmpSort = Integer.parseInt(sortStr);
             if (contextDo.getPreCmpResult().getCmpSort() > cmpSort) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -122,7 +118,8 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
         if (proInt<=0 || proInt>=Constants.CONST_10000){
             return true;
         }
-        return randomService.randomInt(Constants.CONST_1, Constants.CONST_10000) <= proInt;
+        int randomInt = randomService.randomInt(Constants.CONST_1, Constants.CONST_10000);
+        return randomInt <= proInt;
     }
 
     protected void buildInterventionResult(PlayerInterventionParamDo paramDo,

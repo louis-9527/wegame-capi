@@ -44,11 +44,6 @@ public class RetentionUserIntervention extends AbstractNodeComponent<RetentionUs
     @Data
     public static class RetentionUserInterventionConfigDo implements InterventionConfig {
         /**
-         * 是否昨日有登录
-         * {@link DefaultInterventionConfigDo#isYesterdayLogin()}
-         */
-        private boolean isYesterdayLogin;
-        /**
          * 最大累计游戏局数
          * {@link DefaultInterventionConfigDo#getMaxTotalGameCount()}
          */

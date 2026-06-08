@@ -39,7 +39,7 @@ public class NewUserInterventionTest {
 
     @Test
     public void processTest_success() throws Exception {
-        doReturn(10000).when(randomService).randomInt(anyInt(),anyInt());
+//        doReturn(10000).when(randomService).randomInt(anyInt(),anyInt());
         doReturn(InterventionChainIdTypeEnum.PRE_INTERVENTION.formatChainId(GameTypeEnum.LAM_ANG)).when(newUserIntervention).getChainId();
         doReturn("7").when(newUserIntervention).getTag();
         doReturn(InterventionRuleIdConstants.NEW_USER_INTERVENTION).when(newUserIntervention).getNodeId();
@@ -48,7 +48,6 @@ public class NewUserInterventionTest {
                 .userMetricInfoDo(UserMetricInfoDo.builder().registerTime(new Date()).totalBetTimes(0).build())
                 .build();
         NewUserIntervention.NewUserInterventionConfigDo config = new NewUserIntervention.NewUserInterventionConfigDo();
-        config.setToDayRegister(true);
         config.setMaxTotalGameCount(100);
         config.setTriggerProbability(new BigDecimal(1));
         config.setRepeatType(RepeatTypeEnum.ALWAYS_REPEAT.getCode());

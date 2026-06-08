@@ -26,7 +26,7 @@ public class PlayerInterventionServiceTest extends BaseTest {
                 .userMetricInfoDo(UserMetricInfoDo.builder().registerTime(new Date()).totalBetTimes(0).build())
                 .build();
         NewUserIntervention.NewUserInterventionConfigDo config = new NewUserIntervention.NewUserInterventionConfigDo();
-        config.setToDayRegister(true);
+//        config.setToDayRegister(true);
         config.setMaxTotalGameCount(100);
         config.setTriggerProbability(new BigDecimal(1));
         config.setRepeatType(RepeatTypeEnum.ALWAYS_REPEAT.getCode());

@@ -21,18 +21,6 @@ public class DefaultInterventionConfigDo implements Serializable {
     private static final long serialVersionUID = -1800496652360985600L;
     //=========触发条件================
     /**
-     * 是否当日注册
-     */
-    private boolean isToDayRegister;
-    /**
-     * 是否昨日有登录
-     */
-    private boolean isYesterdayLogin;
-    /**
-     * 是否击中fg
-     */
-    private boolean isHitFg;
-    /**
      * 是否本局空盘
      */
     private boolean isCurrentEmpty;

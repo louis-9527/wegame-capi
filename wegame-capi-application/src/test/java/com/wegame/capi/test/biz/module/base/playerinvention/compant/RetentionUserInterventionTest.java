@@ -47,7 +47,6 @@ public class RetentionUserInterventionTest {
                 .build();
 
         RetentionUserIntervention.RetentionUserInterventionConfigDo config = new RetentionUserIntervention.RetentionUserInterventionConfigDo();
-        config.setYesterdayLogin(true);
         config.setMaxTotalGameCount(200);
         config.setTriggerProbability(new BigDecimal(1));
         config.setRepeatType(RepeatTypeEnum.ALWAYS_REPEAT.getCode());

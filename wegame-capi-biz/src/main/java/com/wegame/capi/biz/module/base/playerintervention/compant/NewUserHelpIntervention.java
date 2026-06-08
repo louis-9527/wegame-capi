@@ -83,11 +83,6 @@ public class NewUserHelpIntervention extends AbstractNodeComponent<NewUserHelpIn
     @Data
     public static class NewUserHelpInterventionConfigDo implements InterventionConfig {
         /**
-         * 是否当日注册
-         * {@link DefaultInterventionConfigDo#isToDayRegister()}
-         */
-        private boolean isToDayRegister;
-        /**
          * 最大累计游戏局数
          * {@link DefaultInterventionConfigDo#getMaxTotalGameCount()}
          */

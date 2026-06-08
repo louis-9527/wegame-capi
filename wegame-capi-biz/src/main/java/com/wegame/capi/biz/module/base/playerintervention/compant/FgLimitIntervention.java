@@ -2,9 +2,7 @@ package com.wegame.capi.biz.module.base.playerintervention.compant;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.RetryUtil;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.intervention.*;
@@ -106,7 +104,6 @@ public class FgLimitIntervention extends AbstractNodeComponent<FgLimitInterventi
 
     @Override
     protected void intervention(PlayerInterventionParamDo paramDo, FgLimitInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
-        // todo 重试逻辑补充
         super.buildInterventionResult(paramDo, config, contextDo, null, null, null);
     }
 
@@ -122,11 +119,6 @@ public class FgLimitIntervention extends AbstractNodeComponent<FgLimitInterventi
          * {@link DefaultInterventionConfigDo#getMaxTotalGameCount()}
          */
         private Integer maxTotalGameCount;
-        /**
-         * 是否击中fg
-         * {@link DefaultInterventionConfigDo#isHitFg()}
-         */
-        private boolean isHitFg;
         /**
          * 最小模版倍率
          * {@link DefaultInterventionConfigDo#getMinTemplateMultiple()}
