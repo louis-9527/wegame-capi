@@ -8,6 +8,8 @@ import lombok.ToString;
 
 import java.util.Objects;
 
+import static com.wegame.capi.common.Constants.*;
+
 @Getter
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -16,7 +18,10 @@ public enum BetPromotionTypeEnum {
     NONE(0, "无"),
     OPERATION_EVENT(1, "干预事件"),
     STAR_CARD(2, "星卡"),
-    FREE_SPIN(3, "预定投注");
+    FREE_SPIN(3, "预定投注"),
+    STAR_CARD_IN_FREE(21, "免费星卡")
+
+    ;
 
     /**
      * 枚举码.
@@ -45,5 +50,18 @@ public enum BetPromotionTypeEnum {
             }
         }
         return null;
+    }
+
+    public String getDefaultRtpControlSubKey() {
+        switch (this) {
+            case NONE:
+                return RTP_CONTROL_SUBKEY_DEFAULT;
+            case FREE_SPIN:
+                return RTP_CONTROL_SUBKEY_FREE_SPIN;
+            case STAR_CARD:
+            case STAR_CARD_IN_FREE:
+                return RTP_CONTROL_SUBKEY_STAR_CARD;
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 }

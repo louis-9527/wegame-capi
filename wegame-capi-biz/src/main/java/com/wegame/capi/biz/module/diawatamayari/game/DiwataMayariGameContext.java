@@ -13,7 +13,7 @@ import java.util.Map;
 
 
 /**
- * MariaMakilingGameContext GamePlay上下文
+ * DiwataMayariGameContext GamePlay上下文
  */
 @Component("diwataMayariGameContext")
 public class DiwataMayariGameContext<R> extends AbstractGameContext<R> {

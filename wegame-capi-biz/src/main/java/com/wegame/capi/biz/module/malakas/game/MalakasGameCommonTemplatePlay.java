@@ -1,15 +1,11 @@
 package com.wegame.capi.biz.module.malakas.game;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
@@ -17,7 +13,9 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.base.IdHelper;
 import com.wegame.capi.biz.module.base.game.TemplateGame;
+import com.wegame.capi.biz.module.malakas.MalakasSymbolUtil;
 import com.wegame.capi.biz.module.malakas.reward.MalakasRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -32,21 +30,19 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
-import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
+import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.getTotalRewardAmount;
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.postProcessPlaceholderSymbol;
 
 @Slf4j
 @Component
 public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRecordDo, MalakasBetRecordTemplateEsDo> {
 
-    private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
-    private static final GameInfoDo gameInfo = MALAKAS_GAME_INFO;
-
+    @Autowired
+    IdHelper idHelper;
     @Autowired
     MalakasRewardHandler malakasRewardHandler;
-    @Autowired
-    SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Override
     public List<MalakasGameRecordDo> templatePlay(BetDo betDo, GamePlayDo gamePlayDo, MalakasBetRecordTemplateEsDo template) {
@@ -59,12 +55,13 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         templateList = templateList.stream()
                 .sorted(Comparator.comparing(GameRecordTemplateDo::getBatchId).thenComparing(GameRecordTemplateDo::getIndex)) // 第二排序（次，仅主字段相同时生效）
                 .collect(Collectors.toList());
-        Map<Long, Long> idMap = buildIdMap(templateList);
-        return convertTemplateList(gamePlayDo, templateList, idMap);
+        return convertTemplateList(gamePlayDo, templateList);
     }
 
-    private List<MalakasGameRecordDo> convertTemplateList(GamePlayDo gamePlayDo, List<GameRecordTemplateDo> templateList, Map<Long, Long> idMap) {
-        List<MalakasGameRecordDo> ret = new ArrayList<>();;
+    private List<MalakasGameRecordDo> convertTemplateList(GamePlayDo gamePlayDo, List<GameRecordTemplateDo> templateList) {
+        Map<Long, Long> idMap = idHelper.buildIdMap(templateList);
+        List<MalakasGameRecordDo> ret = new ArrayList<>();
+        ;
         Long maxBatchId = Collections.max(templateList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
         BigDecimal totalMultiple = BigDecimal.ZERO;
         boolean resetTotalMultipleFlag = false;
@@ -88,38 +85,11 @@ public class MalakasGameCommonTemplatePlay implements TemplateGame<MalakasGameRe
         return ret;
     }
 
-    private static long getTotalRewardAmount(List<MalakasGameRecordDo> ret) {
-        return ret.stream()
-                .filter(item -> Objects.nonNull(item.getRewardResult()))
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
-    }
-
-    private WheelDo<MalakasSymbolDo> convertWheel(Object obj) {
-        WheelDo<MalakasSymbolDo> wheel = JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
-        });
-        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
-        // 空元素置为占位元素（以用于中奖计算）
-        wheel.setSymbolArr(handleSymbolNullArr(wheel.getSymbolArr()));
-        return wheel;
-    }
-
-    private Map<Long, Long> buildIdMap(List<GameRecordTemplateDo> configRecordList) {
-        Map<Long, Long> idMap = new HashMap<>();;
-        idMap.put(RECORD_DEFAULT_PARENT_ID, RECORD_DEFAULT_PARENT_ID);
-        for (GameRecordTemplateDo item : CollectionUtils.emptyIfNull(configRecordList)) {
-            if (!idMap.containsKey(item.getId())) {
-                idMap.put(item.getId(), snowflakeIdGenerator.nextId());
-            }
-        }
-        return idMap;
-    }
-
     private MalakasGameRecordDo buildGameRecord(GamePlayDo gamePlay, GameRecordTemplateDo template, BigDecimal totalMultiple, Map<Long, Long> idMap, boolean lastGameFlag) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        WheelDo<MalakasSymbolDo> wheel = convertWheel(template.getWheel());
-        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, totalMultiple));
+        WheelDo<MalakasSymbolDo> wheel = MalakasSymbolUtil.convertWheel(template.getWheel());
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(build(MALAKAS_GAME_INFO, gamePlay, wheel, totalMultiple));
         Long id = idMap.get(template.getId());
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         Long parentId = idMap.get(template.getParentId());

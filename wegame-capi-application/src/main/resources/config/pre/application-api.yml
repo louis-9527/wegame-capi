@@ -5,6 +5,7 @@ api:
       - platformIdList: [50, 52, 55]
         invokeSingle: true
         singleDomain: https://sw-http-main-apisix.igo9.me
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo9.me
         freeSpinDomain: https://sw-http-freespin.igo9.me
         promotionDomain: https://reward-http.igo9.me
         operationDomain: http://dos-egame-aliyun.fpms99.me
@@ -57,6 +58,11 @@ api:
                 2Xs3r+wtjZBpOrZxn5dMUhEHC7jm/0eLUcwOJ0lkoEnl
                 -----END ENCRYPTED PRIVATE KEY-----
               dosPassword: egame-secure-passphrase
+            - platformId: 52
+              channelId: 2050
+              privateKey: cbb82974fd6bf143e68b1dc51d2426951e5b1fc7d35c656f5ac8f18ae9254023
+              privateIv: 4e1d77560440ab55fea1a18e0b6da6b9
+              dosSupport: false
           igo:
             - platformId: 55
               channelId: 2051
@@ -65,6 +71,7 @@ api:
       - platformIdList: [777]
         invokeSingle: true
         singleDomain: http://sw-external-platform-http-main.igo10.me
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo9.me
         freeSpinDomain: http://sw-inhouse-http-freespin.igo10.me
         promotionDomain: http://reward-http-ep.igo10.me
         operationDomain: http://dos-egame-bp-aliyun.platform10.me
@@ -120,6 +127,7 @@ api:
       - platformIdList: [70]
         invokeSingle: true
         singleDomain: https://sw-http-main-apisix-ali.nwrplatform99.com
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo9.me
         freeSpinDomain: https://sw-http-main-apisix-ali.nwrplatform99.com
         promotionDomain: https://reward-http.nwrplatform99.com
         operationDomain: http://dos-egame.nwrplatform99.com

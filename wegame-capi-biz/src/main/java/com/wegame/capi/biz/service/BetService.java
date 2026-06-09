@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service;
 
 import com.google.common.collect.ImmutableMap;
+import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -8,17 +9,18 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.AbstractBetContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.client.enums.AtTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 投注服务
@@ -28,6 +30,11 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class BetService {
+
+    private static final String AT = "at";
+
+    @Value("${spring.application.env}")
+    private String env;
 
     private static final Map<GameTypeEnum, String> contextNameMap = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetContext")
@@ -41,21 +48,6 @@ public class BetService {
             .put(GameTypeEnum.SIRENA, "sirenaBetContext")
             .put(GameTypeEnum.ATLANTIS, "atlantisBetContext")
             .build();
-    private static final List<GameTypeEnum> AB_CONTROL_GAME_LIST = Arrays.asList(
-            GameTypeEnum.MARIA_MAKILING,
-            GameTypeEnum.MALAKAS,
-            GameTypeEnum.IBONG_ADARNA,
-            GameTypeEnum.BAKUNAWA,
-            GameTypeEnum.SIRENA,
-            GameTypeEnum.ATLANTIS
-
-    );
-
-    private static final List<GameTypeEnum> FORCE_TEMPLATE_BET_CONTROL_GAME_LIST = Arrays.asList(
-            GameTypeEnum.LAM_ANG,
-            GameTypeEnum.DIWATA_MAYARI,
-            GameTypeEnum.MANGKUKULAM
-    );
 
     @Autowired
     Map<String, AbstractBetContext> contextMap;
@@ -73,19 +65,20 @@ public class BetService {
     }
 
     public void buildGamePlayType(BetDo betDo) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (AB_CONTROL_GAME_LIST.contains(betDo.getGameType())) {
-            if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
-                betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
-            } else {
-                log.info("userInfo.ut: {}, template bet", userInfo.getUt());
-                betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
-            }
-        } else if (FORCE_TEMPLATE_BET_CONTROL_GAME_LIST.contains(betDo.getGameType())) {
+        if (StringUtils.equals(env, EnvEnum.PROD.getValue())) {
             betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
         } else {
-            // Kapre 强制不走模版
-            betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
+            UserInfo userInfo = UserInfoContext.getUserInfo();
+            String at = Optional.ofNullable(userInfo.getExt())
+                    .map(ext -> ext.getOrDefault(AT, AtTypeEnum.NORMAL.getId()))
+                    .map(Object::toString)
+                    .orElse(AtTypeEnum.NORMAL.getId());
+            if (Objects.equals(at, AtTypeEnum.NORMAL.getId())) {
+                betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
+            } else {
+                log.info("userInfo.at: {}, template bet", at);
+                betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
+            }
         }
     }
 }

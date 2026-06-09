@@ -1,14 +1,17 @@
 package com.wegame.capi.application;
 
+import cn.hutool.core.lang.UUID;
 import com.alibaba.druid.util.StringUtils;
 import com.wegame.base.domain.ServicePublishMessage;
 import com.wegame.base.domain.ServiceShutdownMessage;
 import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.base.utils.LarkUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.listener.AppLaunchPostProcessor;
 import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
+import org.jboss.logging.MDC;
 import org.mybatis.spring.annotation.MapperScan;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +68,7 @@ public class Application implements CommandLineRunner {
     GameProperty gameProperty;
 
     public static void main(String[] args) {
+        MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
         log.info("begin launch application ... ...");
         SpringApplication.run(Application.class, args);
         log.info("success launch application 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉");

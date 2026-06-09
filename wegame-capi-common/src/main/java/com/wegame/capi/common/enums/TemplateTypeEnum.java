@@ -47,6 +47,10 @@ public enum TemplateTypeEnum {
 
     SIRENA_V2(GameTypeEnum.SIRENA, TemplateConstants.SIRENA_BET_RECORD_TEMPLATE_V2),
 
+    SIRENA_V3(GameTypeEnum.SIRENA, TemplateConstants.SIRENA_BET_RECORD_TEMPLATE_V3),
+
+    KAPRE(GameTypeEnum.KAPRE, TemplateConstants.KAPRE_BET_RECORD_TEMPLATE),
+
     ;
 
     /**

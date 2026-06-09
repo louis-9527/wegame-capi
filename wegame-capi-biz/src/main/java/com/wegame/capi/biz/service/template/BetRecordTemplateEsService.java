@@ -98,7 +98,6 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
             long start = System.currentTimeMillis();
             // 2. 执行
             GetResponse resp = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
-            log.info("cost time: {} ms", System.currentTimeMillis() - start);
             // 3. 无结果返回 null
             if (!resp.isExists()) {
                 return null;
@@ -306,11 +305,11 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         return t;
     }
 
-    @CachePut(value = CacheConstants.TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
-    public T putTemplateRedisCache(TemplateTypeEnum templateType, Long betRecordId, T t) {
-        // log.info("putRedisCache, betRecordId: {}", betRecordId);
-        return t;
-    }
+    //@CachePut(value = CacheConstants.TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
+    //public T putTemplateRedisCache(TemplateTypeEnum templateType, Long betRecordId, T t) {
+    //    // log.info("putRedisCache, betRecordId: {}", betRecordId);
+    //    return t;
+    //}
 
     @Cacheable(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
     public T getTemplateWithLocalCache(TemplateTypeEnum templateType, Long betRecordId, Class<T> clazz) {

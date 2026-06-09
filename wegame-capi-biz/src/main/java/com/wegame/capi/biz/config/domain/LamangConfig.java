@@ -340,12 +340,17 @@ public class LamangConfig extends GameBizConfig implements Serializable{
 
     private void validateTemplateConfig() {
         templateConfig.getAbTemplateMapping().forEach((key, value) -> {
+            AssertUtil.assertNotNull(value, ErrorCode.ERR_PARAM, "unknown templateType");
             AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfig().get(value), ErrorCode.ERR_PARAM, "ab: " + key + ",templateType is null");
         });
         templateConfig.getPromotionTemplateMapping().forEach((key, value) -> {
+            AssertUtil.assertNotNull(value, ErrorCode.ERR_PARAM, "unknown templateType");
             AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfig().get(value), ErrorCode.ERR_PARAM, "promotion: " + key + ",templateType is null");
         });
-        templateConfig.getTemplateRangeConfig().values().forEach(TemplateRangeConfig::validate);
+        templateConfig.getTemplateRangeConfig().forEach((templateType, rangeConfig) -> {
+            AssertUtil.assertNotNull(templateType, ErrorCode.ERR_PARAM, "templateRangeConfig.templateType is null");
+            rangeConfig.validate();
+        });
     }
 
     private void jackPotConfigValidate() {

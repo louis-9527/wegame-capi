@@ -5,6 +5,7 @@ api:
       - platformIdList: [50,52,55]
         invokeSingle: true
         singleDomain: http://sw-http-main-apisix-internal-ali.igo8.me
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me
         freeSpinDomain: http://sw-http-freespin-internal-ali.igo8.me
         promotionDomain: http://reward-http-internal-ali.igo8.me
         operationDomain: https://dos-egame-aliyun-qat.platform88.me
@@ -116,6 +117,7 @@ api:
       - platformIdList: [777]
         invokeSingle: true
         singleDomain: http://sw-http-main-apisix-internal-ali.igo8.me
+        singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me
         freeSpinDomain: http://sw-http-freespin-internal-ali.igo8.me
         promotionDomain: http://reward-http-internal-ali.igo8.me
         operationDomain: https://dos-egame-bp-aliyun-qat.platform88.me
@@ -168,3 +170,15 @@ api:
                 Dm1NzEVe1Uh2xBx4TppUD2iMk1vGir71OMqnRfUKIga/
                 -----END ENCRYPTED PRIVATE KEY-----
               dosPassword: egame-secure-passphrase
+      - platformIdList: [640]
+        invokeSingle: true
+        singleDomain: http://sw-http-main-apisix-zp.internal.igo8.me
+        freeSpinDomain: http://sw-http-freespin-zp.internal.igo8.me
+        promotionDomain: http://reward-client-zp.internal.igo8.me
+        operationDomain: http://dos-egame-zp-aliyun-qat.platform88.me
+        platformMap:
+          zp:
+            - platformId: 640
+              channelId: 1114
+              privateKey: bfed08ca15ed959dc25629311105c84b8feb9bb146a8aa24c877cb396ea8e4bc
+              privateIv: 35ae53c0f3edb37056637116970968b2
