@@ -79,25 +79,39 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
         // 前置
         PlayerInterventionContextDo contextDo = new PlayerInterventionContextDo();
         PlayerInterventionResultDo preInterventionResult = playerInterventionService.preIntervention(betDo.getGameType(), playerInterventionParamDo, contextDo);
-        LamangBetRecordTemplateEsDo preTemplateEsDo = this.fetchTemplate(preInterventionResult, betDo, gamePlayDo);
-        // 后置
-        preInterventionResult.setBetRecordTemplateEsDo(preTemplateEsDo);
-        playerInterventionParamDo.setBetRecordTemplateEsDo(preTemplateEsDo);
-        PlayerInterventionResultDo postInterventionResult = playerInterventionService.postIntervention(betDo.getGameType(), playerInterventionParamDo, contextDo);
-        LamangBetRecordTemplateEsDo templateEsDo = this.fetchTemplate(postInterventionResult, betDo, gamePlayDo);
-        if (Objects.nonNull(templateEsDo)) {
-            betDo.setInterventionRuleId(postInterventionResult.getCmpId());
+
+        LamangBetRecordTemplateEsDo noInterventionTemplateEsDo = null;
+        if (Objects.isNull(preInterventionResult)) {
+            // 前置没有结果-从默认获取
+            CommonTemplateConfig.Rtp rtp = getDefaultRtp(betDo, lamangConfig.getCommonTemplateConfig());
+            AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
+            noInterventionTemplateEsDo = fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtp, LamangBetRecordTemplateEsDo.class);
+            AssertUtil.assertNotNull(noInterventionTemplateEsDo, ErrorCode.ERR_INTER);
+            playerInterventionParamDo.setBetRecordTemplateEsDo(noInterventionTemplateEsDo);
+        } else {
+            // 前置有结果
+            LamangBetRecordTemplateEsDo preTemplateEsDo = this.fetchTemplateFromInterventionResult(preInterventionResult, betDo, gamePlayDo);
+            preInterventionResult.setBetRecordTemplateEsDo(preTemplateEsDo);
+            playerInterventionParamDo.setBetRecordTemplateEsDo(preTemplateEsDo);
         }
-        return templateEsDo;
+        // 走后置
+        PlayerInterventionResultDo postInterventionResult = playerInterventionService.postIntervention(betDo.getGameType(), playerInterventionParamDo, contextDo);
+        LamangBetRecordTemplateEsDo postTemplateEsDo = this.fetchTemplateFromInterventionResult(postInterventionResult, betDo, gamePlayDo);
+        if (Objects.nonNull(postTemplateEsDo)) {
+            betDo.setInterventionRuleId(postInterventionResult.getCmpId());
+            return postTemplateEsDo;
+        } else {
+            return noInterventionTemplateEsDo;
+        }
     }
 
     private void paramExtOperatorBuilder(PlayerInterventionParamDo param, BetDo betDo, GamePlayDo gamePlayDo) {
-        Function function = (Function<PlayerInterventionResultDo, LamangBetRecordTemplateEsDo>) resultDo -> fetchTemplate(resultDo, betDo, gamePlayDo);
+        Function function = (Function<PlayerInterventionResultDo, LamangBetRecordTemplateEsDo>) resultDo -> fetchTemplateFromInterventionResult(resultDo, betDo, gamePlayDo);
         param.addExtOperator(InterventionRuleIdConstants.FG_LIMIT_INTERVENTION, function);
     }
 
 
-    private LamangBetRecordTemplateEsDo fetchTemplate(PlayerInterventionResultDo interventionResult, BetDo betDo, GamePlayDo gamePlayDo) {
+    private LamangBetRecordTemplateEsDo fetchTemplateFromInterventionResult(PlayerInterventionResultDo interventionResult, BetDo betDo, GamePlayDo gamePlayDo) {
         if (Objects.isNull(interventionResult)) {
             return null;
         }
