@@ -108,7 +108,7 @@
         }';
 
         normalEmptyIntervention_data = '{
-        "maxTotalGameCount":100,
+        "minTotalGameCount":100,
         "minContinuousEmptyCount":6,
         "triggerProbability":"0.5",
         "repeatType":"always_repeat",
