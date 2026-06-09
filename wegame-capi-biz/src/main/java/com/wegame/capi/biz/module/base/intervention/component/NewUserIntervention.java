@@ -1,10 +1,10 @@
-package com.wegame.capi.biz.module.base.playerintervention.compant;
+package com.wegame.capi.biz.module.base.intervention.component;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.*;
-import com.wegame.capi.biz.module.base.playerintervention.AbstractNodeComponent;
+import com.wegame.capi.biz.module.base.intervention.AbstractNodeComponent;
 import com.wegame.capi.common.constants.InterventionRuleIdConstants;
 import com.yomahub.liteflow.annotation.LiteflowComponent;
 import lombok.Data;

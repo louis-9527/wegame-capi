@@ -8,7 +8,7 @@ import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsD
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionParamDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionResultDo;
-import com.wegame.capi.biz.module.base.playerintervention.compant.FgLimitIntervention;
+import com.wegame.capi.biz.module.base.intervention.component.FgLimitIntervention;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;

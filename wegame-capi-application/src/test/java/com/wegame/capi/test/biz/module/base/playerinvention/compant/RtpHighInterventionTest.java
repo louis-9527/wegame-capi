@@ -5,7 +5,7 @@ import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionParamDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionResultDo;
-import com.wegame.capi.biz.module.base.playerintervention.compant.RtpHighIntervention;
+import com.wegame.capi.biz.module.base.intervention.component.RtpHighIntervention;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.constants.InterventionRuleIdConstants;

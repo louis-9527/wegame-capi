@@ -3,7 +3,7 @@ package com.wegame.capi.test.biz.service.intervention;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionParamDo;
-import com.wegame.capi.biz.module.base.playerintervention.compant.NewUserIntervention;
+import com.wegame.capi.biz.module.base.intervention.component.NewUserIntervention;
 import com.wegame.capi.biz.service.intervention.PlayerInterventionService;
 import com.wegame.capi.common.enums.RepeatTypeEnum;
 import com.wegame.capi.test.BaseTest;

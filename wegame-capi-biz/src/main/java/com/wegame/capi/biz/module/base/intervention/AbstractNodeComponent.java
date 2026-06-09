@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.base.playerintervention;
+package com.wegame.capi.biz.module.base.intervention;
 
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;

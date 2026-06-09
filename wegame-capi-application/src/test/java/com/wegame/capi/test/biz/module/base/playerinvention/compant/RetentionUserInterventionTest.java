@@ -1,12 +1,11 @@
 package com.wegame.capi.test.biz.module.base.playerinvention.compant;
 
 import com.alibaba.fastjson.JSON;
-import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionParamDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionResultDo;
-import com.wegame.capi.biz.module.base.playerintervention.compant.RetentionUserIntervention;
+import com.wegame.capi.biz.module.base.intervention.component.RetentionUserIntervention;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.constants.InterventionRuleIdConstants;

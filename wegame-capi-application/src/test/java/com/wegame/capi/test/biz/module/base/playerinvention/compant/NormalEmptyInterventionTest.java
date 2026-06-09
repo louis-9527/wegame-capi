@@ -6,7 +6,7 @@ import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionContextDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionParamDo;
 import com.wegame.capi.biz.domain.intervention.PlayerInterventionResultDo;
-import com.wegame.capi.biz.module.base.playerintervention.compant.NormalEmptyIntervention;
+import com.wegame.capi.biz.module.base.intervention.component.NormalEmptyIntervention;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
