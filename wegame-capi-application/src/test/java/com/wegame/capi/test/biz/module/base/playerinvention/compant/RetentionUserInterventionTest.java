@@ -42,7 +42,7 @@ public class RetentionUserInterventionTest {
         doReturn(InterventionRuleIdConstants.RETENTION_USER_INTERVENTION).when(retentionUserIntervention).getNodeId();
 
         PlayerInterventionParamDo paramDo = PlayerInterventionParamDo.builder()
-                .userMetricInfoDo(UserMetricInfoDo.builder().yesterdayLoginTime(DateUtil.getYesterdayBegin()).totalBetTimes(0).build())
+                .userMetricInfoDo(UserMetricInfoDo.builder().yesterdayHasBet(true).totalBetTimes(0).build())
                 .build();
 
         RetentionUserIntervention.RetentionUserInterventionConfigDo config = new RetentionUserIntervention.RetentionUserInterventionConfigDo();

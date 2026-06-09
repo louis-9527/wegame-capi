@@ -303,6 +303,7 @@
 		"payoutAmountLimitConfig": {
 			"retryCount": 1,
 			"limitAmount": 1000000000
-		}
+		},
+		"interventionSwitch": true
 	}
 }

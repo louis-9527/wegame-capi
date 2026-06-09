@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.builder;
 
+import cn.hutool.core.util.StrUtil;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
@@ -58,6 +59,17 @@ public class BetRecordBuilder {
                         .build();
             }
         }
+        // 用户干预规则id
+        if (StrUtil.isNotEmpty(betDo.getInterventionRuleId())) {
+            if (Objects.nonNull(extendInfo)) {
+                extendInfo.setInterventionRuleId(betDo.getInterventionRuleId());
+            } else {
+                extendInfo = BetRecordDo.ExtendInfo.builder()
+                        .interventionRuleId(betDo.getInterventionRuleId())
+                        .build();
+            }
+        }
+
         BetRecordDo.Inventory inventory = null;
         if (Objects.nonNull(betDo.getBetInventoryControl())) {
             inventory = BetRecordDo.Inventory.builder()

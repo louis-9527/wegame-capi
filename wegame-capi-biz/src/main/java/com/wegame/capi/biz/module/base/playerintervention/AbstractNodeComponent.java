@@ -128,7 +128,10 @@ public abstract class AbstractNodeComponent<T extends InterventionConfig> extend
 
     protected boolean canTrigger(BigDecimal triggerProbability) {
         int proInt = triggerProbability.multiply(new BigDecimal(Constants.CONST_10000)).intValue();
-        if (proInt <= 0 || proInt >= Constants.CONST_10000) {
+        if (proInt <= 0) {
+            return false;
+        }
+        if (proInt >= Constants.CONST_10000) {
             return true;
         }
         int randomInt = randomService.randomInt(Constants.CONST_1, Constants.CONST_10000);

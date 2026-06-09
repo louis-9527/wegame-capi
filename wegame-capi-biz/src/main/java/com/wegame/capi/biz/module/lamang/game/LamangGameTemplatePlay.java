@@ -54,7 +54,7 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
     public LamangBetRecordTemplateEsDo getTemplate(BetDo betDo, GamePlayDo gamePlayDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        if (!Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.NONE)) {
+        if (!Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.NONE) || !lamangConfig.isInterventionSwitch()) {
             CommonTemplateConfig.Rtp rtp = getDefaultRtp(betDo, lamangConfig.getCommonTemplateConfig());
             AssertUtil.assertNotNull(rtp, ErrorCode.ERR_INTER);
             return fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtp, LamangBetRecordTemplateEsDo.class);
