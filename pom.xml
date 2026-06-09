@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.wegame</groupId>
         <artifactId>wegame-parent</artifactId>
-        <version>1.0.1-RELEASE</version>
+        <version>1.0.1.20260609-RELEASE</version>
     </parent>
     <!--    <groupId>com.wegame</groupId>-->
     <artifactId>wegame-capi</artifactId>
