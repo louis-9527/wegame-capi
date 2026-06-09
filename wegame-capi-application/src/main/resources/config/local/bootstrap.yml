@@ -65,9 +65,9 @@ game:
     MariaMakiling: false
     Malakas: false
     IbongAdarna: false
-    Lamang: false
+    Lamang: true
     Bakunawa: false
-    DiwataMayari: true
+    DiwataMayari: false
     Kapre: false
     Mangkukulam: false
     Sirena: true
