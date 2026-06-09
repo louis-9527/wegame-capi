@@ -147,6 +147,7 @@ public class UserMetricService {
             updateMap.put(user_metric_continueNoFgTimes, continueNoFgTimes);
         }
         updateMap.put(user_metric_currentBalance, result.getCredit());
+        log.info("extendInfo: {}", betRecordDo.getExtendInfo());
         if (Objects.nonNull(betRecordDo.getExtendInfo()) && StringUtils.isNotEmpty(betRecordDo.getExtendInfo().getInterventionRuleId())) {
             Map<String, Long> interventionRecord = UserMetricHelper.getInterventionRecord(mapFromDb);
             interventionRecord.put(betRecordDo.getExtendInfo().getInterventionRuleId(), betRecordDo.getCreateTime());
