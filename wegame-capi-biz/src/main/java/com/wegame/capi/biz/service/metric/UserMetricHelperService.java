@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service.metric;
 
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.context.UserInfo;
@@ -43,8 +44,10 @@ public class UserMetricHelperService {
         }
     }
 
-    public Boolean yesterdayHasBet(UserInfo userInfo, long startCreateTime, long endCreateTime) {
+    public Boolean yesterdayHasBet(UserInfo userInfo) {
         try {
+            long startCreateTime = DateUtil.getYesterdayBegin().getTime();
+            long endCreateTime = DateUtil.getYesterdayEnd().getTime();
             BetRecordDo betRecordDo = betRecordService.get(BetRecordQuery.builder()
                             .pId(userInfo.getPId())
                             .channelId(userInfo.getChannelId())

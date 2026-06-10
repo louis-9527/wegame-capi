@@ -85,7 +85,7 @@ public class UserMetricService {
             map.put(user_metric_currentBalance, Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null);
             BetRecordDo lastBetRecordDo = userMetricHelperService.getLastBetRecord(userInfo);
             map.put(user_metric_exitBalance, Objects.nonNull(lastBetRecordDo) ? lastBetRecordDo.getCredit() : null);
-            Boolean yesterdayHasBet = userMetricHelperService.yesterdayHasBet(userInfo, DateUtil.getYesterdayBegin().getTime(), DateUtil.getYesterdayEnd().getTime());
+            Boolean yesterdayHasBet = userMetricHelperService.yesterdayHasBet(userInfo);
             map.put(user_metric_yesterdayHasBet, yesterdayHasBet);
             redisTemplate.opsForHash().putAll(key(userInfo), map);
         } catch (Exception e) {
