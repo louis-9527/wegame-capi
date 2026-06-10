@@ -237,7 +237,7 @@ public class BetRecordTemplateService<T extends BetRecordTemplateEsDo> implement
                     QueryBuilders.boolQuery()
                             .must(QueryBuilders.termQuery("betType", betType.getCode()))
                             .must(QueryBuilders.rangeQuery("multiple")
-                                    .gte(multipleRangeStart)
+                                    .gt(multipleRangeStart)
                                     .lte(multipleRangeEnd)),
                     // 随机打分打乱顺序
                     ScoreFunctionBuilders.randomFunction()
