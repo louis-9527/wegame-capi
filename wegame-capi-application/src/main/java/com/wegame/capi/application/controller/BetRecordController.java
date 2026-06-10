@@ -83,9 +83,9 @@ public class BetRecordController {
     }
 
     @LoginRequired
-    @ApiOperation(value = "回放", httpMethod = "GET")
-    @GetMapping("/replay/{id}")
-    public CommonResponse<Map<String, BetResultVo>> replay(@PathVariable("id") String id) {
+    @ApiOperation(value = "获取回放结果", httpMethod = "GET")
+    @GetMapping("/get/replay/result/{id}")
+    public CommonResponse<Map<String, BetResultVo>> getReplayResult(@PathVariable("id") String id) {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();

@@ -111,6 +111,7 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
         gameRecordService.asyncPutCache(gameRecordList, gameType, cacheKey);
     }
 
+    @Override
     public Map<String, BetResultVo> getReplayResult(UserInfo userInfo, Long betRecordId, GameTypeEnum gameType) {
         Map<String, BetResultVo> resultMap = new HashMap<>();
         //BetRecordDo betRecordDo = betRecordService.get(betRecordId, userInfo.getPlayerId(), gameType);
