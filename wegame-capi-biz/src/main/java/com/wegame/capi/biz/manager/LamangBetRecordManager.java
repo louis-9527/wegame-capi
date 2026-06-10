@@ -113,7 +113,7 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
 
     public Map<String, BetResultVo> getReplayResult(UserInfo userInfo, Long betRecordId, GameTypeEnum gameType) {
         Map<String, BetResultVo> resultMap = new HashMap<>();
-        BetRecordDo betRecordDo = betRecordService.get(betRecordId, userInfo.getPlayerId(), gameType);
+        //BetRecordDo betRecordDo = betRecordService.get(betRecordId, userInfo.getPlayerId(), gameType);
         List<LamangGameRecordDo> gameRecordList = listGameRecord(GameRecordQuery.builder()
                 .betRecordId(Long.valueOf(betRecordId))
                 .playerId(userInfo.getPlayerId())
@@ -129,16 +129,15 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
             List<LamangBetResultVo> resultList = entry.getValue().stream().map(ToVoConverter::toResultVo).collect(Collectors.toList());
             BetResultVo vo = BetResultVo.builder()
                     .betRecordId(String.valueOf(betRecordId))
-                    .gameId(betRecordDo.getGameId())
-                    .betType(betRecordDo.getBetType())
-                    .betSubType(betRecordDo.getBetSubType())
+                    //.gameId(betRecordDo.getGameId())
+                    //.betType(betRecordDo.getBetType())
+                    //.betSubType(betRecordDo.getBetSubType())
                     .credit(null)
                     .overallRewardAmount(resultList.stream().filter(Objects::nonNull).mapToLong(item -> item.getTotalRewardAmount()).sum())
-                    .totalPayoutAmount(betRecordDo.getPayOutAmount())
+                    //.totalPayoutAmount(betRecordDo.getPayOutAmount())
                     .resultDetail(resultList)
                     .build();
             resultMap.put(String.valueOf(entry.getKey()), vo);
-            // 业务逻辑
         }
         return resultMap;
     }
