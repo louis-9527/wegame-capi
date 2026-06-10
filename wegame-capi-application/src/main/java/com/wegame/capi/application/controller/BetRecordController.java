@@ -15,8 +15,10 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +80,19 @@ public class BetRecordController {
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
         betRecordVo.setGameRecordList(betRecordManager(gameType).listGameRecordVo(Long.parseLong(id), gameType));
         return CommonResponse.build(betRecordVo);
+    }
+
+    @LoginRequired
+    @ApiOperation(value = "回放", httpMethod = "GET")
+    @GetMapping("/replay/{id}")
+    public CommonResponse<Map<String, BetResultVo>> replay(@PathVariable("id") String id) {
+        AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        return CommonResponse.build(betRecordManager(gameType).getReplayResult(userInfo, Long.valueOf(id), gameType));
     }
 
     private AbstractBetRecordManager betRecordManager(GameTypeEnum gameType) {
