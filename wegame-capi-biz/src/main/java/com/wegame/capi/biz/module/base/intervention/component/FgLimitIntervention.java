@@ -80,14 +80,14 @@ public class FgLimitIntervention extends AbstractNodeComponent<FgLimitInterventi
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(paramDo.getBetType(), ErrorCode.ERR_PARAM);
         List<BetTypeEnum> supportBetTypes = Optional.ofNullable(config.getSupportBetTypeList()).orElse(Collections.emptyList());
-        int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
+        int totalBetTimes = userMetricInfoDo.getTotalBetTimes();
         BetRecordTemplateEsDo betRecordTemplateEsDo = paramDo.getBetRecordTemplateEsDo();
         AssertUtil.assertNotNull(betRecordTemplateEsDo, ErrorCode.ERR_PARAM);
         boolean hasFreeGame = Optional.ofNullable(betRecordTemplateEsDo.getHasFreeGame()).orElse(false);
         Double templateMultiple = Optional.ofNullable(betRecordTemplateEsDo.getMultiple()).orElse(0d);
 
         return supportBetTypes.contains(paramDo.getBetType()) &&
-                todayBetTimes <= config.getMaxTotalGameCount() &&
+                totalBetTimes <= config.getMaxTotalGameCount() &&
                 hasFreeGame &&
                 new BigDecimal(templateMultiple).compareTo(config.getMinTemplateMultiple()) >= 0;
     }
