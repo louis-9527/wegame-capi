@@ -41,11 +41,11 @@ public class RetentionUserInterventionTest {
         doReturn(InterventionRuleIdConstants.RETENTION_USER_INTERVENTION).when(retentionUserIntervention).getNodeId();
 
         PlayerInterventionParamDo paramDo = PlayerInterventionParamDo.builder()
-                .userMetricInfoDo(UserMetricInfoDo.builder().yesterdayHasBet(true).totalBetTimes(0).build())
+                .userMetricInfoDo(UserMetricInfoDo.builder().yesterdayHasBet(true).todayBetTimes(0).build())
                 .build();
 
         RetentionUserIntervention.RetentionUserInterventionConfigDo config = new RetentionUserIntervention.RetentionUserInterventionConfigDo();
-        config.setMaxTotalGameCount(200);
+        config.setMaxTodayGameCount(200);
         config.setTriggerProbability(new BigDecimal(1));
         config.setRepeatType(RepeatTypeEnum.ALWAYS_REPEAT.getCode());
         config.setRtpName("98rtp");

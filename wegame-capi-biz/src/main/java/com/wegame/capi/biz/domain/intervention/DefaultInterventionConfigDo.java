@@ -37,6 +37,10 @@ public class DefaultInterventionConfigDo implements Serializable {
      */
     private Integer minTodayGameCount;
     /**
+     * 最大今日局数
+     */
+    private Integer maxTodayGameCount;
+    /**
      * 最大rtp
      */
     private BigDecimal maxRtp;

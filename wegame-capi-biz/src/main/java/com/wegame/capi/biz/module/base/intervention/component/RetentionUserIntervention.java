@@ -29,7 +29,7 @@ public class RetentionUserIntervention extends AbstractNodeComponent<RetentionUs
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         return Objects.nonNull(userMetricInfoDo.getYesterdayHasBet()) && userMetricInfoDo.getYesterdayHasBet() &&
-                userMetricInfoDo.getTotalBetTimes() <= config.getMaxTotalGameCount();
+                userMetricInfoDo.getTodayBetTimes() <= config.getMaxTodayGameCount();
     }
 
     @Override
@@ -50,10 +50,10 @@ public class RetentionUserIntervention extends AbstractNodeComponent<RetentionUs
     @Data
     public static class RetentionUserInterventionConfigDo implements InterventionConfig {
         /**
-         * 最大累计游戏局数
-         * {@link DefaultInterventionConfigDo#getMaxTotalGameCount()}
+         * 最大今日
+         * {@link DefaultInterventionConfigDo#getMaxTodayGameCount()}
          */
-        private Integer maxTotalGameCount;
+        private Integer maxTodayGameCount;
         /**
          * 触发概率
          * {@link DefaultInterventionConfigDo#getTriggerProbability()}
