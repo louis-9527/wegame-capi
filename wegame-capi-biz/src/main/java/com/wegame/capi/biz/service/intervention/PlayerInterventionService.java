@@ -39,7 +39,7 @@ public class PlayerInterventionService {
         AssertUtil.assertNotNull(contextDo, ErrorCode.ERR_INTER, "contextDo is null");
         LiteflowResponse liteflowResponse = flowExecutor.execute2Resp(chainIdType.formatChainId(gameType), param, contextDo);
         AssertUtil.assertNotNull(liteflowResponse, ErrorCode.ERR_INTER, "liteflowResponse is null");
-        AssertUtil.assertTrue(liteflowResponse.isSuccess(), ErrorCode.ERR_INTER, "liteflowResponse is not success");
+        AssertUtil.assertTrue(liteflowResponse.isSuccess(), ErrorCode.ERR_INTER);
         log.info("PlayerInterventionService#{} end.param:{},context:{}", chainIdType.formatChainId(gameType), JSON.toJSONString(param), JSON.toJSONString(contextDo));
         return contextDo.getChainResult();
     }
