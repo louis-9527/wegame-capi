@@ -38,11 +38,11 @@ public class UserMetricInfoDo implements Serializable {
      */
     private int continueEmptyTimes;
     /**
-     * 当日不中FG次数
+     * 不中FG次数
      * 1、为0: 中fg后清0
      * 2、大于0: 当日累计且大于0
      */
-    private int todayContinueNoFgTimes;
+    private int continueNoFgTimes;
     /**
      * 进入时余额，可能为空
      */

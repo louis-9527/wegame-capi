@@ -28,17 +28,17 @@ public class FgIntervention extends AbstractNodeComponent<FgIntervention.FgInter
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         BetTypeEnum betType = paramDo.getBetType();
         AssertUtil.assertNotNull(betType, ErrorCode.ERR_PARAM);
-        int todayContinueNoFgTimes =userMetricInfoDo.getTodayContinueNoFgTimes();
+        int todayContinueNoFgTimes =userMetricInfoDo.getContinueNoFgTimes();
         List<BetTypeEnum> supportBetTypes = Optional.ofNullable(config.getSupportBetTypeList()).orElse(Collections.emptyList());
         return supportBetTypes.contains(betType) &&
-                todayContinueNoFgTimes >= config.getMinTodayNoHitFgCount();
+                todayContinueNoFgTimes >= config.getMinTotalNoHitFgCount();
     }
 
     @Override
     protected boolean triggerProbability(PlayerInterventionParamDo paramDo, FgInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
         UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM, "userMetricInfoDo is null");
-        Integer todayContinueNoFgTimes = Optional.ofNullable(userMetricInfoDo.getTodayContinueNoFgTimes()).orElse(0);
+        Integer todayContinueNoFgTimes = Optional.ofNullable(userMetricInfoDo.getContinueNoFgTimes()).orElse(0);
         // 当日不中FG次数 X 0.5%
         return super.canTrigger(config.getTriggerProbabilityCoefficient().multiply(new BigDecimal(todayContinueNoFgTimes)));
     }
@@ -64,10 +64,10 @@ public class FgIntervention extends AbstractNodeComponent<FgIntervention.FgInter
          */
         private List<BetTypeEnum> supportBetTypeList;
         /**
-         * 最小当日不中fg次数
-         * {@link DefaultInterventionConfigDo#getMinTodayNoHitFgCount()}
+         * 最小不中fg次数
+         * {@link DefaultInterventionConfigDo#getMinTotalNoHitFgCount()}
          */
-        private Integer minTodayNoHitFgCount;
+        private Integer minTotalNoHitFgCount;
         /**
          * 触发概率系数
          * {@link DefaultInterventionConfigDo#getTriggerProbabilityCoefficient()}

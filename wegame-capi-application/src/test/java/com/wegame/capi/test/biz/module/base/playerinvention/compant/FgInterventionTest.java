@@ -47,7 +47,7 @@ public class FgInterventionTest {
         doReturn(TAG).when(fgIntervention).getTag();
         doReturn(CMP_ID).when(fgIntervention).getNodeId();
         PlayerInterventionParamDo paramDo = PlayerInterventionParamDo.builder()
-                .userMetricInfoDo(UserMetricInfoDo.builder().todayContinueNoFgTimes(200).build())
+                .userMetricInfoDo(UserMetricInfoDo.builder().continueNoFgTimes(200).build())
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betAmount(1000)
                 .payAmount(1000)
@@ -55,7 +55,7 @@ public class FgInterventionTest {
 
         FgIntervention.FgInterventionConfigDo config = new FgIntervention.FgInterventionConfigDo();
         config.setSupportBetTypeList(Lists.newArrayList(BetTypeEnum.NORMAL_BET));
-        config.setMinTodayNoHitFgCount(100);
+        config.setMinTotalNoHitFgCount(100);
         config.setTriggerProbabilityCoefficient(new BigDecimal("0.005"));
         config.setRepeatType(RepeatTypeEnum.ALWAYS_REPEAT.getCode());
         config.setRtpName(RTP_NAME);

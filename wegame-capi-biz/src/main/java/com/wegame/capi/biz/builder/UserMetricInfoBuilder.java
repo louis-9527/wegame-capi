@@ -17,7 +17,7 @@ public class UserMetricInfoBuilder {
                 .totalBetAmount(UserMetricHelper.getTotalBetAmount(map))
                 .totalPayoutAmount(UserMetricHelper.getTotalPayoutAmount(map))
                 .continueEmptyTimes(UserMetricHelper.getContinueEmptyTimes(map))
-                .todayContinueNoFgTimes(UserMetricHelper.getContinueNoFgTimes(map))
+                .continueNoFgTimes(UserMetricHelper.getContinueNoFgTimes(map))
                 .enterBalance(UserMetricHelper.getEnterBalance(map))
                 .exitBalance(UserMetricHelper.getExitBalance(map))
                 .currentBalance(UserMetricHelper.getCurrentBalance(map))

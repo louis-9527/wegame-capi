@@ -49,9 +49,9 @@ public class DefaultInterventionConfigDo implements Serializable {
      */
     private BigDecimal minRtp;
     /**
-     * 最小当日不中fg次数
+     * 最小不中fg次数
      */
-    private Integer minTodayNoHitFgCount;
+    private Integer minTotalNoHitFgCount;
     /**
      * 最小模版倍率
      */
