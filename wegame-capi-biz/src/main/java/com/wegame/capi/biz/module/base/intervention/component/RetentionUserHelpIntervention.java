@@ -62,8 +62,8 @@ public class RetentionUserHelpIntervention extends AbstractNodeComponent<Retenti
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         long enterBalance = Optional.ofNullable(userMetricInfoDo.getEnterBalance()).orElse(0L);
         long payAmount = paramDo.getPayAmount();
-        BigDecimal betAmountCoefficient = config.getBetAmountCoefficient();
-        BigDecimal baseMultiple = BigDecimal.valueOf(enterBalance / (double) payAmount).multiply(betAmountCoefficient);
+        BigDecimal interventionMultipleCoefficient = config.getInterventionMultipleCoefficient();
+        BigDecimal baseMultiple = BigDecimal.valueOf(enterBalance / (double) payAmount).multiply(interventionMultipleCoefficient);
         BigDecimal start = baseMultiple.multiply(BigDecimal.ONE.subtract(config.getMultipleBias()));
         BigDecimal end = baseMultiple.multiply(BigDecimal.ONE.add(config.getMultipleBias()));
         super.buildInterventionResult(paramDo, config, contextDo, TemplateMultipleRange.builder().start(start).end(end).build(),null,null);

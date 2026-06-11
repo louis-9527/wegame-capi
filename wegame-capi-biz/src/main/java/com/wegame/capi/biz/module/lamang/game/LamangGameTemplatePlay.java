@@ -141,7 +141,7 @@ public class LamangGameTemplatePlay extends AbstractGameTemplatePlay<LamangGameR
             }
         }
         if (StrUtil.isNotEmpty(interventionResult.getBackstopRtpName())) {
-            CommonTemplateConfig.Rtp rtpByRtpName = lamangConfig.getCommonTemplateConfig().getRtpByRtpName(interventionResult.getRtpName());
+            CommonTemplateConfig.Rtp rtpByRtpName = lamangConfig.getCommonTemplateConfig().getRtpByRtpName(interventionResult.getBackstopRtpName());
             AssertUtil.assertNotNull(rtpByRtpName, ErrorCode.ERR_INTER);
             return super.fetchTemplate(betDo, gamePlayDo, lamangConfig.getCommonTemplateConfig(), rtpByRtpName, LamangBetRecordTemplateEsDo.class);
         }
