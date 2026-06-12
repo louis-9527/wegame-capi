@@ -26,13 +26,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("betRecord")
 @Api(value = "投注记录模块", tags = {"投注记录模块"})
-public class BetRecordController {
+public class BetRecordController extends AbstractController {
 
     public static final Map<GameTypeEnum, String> BET_RECORD_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetRecordManager")
@@ -86,7 +87,8 @@ public class BetRecordController {
     @LoginRequired
     @ApiOperation(value = "获取回放结果", httpMethod = "GET")
     @GetMapping("/get/replay/result/{id}")
-    public CommonResponse<ReplayBetResultVo> getReplayResult(@PathVariable("id") String id) {
+    public CommonResponse<ReplayBetResultVo> getReplayResult(@PathVariable("id") String id, HttpServletResponse response) {
+        noCacheControl(response);
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
