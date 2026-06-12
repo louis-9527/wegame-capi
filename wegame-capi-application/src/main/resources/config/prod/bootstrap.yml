@@ -3,6 +3,20 @@ logging:
   level:
     com.wegame: info
     org.mongodb: error
+
+liteflow:
+  #  support-multiple-type: true
+  check-node-exists: true
+  # nacos
+  rule-source-ext-data-map:
+    serverAddr: mse-98afa3410-nacos-ans.mse.aliyuncs.com:8848
+    dataId: common_intervention_rules.xml
+    group: wegame-capi-qa
+    namespace: fa26b1e9-a8c1-4d6b-b56c-4985e459094b
+    accessKey: LTAI5tMTvh5AJtTDvsFJ941L
+    secretKey: 57yeby8QIcmSE5uue5tQH1CvGj4kZu
+
+
 ## spring-cloud
 spring:
   cloud:
