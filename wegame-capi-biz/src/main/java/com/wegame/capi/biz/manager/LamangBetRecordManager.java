@@ -127,11 +127,11 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
                 .stream()
                 .sorted(Comparator.comparing(LamangGameRecordDo::getBatchId).thenComparing(LamangGameRecordDo::getIndex)) // 第二排序（次，仅主字段相同时生效）
                 .collect(Collectors.toList());
-        // 获取首轮(batchId == 0 and index == 0)
+        // 获取首轮(parentId == 0 && index == 0)
         LamangGameRecordDo firstGameRecord = Optional.ofNullable(gameRecordList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .filter(record -> Objects.equals(0, record.getParentId()) && Objects.equals(0, record.getIndex()))
+                .filter(item -> Objects.equals(item.getParentId(), 0L) && Objects.equals(item.getIndex(), 0L))
                 .findFirst()
                 .orElse(null);
         Map<Long, List<LamangGameRecordDo>> groupByBatch = gameRecordList.stream()
