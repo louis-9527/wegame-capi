@@ -16,6 +16,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.BetResultVo;
+import com.wegame.capi.client.domain.vo.ReplayBetResultVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
@@ -85,7 +86,7 @@ public class BetRecordController {
     @LoginRequired
     @ApiOperation(value = "获取回放结果", httpMethod = "GET")
     @GetMapping("/get/replay/result/{id}")
-    public CommonResponse<Map<String, BetResultVo>> getReplayResult(@PathVariable("id") String id) {
+    public CommonResponse<ReplayBetResultVo> getReplayResult(@PathVariable("id") String id) {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
