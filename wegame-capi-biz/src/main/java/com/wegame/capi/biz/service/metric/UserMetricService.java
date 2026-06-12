@@ -19,12 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.common.constants.MetricConstants.*;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.metricThreadPoolExecutor;
 
 /**
  * 用户埋点服务
@@ -70,7 +72,7 @@ public class UserMetricService {
      * 4、上一次退出时余额
      * 5、当前余额
      */
-    //@Async(metricThreadPoolExecutor) // todo @bruce
+    @Async(metricThreadPoolExecutor)
     public void afterLoginMetric(UserInfo userInfo, Date registerTime, Date lastLoginTime, Date currentLoginTime) {
         if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId())) {
             return;
@@ -102,7 +104,7 @@ public class UserMetricService {
      * 5、空盘累计次数
      * 6、连续不中FG次数
      */
-    //@Async(metricThreadPoolExecutor) todo @bruce
+    @Async(metricThreadPoolExecutor)
     public void afterBetMetric(UserInfo userInfo, BetRecordDo betRecordDo, SingleWalletBetResultDo result, boolean hasRewarFreeWheel) {
         try {
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
