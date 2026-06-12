@@ -112,14 +112,19 @@ public class UserMetricService {
             AssertUtil.assertNotNull(result, ErrorCode.ERR_INTER);
             BetPromotionTypeEnum betPromotionType = BetPromotionTypeEnum.valueOfCode(betRecordDo.getBetPromotionType());
             AssertUtil.assertNotNull(betPromotionType, ErrorCode.ERR_INTER);
-            if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId())
-                    || !Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)
-                    || !betPromotionType.supportUserMetric()) {
+            if (!SUPPORT_GAME_ID_LIST.contains(userInfo.getGameId()) || !Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 return;
             }
-            Map<String, Object> mapFromDb = get(userInfo);
-            Map<String, Object> updateMap = buildUpdateMap(mapFromDb, betRecordDo, result, hasRewarFreeWheel);
-            redisTemplate.opsForHash().putAll(key(userInfo), updateMap);
+            if (!betPromotionType.supportUserMetric()) {
+                // 不支持用户埋点采集，需采集用户余额
+                Map<String, Object> updateMap = new HashMap<>();
+                updateMap.put(user_metric_currentBalance, result.getCredit());
+                redisTemplate.opsForHash().putAll(key(userInfo), updateMap);
+            } else {
+                Map<String, Object> mapFromDb = get(userInfo);
+                Map<String, Object> updateMap = buildUpdateMap(mapFromDb, betRecordDo, result, hasRewarFreeWheel);
+                redisTemplate.opsForHash().putAll(key(userInfo), updateMap);
+            }
         } catch (Exception e) {
             log.error("afterBetMetric error, userInfo: {}", userInfo, e);
         }
