@@ -15,21 +15,25 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.domain.vo.BetResultVo;
+import com.wegame.capi.client.domain.vo.ReplayBetResultVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("betRecord")
 @Api(value = "投注记录模块", tags = {"投注记录模块"})
-public class BetRecordController {
+public class BetRecordController extends AbstractController {
 
     public static final Map<GameTypeEnum, String> BET_RECORD_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetRecordManager")
@@ -78,6 +82,20 @@ public class BetRecordController {
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
         betRecordVo.setGameRecordList(betRecordManager(gameType).listGameRecordVo(Long.parseLong(id), gameType));
         return CommonResponse.build(betRecordVo);
+    }
+
+    @LoginRequired
+    @ApiOperation(value = "获取回放结果", httpMethod = "GET")
+    @GetMapping("/get/replay/result/{id}")
+    public CommonResponse<ReplayBetResultVo> getReplayResult(@PathVariable("id") String id, HttpServletResponse response) {
+        noCacheControl(response);
+        AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        return CommonResponse.build(betRecordManager(gameType).getReplayResult(userInfo, Long.valueOf(id), gameType));
     }
 
     private AbstractBetRecordManager betRecordManager(GameTypeEnum gameType) {

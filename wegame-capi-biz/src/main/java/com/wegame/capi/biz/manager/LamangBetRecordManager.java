@@ -2,10 +2,20 @@ package com.wegame.capi.biz.manager;
 
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.converter.BetRecordConverter;
+import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
+import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.domain.vo.BetResultVo;
+import com.wegame.capi.client.domain.vo.ReplayBetResultVo;
+import com.wegame.capi.client.domain.vo.lamang.LamangBetResultVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
@@ -17,9 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.config.mongo.LamangMongoConfig.lamangTransactionManager;
@@ -104,5 +112,40 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
     public void putGameRecordCache(List<LamangGameRecordDo> gameRecordList, GameTypeEnum gameType, String cacheKey) {
         // 异步设置游戏记录缓存
         gameRecordService.asyncPutCache(gameRecordList, gameType, cacheKey);
+    }
+
+    @Override
+    public ReplayBetResultVo getReplayResult(UserInfo userInfo, Long betRecordId, GameTypeEnum gameType) {
+        Map<String, BetResultVo> resultMap = new HashMap<>();
+        //BetRecordDo betRecordDo = betRecordService.get(betRecordId, userInfo.getPlayerId(), gameType);
+        List<LamangGameRecordDo> gameRecordList = listGameRecord(GameRecordQuery.builder()
+                .betRecordId(Long.valueOf(betRecordId))
+                .playerId(userInfo.getPlayerId())
+                .build(), gameType);
+        AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
+        gameRecordList = gameRecordList.stream()
+                .sorted(Comparator.comparing(LamangGameRecordDo::getBatchId).thenComparing(LamangGameRecordDo::getIndex)) // 第二排序（次，仅主字段相同时生效）
+                .collect(Collectors.toList());
+        LamangGameRecordDo firstGameRecord = gameRecordList.get(0);
+        Map<Long, List<LamangGameRecordDo>> groupByBatch = gameRecordList.stream()
+                .collect(Collectors.groupingBy(LamangGameRecordDo::getBatchId));
+        for (Map.Entry<Long, List<LamangGameRecordDo>> entry : groupByBatch.entrySet()) {
+            List<LamangBetResultVo> resultList = entry.getValue().stream().map(ToVoConverter::toResultVo).collect(Collectors.toList());
+            BetResultVo vo = BetResultVo.builder()
+                    .betRecordId(String.valueOf(betRecordId))
+                    //.gameId(betRecordDo.getGameId())
+                    //.betType(betRecordDo.getBetType())
+                    //.betSubType(betRecordDo.getBetSubType())
+                    .credit(null)
+                    .overallRewardAmount(resultList.stream().filter(Objects::nonNull).mapToLong(item -> item.getTotalRewardAmount()).sum())
+                    //.totalPayoutAmount(betRecordDo.getPayOutAmount())
+                    .resultDetail(resultList)
+                    .build();
+            resultMap.put(String.valueOf(entry.getKey()), vo);
+        }
+        return ReplayBetResultVo.builder()
+                .firstBatchId(String.valueOf(firstGameRecord.getBatchId()))
+                .betResultMap(resultMap)
+                .build();
     }
 }
