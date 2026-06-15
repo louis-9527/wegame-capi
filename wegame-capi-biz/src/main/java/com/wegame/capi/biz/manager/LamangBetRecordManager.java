@@ -6,8 +6,10 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.service.GameRecordService;
+import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.ReplayBetResultVo;
@@ -15,7 +17,9 @@ import com.wegame.capi.client.domain.vo.lamang.LamangBetResultDetailVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangBetResultVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,8 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
 
     @Autowired
     GameRecordService<LamangGameRecordDo> gameRecordService;
+    @Autowired
+    JackpotUserRewardRecordService jackpotUserRewardRecordService;
 
     @Transactional(transactionManager = lamangTransactionManager)
     public Long add(BetRecordDo<LamangGameRecordDo> betRecord, GameTypeEnum gameType) {
@@ -116,6 +122,15 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
         Map<String, BetResultVo> resultMap = new HashMap<>();
         BetRecordDo betRecordDo = betRecordService.get(betRecordId, userInfo.getPlayerId(), gameType);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER);
+        List<JackpotUserRewardRecordDo> recordDos = jackpotUserRewardRecordService.list(JackpotUserRewardRecordQuery.builder()
+                .userId(Long.valueOf(userInfo.getId()))
+                .betRecordId(betRecordId)
+                .build(), JackpotTypeEnum.LAM_ANG);
+        List<Long> jackportGameRecordIdList = Optional.ofNullable(recordDos)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(JackpotUserRewardRecordDo::getGameRecordId)
+                .collect(Collectors.toList());
         List<LamangGameRecordDo> gameRecordList = listGameRecord(GameRecordQuery.builder()
                 .betRecordId(Long.valueOf(betRecordId))
                 .playerId(userInfo.getPlayerId())
@@ -128,6 +143,12 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
         Map<Long, List<LamangGameRecordDo>> groupByBatch = gameRecordList.stream()
                 .collect(Collectors.groupingBy(LamangGameRecordDo::getBatchId));
         for (Map.Entry<Long, List<LamangGameRecordDo>> entry : groupByBatch.entrySet()) {
+            LamangGameRecordDo jackportGameRecord = null;
+            if (CollectionUtils.isNotEmpty(jackportGameRecordIdList)) {
+                jackportGameRecord = entry.getValue()
+                        .stream()
+                        .filter(item -> jackportGameRecordIdList.contains(item.getId())).findFirst().orElse(null);
+            }
             List<LamangBetResultVo> resultList = entry.getValue().stream().map(ToVoConverter::toResultVo).collect(Collectors.toList());
             long overallRewardAmount = resultList.stream().filter(Objects::nonNull).mapToLong(item -> item.getTotalRewardAmount()).sum();
             BetResultVo vo = BetResultVo.builder()
@@ -139,7 +160,7 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
                     .overallRewardAmount(overallRewardAmount)
                     //.totalPayoutAmount(betRecordDo.getPayOutAmount())
                     .resultDetail(LamangBetResultDetailVo.builder()
-                            .jackpotRewardGameRecordId(null)
+                            .jackpotRewardGameRecordId(Objects.nonNull(jackportGameRecord) ? String.valueOf(jackportGameRecord.getId()) : null)
                             .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecordDo.getBetAmount(), overallRewardAmount).getCode())
                             .resultList(resultList)
                             .build())
