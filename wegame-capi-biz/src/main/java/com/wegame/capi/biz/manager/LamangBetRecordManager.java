@@ -2,19 +2,16 @@ package com.wegame.capi.biz.manager;
 
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
-import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
+import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.ReplayBetResultVo;
+import com.wegame.capi.client.domain.vo.lamang.LamangBetResultDetailVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangBetResultVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -117,7 +114,8 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
     @Override
     public ReplayBetResultVo getReplayResult(UserInfo userInfo, Long betRecordId, GameTypeEnum gameType) {
         Map<String, BetResultVo> resultMap = new HashMap<>();
-        //BetRecordDo betRecordDo = betRecordService.get(betRecordId, userInfo.getPlayerId(), gameType);
+        BetRecordDo betRecordDo = betRecordService.get(betRecordId, userInfo.getPlayerId(), gameType);
+        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER);
         List<LamangGameRecordDo> gameRecordList = listGameRecord(GameRecordQuery.builder()
                 .betRecordId(Long.valueOf(betRecordId))
                 .playerId(userInfo.getPlayerId())
@@ -131,15 +129,20 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
                 .collect(Collectors.groupingBy(LamangGameRecordDo::getBatchId));
         for (Map.Entry<Long, List<LamangGameRecordDo>> entry : groupByBatch.entrySet()) {
             List<LamangBetResultVo> resultList = entry.getValue().stream().map(ToVoConverter::toResultVo).collect(Collectors.toList());
+            long overallRewardAmount = resultList.stream().filter(Objects::nonNull).mapToLong(item -> item.getTotalRewardAmount()).sum();
             BetResultVo vo = BetResultVo.builder()
                     .betRecordId(String.valueOf(betRecordId))
                     //.gameId(betRecordDo.getGameId())
                     //.betType(betRecordDo.getBetType())
                     //.betSubType(betRecordDo.getBetSubType())
                     .credit(null)
-                    .overallRewardAmount(resultList.stream().filter(Objects::nonNull).mapToLong(item -> item.getTotalRewardAmount()).sum())
+                    .overallRewardAmount(overallRewardAmount)
                     //.totalPayoutAmount(betRecordDo.getPayOutAmount())
-                    .resultDetail(resultList)
+                    .resultDetail(LamangBetResultDetailVo.builder()
+                            .jackpotRewardGameRecordId(null)
+                            .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecordDo.getBetAmount(), overallRewardAmount).getCode())
+                            .resultList(resultList)
+                            .build())
                     .build();
             resultMap.put(String.valueOf(entry.getKey()), vo);
         }

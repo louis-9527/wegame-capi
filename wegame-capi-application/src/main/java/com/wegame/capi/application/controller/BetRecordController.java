@@ -33,7 +33,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("betRecord")
 @Api(value = "投注记录模块", tags = {"投注记录模块"})
-public class BetRecordController extends AbstractController {
+public class BetRecordController {
 
     public static final Map<GameTypeEnum, String> BET_RECORD_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetRecordManager")
@@ -87,8 +87,7 @@ public class BetRecordController extends AbstractController {
     @LoginRequired
     @ApiOperation(value = "获取回放结果", httpMethod = "GET")
     @GetMapping("/get/replay/result/{id}")
-    public CommonResponse<ReplayBetResultVo> getReplayResult(@PathVariable("id") String id, HttpServletResponse response) {
-        noCacheControl(response);
+    public CommonResponse<ReplayBetResultVo> getReplayResult(@PathVariable("id") String id) {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
