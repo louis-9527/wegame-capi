@@ -75,10 +75,10 @@ spring:
 #game switch
 game:
   enable:
-    MariaMakiling: false
+    MariaMakiling: true
     Malakas: false
     IbongAdarna: false
-    Lamang: true
+    Lamang: false
     Bakunawa: false
     DiwataMayari: false
     Kapre: false

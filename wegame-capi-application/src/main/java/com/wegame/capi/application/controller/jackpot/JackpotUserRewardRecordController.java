@@ -15,10 +15,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.shade.org.apache.commons.lang.math.NumberUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.*;
 
 import static com.wegame.base.domain.CommonResponse.build;
 import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.*;
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * 用户jackpot中奖记录模块
@@ -29,6 +32,7 @@ import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConve
 @RestController
 @RequestMapping("jackpotUserRewardRecord")
 @Api(value = "用户jackpot中奖记录模块", tags = {"用户jackpot中奖记录模块"})
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class JackpotUserRewardRecordController extends AbstractJackpotController {
 
     @LoginRequired

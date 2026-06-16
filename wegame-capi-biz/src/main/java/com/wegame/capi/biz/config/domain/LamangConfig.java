@@ -7,6 +7,7 @@ import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
@@ -16,8 +17,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil.LAMANG_JSON_ROOT_NAME;
-import static com.wegame.capi.common.Constants.CONST_10000;
-import static com.wegame.capi.common.Constants.CONST_1000000;
+import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * lamang 配置类
@@ -32,6 +33,7 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = LAMANG_JSON_ROOT_NAME)
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangConfig extends GameBizConfig implements Serializable {
 
     private static final long serialVersionUID = 5582097906043304355L;

@@ -9,17 +9,20 @@ import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 
 /**
  * jackpot manager
  */
 @Slf4j
 @Component
-public abstract class AbstractJackpotManager {
+public abstract class AbstractJackpotManager implements InitializingBean {
 
     @Autowired
     JackpotRewardPoolInputRecordService jackpotRewardPoolInputRecordService;
@@ -29,6 +32,11 @@ public abstract class AbstractJackpotManager {
     JackpotUserRewardRecordService jackpotUserRewardRecordService;
 
     public abstract JackpotTypeEnum jackpotGameType();
+
+    @Override
+    public void afterPropertiesSet() {
+        log.info(BUILD_BEAN_FORMAT, this.getClass().getSimpleName());
+    }
 
     /**
      * 获取奖池列表

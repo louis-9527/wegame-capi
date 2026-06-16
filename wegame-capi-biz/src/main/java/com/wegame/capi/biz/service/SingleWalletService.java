@@ -27,6 +27,7 @@ import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,7 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
  */
 @Slf4j
 @Service
-public class SingleWalletService {
+public class SingleWalletService implements InitializingBean {
 
     @Autowired
     GameApiProperty gameApiProperty;
@@ -57,8 +58,13 @@ public class SingleWalletService {
     @Autowired
     FreeSpinService freeSpinService;
 
-    @Autowired
+    @Autowired(required = false) // todo 优化
     JackpotRewardPoolService jackpotRewardPoolService;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        log.info("inject bean jackpotRewardPoolService: {}", jackpotRewardPoolService);
+    }
 
     public boolean authLoginToken(UserLoginDo userLoginDo) {
         if (!gameApiProperty.isInvokeSingle(userLoginDo.getPId())) {
@@ -233,5 +239,4 @@ public class SingleWalletService {
             return null;
         }
     }
-
 }
