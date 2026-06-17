@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.NacosKeyUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -57,6 +58,11 @@ public class KapreConfig extends GameBizConfig implements Serializable {
      * 模板配置
      */
     private TemplateRangeConfig templateRangeConfig;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.KAPRE;
+    }
 
     @Data
     @ToString

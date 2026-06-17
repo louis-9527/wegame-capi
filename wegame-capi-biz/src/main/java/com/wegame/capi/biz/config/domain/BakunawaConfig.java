@@ -3,6 +3,7 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -29,7 +30,7 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = BAKUNAWA_JSON_ROOT_NAME)
-public class BakunawaConfig extends GameBizConfig implements Serializable, ConfigValidate {
+public class BakunawaConfig extends GameBizConfig {
     private static final long serialVersionUID = -4811887935435114L;
     /**
      * 元素概率配置
@@ -47,6 +48,11 @@ public class BakunawaConfig extends GameBizConfig implements Serializable, Confi
      * 模板配置
      */
     private BakunawaConfig.TemplateRangeConfig templateRangeConfig;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.BAKUNAWA;
+    }
 
     @Data
     @SuperBuilder
