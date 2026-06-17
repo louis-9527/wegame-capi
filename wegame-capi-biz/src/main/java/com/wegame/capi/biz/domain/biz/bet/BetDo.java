@@ -100,12 +100,6 @@ public class BetDo implements Serializable {
     private VolatilityTypeEnum volatility;
 
     /**
-     * 业务干预上下文
-     * 参数和结果接受判断
-     */
-    private BizInterfereContextDo bizInterfereContext;
-
-    /**
      * sirena 下一局模板id
      */
     private Long nextTemplateId;

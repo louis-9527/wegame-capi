@@ -6,7 +6,6 @@ import com.wegame.base.utils.AssertUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
 
 @Data
@@ -15,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBizConfig implements Serializable, ConfigValidate {
+public abstract class GameBizConfig implements Serializable, ConfigValidate {
 
     /**
      * 派彩金额限制配置
@@ -27,7 +26,6 @@ public class GameBizConfig implements Serializable, ConfigValidate {
     }
 
     @Override
-    @PostConstruct
     public void validate() {
         AssertUtil.assertNotNull(payoutAmountLimitConfig, ErrorCode.ERR_PARAM);
         payoutAmountLimitConfig.validate();

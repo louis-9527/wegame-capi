@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
@@ -338,14 +339,24 @@ public class LamangConfig extends GameBizConfig implements Serializable{
         validateTemplateConfig();
     }
 
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.LAM_ANG;
+    }
+
     private void validateTemplateConfig() {
         templateConfig.getAbTemplateMapping().forEach((key, value) -> {
+            AssertUtil.assertNotNull(value, ErrorCode.ERR_PARAM, "unknown templateType");
             AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfig().get(value), ErrorCode.ERR_PARAM, "ab: " + key + ",templateType is null");
         });
         templateConfig.getPromotionTemplateMapping().forEach((key, value) -> {
+            AssertUtil.assertNotNull(value, ErrorCode.ERR_PARAM, "unknown templateType");
             AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfig().get(value), ErrorCode.ERR_PARAM, "promotion: " + key + ",templateType is null");
         });
-        templateConfig.getTemplateRangeConfig().values().forEach(TemplateRangeConfig::validate);
+        templateConfig.getTemplateRangeConfig().forEach((templateType, rangeConfig) -> {
+            AssertUtil.assertNotNull(templateType, ErrorCode.ERR_PARAM, "templateRangeConfig.templateType is null");
+            rangeConfig.validate();
+        });
     }
 
     private void jackPotConfigValidate() {

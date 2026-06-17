@@ -25,12 +25,14 @@ public class TemplateConstants {
 
     public static final String SIRENA_BET_RECORD_TEMPLATE_V2 = "sirena_bet_record_template_v2";
 
+    public static final String SIRENA_BET_RECORD_TEMPLATE_V3 = "sirena_bet_record_template_v3";
+
+    public static final String KAPRE_BET_RECORD_TEMPLATE = "kapre_bet_record_template";
+
     public static final String ATLANTIS_BET_RECORD_TEMPLATE = "atlantis_bet_record_template";
 
     public static final String BAYANIHAN_BET_RECORD_TEMPLATE_V1 = "bayanihan_bet_record_template";
 
     public static final String BAYANIHAN_BET_RECORD_TEMPLATE_V2 = "bayanihan_bet_record_template_v2";
-
-    public static final String KAPRE_BET_RECORD_TEMPLATE = "kapre_bet_record_template_v2";
 
 }

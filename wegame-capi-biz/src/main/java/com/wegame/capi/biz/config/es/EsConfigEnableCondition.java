@@ -38,6 +38,7 @@ public class EsConfigEnableCondition implements Condition {
             Constants.MANGKUKULAM_PROP,
             Constants.MARIA_MAKILING_PROP,
             Constants.KAPRE_PROP,
+            Constants.SIRENA_PROP,
             Constants.ATLANTIS_PROP,
             Constants.BAYANIHAN_PROP);
 

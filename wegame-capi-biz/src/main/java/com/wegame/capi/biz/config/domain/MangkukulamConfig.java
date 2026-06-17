@@ -8,10 +8,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
-import com.wegame.capi.client.enums.AbTypeEnum;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.client.enums.*;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MangkukulamTagEnum;
@@ -72,6 +69,11 @@ public class MangkukulamConfig extends GameBizConfig implements Serializable{
     private Bet buyBet;
 
     private TemplateConfig templateConfig;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.MANGKUKULAM;
+    }
 
     @Data
     @ToString
@@ -465,9 +467,13 @@ public class MangkukulamConfig extends GameBizConfig implements Serializable{
 
     private void templateRangeConfigValidate() {
         templateConfig.getAbTemplateMapping().forEach((k, v) -> {
-            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfigMapping().get(v), ErrorCode.ERR_PARAM, "template is null");
+            AssertUtil.assertNotNull(v, ErrorCode.ERR_PARAM, "ab: " + k + ",templateType is null");
+            AssertUtil.assertNotNull(templateConfig.getTemplateRangeConfigMapping().get(v), ErrorCode.ERR_PARAM, "ab: " + k + ",templateRangeConfig is null");
         });
-        templateConfig.getTemplateRangeConfigMapping().values().forEach(TemplateRangeConfig::validate);
+        templateConfig.getTemplateRangeConfigMapping().forEach((templateType, rangeConfig) -> {
+            AssertUtil.assertNotNull(templateType, ErrorCode.ERR_PARAM, "templateRangeConfig.templateType is null");
+            rangeConfig.validate();
+        });
     }
 
     private void rewardMaxMultipleValidate() {
