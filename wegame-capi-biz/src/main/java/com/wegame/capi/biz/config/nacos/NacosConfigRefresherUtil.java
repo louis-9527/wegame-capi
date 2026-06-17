@@ -2,18 +2,20 @@ package com.wegame.capi.biz.config.nacos;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.LarkUtil;
 import com.wegame.capi.biz.config.domain.*;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author apple
@@ -34,6 +36,7 @@ public class NacosConfigRefresherUtil {
 
     private static final Map<String, Class<? extends ConfigValidate>> TO_CLASSTYPE_MAP = new HashMap<>();
     private static final Map<String, String> TO_JSON_ROOT_MAP = new HashMap<>();
+    private static final Map<GameTypeEnum, String> TO_GAME_TYPE_MAP = new HashMap<>();
 
     static {
         // TO_CLASSTYPE_MAP init
@@ -58,10 +61,19 @@ public class NacosConfigRefresherUtil {
         TO_JSON_ROOT_MAP.put("kapre_config.json", KAPRE_JSON_ROOT_NAME);
         TO_JSON_ROOT_MAP.put("mangkukulam_config.json", MANGKUKULAM_JSON_ROOT_NAME);
 
+        // TO_GAME_TYPE_MAP init
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.MARIA_MAKILING, "maria_makiling_config.json");
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.MALAKAS, "malakas_config.json");
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.IBONG_ADARNA, "ibong_adarna_config.json");
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.BAKUNAWA, "bakunawa_config.json");
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.LAM_ANG, "lamang_config.json");
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.DIWATA_MAYARI, "diwata_mayari_config.json");
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.KAPRE, "kapre_config.json");
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.MANGKUKULAM, "mangkukulam_config.json");
     }
 
-    public static boolean validate(String dataId, String groupId, String configInfo) {
-        if (needValidate(dataId)) {
+    public static boolean validate(List<GameTypeEnum> gameTypeList, String dataId, String groupId, String configInfo) {
+        if (needValidate(gameTypeList, dataId)) {
             try {
                 String realConfigInfo = getRealConfigInfo(dataId, configInfo);
                 AssertUtil.assertStrNotEmpty(realConfigInfo, ErrorCode.ERR_PARAM);
@@ -113,7 +125,22 @@ public class NacosConfigRefresherUtil {
         return null;
     }
 
-    private static boolean needValidate(String dataId) {
-        return TO_CLASSTYPE_MAP.keySet().stream().filter(item -> dataId.endsWith(item)).findAny().isPresent();
+    private static boolean needValidate(List<GameTypeEnum> gameTypeList, String dataId) {
+        List<String> values = TO_GAME_TYPE_MAP.entrySet()
+                .stream()
+                .filter(item -> gameTypeList.contains(item.getKey()))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+        return values.stream().filter(item -> dataId.endsWith(item)).findAny().isPresent();
+        //return TO_CLASSTYPE_MAP.keySet().stream().filter(item -> dataId.endsWith(item)).findAny().isPresent();
+    }
+
+    public static boolean needAddListener(List<GameTypeEnum> gameTypeList, String dataId) {
+        List<String> values = TO_GAME_TYPE_MAP.entrySet()
+                .stream()
+                .filter(item -> gameTypeList.contains(item.getKey()))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+        return values.stream().filter(item -> dataId.endsWith(item)).findAny().isPresent();
     }
 }
