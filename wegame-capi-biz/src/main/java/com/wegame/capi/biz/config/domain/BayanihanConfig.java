@@ -26,7 +26,6 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 
 /**
  * bayanihan 配置
- *
  */
 @Data
 @SuperBuilder
@@ -37,7 +36,7 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = BAYANIHAN_JSON_ROOT_NAME)
-public class BayanihanConfig extends GameBizConfig{
+public class BayanihanConfig extends GameBizConfig {
 
     private static final long serialVersionUID = -3176807225114663395L;
 
@@ -63,6 +62,11 @@ public class BayanihanConfig extends GameBizConfig{
      * 模板配置
      */
     private TemplateConfig templateConfig;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.BAYANIHAN;
+    }
 
     @Data
     @SuperBuilder
