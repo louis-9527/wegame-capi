@@ -17,10 +17,12 @@
 package com.alibaba.cloud.nacos.refresh;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import cn.hutool.core.lang.Assert;
 import com.alibaba.cloud.nacos.NacosConfigManager;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
@@ -30,6 +32,7 @@ import com.alibaba.nacos.api.config.listener.AbstractSharedListener;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
+import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,12 +111,14 @@ public class NacosContextRefresher
     }
 
     private void registerNacosListener(final String groupKey, final String dataKey) {
+        GameProperty gameProperty = applicationContext.getBean(GameProperty.class);
+        Assert.notNull(gameProperty);
         String key = NacosPropertySourceRepository.getMapKey(dataKey, groupKey);
         Listener listener = listenerMap.computeIfAbsent(key,
                 lst -> new AbstractSharedListener() {
                     @Override
                     public void innerReceive(String dataId, String group, String configInfo) {
-                        if (NacosConfigRefresherUtil.validate(dataId, group, configInfo)) {
+                        if (NacosConfigRefresherUtil.validate(gameProperty.enabledGameTypes(), dataId, group, configInfo)) {
                             refreshCountIncrement();
                             nacosRefreshHistory.addRefreshRecord(dataId, group, configInfo);
                             applicationContext.publishEvent(
@@ -127,9 +132,11 @@ public class NacosContextRefresher
                     }
                 });
         try {
-            configService.addListener(dataKey, groupKey, listener);
-            log.info("[Nacos Config] Listening config: dataId={}, group={}", dataKey,
-                    groupKey);
+            if (NacosConfigRefresherUtil.needAddListener(gameProperty.enabledGameTypes(), dataKey)) {
+                configService.addListener(dataKey, groupKey, listener);
+                log.info("[Nacos Config] Listening config: dataId={}, group={}", dataKey,
+                        groupKey);
+            }
         }
         catch (NacosException e) {
             log.warn(String.format(
