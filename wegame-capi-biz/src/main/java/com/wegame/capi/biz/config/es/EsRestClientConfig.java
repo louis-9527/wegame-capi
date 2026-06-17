@@ -20,7 +20,6 @@ import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Configuration
-@Conditional(EsConfigEnableCondition.class)
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
     private String uris;
