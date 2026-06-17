@@ -9,6 +9,7 @@ import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
 import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.SirenaTagEnum;
 import com.wegame.capi.common.enums.SymbolEnum;
@@ -37,7 +38,7 @@ import static com.wegame.capi.common.Constants.CONST_100;
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = SIRENA_JSON_ROOT_NAME)
-public class SirenaConfig extends GameBizConfig implements Serializable {
+public class SirenaConfig extends GameBizConfig {
     private static final long serialVersionUID = 5555098765480050L;
     /**
      * 赔率配置
@@ -73,6 +74,11 @@ public class SirenaConfig extends GameBizConfig implements Serializable {
      * 模板配置
      */
     private TemplateConfig templateConfig;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.SIRENA;
+    }
 
 
     @Data
