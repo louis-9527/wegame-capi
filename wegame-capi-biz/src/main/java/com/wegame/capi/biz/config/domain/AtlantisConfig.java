@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BizEventEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -57,6 +58,11 @@ public class AtlantisConfig extends GameBizConfig implements Serializable {
      * 购买免费轮期望的scatter个数
      */
     private Integer buyBetExceptedScatterCount;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.ATLANTIS;
+    }
 
     @Data
     @ToString
