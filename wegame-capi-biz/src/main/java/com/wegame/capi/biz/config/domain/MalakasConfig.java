@@ -5,6 +5,7 @@ import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.common.CommonInventoryControlConfig;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -125,13 +126,19 @@ public class MalakasConfig extends GameBizConfig implements Serializable  {
         private Map<String, Integer> freeGame;
     }
 
-    public void validate() {
+    @Override
+    public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         scatterFreeWheelTimesConfigValidate();
         rewardMaxMultipleValidate();
         templateRangeConfigValidate();
         inventoryControlConfigValidate();
+    }
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.MALAKAS;
     }
 
     private void inventoryControlConfigValidate() {

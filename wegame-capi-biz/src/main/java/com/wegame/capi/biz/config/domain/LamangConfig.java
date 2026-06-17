@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
@@ -336,6 +337,11 @@ public class LamangConfig extends GameBizConfig implements Serializable{
         jackPotConfigValidate();
         freeWheelTimesValidate();
         validateTemplateConfig();
+    }
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.LAM_ANG;
     }
 
     private void validateTemplateConfig() {

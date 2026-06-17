@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -65,6 +66,11 @@ public class MariaMakilingConfig extends GameBizConfig implements Serializable {
      * 模板配置
      */
     private TemplateRangeConfig templateRangeConfig;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.MARIA_MAKILING;
+    }
 
     @Data
     @ToString

@@ -16,6 +16,8 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.domain.vo.BetResultVo;
+import com.wegame.capi.client.domain.vo.ReplayBetResultVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @Slf4j
@@ -113,6 +116,19 @@ public class BetRecordController {
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
         betRecordVo.setGameRecordList(lastOneGameRecord.getGameRecordList());
         return CommonResponse.build(betRecordVo);
+    }
+
+    @LoginRequired
+    @ApiOperation(value = "获取回放结果", httpMethod = "GET")
+    @GetMapping("/get/replay/result/{id}")
+    public CommonResponse<ReplayBetResultVo> getReplayResult(@PathVariable("id") String id) {
+        AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        return CommonResponse.build(betRecordManager(gameType).getReplayResult(userInfo, Long.valueOf(id), gameType));
     }
 
     private AbstractBetRecordManager betRecordManager(GameTypeEnum gameType) {
