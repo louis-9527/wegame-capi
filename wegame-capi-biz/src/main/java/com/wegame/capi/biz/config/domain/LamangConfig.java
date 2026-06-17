@@ -4,6 +4,13 @@ import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
+import com.wegame.capi.biz.config.domain.template.TemplateSelectionContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -240,6 +247,11 @@ public class LamangConfig extends GameBizConfig implements Serializable {
         jackPotConfigValidate();
         freeWheelTimesValidate();
         commonTemplateConfigValidate();
+    }
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.LAM_ANG;
     }
 
     private void commonTemplateConfigValidate() {
