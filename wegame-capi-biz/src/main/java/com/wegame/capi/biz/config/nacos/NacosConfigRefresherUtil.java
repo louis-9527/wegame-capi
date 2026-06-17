@@ -77,6 +77,7 @@ public class NacosConfigRefresherUtil {
         TO_GAME_TYPE_MAP.put(GameTypeEnum.DIWATA_MAYARI, "diwata_mayari_config.json");
         TO_GAME_TYPE_MAP.put(GameTypeEnum.KAPRE, "kapre_config.json");
         TO_GAME_TYPE_MAP.put(GameTypeEnum.MANGKUKULAM, "mangkukulam_config.json");
+        TO_GAME_TYPE_MAP.put(GameTypeEnum.SIRENA, "sirena_config.json");
     }
 
     public static boolean validate(List<GameTypeEnum> gameTypeList, String dataId, String groupId, String configInfo) {
