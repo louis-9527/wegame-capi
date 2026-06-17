@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.common.CommonBloodPoolConfig;
 import com.wegame.capi.biz.config.domain.common.CommonTemplateConfig;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -75,6 +76,11 @@ public class DiwataMayariConfig extends GameBizConfig {
      * 通用模版配置
      */
     private CommonTemplateConfig commonTemplateConfig;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.DIWATA_MAYARI;
+    }
 
     @Data
     @SuperBuilder

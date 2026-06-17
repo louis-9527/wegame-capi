@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.nacos.NacosConfigRefresherUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
 import com.wegame.capi.common.utils.NacosKeyUtil;
@@ -61,6 +62,11 @@ public class IbongAdarnaConfig extends GameBizConfig {
      * 模版配置
      */
     private TemplateRangeConfig templateRangeConfig;
+
+    @Override
+    public GameTypeEnum gameType() {
+        return GameTypeEnum.IBONG_ADARNA;
+    }
 
     @Data
     @SuperBuilder

@@ -16,7 +16,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBizConfig implements Serializable, ConfigValidate {
+public abstract class GameBizConfig implements Serializable, ConfigValidate {
 
     /**
      * 派彩金额限制配置
@@ -29,11 +29,6 @@ public class GameBizConfig implements Serializable, ConfigValidate {
 
     public void bizValidate() {
         throw new BusinessException(ErrorCode.ERR_INTER, "no support");
-    }
-
-    public GameTypeEnum gameType() {
-        // to sub class
-        return null;
     }
 
     @Override
