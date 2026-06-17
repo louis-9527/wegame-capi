@@ -3,6 +3,7 @@ package com.wegame.capi.biz.config.domain;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -26,8 +27,13 @@ public class GameBizConfig implements Serializable, ConfigValidate {
         throw new BusinessException(ErrorCode.ERR_INTER, "no support");
     }
 
+    public GameTypeEnum gameType() {
+        // to sub class
+        return null;
+    }
+
     @Override
-    @PostConstruct
+    //@PostConstruct
     public void validate() {
         AssertUtil.assertNotNull(payoutAmountLimitConfig, ErrorCode.ERR_PARAM);
         payoutAmountLimitConfig.validate();
