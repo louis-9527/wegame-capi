@@ -112,7 +112,6 @@ public class NacosContextRefresher
 
     private void registerNacosListener(final String groupKey, final String dataKey) {
         GameProperty gameProperty = applicationContext.getBean(GameProperty.class);
-        Assert.notNull(gameProperty);
         String key = NacosPropertySourceRepository.getMapKey(dataKey, groupKey);
         Listener listener = listenerMap.computeIfAbsent(key,
                 lst -> new AbstractSharedListener() {

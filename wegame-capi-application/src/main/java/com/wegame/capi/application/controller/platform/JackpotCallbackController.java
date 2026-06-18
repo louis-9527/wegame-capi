@@ -11,10 +11,14 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 
 /**
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("jackpot")
 @Api(value = "jackpot回调查询金额", tags = {"jackpot回调查询金额"})
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class JackpotCallbackController extends AbstractJackpotController {
 
     @ApiOperation(value = "获取jackpot详情", httpMethod = "POST")

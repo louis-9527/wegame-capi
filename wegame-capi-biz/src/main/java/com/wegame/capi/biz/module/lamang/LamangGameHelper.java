@@ -2,10 +2,14 @@ package com.wegame.capi.biz.module.lamang;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
+
+import java.util.List;
+import java.util.Objects;
 
 import static com.wegame.capi.common.enums.SymbolEnum.*;
 
@@ -104,4 +108,11 @@ public class LamangGameHelper {
                     .put(LAMANG_SUPER_WILD.getId(), LAMANG_SUPER_WILD)
                     .build())
             .build();
+
+    public static long getTotalRewardAmount(List<LamangGameRecordDo> ret) {
+        return ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+    }
 }

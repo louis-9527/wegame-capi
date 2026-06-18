@@ -11,6 +11,7 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.jackpot.JackpotUserRewardRecordQueryBuilder.*;
 import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.*;
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * Jackpot用户中奖记录服务
@@ -32,6 +35,7 @@ import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConve
  * @author genereate
  */
 @Service
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class JackpotUserRewardRecordService extends AbstractService {
 
     public JackpotUserRewardRecordDo get(Long id, JackpotTypeEnum jackpotType) {

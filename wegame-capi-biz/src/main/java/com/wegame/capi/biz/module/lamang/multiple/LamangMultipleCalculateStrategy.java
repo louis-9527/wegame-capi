@@ -8,14 +8,19 @@ import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.biz.module.base.multiple.AbstractMultipleCalculateStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
+
 @Slf4j
 @Component("lamangMultipleCalculateStrategy")
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangMultipleCalculateStrategy extends AbstractMultipleCalculateStrategy<LamangSymbolDo> {
     @Autowired
     LamangConfig lamangConfig;

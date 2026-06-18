@@ -100,6 +100,10 @@ public class BetDo implements Serializable {
     private VolatilityTypeEnum volatility;
 
     /**
+     * 干预id
+     */
+    private String interventionRuleId;
+    /**
      * sirena 下一局模板id
      */
     private Long nextTemplateId;

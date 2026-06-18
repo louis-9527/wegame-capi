@@ -1,0 +1,121 @@
+package com.wegame.capi.biz.module.base.intervention.component;
+
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
+import com.wegame.capi.biz.domain.intervention.*;
+import com.wegame.capi.biz.module.base.intervention.AbstractNodeComponent;
+import com.wegame.capi.common.constants.InterventionRuleIdConstants;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.Optional;
+
+/**
+ * 次留救命
+ */
+@Slf4j
+@LiteflowComponent(id = InterventionRuleIdConstants.RETENTION_USER_HELP_INTERVENTION)
+public class RetentionUserHelpIntervention extends AbstractNodeComponent<RetentionUserHelpIntervention.RetentionUserHelpInterventionConfigDo> {
+    /**
+     * 昨日有登录信息
+     * 今日游戏局数 >= 20
+     * 当前余额 <=  投注额*5
+     * 总派彩/总投注 <= 80%
+     */
+    @Override
+    protected boolean triggerCondition(PlayerInterventionParamDo paramDo, RetentionUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
+        UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
+        Boolean yesterdayHasBet = userMetricInfoDo.getYesterdayHasBet();
+        int todayBetTimes = userMetricInfoDo.getTodayBetTimes();
+        Long currentCredit = userMetricInfoDo.getCurrentBalance();
+        if (Objects.isNull(currentCredit)){
+            return false;
+        }
+        double rtp = userMetricInfoDo.getRtp();
+        BigDecimal betAmount = new BigDecimal(paramDo.getBetAmount());
+        return Objects.nonNull(yesterdayHasBet) && yesterdayHasBet &&
+                todayBetTimes >= config.getMinTodayGameCount() &&
+                currentCredit <= betAmount.multiply(config.getBetAmountCoefficient()).longValue() &&
+                rtp <= config.getMaxRtp().doubleValue()
+                ;
+    }
+
+    @Override
+    protected boolean triggerProbability(PlayerInterventionParamDo paramDo, RetentionUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
+        return super.fixedTriggerProbability(paramDo, config, contextDo);
+    }
+
+    @Override
+    protected boolean repeatCondition(PlayerInterventionParamDo paramDo, RetentionUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
+        return super.commonRepeatCondition(paramDo, config, contextDo);
+    }
+
+    @Override
+    protected void intervention(PlayerInterventionParamDo paramDo, RetentionUserHelpInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
+        UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
+        long enterBalance = Optional.ofNullable(userMetricInfoDo.getEnterBalance()).orElse(0L);
+        long payAmount = paramDo.getPayAmount();
+        BigDecimal interventionMultipleCoefficient = config.getInterventionMultipleCoefficient();
+        BigDecimal baseMultiple = BigDecimal.valueOf(enterBalance / (double) payAmount).multiply(interventionMultipleCoefficient);
+        BigDecimal start = baseMultiple.multiply(BigDecimal.ONE.subtract(config.getMultipleBias()));
+        BigDecimal end = baseMultiple.multiply(BigDecimal.ONE.add(config.getMultipleBias()));
+        super.buildInterventionResult(paramDo, config, contextDo, TemplateMultipleRange.builder().start(start).end(end).build(),null,null);
+    }
+
+    @Data
+    public static class RetentionUserHelpInterventionConfigDo implements InterventionConfig {
+        /**
+         * 最小今日局数
+         * {@link DefaultInterventionConfigDo#getMinTodayGameCount()}
+         */
+        private Integer minTodayGameCount;
+        /**
+         * 投注额系数
+         * {@link DefaultInterventionConfigDo#getBetAmountCoefficient()}
+         */
+        private BigDecimal betAmountCoefficient;
+        /**
+         * 最大rtp
+         * {@link DefaultInterventionConfigDo#getMaxRtp()}
+         */
+        private BigDecimal maxRtp;
+
+
+        /**
+         * 触发概率
+         * {@link DefaultInterventionConfigDo#getTriggerProbability()}
+         */
+        private BigDecimal triggerProbability;
+        /**
+         * 重复类型
+         * {@link DefaultInterventionConfigDo#getRepeatType()}
+         */
+        private String repeatType;
+
+
+        /**
+         * 干预模版倍率系数
+         * {@link DefaultInterventionConfigDo#getInterventionMultipleCoefficient()}
+         */
+        private BigDecimal interventionMultipleCoefficient;
+        /**
+         * 兜底干预模版name
+         * eg:96rtp
+         * {@link DefaultInterventionConfigDo#getBackstopRtpName()}
+         */
+        private String backstopRtpName;
+        /**
+         * 干预模版倍率偏差
+         * {@link DefaultInterventionConfigDo#getMultipleBias()}
+         */
+        private BigDecimal multipleBias;
+
+    }
+}

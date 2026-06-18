@@ -29,6 +29,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -36,11 +37,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 @Component("lamangRewardHandler")
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
     private static final Integer MIN_SCATTER_COUNT_FOR_FREE_SPIN = 3;
 

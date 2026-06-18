@@ -9,16 +9,19 @@ import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
+
 /**
  * 抽象后处理器
  */
 @Slf4j
-public abstract class AbstractPostHandler implements PostHandler {
+public abstract class AbstractPostHandler implements PostHandler, InitializingBean {
     @Value("${spring.application.name}")
     public String appName;
     @Value("${spring.application.env}")
@@ -29,6 +32,11 @@ public abstract class AbstractPostHandler implements PostHandler {
     public DistributeLock distributeLock;
     @Autowired
     public GameProperty gameProperty;
+
+    @Override
+    public void afterPropertiesSet() {
+        log.info(BUILD_BEAN_FORMAT, this.getClass().getSimpleName());
+    }
 
     public boolean supportGame(GameTypeEnum gameType) {
         return gameProperty.enabledGameTypes()

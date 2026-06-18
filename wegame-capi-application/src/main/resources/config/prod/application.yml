@@ -28,7 +28,7 @@ spring:
   application:
     name: wegame-capi
     env: prod
-    version: 20260601001
+    version: 20260608001
   profiles:
     active: prod
   config:

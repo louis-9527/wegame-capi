@@ -12,6 +12,7 @@ import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.InventoryManager;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -88,7 +89,7 @@ public class BetStatusService {
                 if (Objects.equals(BetStatusEnum.SUCCESS, betStatus)) {
                     handle(betRecordDo, gameType, betStatus, betStatusRes);
                     inventoryManager.increaseInventory(BetStatusEnum.SUCCESS, betRecordDo);
-                    break;
+                    // todo @bruce userMetricService.afterBetMetric(UserInfoContext.getUserInfo(), betRecordDo, result, syncOpt);break;
                 } else if (Objects.equals(BetStatusEnum.FAIL, betStatus)) {
                     log.warn("convertBetStatus warn bet fail, betRecordId: {}, betStatusRes: {}", betRecordDo.getId(), betStatusRes);
                     handle(betRecordDo, gameType, betStatus, betStatusRes);

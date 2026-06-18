@@ -19,16 +19,18 @@ import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.JackpotAmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-import static com.wegame.capi.common.Constants.CONST_1000000000;
+import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangJackpotHandler extends AbsJackpotHandler {
     @Autowired
     private LamangConfig lamangConfig;
