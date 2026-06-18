@@ -14,8 +14,6 @@ CREATE TABLE `lamang_bet_record` (
   `playerName` varchar(255) NULL COMMENT "玩家名称",
   `betType` varchar(255) NULL COMMENT "投注类型",
   `betSubType` varchar(255) NULL COMMENT "投注子类型",
-  `bizInterfereType` int NULL COMMENT "业务干预类型",
-  `bizInterfereSubType` int NULL COMMENT "业务干预子类型",
   `betPromotionType` int NULL COMMENT "投注营销类型",
   `betId` varchar(255) NULL COMMENT "投注id（单钱包）",
   `betSerialNo` varchar(255) NULL COMMENT "投注流水号（对应单钱包refId）",
