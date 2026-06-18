@@ -9,12 +9,10 @@ liteflow:
   check-node-exists: true
   # nacos
   rule-source-ext-data-map:
-    serverAddr: mse-98afa3410-nacos-ans.mse.aliyuncs.com:8848
+    serverAddr: mse-16d36ad10-nacos-ans.mse.aliyuncs.com:8848
     dataId: common_intervention_rules.xml
-    group: wegame-capi-qa
-    namespace: fa26b1e9-a8c1-4d6b-b56c-4985e459094b
-    accessKey: LTAI5tMTvh5AJtTDvsFJ941L
-    secretKey: 57yeby8QIcmSE5uue5tQH1CvGj4kZu
+    group: wegame-capi-prod
+    namespace: c97b27d0-992d-4046-8641-f2eece6aef93
 
 
 ## spring-cloud
