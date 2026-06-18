@@ -16,6 +16,7 @@ import com.wegame.capi.biz.manager.InventoryManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.biz.service.metric.UserMetricService;
 import com.wegame.capi.biz.service.operation.OperationEventControlService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -67,6 +68,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     InventoryManager inventoryManager;
     @Autowired
     public OperationEventControlService operationEventControlService;
+    @Autowired
+    UserMetricService userMetricService;
 
     public abstract AbstractGameContext<R> gameContext();
 
@@ -100,6 +103,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 result = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
+        // 注意： userMetricService.afterBetMetric 中 syncOpt 为是否中免费轮 ！！！
+        userMetricService.afterBetMetric(UserInfoContext.getUserInfo(), betRecordDo, result, syncOpt);
         operationEventControlService.onBetComplete(betDo, betRecordDo, result);
         return result;
     }

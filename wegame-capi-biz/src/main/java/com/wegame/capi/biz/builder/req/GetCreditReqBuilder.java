@@ -24,4 +24,14 @@ public class GetCreditReqBuilder {
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
     }
+
+    public static GetCreditReq buildReq(UserInfo userInfo) {
+        return GetCreditReq.builder()
+                .pId(userInfo.getPId())
+                .channelId(userInfo.getChannelId())
+                .playerName(userInfo.getPlayerName())
+                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
+                .createTime(DateUtil.toUTC(new Date()))
+                .build();
+    }
 }

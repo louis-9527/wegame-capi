@@ -32,6 +32,7 @@ import com.wegame.capi.dao.repository.domain.operation.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -44,12 +45,14 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
+
 /**
  * 抽象干预事件Manager
  */
 @Slf4j
 @Component
-public abstract class AbstractOperationEventManager {
+public abstract class AbstractOperationEventManager implements InitializingBean {
 
     @Autowired
     OperationEventService operationEventService;
@@ -67,6 +70,11 @@ public abstract class AbstractOperationEventManager {
     public ThreadPoolExecutor operationEventThreadPoolExecutor;
     @Autowired
     private DistributeLock distributeLock;
+
+    @Override
+    public void afterPropertiesSet() {
+        log.info(BUILD_BEAN_FORMAT, this.getClass().getSimpleName());
+    }
 
     /**
      * 获取干预事件类型

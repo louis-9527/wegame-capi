@@ -1,0 +1,125 @@
+<flow>
+    <chain name="zhumeng004_preIntervention">
+        newUserIntervention_data = '{
+        "maxTotalGameCount":27,
+        "triggerProbability":"1",
+        "repeatType":"always_repeat",
+        "rtpName":"98rtp"
+        }';
+
+        retentionUserIntervention_data = '{
+        "isYesterdayLogin":"true",
+        "maxTotalGameCount":200,
+        "triggerProbability":"1",
+        "repeatType":"always_repeat",
+        "rtpName":"98rtp"
+        }';
+
+        rtpHighIntervention_data = '{
+        "minRtp":"1",
+        "triggerProbability":"1",
+        "repeatType":"always_repeat",
+        "rtpName":"92rtp"
+        }';
+
+
+        rtpLowIntervention_data = '{
+        "maxRtp":"0.92",
+        "triggerProbability":"1",
+        "repeatType":"always_repeat",
+        "rtpName":"100rtp"
+        }';
+
+
+        fgIntervention_data = '{
+        "supportBetTypeList":["NORMAL_BET"],
+        "minTodayNoHitFgCount":100,
+        "triggerProbabilityCoefficient":"0.005",
+        "repeatType":"always_repeat",
+        "rtpName":"fgrtp"
+        }';
+
+        newUserHelpIntervention_data = '{
+        "maxTotalGameCount":100,
+        "minTodayGameCount":20,
+        "betAmountCoefficient":"5",
+        "maxRtp":"0.8",
+        "triggerProbability":"0.05",
+        "repeatType":"never_repeat",
+        "interventionMultipleCoefficient":"0.8",
+        "backstopRtpName":"96rtp",
+        "multipleBias":"0.1"
+        }';
+
+
+        retentionUserHelpIntervention_data = '{
+        "minTodayGameCount":20,
+        "betAmountCoefficient":"5",
+        "maxRtp":"0.8",
+        "triggerProbability":"0.07",
+        "repeatType":"today_not_repeat",
+        "interventionMultipleCoefficient":"0.8",
+        "backstopRtpName":"96rtp",
+        "multipleBias":"0.1"
+        }';
+
+
+        returnUserIntervention_data = '{
+        "minTodayGameCount":20,
+        "betAmountCoefficient":"5",
+        "maxRtp":"0.8",
+        "triggerProbability":"0.09",
+        "repeatType":"always_repeat",
+        "interventionMultipleCoefficient":"0.8",
+        "backstopRtpName":"96rtp",
+        "multipleBias":"0.1"
+        }';
+
+
+        THEN(
+        newUserHelpIntervention.data(newUserIntervention_data).tag('11'),
+        retentionUserHelpIntervention.data(retentionUserHelpIntervention_data).tag('10'),
+        returnUserIntervention.data(returnUserIntervention_data).tag('9'),
+        newUserIntervention.data(newUserIntervention_data).tag('7'),
+        fgIntervention.data(fgIntervention_data).tag('6'),
+        retentionUserIntervention.data(retentionUserIntervention_data).tag('5'),
+        rtpHighIntervention.data(rtpHighIntervention_data).tag('2'),
+        rtpLowIntervention.data(rtpLowIntervention_data).tag('1')
+        );
+    </chain>
+
+    <chain name="zhumeng004_postIntervention">
+        fgLimitIntervention_data = '{
+        "supportBetTypeList":["NORMAL_BET"],
+        "maxTotalGameCount":200,
+        "minTemplateMultiple":"30",
+        "triggerProbability":"1",
+        "repeatType":"always_repeat",
+        "rtpName":"fgrtp",
+        "interventionRetryCount":3
+        }';
+
+        newUserEmptyIntervention_data = '{
+        "maxTotalGameCount":100,
+        "minContinuousEmptyCount":5,
+        "triggerProbability":"0.5",
+        "repeatType":"always_repeat",
+        "interventionTemplateRange":"0_1"
+        }';
+
+        normalEmptyIntervention_data = '{
+        "minTotalGameCount":100,
+        "minContinuousEmptyCount":6,
+        "triggerProbability":"0.5",
+        "repeatType":"always_repeat",
+        "interventionTemplateRange":"0_1"
+        }';
+
+
+        THEN(
+        fgLimitIntervention.data(fgLimitIntervention_data).tag('8'),
+        newUserEmptyIntervention.data(newUserEmptyIntervention_data).tag('4'),
+        normalEmptyIntervention.data(normalEmptyIntervention_data).tag('3')
+        );
+    </chain>
+</flow>

@@ -14,6 +14,21 @@ logging:
     com.alibaba.cloud.nacos: DEBUG
     # Spring配置绑定模块：打印配置注入、更新日志（可选）
     # org.springframework.boot.context.properties: DEBUG
+
+liteflow:
+  # 从 classpath 加载本地 JSON 文件
+  #  rule-source: classpath:common_intervention_rules.xml
+  #  support-multiple-type: true
+  check-node-exists: true
+  # nacos
+  rule-source-ext-data-map:
+    serverAddr: mse-98afa3410-p.nacos-ans.mse.aliyuncs.com:8848
+    dataId: common_intervention_rules.xml
+    group: wegame-capi-local
+    namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
+    accessKey: LTAI5tMTvh5AJtTDvsFJ941L
+    secretKey: 57yeby8QIcmSE5uue5tQH1CvGj4kZu
+
 #spring-cloud
 spring:
   cloud:

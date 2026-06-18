@@ -13,12 +13,16 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotAccFlagEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordQuery;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 
 /**
@@ -27,6 +31,7 @@ import java.util.List;
  * @author genereate
  */
 @Service
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class JackpotRewardPoolInputRecordService extends AbstractService {
 
     public void batchAdd(List<JackpotRewardPoolInputRecordDo> doList, JackpotTypeEnum jackpotType) {

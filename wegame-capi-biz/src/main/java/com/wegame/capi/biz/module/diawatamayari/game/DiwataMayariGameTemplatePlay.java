@@ -60,6 +60,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGameTemplatePlay<Diwat
                 DEFAULT_SERVICE_NAME);
     }
 
+    // todo use parent method
     private DiwataBetRecordTemplateEsDo fetchTemplate(BetDo betDo, GamePlayDo gamePlayDo, CommonTemplateConfig.Rtp rtp) {
         String templateIndexName = rtp.getIndexName();
         AssertUtil.assertStrNotEmpty(templateIndexName, ErrorCode.ERR_INTER);

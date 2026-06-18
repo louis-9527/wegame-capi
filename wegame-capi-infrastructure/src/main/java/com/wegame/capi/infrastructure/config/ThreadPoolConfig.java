@@ -33,6 +33,7 @@ public class ThreadPoolConfig {
 
     public static final String scheduledThreadPoolExecutor = "scheduledThreadPoolExecutor";
     public static final String inventoryThreadPoolExecutor = "inventoryThreadPoolExecutor";
+    public static final String metricThreadPoolExecutor = "metricThreadPoolExecutor";
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -192,6 +193,20 @@ public class ThreadPoolConfig {
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue(1000000),
                 new CustomizableThreadFactory("inventory-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        // executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(metricThreadPoolExecutor)
+    public ThreadPoolExecutor metricThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                100,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue(1000000),
+                new CustomizableThreadFactory("metric-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();

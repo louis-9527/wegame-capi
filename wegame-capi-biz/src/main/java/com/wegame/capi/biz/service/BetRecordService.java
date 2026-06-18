@@ -130,6 +130,15 @@ public class BetRecordService extends AbstractService {
         return poToDo(betRecordPo);
     }
 
+    public BetRecordDo get(BetRecordQuery query, GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(BetRecordQueryBuilder.buildMongodbQuery(query),
+                BetRecordPo.class,
+                gameType.getBetRecordCollectionName());
+        return poToDo(betRecordPo);
+    }
+
     public List<BetRecordDo> list(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),

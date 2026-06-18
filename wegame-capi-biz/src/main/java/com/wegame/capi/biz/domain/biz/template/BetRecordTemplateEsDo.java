@@ -46,6 +46,11 @@ public class BetRecordTemplateEsDo implements Serializable {
     @Field(type = FieldType.Keyword)
     private String templateType;
     /**
+     * 是否有免费游戏
+     */
+    @Field(type = FieldType.Boolean)
+    private Boolean hasFreeGame;
+    /**
      * hash
      */
     private String hash;

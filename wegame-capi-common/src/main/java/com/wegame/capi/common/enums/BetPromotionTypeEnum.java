@@ -64,4 +64,17 @@ public enum BetPromotionTypeEnum {
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
     }
+
+    public boolean supportUserMetric() {
+        switch (this) {
+            case NONE:
+            case OPERATION_EVENT:
+                return true;
+            case FREE_SPIN:
+            case STAR_CARD:
+            case STAR_CARD_IN_FREE:
+                return false;
+        }
+        return false;
+    }
 }
