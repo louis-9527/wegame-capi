@@ -15,6 +15,7 @@ import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -27,6 +28,8 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 import static com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter.poToDoList;
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * Jackpot奖池服务
@@ -34,6 +37,7 @@ import static com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter.p
  * @author genereate
  */
 @Service
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class JackpotRewardPoolService extends AbstractService {
 
     @Autowired

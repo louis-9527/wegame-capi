@@ -30,16 +30,20 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.TEMPLATE_PLAY;
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * lamang游戏投注抽象接口
  */
 @Slf4j
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public abstract class AbstractLamangBetStrategy
         extends AbstractCommonBetStrategy<LamangGameRecordDo, LamangBetRecordDetailDo>
         implements LamangBetStrategy<LamangBetRecordDetailDo> {

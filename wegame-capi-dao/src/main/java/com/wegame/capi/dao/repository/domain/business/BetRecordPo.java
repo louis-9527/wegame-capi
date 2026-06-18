@@ -182,6 +182,10 @@ public class BetRecordPo implements Serializable {
          * 当前档位
          */
         private String currentLevelNo;
+        /**
+         * 用户干预规则id
+         */
+        private String interventionRuleId;
     }
 
     @Data

@@ -1,0 +1,101 @@
+package com.wegame.capi.biz.module.base.intervention.component;
+
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.UserMetricInfoDo;
+import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
+import com.wegame.capi.biz.domain.intervention.*;
+import com.wegame.capi.biz.module.base.intervention.AbstractNodeComponent;
+import com.wegame.capi.common.constants.InterventionRuleIdConstants;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.yomahub.liteflow.annotation.LiteflowComponent;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
+
+/**
+ * 常态空盘干预
+ */
+@Slf4j
+@LiteflowComponent(id = InterventionRuleIdConstants.NORMAL_EMPTY_INTERVENTION)
+public class NormalEmptyIntervention extends AbstractNodeComponent<NormalEmptyIntervention.NormalEmptyInterventionConfigDo> {
+    /**
+     * 累计游戏局数 >= 100
+     * 连续空盘计数 >= 6
+     * 本局结果为空盘
+     */
+    @Override
+    protected boolean triggerCondition(PlayerInterventionParamDo paramDo, NormalEmptyInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
+        UserMetricInfoDo userMetricInfoDo = paramDo.getUserMetricInfoDo();
+        AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
+        int totalBetTimes = userMetricInfoDo.getTotalBetTimes();
+        int continueEmptyTimes = userMetricInfoDo.getContinueEmptyTimes();
+        BetRecordTemplateEsDo betRecordTemplateEsDo = paramDo.getBetRecordTemplateEsDo();
+        AssertUtil.assertNotNull(betRecordTemplateEsDo, ErrorCode.ERR_PARAM);
+        Double multiple = betRecordTemplateEsDo.getMultiple();
+
+        return totalBetTimes >= config.getMinTotalGameCount() &&
+                continueEmptyTimes >= config.getMinContinuousEmptyCount() &&
+                multiple <= 0
+                ;
+    }
+
+    @Override
+    protected boolean triggerProbability(PlayerInterventionParamDo paramDo, NormalEmptyInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
+        return super.fixedTriggerProbability(paramDo, config, contextDo);
+    }
+
+    @Override
+    protected boolean repeatCondition(PlayerInterventionParamDo paramDo, NormalEmptyInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
+        return super.commonRepeatCondition(paramDo, config, contextDo);
+    }
+
+    @Override
+    protected void intervention(PlayerInterventionParamDo paramDo, NormalEmptyInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
+        super.buildInterventionResult(paramDo, config, contextDo,TemplateMultipleRange.build(config.getInterventionTemplateRange()), null, null);
+    }
+
+    /**
+     * @see com.wegame.capi.biz.domain.intervention.DefaultInterventionConfigDo
+     */
+    @Data
+    public static class NormalEmptyInterventionConfigDo implements InterventionConfig {
+        /**
+         * 最小累计游戏局数
+         * {@link DefaultInterventionConfigDo#getMinTotalGameCount()}
+         */
+        private Integer minTotalGameCount;
+        /**
+         * 最小连续空盘次数
+         * {@link DefaultInterventionConfigDo#getMinContinuousEmptyCount()}
+         */
+        private Integer minContinuousEmptyCount;
+
+        /**
+         * 触发概率
+         * {@link DefaultInterventionConfigDo#getTriggerProbability()}
+         */
+        private BigDecimal triggerProbability;
+
+        /**
+         * 重复类型
+         *
+         * @see com.wegame.capi.common.enums.RepeatTypeEnum
+         * {@link DefaultInterventionConfigDo#getRepeatType()}
+         */
+        private String repeatType;
+        /**
+         * 干预模版name
+         * eg:98rtp
+         * {@link DefaultInterventionConfigDo#getRtpName()}
+         */
+        private String rtpName;
+        /**
+         * 干预模版倍率范围
+         * eg:0-1
+         * {@link DefaultInterventionConfigDo#getInterventionTemplateRange()}
+         */
+        private String interventionTemplateRange;
+    }
+}

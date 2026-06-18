@@ -5,6 +5,7 @@ import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.application.controller.AbstractController;
 import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -29,7 +30,7 @@ import static com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter.d
  *
  * @author generate
  */
-public abstract class AbstractJackpotController {
+public abstract class AbstractJackpotController extends AbstractController {
 
     public static final Map<GameTypeEnum, String> JACKPOT_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.LAM_ANG, "lamangJackpotManager")

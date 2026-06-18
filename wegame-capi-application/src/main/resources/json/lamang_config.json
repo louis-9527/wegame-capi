@@ -255,104 +255,55 @@
 		},
 		"rewardMaxMultiple": "10250",
 		"freeWheelTimes": 10,
-		"templateConfig": {
-			"templateWarmUpEndOddsMap": {
-				"NORMAL_BET": 5,
-				"BUY_BET": -1
+		"commonTemplateConfig": {
+			"warmUpEndMultipleMap": {
+				"NORMAL_BET": 8,
+				"BUY_BET": 5
 			},
-			"promotionTemplateMapping": {
-				"FREE_SPIN": "LAM_ANG_FREE_SPIN_V1"
-			},
-			"abTemplateMapping": {
-				"A": "LAM_ANG",
-				"B": "LAM_ANG_V2"
-			},
-			"templateRangeConfig" : {
-				"LAM_ANG" : {
-					"mainGame": {
-						"0_0": 2810000,
-						"0_0.5": 364262,
-						"0.5_1": 151266,
-						"1_3": 200000,
-						"3_5": 69000,
-						"5_8": 54000,
-						"8_15": 53000,
-						"15_30": 37347,
-						"30_50": 11000,
-						"50_70": 4684,
-						"70_100": 3000
-					},
-					"freeGame": {
-						"0_0.5": 115508,
-						"0.5_1": 88914,
-						"1_3": 62417,
-						"3_5": 7000,
-						"5_8": 1340,
-						"8_15": 850,
-						"15_30": 210,
-						"30_50": 40,
-						"50_70": 8,
-						"70_100": 5
+			"rtpMap": {
+				"96rtp": {
+					"indexName": "lamang_bet_record_template",
+					"multipleRangeWeightMap": {
+						"NORMAL_BET": {
+							"1_3": 43022,
+							"3_5": 19903,
+							"5_8": 12266
+						},
+						"BUY_BET": {
+							"1_3": 43022,
+							"3_5": 19903,
+							"5_8": 12266
+						}
 					}
 				},
-				"LAM_ANG_V2" : {
-					"mainGame": {
-						"0_0": 2810000,
-						"0_0.5": 364262,
-						"0.5_1": 151266,
-						"1_3": 200000,
-						"3_5": 69000,
-						"5_8": 54000,
-						"8_15": 53000,
-						"15_30": 37347,
-						"30_50": 11000,
-						"50_70": 4389,
-						"70_100": 2000,
-						"100_300": 500,
-						"300_500": 40,
-						"500_1000": 10,
-						"1000_5000": 1
-					},
-					"freeGame": {
-						"0_0.5": 115508,
-						"0.5_1": 88914,
-						"1_3": 62417,
-						"3_5": 7000,
-						"5_8": 1340,
-						"8_15": 850,
-						"15_30": 210,
-						"30_50": 40,
-						"50_70": 8,
-						"70_100": 5
+				"freeSpinRtp": {
+					"indexName": "lamang_free_spin_bet_record_template",
+					"multipleRangeWeightMap": {
+						"NORMAL_BET": {
+							"1_3": 43022,
+							"3_5": 19903,
+							"5_8": 12266
+						},
+						"BUY_BET": {
+							"1_3": 43022,
+							"3_5": 19903,
+							"5_8": 12266
+						}
 					}
-				},
-				"LAM_ANG_FREE_SPIN_V1" : {
-					"mainGame": {
-						"0_0": 3447500,
-						"1_3": 1800000,
-						"3_5": 160000,
-						"5_8": 20000,
-						"8_15": 10000,
-						"15_30": 5000
-					},
-					"freeGame": {
-						"0_0.5": 0,
-						"0.5_1": 0,
-						"1_3": 0,
-						"3_5": 0,
-						"5_8": 0,
-						"8_15": 0,
-						"15_30": 0,
-						"30_50": 0,
-						"50_70": 0,
-						"70_100": 0
-					}
+				}
+			},
+			"rtpControlMap": {
+				"Default": {
+					"StarCard": "96rtp",
+					"FreeSpin": "freeSpinRtp",
+					"Default": "96rtp"
 				}
 			}
 		},
 		"payoutAmountLimitConfig": {
 			"retryCount": 1,
 			"limitAmount": 1000000000
-		}
+		},
+		"interventionSwitch": true
 	}
 }

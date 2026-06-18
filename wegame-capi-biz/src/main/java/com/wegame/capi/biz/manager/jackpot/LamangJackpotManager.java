@@ -12,6 +12,7 @@ import com.wegame.capi.common.enums.JackpotRewardAmountTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +24,11 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.jackpot.JackpotRewardPoolBuilder.buildList;
 import static com.wegame.capi.biz.config.mongo.LamangMongoConfig.lamangTransactionManager;
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 @Component("lamangJackpotManager")
 public class LamangJackpotManager extends AbstractJackpotManager {
 

@@ -60,6 +60,7 @@ public class BetRecordConverter {
                     .campaignId(po.getExtendInfo().getCampaignId())
                     .poolCategory(po.getExtendInfo().getPoolCategory())
                     .currentLevelNo(po.getExtendInfo().getCurrentLevelNo())
+                    .interventionRuleId(po.getExtendInfo().getInterventionRuleId())
                     .build());
         }
         if (Objects.nonNull(po.getJackpot())) {
@@ -123,6 +124,7 @@ public class BetRecordConverter {
                     .campaignId(betRecordDo.getExtendInfo().getCampaignId())
                     .poolCategory(betRecordDo.getExtendInfo().getPoolCategory())
                     .currentLevelNo(betRecordDo.getExtendInfo().getCurrentLevelNo())
+                    .interventionRuleId(betRecordDo.getExtendInfo().getInterventionRuleId())
                     .build());
         }
         if (Objects.nonNull(betRecordDo.getJackpot())) {
