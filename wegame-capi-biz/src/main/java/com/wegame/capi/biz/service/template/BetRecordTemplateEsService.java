@@ -47,6 +47,7 @@ import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 
 @Slf4j
 @Service
+@Deprecated
 @ConditionalOnBean(EsRestClientConfig.class)
 public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> implements InitializingBean {
 
