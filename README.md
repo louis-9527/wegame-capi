@@ -33,15 +33,22 @@ http://client.sportslive.com.ph:9000/capi/doc.html
 
 
 游戏主R：
-    MariaMakiling: zhumeng001 maidong
-    Malakas: zhumeng002 maidong
-    IbongAdarna: zhumeng003 jayni
-    Lamang: zhumeng004 lyric
-    Bakunawa: zhumeng005 maidong
-    DiwataMayari: zhumeng006 jayni
-    Kapre: zhumeng007 jayni
-    Mangkukulam: zhumeng008 lyric
-    Sirena: zhumeng009 lyric
-    Atlantis: zhumeng010 lyric
-    Bayanihan: zhumeng011 jayni
-    Idol: zhumeng012 maidong
+MariaMakiling: zhumeng001 maidong **online**
+Malakas: zhumeng002 maidong **online**
+IbongAdarna: zhumeng003 jayni **online**
+Lamang: zhumeng004 lyric **online**
+Bakunawa: zhumeng005 maidong **online**
+DiwataMayari: zhumeng006 jayni **online**
+Kapre: zhumeng007 jayni **online**
+Mangkukulam: zhumeng008 lyric **online**
+Sirena: zhumeng009 lyric **online**
+Atlantis: zhumeng010 lyric  _stress_
+Bayanihan: zhumeng011 jayni **online**
+Idol: zhumeng012 maidong
+GoldenPursuit: zhumeng013 jayni
+FruitNinja: zhumeng014 lyric
+FOUR_DIVINE: zhumeng015 maidong
+PALO_SEBO: zhumeng017 lyric
+LAMANG_DELUXE: zhumeng018 lyric
+FOURTUNE: zhumeng019 jayni
+ASWANG: zhumeng020 maidong
