@@ -266,14 +266,6 @@
                 <config-dir>local</config-dir>
             </properties>
         </profile>
-
-        <profile>
-            <id>dev</id>
-            <properties>
-                <config-dir>dev</config-dir>
-            </properties>
-        </profile>
-
         <profile>
             <id>qa</id>
             <properties>
@@ -286,7 +278,6 @@
                 <config-dir>sts</config-dir>
             </properties>
         </profile>
-
         <profile>
             <id>pre</id>
             <properties>
