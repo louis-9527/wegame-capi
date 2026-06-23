@@ -131,7 +131,7 @@ public abstract class AbstractAtlantisBetStrategy
     private boolean atlantisIsCanOperationEvent(BetDo betDo) {
         // atlantis 只normal 和lockBoy(EX_BET)可支持dos
         BetSubTypeEnum betSubType = betDo.getBetSubType();
-        return Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET) || Objects.equals(betSubType, BetSubTypeEnum.EX_BET);
+        return Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET);
     }
 
     /**
