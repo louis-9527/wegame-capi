@@ -95,7 +95,7 @@ dynamic:
       - prod-bayanihan-pri.redis.singapore.rds.aliyuncs.com:6379
 #game switch
 game:
-  enableRedisNodes: Bayanihan
+  enableRedis: Common
   enable:
     MariaMakiling: false
     Malakas: false

@@ -75,6 +75,7 @@ spring:
             refresh: true
 #game switch
 game:
+  enableRedis: Common
   enable:
     MariaMakiling: true
     Malakas: true
