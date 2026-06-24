@@ -83,6 +83,7 @@ spring:
             refresh: true
 #game switch
 game:
+  enableRedisNodes: Bayanihan
   enable:
     MariaMakiling: false
     Malakas: false
