@@ -87,6 +87,7 @@ public class Constants {
     public static final String TRUE_VAL = "true";
     public static final String DYNAMIC_OPERATION_SWITCH = "dynamic.operation.switch";
     public static final String DYNAMIC_AP_OPERATION_SWITCH = "dynamic.ap.operation.switch";
+    public static final String DYNAMIC_NP_OPERATION_SWITCH = "dynamic.np.operation.switch";
     public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
     public static final String MALAKAS_PROP = "game.enable.Malakas";
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";

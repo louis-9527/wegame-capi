@@ -223,7 +223,7 @@ public class OperationEventApPulsarConfig {
 
     @Bean(name = bayanihanOperationEventApConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = BAYANIHAN_PROP, havingValue = TRUE_VAL)
-    @ConditionalOnBean(SirenaOperationEventPulsarListener.class)
+    @ConditionalOnBean(BayanihanOperationEventPulsarListener.class)
     public Consumer<byte[]> bayanihanOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
                                                            @Autowired BayanihanOperationEventPulsarListener  bayanihanOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, bayanihanOperationEventApConsumer);
