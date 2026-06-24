@@ -64,7 +64,7 @@ spring:
           - data-id: wegame-capi-sts-bayanihan_config.json
             group: wegame-capi-sts
             refresh: true
-## game switch
+## game switch, enableRedis参数说明 需与游戏名保持一致（除Common外），prod环境配置对应游戏， 非prod环境配置Common
 game:
   enableRedis: Common
   enable:
