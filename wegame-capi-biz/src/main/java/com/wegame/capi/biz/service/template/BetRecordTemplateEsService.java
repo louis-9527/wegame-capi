@@ -306,12 +306,6 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         return t;
     }
 
-    //@CachePut(value = CacheConstants.TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
-    //public T putTemplateRedisCache(TemplateTypeEnum templateType, Long betRecordId, T t) {
-    //    // log.info("putRedisCache, betRecordId: {}", betRecordId);
-    //    return t;
-    //}
-
     @Cacheable(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
     public T getTemplateWithLocalCache(TemplateTypeEnum templateType, Long betRecordId, Class<T> clazz) {
         // todo delete log
