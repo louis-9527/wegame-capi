@@ -81,6 +81,18 @@ spring:
           - data-id: wegame-capi-local-bayanihan_config.json
             group: wegame-capi-local
             refresh: true
+#dynamic
+dynamic:
+  redisNodes:
+    Common:
+      - localhost:7001
+      - localhost:7002
+      - localhost:7003
+      - localhost:7004
+      - localhost:7005
+      - localhost:7006
+    Bayanihan:
+      - prod-bayanihan-pri.redis.singapore.rds.aliyuncs.com:6379
 #game switch
 game:
   enableRedisNodes: Bayanihan
