@@ -28,14 +28,14 @@ spring:
   application:
     name: wegame-capi
     env: qa
-    version: 20260529001
+    version: 20260624001
   profiles:
     active: qa
   config:
     import:
       - application-api.yml
       - application-datasource.yml
-      - application-redis.yml
+      - application-redis-${game.enableRedis}.yml
       - application-elasticsearch.yml
       - game-common.yml
       - game-maria_makiling.yml

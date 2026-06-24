@@ -63,8 +63,9 @@ spring:
           - data-id: wegame-capi-pre-bayanihan_config.json
             group: wegame-capi-pre
             refresh: true
-## game switch
+## game switch, enableRedis参数说明 需与游戏名保持一致（除Common外），prod环境配置对应游戏， 非prod环境配置Common
 game:
+  enableRedis: Common
   enable:
     MariaMakiling: true
     Malakas: true

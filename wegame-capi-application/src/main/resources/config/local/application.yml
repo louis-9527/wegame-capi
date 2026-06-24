@@ -30,7 +30,7 @@ spring:
     import:
       - application-api.yml
       - application-datasource.yml
-      - application-redis.yml
+      - application-redis-${game.enableRedis}.yml
       - application-elasticsearch.yml
       - game-common.yml
       - game-maria_makiling.yml

@@ -127,5 +127,4 @@ public class AtlantisTemplateLoadPostHandler extends AbstractTemplateLoadPostHan
             log.info("loadLocalCache error, betType: {},betSubType:{}", betType, betSubType, e);
         }
     }
-
 }
