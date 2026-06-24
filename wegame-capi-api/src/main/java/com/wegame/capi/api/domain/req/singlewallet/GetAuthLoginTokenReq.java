@@ -11,7 +11,8 @@ import java.io.Serializable;
  */
 @Data
 @SuperBuilder
-@ToString
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class GetAuthLoginTokenReq extends BaseReq implements Serializable {
     private static final long serialVersionUID = 1L;
     private String token;
