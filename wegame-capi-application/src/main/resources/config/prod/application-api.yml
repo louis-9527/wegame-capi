@@ -229,7 +229,7 @@ api:
       - platformIdList: [ 70 ]
         invokeSingle: true
         singleDomain: http://sw-http-main-apisix-internal-ali.nwrplatform10.com
-        singlePoolConfigDomain:
+        singlePoolConfigDomain: http://dos-fund-pool-app.igo10.me
         freeSpinDomain: http://sw-http-freespin-internal-ali.nwrplatform10.com
         promotionDomain: http://reward-http-internal-ali.nwrplatform10.com
         operationDomain: http://dos-egame.nwrgames.com
