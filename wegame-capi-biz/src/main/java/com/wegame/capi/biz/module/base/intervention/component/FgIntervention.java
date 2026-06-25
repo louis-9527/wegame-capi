@@ -20,6 +20,7 @@ import java.util.*;
 @Slf4j
 @LiteflowComponent(id = InterventionRuleIdConstants.FG_INTERVENTION)
 public class FgIntervention extends AbstractNodeComponent<FgIntervention.FgInterventionConfigDo> {
+    private static final Double TEMP_MULTIPLE=10d;
 
     @Override
     protected boolean triggerCondition(PlayerInterventionParamDo paramDo, FgInterventionConfigDo config, PlayerInterventionContextDo contextDo) {
@@ -28,10 +29,18 @@ public class FgIntervention extends AbstractNodeComponent<FgIntervention.FgInter
         AssertUtil.assertNotNull(userMetricInfoDo, ErrorCode.ERR_PARAM);
         BetTypeEnum betType = paramDo.getBetType();
         AssertUtil.assertNotNull(betType, ErrorCode.ERR_PARAM);
-        int todayContinueNoFgTimes =userMetricInfoDo.getContinueNoFgTimes();
+        int todayContinueNoFgTimes = userMetricInfoDo.getContinueNoFgTimes();
         List<BetTypeEnum> supportBetTypes = Optional.ofNullable(config.getSupportBetTypeList()).orElse(Collections.emptyList());
+        long lossTotalBetAmount = userMetricInfoDo.getTotalBetAmount() - userMetricInfoDo.getTotalPayoutAmount();
+        long betAmount = paramDo.getBetAmount();
+        if (betAmount == 0) {
+            return false;
+        }
+        double result = lossTotalBetAmount / (double) betAmount;
         return supportBetTypes.contains(betType) &&
-                todayContinueNoFgTimes >= config.getMinTotalNoHitFgCount();
+                todayContinueNoFgTimes >= config.getMinTotalNoHitFgCount() &&
+                result>TEMP_MULTIPLE
+                ;
     }
 
     @Override
@@ -75,6 +84,7 @@ public class FgIntervention extends AbstractNodeComponent<FgIntervention.FgInter
         private BigDecimal triggerProbabilityCoefficient;
         /**
          * 重复类型
+         *
          * @see com.wegame.capi.common.enums.RepeatTypeEnum
          * {@link DefaultInterventionConfigDo#getRepeatType()}
          */
