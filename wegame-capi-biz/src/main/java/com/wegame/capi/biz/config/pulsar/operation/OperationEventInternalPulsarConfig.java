@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.config.pulsar.operation;
 
 import com.wegame.capi.biz.listener.operation.*;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.*;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.wegame.capi.biz.config.pulsar.operation.PulsarConfigHelper.buildSubscriptionName;
 import static com.wegame.capi.common.Constants.*;
 
 /**
@@ -25,6 +27,11 @@ import static com.wegame.capi.common.Constants.*;
 @Configuration
 @ConditionalOnProperty(name = {DYNAMIC_OPERATION_SWITCH, DYNAMIC_INTERNAL_OPERATION_SWITCH}, havingValue = TRUE_VAL)
 public class OperationEventInternalPulsarConfig {
+    private static final String key = "cd_Internal";
+    @Value("${spring.application.name}")
+    String appName;
+    @Value("${spring.application.env}")
+    String env;
     @Value("${dynamic.internal.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.internal.operation.pulsar_topic}")
@@ -35,29 +42,6 @@ public class OperationEventInternalPulsarConfig {
     String dynamicOperationAuthCredentialsFilePath;
     @Value("${dynamic.internal.operation.pulsar.auth.audience}")
     String dynamicOperationAuthAudience;
-    // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
-    @Value("${dynamic.internal.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
-    String dynamicOperationGroupMariaMakiling;
-    @Value("${dynamic.internal.operation.pulsar_group.malakas:cd_Malakas}")
-    String dynamicOperationGroupMalakas;
-    @Value("${dynamic.internal.operation.pulsar_group.ibong:cd_Ibong}")
-    String dynamicOperationGroupIbong;
-    @Value("${dynamic.internal.operation.pulsar_group.bakunawa:cd_Bakunawa}")
-    String dynamicOperationGroupBakunawa;
-    @Value("${dynamic.internal.operation.pulsar_group.lamang:cd_Lamang}")
-    String dynamicOperationGroupLamang;
-    @Value("${dynamic.internal.operation.pulsar_group.diwata_mayari:cd_DiwataMayari}")
-    String dynamicOperationGroupDiwataMayari;
-    @Value("${dynamic.internal.operation.pulsar_group.kapre:cd_Kapre}")
-    String dynamicOperationGroupKapre;
-    @Value("${dynamic.internal.operation.pulsar_group.mangkukulam:cd_Mangkukulam}")
-    String dynamicOperationGroupMangkukulam;
-    @Value("${dynamic.internal.operation.pulsar_group.sirena:cd_Sirena}")
-    String dynamicOperationGroupSirena;
-    @Value("${dynamic.internal.operation.pulsar_group.atlantis:cd_Atlantis}")
-    String dynamicOperationGroupAtlantis;
-    @Value("${dynamic.internal.operation.pulsar_group.bayanihan:cd_Bayanihan}")
-    String dynamicOperationGroupBayanihan;
 
 
     @Bean(name = "operationEventInternalPulsarClient", destroyMethod = COMMON_CLOSE_METHOD)
@@ -91,7 +75,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "mariaMakilingOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupMariaMakiling)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.MARIA_MAKILING))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(mariamakilingOperationEventPulsarListener)
                 .subscribe();
@@ -105,7 +89,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "malakasOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupMalakas)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.MALAKAS))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(malakasOperationEventPulsarListener)
                 .subscribe();
@@ -119,7 +103,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "ibongOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupIbong)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.IBONG_ADARNA))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(ibongOperationEventPulsarListener)
                 .subscribe();
@@ -133,7 +117,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "bakunawaOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupBakunawa)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.BAKUNAWA))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(bakunawaOperationEventPulsarListener)
                 .subscribe();
@@ -147,7 +131,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "lamangOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupLamang)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.LAM_ANG))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(lamangOperationEventPulsarListener)
                 .subscribe();
@@ -161,7 +145,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "diwataMayariOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupDiwataMayari)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.DIWATA_MAYARI))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(diwataMayariOperationEventPulsarListener)
                 .subscribe();
@@ -175,7 +159,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "kapreOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupKapre)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.KAPRE))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(kapreOperationEventPulsarListener)
                 .subscribe();
@@ -189,7 +173,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "mangkukulamOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupMangkukulam)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.MANGKUKULAM))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(mangkukulamOperationEventPulsarListener)
                 .subscribe();
@@ -203,7 +187,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "sirenaOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupSirena)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.SIRENA))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(sirenaOperationEventPulsarListener)
                 .subscribe();
@@ -217,7 +201,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "atlantisOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupAtlantis)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.ATLANTIS))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(atlantisOperationEventPulsarListener)
                 .subscribe();
@@ -231,7 +215,7 @@ public class OperationEventInternalPulsarConfig {
         log.info(BUILD_BEAN_FORMAT, "bayanihanOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
-                .subscriptionName(dynamicOperationGroupBayanihan)
+                .subscriptionName(buildSubscriptionName(appName, env, key, GameTypeEnum.BAYANIHAN))
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(bayanihanOperationEventPulsarListener)
                 .subscribe();
