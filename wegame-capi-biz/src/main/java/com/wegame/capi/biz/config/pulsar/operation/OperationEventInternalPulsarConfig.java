@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.config.pulsar;
+package com.wegame.capi.biz.config.pulsar.operation;
 
 import com.wegame.capi.biz.listener.operation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.net.URL;
 import java.util.Objects;
@@ -25,7 +24,7 @@ import static com.wegame.capi.common.Constants.*;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(name = DYNAMIC_OPERATION_SWITCH, havingValue = TRUE_VAL)
-public class OperationEventPulsarConfig {
+public class OperationEventInternalPulsarConfig {
     private static final String operationEventPulsarClient = "operationEventPulsarClient";
     private static final String mariaMakilingOperationEventConsumer = "mariaMakilingOperationEventConsumer";
     private static final String malakasOperationEventConsumer = "malakasOperationEventConsumer";

@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.config.pulsar;
+package com.wegame.capi.biz.config.pulsar.operation;
 
 import com.wegame.capi.biz.listener.operation.*;
 import lombok.extern.slf4j.Slf4j;
