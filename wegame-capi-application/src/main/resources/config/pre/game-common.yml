@@ -4,6 +4,7 @@ dynamic:
     switch: true
   internal:
     operation:
+      switch: true
       pulsar_url: pulsar+ssl://pc-06daaa29.alicloud-apse1-uat-by8ki.ali.snio.cloud:6651
       pulsar_topic: dos_game_slot_event
       pulsar_group:
@@ -25,6 +26,7 @@ dynamic:
           audience: urn:sn:pulsar:o-0676f:platform-aliyun-uat
   external:
     operation:
+      switch: true
       pulsar_url: pulsar+ssl://pc-06daaa29.alicloud-apse1-uat-by8ki.ali.snio.cloud:6651
       pulsar_topic: dos_bp_game_slot_event
       pulsar_group:

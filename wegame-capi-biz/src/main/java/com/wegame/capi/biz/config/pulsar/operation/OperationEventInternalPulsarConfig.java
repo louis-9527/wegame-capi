@@ -23,7 +23,7 @@ import static com.wegame.capi.common.Constants.*;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = DYNAMIC_OPERATION_SWITCH, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = {DYNAMIC_OPERATION_SWITCH, DYNAMIC_INTERNAL_OPERATION_SWITCH}, havingValue = TRUE_VAL)
 public class OperationEventInternalPulsarConfig {
     @Value("${dynamic.internal.operation.pulsar_url}")
     String dynamicOperationTopicUrl;

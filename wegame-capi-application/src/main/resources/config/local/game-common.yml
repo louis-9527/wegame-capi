@@ -4,6 +4,7 @@ dynamic:
     switch: false
   internal:
     operation:
+      switch: false
       pulsar_url: pulsar+ssl://pc-f71ef0a1.alicloud-apse1-qat-a8kpr.ali.snio.cloud:6651
       pulsar_topic: dos_game_slot_event
       pulsar_group:
@@ -25,6 +26,7 @@ dynamic:
           audience: urn:sn:pulsar:o-h9vm9:platform-aliyun-qat
   external:
     operation:
+      switch: false
       pulsar_url: pulsar+ssl://pc-f71ef0a1.alicloud-apse1-qat-a8kpr.ali.snio.cloud:6651
       pulsar_topic: dos_bp_game_slot_event
       pulsar_group:

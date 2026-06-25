@@ -4,6 +4,7 @@ dynamic:
     switch: false
   internal:
     operation:
+      switch: false
       pulsar_url: pulsar+ssl://pc-d33b581f.alicloud-apse1-test-gqwl5.ali.snio.cloud:6651
       pulsar_topic: dos_game_slot_event
       pulsar_group:
@@ -25,6 +26,7 @@ dynamic:
           audience: urn:sn:pulsar:o-sn9dy:stress-test-kl
   external:
     operation:
+      switch: false
       pulsar_url: pulsar+ssl://pc-3f23fd60.alicloud-apse1-prod-scx3f.ali.snio.cloud:6651
       pulsar_topic: dos_bp_game_slot_event
       pulsar_group:
