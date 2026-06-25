@@ -82,7 +82,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MariamakilingOperationEventPulsarListener.class)
     public Consumer<byte[]> mariaMakilingOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                                        @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
+                                                                  @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "mariaMakilingOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -96,7 +96,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
     public Consumer<byte[]> malakasOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                                  @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
+                                                            @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "malakasOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -110,7 +110,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(IbongOperationEventPulsarListener.class)
     public Consumer<byte[]> ibongOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                                @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
+                                                          @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "ibongOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -124,7 +124,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(LamangOperationEventPulsarListener.class)
     public Consumer<byte[]> lamangOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                         @Autowired LamangOperationEventPulsarListener lamangOperationEventPulsarListener) throws PulsarClientException {
+                                                           @Autowired LamangOperationEventPulsarListener lamangOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "lamangOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -139,7 +139,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
     public Consumer<byte[]> bakunawaOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                           @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
+                                                             @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "bakunawaOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -154,7 +154,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
     public Consumer<byte[]> diwataMayariOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                               @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
+                                                                 @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "diwataMayariOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -168,7 +168,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(KapreOperationEventPulsarListener.class)
     public Consumer<byte[]> kapreOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                        @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
+                                                          @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "kapreOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -183,7 +183,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
     public Consumer<byte[]> mangkukulamOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                              @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
+                                                                @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "mangkukulamOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -197,7 +197,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = SIRENA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(SirenaOperationEventPulsarListener.class)
     public Consumer<byte[]> sirenaOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                           @Autowired SirenaOperationEventPulsarListener  sirenaOperationEventPulsarListener) throws PulsarClientException {
+                                                           @Autowired SirenaOperationEventPulsarListener sirenaOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "sirenaOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
@@ -211,7 +211,7 @@ public class OperationEventApPulsarConfig {
     @ConditionalOnProperty(name = BAYANIHAN_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(BayanihanOperationEventPulsarListener.class)
     public Consumer<byte[]> bayanihanOperationEventApConsumer(@Autowired PulsarClient operationEventApPulsarClient,
-                                                           @Autowired BayanihanOperationEventPulsarListener  bayanihanOperationEventPulsarListener) throws PulsarClientException {
+                                                              @Autowired BayanihanOperationEventPulsarListener bayanihanOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, "bayanihanOperationEventApConsumer");
         return operationEventApPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)

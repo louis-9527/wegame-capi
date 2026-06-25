@@ -83,12 +83,12 @@ public class OperationEventInternalPulsarConfig {
     }
 
 
-    @Bean(name = "mariaMakilingOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "mariaMakilingOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MariamakilingOperationEventPulsarListener.class)
-    public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                                @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "mariaMakilingOperationEventConsumer");
+    public Consumer<byte[]> mariaMakilingOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                        @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "mariaMakilingOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
@@ -97,12 +97,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "malakasOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "malakasOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
-    public Consumer<byte[]> malakasOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                          @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "malakasOperationEventConsumer");
+    public Consumer<byte[]> malakasOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                  @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "malakasOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMalakas)
@@ -111,12 +111,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "ibongOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "ibongOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(IbongOperationEventPulsarListener.class)
-    public Consumer<byte[]> ibongOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                        @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "ibongOperationEventConsumer");
+    public Consumer<byte[]> ibongOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "ibongOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupIbong)
@@ -125,12 +125,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "bakunawaOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "bakunawaOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
-    public Consumer<byte[]> bakunawaOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                           @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "bakunawaOperationEventConsumer");
+    public Consumer<byte[]> bakunawaOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                   @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "bakunawaOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupBakunawa)
@@ -139,12 +139,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "lamangOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "lamangOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(LamangOperationEventPulsarListener.class)
-    public Consumer<byte[]> lamangOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                         @Autowired LamangOperationEventPulsarListener lamangOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "lamangOperationEventConsumer");
+    public Consumer<byte[]> lamangOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                 @Autowired LamangOperationEventPulsarListener lamangOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "lamangOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupLamang)
@@ -153,12 +153,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "diwataMayariOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "diwataMayariOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
-    public Consumer<byte[]> diwataMayariOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                               @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "diwataMayariOperationEventConsumer");
+    public Consumer<byte[]> diwataMayariOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                       @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "diwataMayariOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
@@ -167,12 +167,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "kapreOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "kapreOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(KapreOperationEventPulsarListener.class)
-    public Consumer<byte[]> kapreOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                        @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "kapreOperationEventConsumer");
+    public Consumer<byte[]> kapreOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "kapreOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupKapre)
@@ -181,12 +181,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "mangkukulamOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "mangkukulamOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
-    public Consumer<byte[]> mangkukulamOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                              @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "mangkukulamOperationEventConsumer");
+    public Consumer<byte[]> mangkukulamOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                      @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "mangkukulamOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMangkukulam)
@@ -195,12 +195,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "sirenaOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "sirenaOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = SIRENA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(SirenaOperationEventPulsarListener.class)
-    public Consumer<byte[]> sirenaOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                         @Autowired SirenaOperationEventPulsarListener sirenaOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "sirenaOperationEventConsumer");
+    public Consumer<byte[]> sirenaOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                 @Autowired SirenaOperationEventPulsarListener sirenaOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "sirenaOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupSirena)
@@ -209,12 +209,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "atlantisOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "atlantisOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = ATLANTIS_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(AtlantisOperationEventPulsarListener.class)
-    public Consumer<byte[]> atlantisOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                           @Autowired AtlantisOperationEventPulsarListener atlantisOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "atlantisOperationEventConsumer");
+    public Consumer<byte[]> atlantisOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                   @Autowired AtlantisOperationEventPulsarListener atlantisOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "atlantisOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupAtlantis)
@@ -223,12 +223,12 @@ public class OperationEventInternalPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "bayanihanOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "bayanihanOperationEventInternalConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = BAYANIHAN_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(BayanihanOperationEventPulsarListener.class)
-    public Consumer<byte[]> bayanihanOperationEventConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
-                                                            @Autowired BayanihanOperationEventPulsarListener bayanihanOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "bayanihanOperationEventConsumer");
+    public Consumer<byte[]> bayanihanOperationEventInternalConsumer(@Autowired PulsarClient operationEventInternalPulsarClient,
+                                                                    @Autowired BayanihanOperationEventPulsarListener bayanihanOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "bayanihanOperationEventInternalConsumer");
         return operationEventInternalPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupBayanihan)
