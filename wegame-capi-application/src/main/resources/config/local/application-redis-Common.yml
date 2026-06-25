@@ -4,13 +4,13 @@ spring:
     connectTimeout: 1500
     timeout: 1500
     cluster:
-      nodes: ${dynamic.redisNodes.${game.enableRedisNodes}}
-#        - localhost:7001
-#        - localhost:7002
-#        - localhost:7003
-#        - localhost:7004
-#        - localhost:7005
-#        - localhost:7006
+      nodes:
+        - localhost:7001
+        - localhost:7002
+        - localhost:7003
+        - localhost:7004
+        - localhost:7005
+        - localhost:7006
       max-redirects: 3
     redisson:
       minIdlePoolSize: 0
