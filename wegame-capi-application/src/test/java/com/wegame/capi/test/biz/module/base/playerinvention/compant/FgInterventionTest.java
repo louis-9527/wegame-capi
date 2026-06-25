@@ -47,7 +47,7 @@ public class FgInterventionTest {
         doReturn(TAG).when(fgIntervention).getTag();
         doReturn(CMP_ID).when(fgIntervention).getNodeId();
         PlayerInterventionParamDo paramDo = PlayerInterventionParamDo.builder()
-                .userMetricInfoDo(UserMetricInfoDo.builder().continueNoFgTimes(200).build())
+                .userMetricInfoDo(UserMetricInfoDo.builder().totalBetAmount(1000000).totalPayoutAmount(1000).continueNoFgTimes(200).build())
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betAmount(1000)
                 .payAmount(1000)
