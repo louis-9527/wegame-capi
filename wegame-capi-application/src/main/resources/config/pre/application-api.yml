@@ -70,11 +70,11 @@ api:
               privateIv: b3417fdeb120093da5ba14ec2225d762
       - platformIdList: [777]
         invokeSingle: true
-        singleDomain: http://sw-external-platform-http-main.igo10.me
+        singleDomain: https://sw-http-main-apisix.igo9.me
         singlePoolConfigDomain: https://dos-fund-pool-app.igo9.me
-        freeSpinDomain: http://sw-inhouse-http-freespin.igo10.me
-        promotionDomain: http://reward-http-ep.igo10.me
-        operationDomain: http://dos-egame-bp-aliyun.platform10.me
+        freeSpinDomain: https://sw-http-freespin.igo9.me
+        promotionDomain:  https://reward-http.igo9.me
+        operationDomain:  https://dos-egame-bp-aliyun.platform99.me
         platformMap:
           bp:
             - platformId: 777
