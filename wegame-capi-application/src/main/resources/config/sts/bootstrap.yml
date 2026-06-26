@@ -31,32 +31,32 @@ spring:
         secret-key: 57yeby8QIcmSE5uue5tQH1CvGj4kZu
         refresh-enabled: true
         extension-configs:
-          - data-id: wegame-capi-qa-maria_makiling_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-sts-maria_makiling_config.json
+            group: wegame-capi-sts
             refresh: true
-          - data-id: wegame-capi-qa-malakas_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-sts-malakas_config.json
+            group: wegame-capi-sts
             refresh: true
-          - data-id: wegame-capi-qa-ibong_adarna_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-sts-ibong_adarna_config.json
+            group: wegame-capi-sts
             refresh: true
           - data-id: wegame-capi-qa-lamang_config.json
             group: wegame-capi-qa
             refresh: true
-          - data-id: wegame-capi-qa-bakunawa_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-sts-bakunawa_config.json
+            group: wegame-capi-sts
             refresh: true
-          - data-id: wegame-capi-qa-diwata_mayari_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-sts-diwata_mayari_config.json
+            group: wegame-capi-sts
             refresh: true
-          - data-id: wegame-capi-qa-kapre_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-sts-kapre_config.json
+            group: wegame-capi-sts
             refresh: true
-          - data-id: wegame-capi-qa-mangkukulam_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-sts-mangkukulam_config.json
+            group: wegame-capi-sts
             refresh: true
-          - data-id: wegame-capi-qa-sirena_config.json
-            group: wegame-capi-qa
+          - data-id: wegame-capi-sts-sirena_config.json
+            group: wegame-capi-sts
             refresh: true
           - data-id: wegame-capi-sts-atlantis_config.json
             group: wegame-capi-sts
@@ -77,5 +77,5 @@ game:
     Kapre: false
     Mangkukulam: false
     Sirena: false
-    Atlantis: false
-    Bayanihan: true
+    Atlantis: true
+    Bayanihan: false

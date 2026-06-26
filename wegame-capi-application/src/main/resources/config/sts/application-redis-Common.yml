@@ -8,8 +8,8 @@ spring:
         - stress-makiling-pri.redis.singapore.rds.aliyuncs.com:6379
       max-redirects: 3
     redisson:
-      minIdlePoolSize: 50
-      maxPoolSize: 500
+      minIdlePoolSize: 5
+      maxPoolSize: 50
     lettuce:
       cluster:
         refresh:

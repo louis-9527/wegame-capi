@@ -9,7 +9,7 @@ dynamic:
       pulsar_auth:
         issuer_url: https://auth.streamnative.cloud/
         credentials_file_path: /operation_pulsar_privateKey.json
-        audience: urn:sn:pulsar:o-sn9dy:stress-test-kl
+        audience: urn:sn:pulsar:o-h9vm9:stress-test
     external:
       enable: false
       pulsar_url: pulsar+ssl://pc-3f23fd60.alicloud-apse1-prod-scx3f.ali.snio.cloud:6651
