@@ -25,22 +25,22 @@ import static com.wegame.capi.common.Constants.*;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = {DYNAMIC_OPERATION_SWITCH, DYNAMIC_EXTERNAL_OPERATION_SWITCH}, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = {DYNAMIC_OPERATION_ENABLE, DYNAMIC_OPERATION_EXTERNAL_ENABLE}, havingValue = TRUE_VAL)
 public class OperationEventExternalPulsarConfig {
     private static final String key = "cd_External";
     @Value("${spring.application.name}")
     String appName;
     @Value("${spring.application.env}")
     String env;
-    @Value("${dynamic.external.operation.pulsar_url}")
+    @Value("${dynamic.operation.external.pulsar_url}")
     String dynamicOperationTopicUrl;
-    @Value("${dynamic.external.operation.pulsar_topic}")
+    @Value("${dynamic.operation.external.pulsar_topic}")
     String dynamicOperationTopic;
-    @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
+    @Value("${dynamic.operation.external.pulsar_auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
-    @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
+    @Value("${dynamic.operation.external.pulsar_auth.credentials_file_path}")
     String dynamicOperationAuthCredentialsFilePath;
-    @Value("${dynamic.external.operation.pulsar.auth.audience}")
+    @Value("${dynamic.operation.external.pulsar_auth.audience}")
     String dynamicOperationAuthAudience;
 
     @Bean(name = "operationEventExternalPulsarClient", destroyMethod = COMMON_CLOSE_METHOD)

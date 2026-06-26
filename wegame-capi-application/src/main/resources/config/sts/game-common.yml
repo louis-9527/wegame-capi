@@ -1,24 +1,20 @@
 # operation pulsar
 dynamic:
   operation:
-    switch: false
-  internal:
-    operation:
-      switch: false
+    enable: false
+    internal:
+      enable: false
       pulsar_url: pulsar+ssl://pc-d33b581f.alicloud-apse1-test-gqwl5.ali.snio.cloud:6651
       pulsar_topic: dos_game_slot_event
-      pulsar:
-        auth:
-          issuer_url: https://auth.streamnative.cloud/
-          credentials_file_path: /operation_pulsar_privateKey.json
-          audience: urn:sn:pulsar:o-sn9dy:stress-test-kl
-  external:
-    operation:
-      switch: false
+      pulsar_auth:
+        issuer_url: https://auth.streamnative.cloud/
+        credentials_file_path: /operation_pulsar_privateKey.json
+        audience: urn:sn:pulsar:o-sn9dy:stress-test-kl
+    external:
+      enable: false
       pulsar_url: pulsar+ssl://pc-3f23fd60.alicloud-apse1-prod-scx3f.ali.snio.cloud:6651
       pulsar_topic: dos_bp_game_slot_event
-      pulsar:
-        auth:
-          issuer_url: https://auth.streamnative.cloud
-          credentials_file_path: /operation_pulsar_external_privateKey.json
-          audience:  urn:sn:pulsar:o-iylfk:platform-pulsar-external-platform
+      pulsar_auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_external_privateKey.json
+        audience: urn:sn:pulsar:o-iylfk:platform-pulsar-external-platform

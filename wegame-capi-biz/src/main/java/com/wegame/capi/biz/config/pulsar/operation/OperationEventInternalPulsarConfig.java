@@ -25,22 +25,22 @@ import static com.wegame.capi.common.Constants.*;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = {DYNAMIC_OPERATION_SWITCH, DYNAMIC_INTERNAL_OPERATION_SWITCH}, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = {DYNAMIC_OPERATION_ENABLE, DYNAMIC_OPERATION_INTERNAL_ENABLE}, havingValue = TRUE_VAL)
 public class OperationEventInternalPulsarConfig {
     private static final String key = "cd_Internal";
     @Value("${spring.application.name}")
     String appName;
     @Value("${spring.application.env}")
     String env;
-    @Value("${dynamic.internal.operation.pulsar_url}")
+    @Value("${dynamic.operation.internal.pulsar_url}")
     String dynamicOperationTopicUrl;
-    @Value("${dynamic.internal.operation.pulsar_topic}")
+    @Value("${dynamic.operation.internal.pulsar_topic}")
     String dynamicOperationTopic;
-    @Value("${dynamic.internal.operation.pulsar.auth.issuer_url}")
+    @Value("${dynamic.operation.internal.pulsar_auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
-    @Value("${dynamic.internal.operation.pulsar.auth.credentials_file_path}")
+    @Value("${dynamic.operation.internal.pulsar_auth.credentials_file_path}")
     String dynamicOperationAuthCredentialsFilePath;
-    @Value("${dynamic.internal.operation.pulsar.auth.audience}")
+    @Value("${dynamic.operation.internal.pulsar_auth.audience}")
     String dynamicOperationAuthAudience;
 
 

@@ -1,44 +1,36 @@
 # operation pulsar
 dynamic:
   operation:
-    switch: true
-  internal:
-    operation:
-      switch: true
+    enable: true
+    internal:
+      enable: true
       pulsar_url: pulsar+ssl://pc-cb51cf5b.alicloud-apse1-prod-hfd09.ali.snio.cloud:6651
       pulsar_topic: dos_game_slot_event
-      pulsar:
-        auth:
-          issuer_url: https://auth.streamnative.cloud
-          credentials_file_path: /operation_pulsar_privateKey.json
-          audience: urn:sn:pulsar:o-iylfk:platform-egame-prod
-  external:
-    operation:
-      switch: true
+      pulsar_auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_privateKey.json
+        audience: urn:sn:pulsar:o-iylfk:platform-egame-prod
+    external:
+      enable: true
       pulsar_url: pulsar+ssl://pc-3f23fd60.alicloud-apse1-prod-scx3f.ali.snio.cloud:6651
       pulsar_topic: dos_bp_game_slot_event
-      pulsar:
-        auth:
-          issuer_url: https://auth.streamnative.cloud
-          credentials_file_path: /operation_pulsar_external_privateKey.json
-          audience:  urn:sn:pulsar:o-iylfk:platform-pulsar-external-platform
-  ap:
-    operation:
-      switch: true
+      pulsar_auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_external_privateKey.json
+        audience: urn:sn:pulsar:o-iylfk:platform-pulsar-external-platform
+    ap:
+      enable: true
       pulsar_url: pulsar+ssl://pc-c5b771c5.alicloud-apse1-prod-bclz4.ali.snio.cloud:6651
       pulsar_topic: dos_game_slot_event
-      pulsar:
-        auth:
-          issuer_url: https://auth.streamnative.cloud
-          credentials_file_path: /operation_pulsar_ap_privateKey.json
-          audience: urn:sn:pulsar:o-iylfk:platform-pulsar-asystem
-  np:
-    operation:
-      switch: true
+      pulsar_auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_ap_privateKey.json
+        audience: urn:sn:pulsar:o-iylfk:platform-pulsar-asystem
+    np:
+      enable: true
       pulsar_url: pulsar+ssl://pc-b1908bb8.alicloud-apse1-prod-omhf1.ali.snio.cloud:6651
       pulsar_topic: dos_game_slot_event
-      pulsar:
-        auth:
-          issuer_url: https://auth.streamnative.cloud
-          credentials_file_path: /operation_pulsar_np_privateKey.json
-          audience: urn:sn:pulsar:o-iylfk:platform-pulsar-newport-prod
+      pulsar_auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_np_privateKey.json
+        audience: urn:sn:pulsar:o-iylfk:platform-pulsar-newport-prod

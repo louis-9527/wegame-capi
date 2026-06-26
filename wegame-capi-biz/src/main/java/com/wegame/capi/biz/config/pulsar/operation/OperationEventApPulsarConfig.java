@@ -25,22 +25,22 @@ import static com.wegame.capi.common.Constants.*;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = {DYNAMIC_OPERATION_SWITCH, DYNAMIC_AP_OPERATION_SWITCH}, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = {DYNAMIC_OPERATION_ENABLE, DYNAMIC_OPERATION_AP_ENABLE}, havingValue = TRUE_VAL)
 public class OperationEventApPulsarConfig {
     private static final String key = "cd_Ap";
     @Value("${spring.application.name}")
     String appName;
     @Value("${spring.application.env}")
     String env;
-    @Value("${dynamic.ap.operation.pulsar_url}")
+    @Value("${dynamic.operation.ap.pulsar_url}")
     String dynamicOperationTopicUrl;
-    @Value("${dynamic.ap.operation.pulsar_topic}")
+    @Value("${dynamic.operation.ap.pulsar_topic}")
     String dynamicOperationTopic;
-    @Value("${dynamic.ap.operation.pulsar.auth.issuer_url}")
+    @Value("${dynamic.operation.ap.pulsar_auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
-    @Value("${dynamic.ap.operation.pulsar.auth.credentials_file_path}")
+    @Value("${dynamic.operation.ap.pulsar_auth.credentials_file_path}")
     String dynamicOperationAuthCredentialsFilePath;
-    @Value("${dynamic.ap.operation.pulsar.auth.audience}")
+    @Value("${dynamic.operation.ap.pulsar_auth.audience}")
     String dynamicOperationAuthAudience;
 
     @Bean(name = "operationEventApPulsarClient", destroyMethod = COMMON_CLOSE_METHOD)
