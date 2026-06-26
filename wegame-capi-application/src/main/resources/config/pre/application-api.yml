@@ -124,6 +124,11 @@ api:
                 Dm1NzEVe1Uh2xBx4TppUD2iMk1vGir71OMqnRfUKIga/
                 -----END ENCRYPTED PRIVATE KEY-----
               dosPassword: egame-secure-passphrase
+            - platformId: 777
+              channelId: 8004
+              privateKey: fea3de11dfaebbe075df0059b12567f2920ea7b8f09c9268548b05a58857caac
+              privateIv: e91a9b5f95b9d84539fdd863026d9cdd
+              dosSupport:  false
       - platformIdList: [70]
         invokeSingle: true
         singleDomain: https://sw-http-main-apisix-ali.nwrplatform99.com
