@@ -21,9 +21,6 @@ import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
-import com.wegame.capi.biz.service.freespin.FreeSpinService;
-import com.wegame.capi.biz.service.operation.OperationEventControlService;
-import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
@@ -65,8 +62,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     BagService bagService;
     @Autowired
     private GameApiProperty gameApiProperty;
-    @Value("${dynamic.operation.switch}")
-    public boolean operationSwitch;
+    @Value("${dynamic.operation.enable}")
+    public boolean operationEnable;
 
     public abstract AbstractOperationEventManager operationEventManager();
 
@@ -77,7 +74,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     }
 
     public boolean isCanOperationEventBet(BetDo betDo) {
-        if (!operationSwitch) {
+        if (!operationEnable) {
             return false;
         }
         try {
