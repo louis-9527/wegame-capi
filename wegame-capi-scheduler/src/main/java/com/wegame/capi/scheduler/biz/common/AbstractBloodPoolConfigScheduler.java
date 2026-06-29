@@ -1,18 +1,14 @@
 package com.wegame.capi.scheduler.biz.common;
 
-import com.wegame.base.exception.LockException;
-import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.domain.res.singlewallet.GetPoolConfigRes;
 import com.wegame.capi.biz.config.domain.common.CommonBloodPoolConfig;
 import com.wegame.capi.biz.service.SingleWalletConfigService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +35,10 @@ public abstract class AbstractBloodPoolConfigScheduler
         try {
             log.info("AbstractBloodPoolConfigScheduler start");
             CommonBloodPoolConfig config = bloodPoolConfig();
+            if (!config.isEnable()) {
+                log.info("blood pool config enable: {}", config.isEnable());
+                return;
+            }
             Map<String, List<String>> supportMap = config.getSupportMap();
             supportMap.forEach((platformId, channelIds) -> {
                 channelIds.forEach(channelId -> {
