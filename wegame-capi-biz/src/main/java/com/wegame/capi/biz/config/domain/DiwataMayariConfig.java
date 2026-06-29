@@ -163,6 +163,12 @@ public class DiwataMayariConfig extends GameBizConfig {
         this.freeWheelTimesRuleConfigValidate();
         this.rewardMaxMultipleValidate();
         this.commonTemplateConfigValidate();
+        this.commonBloodPoolConfigValidate();
+    }
+
+    private void commonBloodPoolConfigValidate() {
+        AssertUtil.assertNotNull(this.commonBloodPoolConfig, ErrorCode.ERR_INTER, "commonBloodPoolConfig is null");
+        commonBloodPoolConfig.validate();
     }
 
     private void commonTemplateConfigValidate() {
