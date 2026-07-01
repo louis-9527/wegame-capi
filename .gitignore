@@ -17,17 +17,14 @@ wegame-capi-application/log/
 /wegame-capi-application/.._target_test-classes/
 /wegame-capi-application/wegame-capi-application.iml
 /wegame-capi-portable/*
-/wegame-capi-application/wegame-capi-application.iml
 /wegame-capi-client/.idea/workspace.xml
 /wegame-capi-application/Users/
 /.vscode/settings.json
+/.codegraph/
+
 /wegame-capi-biz/src/main/java/com/wegame/capi/biz/config/pulsar/LocalPulsarBeanDisablePostProcessor.java
 /wegame-capi-scaffold/
 
 /wegame-capi-scaffold/target/
-.codegraph/codegraph.db
-/.codegraph/codegraph.lock
-/.codegraph
-/.codegraph/
 /AGENTS.md
 
