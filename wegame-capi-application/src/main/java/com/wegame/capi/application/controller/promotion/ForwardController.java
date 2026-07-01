@@ -2,6 +2,7 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.biz.service.promotion.ForwardService;
 import com.wegame.capi.client.domain.request.promotion.ForwardRequest;
 import io.swagger.annotations.Api;
@@ -29,7 +30,7 @@ public class ForwardController {
     @LoginRequired
     @ApiOperation(value = "Promotion 通用转发（path 由 action 指定）", httpMethod = "POST")
     @PostMapping("/forward")
-    public CommonResponse<Map<String, Object>> forward(@RequestBody ForwardRequest request) {
+    public CommonResponse<CommonRes<Map<String, Object>>> forward(@RequestBody ForwardRequest request) {
         request.validate();
         return build(forwardService.forward(request.getAction(), request.getData()));
     }

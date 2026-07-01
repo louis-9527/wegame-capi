@@ -8,7 +8,6 @@ import com.wegame.capi.api.base.PromotionBaseApi;
 import com.wegame.capi.api.domain.req.promotion.PromotionForwardReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -32,14 +31,9 @@ public class ForwardApi extends PromotionBaseApi {
     private static final String PROMOTION_PATH_FORMAT = "%s/%s";
 
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
-    public Map<String, Object> forward(String urlPath, PromotionForwardReq req) {
+    public CommonRes<Map<String, Object>> forward(String urlPath, PromotionForwardReq req) {
         try {
-            // todo 目前特殊处理待成就系统那边改成造再移除特殊逻辑
-            if (StringUtils.equals(urlPath, "getRedirectGameUrl")) {
-                assembleSignature(req);
-            } else {
-                assembleSingleSignature(req);
-            }
+            assembleSignature(req, req.getPreSignature());
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             URI uri = URI.create(String.format(PROMOTION_PATH_FORMAT, promotionDomain(req.getPId()), urlPath));
             RequestEntity<Map<String, Object>> requestEntity = new RequestEntity<>(req.getParamesMap(), headers, HttpMethod.POST, uri);
@@ -47,11 +41,11 @@ public class ForwardApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            if (!responseEntity.getBody().isSuc()) {
-                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
-            }
+            //if (!responseEntity.getBody().isSuc()) {
+            //    throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
+            //}
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
+            return responseEntity.getBody();
         } catch (BusinessException e) {
             log.error("promotion forward BusinessException, path: {}, req: {}, errMsg: {}", urlPath, req, e.getMessage(), e);
             throw e;
