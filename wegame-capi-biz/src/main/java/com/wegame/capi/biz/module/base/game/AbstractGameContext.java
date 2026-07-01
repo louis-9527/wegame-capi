@@ -92,10 +92,10 @@ public abstract class AbstractGameContext<R> {
                     Long byDivideAmount = payAmount > 0 ? payAmount : betAmount;
                     BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(byDivideAmount), 2, RoundingMode.FLOOR);
                     if (divideValue.compareTo(templateMultipleRange.getEnd()) > 0) {
-                        log.error("playResultValidate,overallRewardAmount more than multiple up limit,stop process.gameplay:{}", gamePlayDo);
+                        log.error("playResultValidate, overallRewardAmount more than multiple up limit, stop process.gameplay: {}, divideValue: {}", gamePlayDo, divideValue);
                         throw new BusinessException(ErrorCode.ERR_INTER);
                     } else if (divideValue.compareTo(templateMultipleRange.getStart()) < 0) {
-                        log.error("playResultValidate,overallRewardAmount more than multiple low limit,continue process.gameplay:{}", gamePlayDo);
+                        log.error("playResultValidate, overallRewardAmount less than multiple low limit, continue process.gameplay: {}, divideValue: {}", gamePlayDo, divideValue);
                         return;
                     }
                     return;
@@ -128,7 +128,7 @@ public abstract class AbstractGameContext<R> {
         if (BetSubTypeEnum.isFirstStep(gamePlayDo.getBetSubType().getCode())) {
             // 首轮用支付金额计算
             actualCalcAmount = gamePlayDo.getPayAmount();
-        } else if (BetSubTypeEnum.isSecondStep(gamePlayDo.getBetSubType().getCode())){
+        } else if (BetSubTypeEnum.isSecondStep(gamePlayDo.getBetSubType().getCode())) {
             // 第二轮生成用投注金额计算
             actualCalcAmount = gamePlayDo.getBetAmount();
         }
