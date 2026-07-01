@@ -90,7 +90,7 @@ public abstract class AbstractGameContext<R> {
                         return;
                     }
                     Long byDivideAmount = payAmount > 0 ? payAmount : betAmount;
-                    BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(byDivideAmount), 2, RoundingMode.FLOOR);
+                    BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(byDivideAmount), 5, RoundingMode.FLOOR);
                     if (divideValue.compareTo(templateMultipleRange.getEnd()) > 0) {
                         log.error("playResultValidate, overallRewardAmount more than multiple up limit, stop process.gameplay: {}, divideValue: {}", gamePlayDo, divideValue);
                         throw new BusinessException(ErrorCode.ERR_INTER);
