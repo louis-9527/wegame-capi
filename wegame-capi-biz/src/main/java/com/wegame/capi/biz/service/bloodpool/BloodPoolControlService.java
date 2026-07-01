@@ -43,7 +43,7 @@ public class BloodPoolControlService {
     public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo, CommonBloodPoolConfig commonBloodPoolConfig) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        if (Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isEnable() && !commonBloodPoolConfig.isSupport(userInfo.getPId(), userInfo.getChannelId())) {
+        if (Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isEnable() || Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isSupport(userInfo.getPId(), userInfo.getChannelId())) {
             log.warn("commonBloodPoolConfig enable: {}, or not support, pid: {}, channelid: {}", commonBloodPoolConfig.isEnable(), userInfo.getPId(), userInfo.getChannelId());
             return null;
         }
