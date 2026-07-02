@@ -12,7 +12,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -27,10 +26,10 @@ import java.util.concurrent.TimeUnit;
 public class UserIdLoadPostHandler extends AbstractPostHandler {
     @Autowired
     UserService userService;
+
     @Override
     public void handle() {
-        // todo 第一次上线后，关闭。 sts环境保留
-        if (!StringUtils.equals(env, "sts")) {
+        if (!StringUtils.equals(env, EnvEnum.STS.getValue())) {
             return;
         }
         try {
