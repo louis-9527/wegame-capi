@@ -82,7 +82,9 @@ public class InventoryService {
             return;
         }
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
-        AssertUtil.assertTrue(SUPPORT_GAME_TYPE_LIST.contains(gameType), ErrorCode.ERR_INTER);
+        if (!SUPPORT_GAME_TYPE_LIST.contains(gameType)) {
+            return;
+        }
         AssertUtil.assertStrNotEmpty(poolName, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(inventoryType, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(increaseInventoryAmount > 0L, ErrorCode.ERR_INTER);
