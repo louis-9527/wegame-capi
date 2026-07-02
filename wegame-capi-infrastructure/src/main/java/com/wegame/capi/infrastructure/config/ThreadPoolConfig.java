@@ -29,7 +29,6 @@ public class ThreadPoolConfig {
     public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
 
     public static final String autoContinuePlayGameThreadPoolExecutor = "autoContinuePlayGameThreadPoolExecutor";
-    public static final String warmUpConnectionThreadPoolExecutor = "warmUpConnectionThreadPoolExecutor";
 
     public static final String scheduledThreadPoolExecutor = "scheduledThreadPoolExecutor";
     public static final String inventoryThreadPoolExecutor = "inventoryThreadPoolExecutor";
@@ -155,20 +154,6 @@ public class ThreadPoolConfig {
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(10000),
                 new CustomizableThreadFactory("auto-continue-play-game-pool-"),
-                new ThreadPoolExecutor.DiscardOldestPolicy());
-        executor.allowCoreThreadTimeOut(true);
-        executor.prestartAllCoreThreads();
-        return executor;
-    }
-
-    @Bean(warmUpConnectionThreadPoolExecutor)
-    public ThreadPoolExecutor warmUpConnectionThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(120,
-                120,
-                300L,
-                TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(300),
-                new CustomizableThreadFactory("warm-up-connection-thread-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
