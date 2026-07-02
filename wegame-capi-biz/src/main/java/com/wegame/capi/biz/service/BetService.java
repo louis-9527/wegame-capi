@@ -77,7 +77,6 @@ public class BetService {
             if (Objects.equals(at, AtTypeEnum.NORMAL.getId())) {
                 betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
             } else {
-                log.info("userInfo.at: {}, template bet", at);
                 betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
             }
         }
