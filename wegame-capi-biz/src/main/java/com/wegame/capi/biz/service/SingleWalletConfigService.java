@@ -10,6 +10,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.infrastructure.helper.LarkHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +52,7 @@ public class SingleWalletConfigService {
         return getBloodPoolConfigNoCache(pid, channelId, gameType);
     }
 
-    @Cacheable(value = CacheConstants.BLOOD_POOL_CONFIG, key = "#pid + '_' + #channelId + '_' + #gameType.name")
+    @CachePut(value = CacheConstants.BLOOD_POOL_CONFIG, key = "#pid + '_' + #channelId + '_' + #gameType.name")
     public List<GetPoolConfigRes.BloodPoolConfig> putBloodPoolConfigCache(String pid, String channelId, GameTypeEnum gameType, List<GetPoolConfigRes.BloodPoolConfig> configList) {
         log.info("putBloodPoolConfigCache, pid: {}, channelId: {}, gameType: {}", pid, channelId, gameType.getName());
         return configList;
