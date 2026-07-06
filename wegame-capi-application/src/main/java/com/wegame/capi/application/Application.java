@@ -66,6 +66,8 @@ public class Application implements CommandLineRunner {
     AppLaunchPostProcessor appLaunchPostProcessor;
     @Autowired
     GameProperty gameProperty;
+    @Value("${game.enableRedis}")
+    private String enableRedis;
 
     public static void main(String[] args) {
         MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
@@ -77,7 +79,11 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("after launch application, env: {}, version: {}", env, version);
+        log.info("wegame-capi after launch application, game: {}, env: {}, enableRedis, version: {}",
+                gameProperty.enabledGameNames(),
+                env,
+                enableRedis,
+                version);
         sendPublishMessage();
         appLaunchPostProcessor.postProcess();
     }
