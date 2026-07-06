@@ -79,7 +79,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("wegame-capi after launch application, game: {}, env: {}, enableRedis, version: {}",
+        log.info("wegame-capi after launch application, game: {}, env: {}, enableRedis: {}, version: {}",
                 gameProperty.enabledGameNames(),
                 env,
                 enableRedis,
