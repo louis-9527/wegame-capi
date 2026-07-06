@@ -41,16 +41,16 @@ public class BloodPoolControlService {
     SingleWalletConfigService singleWalletConfigService;
 
     public GetPoolConfigRes.BloodPoolConfig matchBloodPoolConfig(BetDo betDo, CommonBloodPoolConfig commonBloodPoolConfig) {
-        if (Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isEnable()) {
-            log.warn("commonBloodPoolConfig enable: {}", commonBloodPoolConfig.isEnable());
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        if (Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isEnable() || Objects.nonNull(commonBloodPoolConfig) && !commonBloodPoolConfig.isSupport(userInfo.getPId(), userInfo.getChannelId())) {
+            log.warn("commonBloodPoolConfig enable: {}, or not support, pid: {}, channelid: {}", commonBloodPoolConfig.isEnable(), userInfo.getPId(), userInfo.getChannelId());
             return null;
         }
         if (Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.FREE_SPIN)
                 || Objects.equals(betDo.getBetPromotionType(), BetPromotionTypeEnum.STAR_CARD_IN_FREE)) {
             return null;
         }
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 渠道判断是否支持
         if (!gameApiProperty.supportDosChannelIdSet().contains(userInfo.getChannelId())) {
             // 非dos不支持血池控制

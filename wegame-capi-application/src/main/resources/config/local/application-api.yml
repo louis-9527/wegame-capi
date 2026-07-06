@@ -2,7 +2,7 @@
 api:
   game:
     multiPlatformList:
-      - platformIdList: [50, 55]
+      - platformIdList: [ 50, 55 ]
         invokeSingle: false
         singleDomain: http://sw-http-main-apisix.igo8.me
         singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me
@@ -110,7 +110,7 @@ api:
               channelId: 1051
               privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
               privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
-      - platformIdList: [777]
+      - platformIdList: [ 777 ]
         invokeSingle: true
         singleDomain: http://sw-external-platform-http-main.igo10.me
         singlePoolConfigDomain: https://dos-fund-pool-app.igo8.me
@@ -123,7 +123,7 @@ api:
               channelId: 9004
               privateKey: 6b2f96e579ace6cdcd9eb174c7fba61b49aa7ca738e6d9de9b577363432cebce
               privateIv: dcd76c24c18cb4b4f7fd9326734801da
-              dosSupport:  true
+              dosSupport: true
               dosPublicKey: |
                 -----BEGIN PUBLIC KEY-----
                 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1TmmNTU/ch2QPSujUcXd
