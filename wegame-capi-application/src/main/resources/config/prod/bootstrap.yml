@@ -61,17 +61,17 @@ spring:
             group: wegame-capi-prod
             refresh: true
 ## game switch, enableRedis参数说明 需与游戏名保持一致（除Common外），prod环境配置对应游戏， 非prod环境配置Common
-game:
-  enableRedis: Bayanihan
-  enable:
-    MariaMakiling: false
-    Malakas: false
-    IbongAdarna: false
-    Lamang: false
-    Bakunawa: false
-    DiwataMayari: false
-    Kapre: false
-    Mangkukulam: false
-    Sirena: false
-    Atlantis: false
-    Bayanihan: true
+#game:
+#  enableRedis: Bayanihan
+#  enable:
+#    MariaMakiling: false
+#    Malakas: false
+#    IbongAdarna: false
+#    Lamang: false
+#    Bakunawa: false
+#    DiwataMayari: false
+#    Kapre: false
+#    Mangkukulam: false
+#    Sirena: false
+#    Atlantis: false
+#    Bayanihan: false
